@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-07-15T12:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="supdeq-demo-mca" name="SUpDEq MCA Demo 工作流">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="SUpDEq MCA Demo 工作流" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="20" width="700" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="start" value="运行初始化&#xa;supdeq_start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="665" y="85" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="deps" value="加载路径与依赖&#xa;SUpDEq / SOFiA / AKtools / SOFA&#xa;MCA 还需要 Auditory Toolbox" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="615" y="185" width="320" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="grids" value="1. 定义球面采样网格&#xa;稀疏：Ns = 3 → 26 点&#xa;密集：Nd = 44 → 2702 点&#xa;supdeq_lebedev" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="615" y="300" width="320" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="sparse" value="2. 构造稀疏输入 HRTF&#xa;KU100 内置密集数据&#xa;→ 按 sgS 抽取 26 个方向&#xa;supdeq_getSparseDataset(..., 'ku100')" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="615" y="430" width="320" height="105" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="split" value="3. 分别执行三种空间上采样" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="575" width="250" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sh" value="基线 A：普通 SH&#xa;预处理：None&#xa;插值：SH&#xa;幅度校正：关闭 (mc = NaN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="100" y="730" width="300" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="con" value="基线 B：时间对齐插值&#xa;SUpDEq 方向均衡 / 时间对齐&#xa;→ SH 插值&#xa;→ SUpDEq 反处理&#xa;幅度校正：关闭 (mc = NaN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="475" y="715" width="300" height="135" as="geometry"/>
+        </mxCell>
+        <mxCell id="mca" value="方法 C：MCA&#xa;SUpDEq 方向均衡 / 时间对齐&#xa;→ SH 插值 → SUpDEq 反处理&#xa;→ 听觉频带幅度校正 MC&#xa;mc = Inf（不限制提升量）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="850" y="715" width="320" height="135" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="shout" value="interpHRTF_sh" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="145" y="885" width="210" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="conout" value="interpHRTF_con" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="885" width="210" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="mcaout" value="interpHRTF_mca" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="905" y="885" width="210" height="65" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="reference" value="4. 构造密集参考数据&#xa;从同一 KU100 数据按 sgD 获取 2702 点&#xa;频域 HRTF 经 IFFT 得到 HRIR&#xa;refHRTF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="715" width="300" height="135" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="compare" value="5–7. 对比与评价" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="1000" width="250" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="plots" value="HRIR 对比图&#xa;正前方与对侧耳方向&#xa;supdeq_plotIR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="260" y="1145" width="270" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="lsd" value="对数频谱差异 LSD&#xa;supdeq_calcLSD_HRIR&#xa;比较 SH / SUpDEq / MCA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="640" y="1145" width="270" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="erb" value="听觉滤波器幅度误差&#xa;ERB 频带平均&#xa;更接近论文评价指标" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="1145" width="270" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="end" value="输出：三组稠密 HRTF/HRIR&#xa;及其相对参考数据的误差结果" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="615" y="1280" width="320" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="start" target="deps"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="deps" target="grids"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="grids" target="sparse"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="sparse" target="split"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="A" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="split" target="sh"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" value="B" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="split" target="con"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" value="C" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="split" target="mca"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" value="sgD" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="grids" target="reference"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1470" y="350"/></Array></mxGeometry></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="sh" target="shout"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="con" target="conout"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="mca" target="mcaout"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="shout" target="compare"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="conout" target="compare"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="mcaout" target="compare"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e15" value="参考真值" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="reference" target="compare"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="compare" target="plots"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="compare" target="lsd"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="compare" target="erb"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="plots" target="end"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="lsd" target="end"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="erb" target="end"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -390,3 +390,5 @@ Contralateral high-frequency error
 
 该版本已经可以形成一篇完整的 CSMT 初稿。
 
+- 0722：添加了git
+

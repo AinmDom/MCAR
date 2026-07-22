@@ -1,6 +1,11 @@
 # Third-party dependency kept locally; do not version its sources or data.
-SUpDEq-master/
+SUpDEq-master/*
+!SUpDEq-master/README.project.md
 
 # Reproducible outputs from scripts/run_mca_demo_export.m.
-/figures/mca_demo_ku100_ns3_nd44/
-/outputs/
+/figures/mca_demo_ku100_ns3_nd44/*
+!/figures/mca_demo_ku100_ns3_nd44/README.md
+
+# Large, generated experiment features and intermediate results.
+/outputs/*
+!/outputs/README.md

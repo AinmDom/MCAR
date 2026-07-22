@@ -35,7 +35,7 @@ Residual = log|H_ref| - log|H_MCA|
 当前工具包路径：
 
 ```text
-D:\course\CUC_2\CSMT\2026\SUpDEq-master
+..\CSMT\MCAR\SUpDEq-master
 ```
 
 该工具包是 MCA 论文作者公开的 MATLAB 工具包。README 中说明，`supdeq_interpHRTF` 已经集成了 MCA 后处理步骤。

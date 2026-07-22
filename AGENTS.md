@@ -1,0 +1,39 @@
+# 项目协作指引
+
+## 项目目标
+
+本项目研究在 MCA（Magnitude-Corrected and Time-Aligned Interpolation）HRTF 插值结果上，使用轻量残差网络降低剩余插值误差。
+
+首版学习任务为：
+
+```text
+residual = log|H_ref| - log|H_MCA|
+```
+
+## 每次开始工作
+
+1. 阅读根目录 `README.md`，了解完整研究路线。
+2. 阅读 `docs/PROJECT_STATUS.md`，确认当前工作、阻塞项和下一步。
+3. 阅读 `docs/EXPERIMENT_LOG.md`，避免重复已经完成的实验。
+4. 检查 `git status` 和最近提交；除非用户明确要求，不覆盖或丢弃已有改动。
+
+## 目录与数据约定
+
+- `docs/`：项目状态、实验记录与其他轻量级研究文档，必须提交到 Git。
+- `figures/`：用于论文或实验报告的图片；仅提交可复现或确需保留的结果图。
+- `SUpDEq-master/`：本地第三方 MATLAB 工具包，已由 `.gitignore` 忽略；不要把其源码或数据提交进本仓库。
+- 大型 HRTF 数据集、MAT 文件、中间缓存和模型权重不得直接提交；需在 `docs/PROJECT_STATUS.md` 记录其获取方式、版本和本机路径。
+
+## 实验约定
+
+- 首先复现 `SUpDEq-master/supdeq_demo_MCA.m`。
+- 基线顺序：SH only、SUpDEq + SH、MCA、MCA + residual MLP。
+- 优先使用 Lebedev 稀疏网格；重点指标为 LSD、auditory-band magnitude error、ILD error，以及对侧高频误差。
+- 每次实验结束都更新 `docs/EXPERIMENT_LOG.md`：数据集、网格、参数、指标、结论和结果文件位置。
+- 每完成一个可恢复的阶段，更新 `docs/PROJECT_STATUS.md` 并创建清晰的 Git 提交。
+
+## 验证与交接
+
+- 修改 MATLAB 或 Python 实验代码时，记录实际执行的命令和结果；没有执行时应明确说明原因。
+- 跨电脑继续工作时，先同步 Git，再按“每次开始工作”流程恢复上下文。
+- 交接前确保状态文档与 Git 提交对应，且下一步是可执行、可验证的具体任务。

@@ -1,2 +1,6 @@
 # Third-party dependency kept locally; do not version its sources or data.
 SUpDEq-master/
+
+# Reproducible outputs from scripts/run_mca_demo_export.m.
+/figures/mca_demo_ku100_ns3_nd44/
+/outputs/

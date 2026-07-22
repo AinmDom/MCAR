@@ -13,16 +13,15 @@ residual = log|H_ref| - log|H_MCA|
 ## 每次开始工作
 
 1. 阅读根目录 `README.md`，了解完整研究路线。
-2. 阅读 `docs/PROJECT_STATUS.md`，确认当前工作、阻塞项和下一步。
-3. 阅读 `docs/EXPERIMENT_LOG.md`，避免重复已经完成的实验。
-4. 检查 `git status` 和最近提交；除非用户明确要求，不覆盖或丢弃已有改动。
+2. 阅读 `docs/EXPERIMENT_LOG.md`，确认当前工作、阻塞项、实验结论和下一步。
+3. 检查 `git status` 和最近提交；除非用户明确要求，不覆盖或丢弃已有改动。
 
 ## 目录与数据约定
 
 - `docs/`：项目状态、实验记录与其他轻量级研究文档，必须提交到 Git。
 - `figures/`：用于论文或实验报告的图片；仅提交可复现或确需保留的结果图。
 - `SUpDEq-master/`：本地第三方 MATLAB 工具包，已由 `.gitignore` 忽略；不要把其源码或数据提交进本仓库。
-- 大型 HRTF 数据集、MAT 文件、中间缓存和模型权重不得直接提交；需在 `docs/PROJECT_STATUS.md` 记录其获取方式、版本和本机路径。
+- 大型 HRTF 数据集、MAT 文件、中间缓存和模型权重不得直接提交；需在 `docs/EXPERIMENT_LOG.md` 记录其获取方式、版本和本机路径。
 
 ## 实验约定
 
@@ -30,7 +29,7 @@ residual = log|H_ref| - log|H_MCA|
 - 基线顺序：SH only、SUpDEq + SH、MCA、MCA + residual MLP。
 - 优先使用 Lebedev 稀疏网格；重点指标为 LSD、auditory-band magnitude error、ILD error，以及对侧高频误差。
 - 每次实验结束都更新 `docs/EXPERIMENT_LOG.md`：数据集、网格、参数、指标、结论和结果文件位置。
-- 每完成一个可恢复的阶段，更新 `docs/PROJECT_STATUS.md` 并创建清晰的 Git 提交。
+- 每完成一个可恢复的阶段，按日期更新 `docs/EXPERIMENT_LOG.md` 并创建清晰的 Git 提交。
 
 ## 验证与交接
 

@@ -11,9 +11,24 @@ SUpDEq-master/*
 !/outputs/README.md
 
 # Keep reproducible MATLAB entry points, but ignore large checkpoints and
-# generated results under the MCA-paper reproduction workspace.
+# generated results under the MCA-paper reproduction workspace. Keep only
+# compact cross-subject tables and publication-ready PNG summaries.
 /reproduce/*
 !/reproduce/*.m
+!/reproduce/hutubs_mca_batch/
+/reproduce/hutubs_mca_batch/*
+!/reproduce/hutubs_mca_batch/aggregate/
+/reproduce/hutubs_mca_batch/aggregate/*
+!/reproduce/hutubs_mca_batch/aggregate/aggregation_report.txt
+!/reproduce/hutubs_mca_batch/aggregate/aggregate_erb_by_order_paper_unweighted.csv
+!/reproduce/hutubs_mca_batch/aggregate/aggregate_binaural_by_order.csv
+!/reproduce/hutubs_mca_batch/aggregate/aggregate_frequency_by_order_quadrature_weighted.csv
+!/reproduce/hutubs_mca_batch/aggregate/mca_improvement_by_order.csv
+!/reproduce/hutubs_mca_batch/aggregate/key_findings.csv
+!/reproduce/hutubs_mca_batch/aggregate/fig05_region_magnitude_error.png
+!/reproduce/hutubs_mca_batch/aggregate/full_sphere_magnitude_error.png
+!/reproduce/hutubs_mca_batch/aggregate/binaural_error_by_order.png
+!/reproduce/hutubs_mca_batch/aggregate/frequency_error_n3_n6.png
 
 # Large HRTF datasets kept locally; track only data/HRTF/README.md.
 /data/HRTF/axd/

@@ -1,0 +1,7 @@
+HUTUBS MCA reproduction aggregation
+Subjects: 96
+Sparse orders: 1-10
+
+FullSphere: maximum MCA improvement 0.294539 dB at N=3; 96/96 subjects improved at that order.
+Frontal25deg: maximum MCA improvement 0.314076 dB at N=4; 95/96 subjects improved at that order.
+Contralateral25deg: maximum MCA improvement 0.923091 dB at N=2; 96/96 subjects improved at that order.

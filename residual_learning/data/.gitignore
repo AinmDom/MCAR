@@ -1,3 +1,6 @@
 *
 !.gitignore
 !README.md
+!hutubs_residual_v1_n03/
+hutubs_residual_v1_n03/*
+!hutubs_residual_v1_n03/training_statistics.json

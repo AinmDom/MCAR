@@ -27,7 +27,7 @@
 - 过拟合检查：pp91 单被试运行 8 epoch × 300 steps 后，随机留出 block 的 MAE 从 MCA zero-residual 基线约 `2.34 dB` 降至约 `1.60 dB`，数据读取、梯度和 checkpoint 链路均通过。
 - 训练过程：跨被试训练命令为 `train_residual_mlp.py ... --run-name mlp_n03_v1 --epochs 12 --steps-per-epoch 600 --validation-steps 96`；总耗时 `380.2 s`（约 6 分 20 秒）。根据 validation MAE 选择 epoch 10 的 best checkpoint。
 - 独立指标结果：在完整 validation（12 被试、`10,000,800` 样本）上，逐频点 residual MAE 从 MCA 基线 `2.5719 dB` 降至 `2.1886 dB`（`14.90%`），RMSE 从 `4.1438` 降至 `3.5346 dB`。在严格未见的 test（12 被试、`10,000,800` 样本）上，MAE 从 `2.6007` 降至 `2.2172 dB`（`14.75%`），RMSE 从 `4.1861` 降至 `3.5792 dB`。
-- 输出文件位置：训练代码为 `residual_learning/python/residual_data.py`、`residual_model.py`、`train_residual_mlp.py`、`evaluate_residual_mlp.py`；本地 checkpoint、CSV 和 JSON 位于 `residual_learning/runs/mlp_n03_v1`，由嵌套 `.gitignore` 忽略。
+- 输出文件位置：训练代码为 `residual_learning/python/residual_data.py`、`residual_model.py`、`train_residual_mlp.py`、`evaluate_residual_mlp.py`；`residual_learning/runs/mlp_n03_v1` 中仅保留 `history.csv`、`val_metrics.json` 和 `test_metrics.json`，checkpoint、含本机绝对路径的配置与其他运行产物由嵌套 `.gitignore` 忽略。
 - 结论与限制：首版轻量 MLP 已在未见被试上稳定降低原始频谱 residual，证明 MCA 后残差包含可跨被试学习的规律。当前结果不是论文 ERB magnitude error、ILD 或 ITD；模型只预测幅度 residual，尚未将预测值回填为校正 HRTF 并重算这些最终听觉指标。
 - 下一步：实现“预测 residual → 修正 MCA 幅度 → 结合原 MCA 相位”的重建与评估器，首先在完整 test 集报告 auditory-band magnitude error、对侧高频误差和 ILD；ITD 预计保持 MCA 水平，因为本阶段不修改相位。
 
@@ -41,7 +41,7 @@
 - 完整性检查：96/96 HDF5 成功，0 failure、0 partial；每个文件包含 `833,400` 个样本，总计 `80,006,400` 个样本。遍历读取全部 96 个文件后，train/validation/test 属性计数为 `72/12/12`，全部数组尺寸一致且数值有限，`reference - MCA = residual` 的最大恒等误差为 `0 dB`。输出总大小 `1,179,616,094` 字节（`1124.97 MiB`，约 `1.10 GiB`）。
 - 训练集统计：仅使用 72 个 train 被试的 `60,004,800` 个样本计算归一化参数。MCA log-magnitude 均值/标准差为 `0.4367/9.3164 dB`；correction-filter log-magnitude 为 `0.8184/2.6988 dB`；目标 residual 均值/标准差为 `-0.0905/4.0625 dB`，平均绝对值为 `2.5156 dB`，范围约 `-67.71`–`69.57 dB`。
 - 指标解释：这里的 residual 是逐 FFT 频点的细粒度谱差，不是论文 41 个 auditory band 上的能量误差，因此其平均绝对值不能直接与前一阶段约 0.8 dB 的 ERB 指标比较。后续训练仍应以原始 residual 为监督，并用论文 ERB、ILD、对侧高频误差作为最终评价。
-- 输出文件位置：源码、划分和说明位于 `residual_learning/`；大型数据位于 `residual_learning/data/hutubs_residual_v1_n03`，由嵌套 `.gitignore` 忽略。训练集统计在该目录的 `training_statistics.json`。
+- 输出文件位置：源码、划分和说明位于 `residual_learning/`；大型数据位于 `residual_learning/data/hutubs_residual_v1_n03`，由嵌套 `.gitignore` 忽略；仅保留该目录的 `training_statistics.json` 以复现训练归一化。
 - 硬件准备：本机 NVIDIA GeForce RTX 5060，显存 `8151 MiB`，驱动 `595.79`，CUDA compute capability `12.0`；适合使用混合精度训练轻量 MLP，但 batch size 需按 8 GB 显存控制。
 - 阻塞项：当前虚拟环境尚未安装 PyTorch；在安装前应核对支持 RTX 5060 / compute capability 12.0 的官方 CUDA wheel 版本。
 - 结论与下一步：Residual 数据集 v1 已可直接供 Python 训练。下一步实现按 HDF5 随机采样的 PyTorch Dataset、仅由 train 统计量归一化的轻量 MLP，以及 zero-residual（即原 MCA）对照；先跑小规模过拟合检查，再进行完整训练。

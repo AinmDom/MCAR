@@ -1,0 +1,13 @@
+{
+  "split": "val",
+  "subject_file_count": 12,
+  "sample_count": 10000800,
+  "model_mae_db": 2.188647413568853,
+  "model_rmse_db": 3.534563139161943,
+  "mca_zero_residual_mae_db": 2.571911391159142,
+  "mca_zero_residual_rmse_db": 4.143771328093833,
+  "mae_reduction_percent": 14.901912208474432,
+  "checkpoint_epoch": 10,
+  "model_parameter_count": 100225,
+  "device": "NVIDIA GeForce RTX 5060"
+}

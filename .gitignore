@@ -10,6 +10,10 @@ SUpDEq-master/*
 /outputs/*
 !/outputs/README.md
 
+# Local MCA-paper reproduction workspace; keep experimental scripts and outputs
+# out of version control until the reproduction is finalized.
+/reproduce/
+
 # Large HRTF datasets kept locally; track only data/HRTF/README.md.
 /data/HRTF/axd/
 /data/HRTF/hutubs/

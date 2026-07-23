@@ -9,3 +9,7 @@ SUpDEq-master/*
 # Large, generated experiment features and intermediate results.
 /outputs/*
 !/outputs/README.md
+
+# Large HRTF datasets kept locally; track only data/HRTF/README.md.
+/data/HRTF/axd/
+/data/HRTF/hutubs/

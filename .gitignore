@@ -10,9 +10,10 @@ SUpDEq-master/*
 /outputs/*
 !/outputs/README.md
 
-# Local MCA-paper reproduction workspace; keep experimental scripts and outputs
-# out of version control until the reproduction is finalized.
-/reproduce/
+# Keep reproducible MATLAB entry points, but ignore large checkpoints and
+# generated results under the MCA-paper reproduction workspace.
+/reproduce/*
+!/reproduce/*.m
 
 # Large HRTF datasets kept locally; track only data/HRTF/README.md.
 /data/HRTF/axd/

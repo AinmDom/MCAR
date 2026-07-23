@@ -18,6 +18,22 @@
 - 结论与下一步：
 ```
 
+## 2026-07-23：HUTUBS 96 被试 MCA 全量复现与跨被试汇总
+
+- 实验目标：按论文技术评估设置，在全部 96 个 HUTUBS simulated SOFA 上完成 Lebedev `N=1`–`10` 的 SH only、SUpDEq + SH 和 MCA 基线，并汇总跨被试幅度、ILD、ITD 指标与论文 Fig. 5 风格曲线。
+- 数据集与版本：本机 `data/HRTF/hutubs` 中 `pp1`–`pp96` 的 96 个 simulated SOFA；每个文件包含 Lebedev `N=35` 的 1730 个方向、双耳 256 点 HRIR，采样率 44.1 kHz。
+- 稀疏网格与采样点数：稀疏输入为 Lebedev `N=1`–`10`；幅度误差目标为 Fliege `N=29`（900 方向）；双耳线索目标为水平面 0–359 度（360 方向）。ERB 指标实际得到 41 个中心频率，范围 `50`–`19792.31 Hz`，与论文的 50 Hz–20 kHz、41 个听觉滤波器一致。
+- 方法与关键参数：SH only（`'None'`, `'SH'`, `mc=nan`）、conventional（`'SUpDEq'`, `'SH'`, `mc=nan`）与 MCA（`'SUpDEq'`, `'SH'`, `mc=inf`）；FFT oversize 为 4。MCA 使用 SUpDEq 默认最小相位幅度校正、空间混叠频率以下限制和 `fadeDown`。头半径由 HUTUBS `x1,x2,x3` 与 Algazi 公式计算；公开人体测量表中 pp18、pp79、pp92 缺值，三者透明地使用其余 93 人的平均半径 `0.091021 m`，这是相对论文私有完整元数据的已知偏差。
+- 实验过程：使用 6 个 MATLAB process workers 按被试并行，每个被试内部按 `N=1`–`10` 顺序执行并逐阶保存独立检查点。实际命令为 `matlab -batch "addpath(fullfile(pwd,'reproduce')); run_hutubs_mca_batch(1:96,1:10,6,'hutubs_mca_batch')"`；总耗时 `11471.8 s`（约 3 小时 11 分 12 秒）。随后执行 `matlab -batch "addpath(fullfile(pwd,'reproduce')); aggregate_hutubs_mca_results"`，约 57 秒完成跨被试汇总和绘图。
+- 完整性检查：96/96 被试成功，0 个失败；共 960 个逐阶 MAT、960 个 ERB CSV、960 个双耳指标 CSV、96 个完成标记；每位被试均恰有 10 个阶数。结果总大小 `203,774,606` 字节（约 194.3 MiB）。
+- 统计口径修正：批处理 CSV 最初使用 Fliege 求积权重做方向平均；论文 Fig. 5 是对选中方向做普通算术平均。逐阶 MAT 已保存每个方向的跨频率误差，因此汇总阶段直接由检查点重建论文严格口径，不需要重新插值。两种口径均保留，并以文件名明确区分；论文对照图使用未加权方向平均。
+- 幅度指标结果：左耳对侧 25 度区域中，N=2 conventional/MCA 为 `2.7789/1.8558 dB`，改善 `0.9231 dB`，96/96 被试改善；N=3 为 `2.6819/1.8965 dB`，改善 `0.7854 dB`，96/96 改善。左耳前方 25 度的最大改善位于 N=4，由 `0.7460 dB` 降至 `0.4319 dB`，改善 `0.3141 dB`，95/96 改善。左耳全空间在 N=3 由 `1.0980 dB` 降至 `0.8035 dB`，改善 `0.2945 dB`，96/96 改善。N=1 全空间 MCA 略差（`1.5664` 升至 `1.6370 dB`），与论文所述低阶 N=1 难以进一步改善的现象一致。
+- 双耳指标结果：N=3 水平面平均绝对 ILD 误差由 conventional `1.5623 dB` 降至 MCA `0.8611 dB`；平均绝对 ITD 误差为 `11.7113/11.6454 µs`，几乎不变，符合幅度校正主要改善 ILD 而不改变低频到达时间的预期。
+- 论文对照结论：复现曲线重现原文 Fig. 5 的核心模式：对侧误差显著高于前方；N=1 对侧改善很小；最大幅度改善集中在 N=2–5；前方改善峰值在 N=3–4；跨被试标准差在 MCA 后总体减小。当前结论可作为后续 residual 网络必须超过的 MCA 基线。
+- 输出文件位置：根目录 `reproduce/hutubs_mca_batch`；汇总在 `reproduce/hutubs_mca_batch/aggregate`，包括严格口径 ERB 表、加权口径 ERB 表、双耳指标表、改进表、MAT 汇总以及 `fig05_region_magnitude_error.png`、`full_sphere_magnitude_error.png`、`binaural_error_by_order.png`、`frequency_error_n3_n6.png`。`reproduce/` 根目录的 MATLAB 复现脚本纳入 Git，子目录中的大型检查点和生成结果继续由 `.gitignore` 忽略。
+- 阻塞项：无计算阻塞。正式写作时需注明 pp18、pp79、pp92 的头半径替代策略；若获得三人的完整人体测量值，可仅重跑这三人做敏感性检查。
+- 结论与下一步：96 被试 MCA 传统基线已完成，可进入 residual 学习数据导出。下一步应先固定 subject-wise 训练/验证/测试划分，再导出 `log|H_ref| - log|H_MCA|` 目标及方向、频率、耳别、MCA 幅度与 correction-filter 特征，避免同一被试跨集合造成数据泄漏。
+
 ## 2026-07-23：HUTUBS simulated 单被试 MCA 复现检查点
 
 - 实验目标：验证 HUTUBS simulated SOFA 与 MCA 论文的 Lebedev 网格、个体头半径和 MCA 基线参数可在本机 SUpDEq 环境中一致运行，再进入 96 位受试者的批处理。

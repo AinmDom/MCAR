@@ -18,6 +18,21 @@
 - 结论与下一步：
 ```
 
+## 2026-07-23：Residual learning 数据集 v1（HUTUBS N=3）
+
+- 实验目标：建立独立的 `residual_learning/` 阶段目录，固定无被试泄漏的数据划分，并为轻量网络导出 `target = reference_logmag_db - mca_logmag_db` 的首版训练数据。
+- 数据集与划分：96 个 HUTUBS simulated HRTF；使用 MATLAB `rng(20260723, 'twister'); randperm(96)` 固定 subject-wise 划分为 train/validation/test = `72/12/12`。同一被试只属于一个集合。公开人体测量缺失的 pp79、pp92、pp18 分别位于 train、validation、test。
+- 稀疏网格与目标网格：首版固定 Lebedev `N=3`（26 个稀疏方向），目标为 Fliege `N=29`（900 个方向），双耳独立保存。选择条件为 `50 Hz <= f <= 20 kHz`；由于 44.1 kHz、1024 点 FFT 的离散频率栅格，实际得到 463 个频点，范围 `86.1328`–`19982.8125 Hz`。
+- 数据格式：每个被试/阶数独立保存一个 HDF5；Python 侧频谱布局统一为 `[ear, direction, frequency]`。主要字段为 `/mca_logmag_db`、`/reference_logmag_db`、`/correction_logmag_db`、`/target_residual_db`、`/direction_features` 和 `/frequency_hz`。方向特征包含 azimuth、elevation、单位向量 `x/y/z` 和 Fliege weight。文件先写入 `.partial`，完整校验和元数据写入后再原子改名，可断点续跑。
+- 实验过程：先执行 `export_hutubs_residual_dataset(91,3,1,'pilot_pp91_n03')` 完成 pp91 试导出，再执行 `export_hutubs_residual_dataset(1:96,3,6,'hutubs_residual_v1_n03')`，使用 6 个 MATLAB process workers 完成全量导出；全量运行耗时 `920.8 s`（约 15 分 21 秒）。项目 Python 虚拟环境安装 `h5py 3.16.0`，使用 `validate_residual_hdf5.py` 和 `compute_training_statistics.py` 做读取验证及训练集统计。
+- 完整性检查：96/96 HDF5 成功，0 failure、0 partial；每个文件包含 `833,400` 个样本，总计 `80,006,400` 个样本。遍历读取全部 96 个文件后，train/validation/test 属性计数为 `72/12/12`，全部数组尺寸一致且数值有限，`reference - MCA = residual` 的最大恒等误差为 `0 dB`。输出总大小 `1,179,616,094` 字节（`1124.97 MiB`，约 `1.10 GiB`）。
+- 训练集统计：仅使用 72 个 train 被试的 `60,004,800` 个样本计算归一化参数。MCA log-magnitude 均值/标准差为 `0.4367/9.3164 dB`；correction-filter log-magnitude 为 `0.8184/2.6988 dB`；目标 residual 均值/标准差为 `-0.0905/4.0625 dB`，平均绝对值为 `2.5156 dB`，范围约 `-67.71`–`69.57 dB`。
+- 指标解释：这里的 residual 是逐 FFT 频点的细粒度谱差，不是论文 41 个 auditory band 上的能量误差，因此其平均绝对值不能直接与前一阶段约 0.8 dB 的 ERB 指标比较。后续训练仍应以原始 residual 为监督，并用论文 ERB、ILD、对侧高频误差作为最终评价。
+- 输出文件位置：源码、划分和说明位于 `residual_learning/`；大型数据位于 `residual_learning/data/hutubs_residual_v1_n03`，由嵌套 `.gitignore` 忽略。训练集统计在该目录的 `training_statistics.json`。
+- 硬件准备：本机 NVIDIA GeForce RTX 5060，显存 `8151 MiB`，驱动 `595.79`，CUDA compute capability `12.0`；适合使用混合精度训练轻量 MLP，但 batch size 需按 8 GB 显存控制。
+- 阻塞项：当前虚拟环境尚未安装 PyTorch；在安装前应核对支持 RTX 5060 / compute capability 12.0 的官方 CUDA wheel 版本。
+- 结论与下一步：Residual 数据集 v1 已可直接供 Python 训练。下一步实现按 HDF5 随机采样的 PyTorch Dataset、仅由 train 统计量归一化的轻量 MLP，以及 zero-residual（即原 MCA）对照；先跑小规模过拟合检查，再进行完整训练。
+
 ## 2026-07-23：HUTUBS 96 被试 MCA 全量复现与跨被试汇总
 
 - 实验目标：按论文技术评估设置，在全部 96 个 HUTUBS simulated SOFA 上完成 Lebedev `N=1`–`10` 的 SH only、SUpDEq + SH 和 MCA 基线，并汇总跨被试幅度、ILD、ITD 指标与论文 Fig. 5 风格曲线。

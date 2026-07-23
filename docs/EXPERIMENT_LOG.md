@@ -18,6 +18,19 @@
 - 结论与下一步：
 ```
 
+## 2026-07-23：Residual MLP v1（HUTUBS N=3，跨被试）
+
+- 实验目标：在已经导出的 HUTUBS N=3 residual 数据集上，实现并验证首版轻量 MLP，确认模型能在严格的 subject-wise 未见被试上降低 `reference_logmag_db - mca_logmag_db`。
+- 训练环境：Conda 环境 `D:\miniconda3\envs\ml`，Python `3.9.23`，PyTorch `2.8.0+cu128`，CUDA build `12.8`，h5py `3.14.0`。GPU 为 RTX 5060（8151 MiB，compute capability 12.0）；已实际验证 HDF5 读取、CUDA 张量计算和混合精度反向传播。
+- 模型与输入：`ResidualMLP` 有 `100,225` 个可训练参数；7 个输入特征依次为归一化 MCA log-magnitude、归一化 MCA correction-filter log-magnitude、方向单位向量 `x/y/z`、归一化 `log10(frequency)` 和耳别（左=-1，右=1）。网络为宽度 128 的输入层、3 个 SiLU 残差块和单输出层，预测归一化的 dB residual。
+- 采样与优化：为避免将 1.10 GiB 数据整体载入内存，每个 batch 从随机被试和随机耳朵读取 `64` 个方向与 `128` 个频点的笛卡尔块，共 `8192` 样本。归一化参数严格来自 72 个 train 被试；优化器 AdamW（学习率 `1e-3`、weight decay `1e-5`）、SmoothL1 损失、cosine learning-rate decay、CUDA FP16 AMP。训练共 12 epoch × 600 steps（随机有放回采样），每 epoch 以 96 个 validation block 监控。
+- 过拟合检查：pp91 单被试运行 8 epoch × 300 steps 后，随机留出 block 的 MAE 从 MCA zero-residual 基线约 `2.34 dB` 降至约 `1.60 dB`，数据读取、梯度和 checkpoint 链路均通过。
+- 训练过程：跨被试训练命令为 `train_residual_mlp.py ... --run-name mlp_n03_v1 --epochs 12 --steps-per-epoch 600 --validation-steps 96`；总耗时 `380.2 s`（约 6 分 20 秒）。根据 validation MAE 选择 epoch 10 的 best checkpoint。
+- 独立指标结果：在完整 validation（12 被试、`10,000,800` 样本）上，逐频点 residual MAE 从 MCA 基线 `2.5719 dB` 降至 `2.1886 dB`（`14.90%`），RMSE 从 `4.1438` 降至 `3.5346 dB`。在严格未见的 test（12 被试、`10,000,800` 样本）上，MAE 从 `2.6007` 降至 `2.2172 dB`（`14.75%`），RMSE 从 `4.1861` 降至 `3.5792 dB`。
+- 输出文件位置：训练代码为 `residual_learning/python/residual_data.py`、`residual_model.py`、`train_residual_mlp.py`、`evaluate_residual_mlp.py`；本地 checkpoint、CSV 和 JSON 位于 `residual_learning/runs/mlp_n03_v1`，由嵌套 `.gitignore` 忽略。
+- 结论与限制：首版轻量 MLP 已在未见被试上稳定降低原始频谱 residual，证明 MCA 后残差包含可跨被试学习的规律。当前结果不是论文 ERB magnitude error、ILD 或 ITD；模型只预测幅度 residual，尚未将预测值回填为校正 HRTF 并重算这些最终听觉指标。
+- 下一步：实现“预测 residual → 修正 MCA 幅度 → 结合原 MCA 相位”的重建与评估器，首先在完整 test 集报告 auditory-band magnitude error、对侧高频误差和 ILD；ITD 预计保持 MCA 水平，因为本阶段不修改相位。
+
 ## 2026-07-23：Residual learning 数据集 v1（HUTUBS N=3）
 
 - 实验目标：建立独立的 `residual_learning/` 阶段目录，固定无被试泄漏的数据划分，并为轻量网络导出 `target = reference_logmag_db - mca_logmag_db` 的首版训练数据。

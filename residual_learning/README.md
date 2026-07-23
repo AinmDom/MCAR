@@ -89,3 +89,46 @@ residual_learning/.venv/Scripts/python `
 
 归一化统计量严格只从 72 个 train 被试计算；validation 和 test 不参与均值、
 标准差或超参数估计。
+
+## 训练环境和首版 MLP
+
+训练使用本机 Conda 环境 `D:\miniconda3\envs\ml`。已验证其中的 PyTorch
+`2.8.0+cu128` 可使用 RTX 5060，CUDA build 为 12.8。该环境还需要：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe -m pip install -r residual_learning/requirements.txt
+```
+
+首版模型是约 10 万参数的残差 MLP。它使用归一化后的 MCA magnitude、MCA
+correction-filter magnitude、方向单位向量、log-frequency 和耳别，共 7 个输入
+特征，输出归一化的 dB residual。
+
+先执行单被试过拟合检查：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe residual_learning/python/train_residual_mlp.py `
+  residual_learning/data/hutubs_residual_v1_n03 `
+  --run-name overfit_pp91 --overfit-subject 91 --epochs 8 `
+  --steps-per-epoch 300 --validation-steps 64
+```
+
+训练日志和检查点位于 `runs/`，不提交 Git。过拟合检查通过后，再用完整
+subject-wise train/validation 划分训练。
+
+一轮首版跨被试训练和独立测试：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe residual_learning/python/train_residual_mlp.py `
+  residual_learning/data/hutubs_residual_v1_n03 `
+  --run-name mlp_n03_v1 --epochs 12 --steps-per-epoch 600 --validation-steps 96
+D:\miniconda3\envs\ml\python.exe residual_learning/python/evaluate_residual_mlp.py `
+  residual_learning/data/hutubs_residual_v1_n03 `
+  residual_learning/runs/mlp_n03_v1/best.pt --split test
+```
+
+这里的 MAE/RMSE 是逐 FFT 频点的 residual 指标；独立 test 的论文 ERB、ILD 和
+对侧高频指标将在模型基本泛化通过后再计算。
+
+当前已完成的 `mlp_n03_v1`（100,225 参数）在完整未见 test 集上将逐频点 residual
+MAE 从 `2.6007 dB` 降至 `2.2172 dB`（`14.75%`）。这证明残差可学习，但尚不等价
+于论文的 ERB/ILD 指标；下一阶段需要将预测 residual 回填到 MCA 幅度后重新计算。

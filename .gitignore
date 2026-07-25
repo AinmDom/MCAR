@@ -14,6 +14,12 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .ipynb_checkpoints/
+build/
+dist/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
 
 # MATLAB generated files and build products.
 *.asv
@@ -24,6 +30,9 @@ codegen/
 *.mexw64
 *.mexa64
 *.mexmaci64
+matlab_crash_dump.*
+java.log
+hs_err_pid*
 
 # Large datasets, intermediate arrays, and model checkpoints.
 # Keep lightweight provenance, metrics, and reports as README/CSV/JSON files.
@@ -36,12 +45,34 @@ codegen/
 *.pt
 *.pth
 *.ckpt
+*.onnx
+*.safetensors
+*.pkl
+*.pickle
+*.joblib
+*.fig
 
 # Runtime logs and temporary process files.
 *.log
 *.pid
 *.tmp
 *.temp
+*.partial
+*.part
+*.swp
+*.swo
+*~
+events.out.tfevents.*
+lightning_logs/
+mlruns/
+
+# Experiment tracker state and machine-local credentials.
+wandb/
+wandb_state/
+*.wandb
+.env
+.env.*
+!.env.example
 
 # Third-party dependency kept locally; do not version its sources or data.
 SUpDEq-master/*

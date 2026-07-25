@@ -18,6 +18,71 @@
 - 结论与下一步：
 ```
 
+## 2026-07-26：MLP + CNN v3 首版完整技术报告
+
+- 工作目标：在 v3 正式训练、完整 validation、锁定 test 和严格 HRTF 重建全部完成后，形成与 v1/v2 报告体系一致的独立技术报告。
+- 报告文件：新增 `docs/MLP_CNN_V3_REPORT.md`，共 25 章，覆盖摘要、版本演进、需求与验收、数据协议、模型选型、MLP-CNN 融合、参数与感受野、初始化、双耳完整频谱采样、复合损失、W&B、训练过程、validation/test、防泄漏协议、MCA 幅度回填、严格指标、逐被试结果、工程结构、完整复现命令、有效性威胁、v3.1 建议和项目结论。
+- 数值审校：报告中的训练、完整 residual、严格 ERB/高频/ILD、资源与重建质量数字均与本地 JSON/CSV/MATLAB 输出交叉核对。补充确认 v3 相对 v2 的全空间 ERB、对侧 25° ERB和对侧高频均为 12/12 test 被试改善；严格 ILD 只有 3/12 优于 v2，9/12 回升，说明 ILD 退化是系统性弱点而非单个异常值。
+- 口径修正：旧 v3 README 所写“91 点感受野”只对应膨胀卷积主干；报告按实际网络计算，计入 kernel-7 stem 后完整理论感受野为 97 点，约 `4.18 kHz`，并已同步修正 README。
+- Git 状态：报告与源码保持可提交，checkpoint、HDF5、W&B 缓存、MAT 和批量生成图片继续由嵌套 `.gitignore` 忽略；本次未提交或推送，也未改动用户已有的根 `.gitignore` 变更。
+- 结论与下一步：首版报告已经可以用于项目交接、阶段汇报和论文方法章节素材。后续若进入 v3.1，优先实现与最终 HRIR 能量定义对齐的可微 ILD 损失，并在不访问 test 的情况下完成 validation 选型。
+
+## 2026-07-25：MLP + CNN v3 锁定 test 与严格 HRTF 重建评估
+
+- 实验目标：在完整 validation 已确认且模型、超参数和 epoch 9 checkpoint 全部锁定后，解封固定的 12 个 test 被试；先穷举 raw residual，再把 v3 residual 回填到 MCA 幅度，并使用与 v1/v2 完全相同的 MATLAB 口径计算论文对应的 ERB magnitude error、对侧高频误差和 ILD，同时生成 12 被试 HRTF 总览。
+- test 范围与防泄漏：test 被试为 pp8、pp18、pp22、pp26、pp31、pp33、pp45、pp47、pp59、pp70、pp73、pp81。仅在 validation 阶段完成并明确锁定 epoch 9 后执行 `--split test --allow-test`；test 结果未用于重新训练、模型选择或超参数调整。
+- 完整 raw residual：12 个 HDF5 × 2 耳 × 900 方向 × 463 频点，共 `10,000,800` 个样本。MCA zero-residual 的 MAE/RMSE 为 `2.600671/4.186115 dB`，v2 为 `2.168373/3.552562 dB`，v3 为 `2.091041/3.452171 dB`。v3 相对 MCA 的 MAE 改善 `19.60%`，相对 v2 的 MAE 改善 `3.57%`；12/12 test 被试的 v3 MAE 均低于 v2，逐被试改善范围为 `1.42%–4.79%`。内置 v2 与历史 test 结果的 MAE/RMSE 差值仅 `-7.68e-9/-9.18e-8 dB`，一致性检查通过。
+- 完整频谱 GPU 推理：新增 `residual_learning/mlp_cnn_v3/python/predict_mlp_cnn_reconstruction.py`。复用 v1 已缓存且与 v2 共用的 900 个 Fliege dense 方向 + 360 个水平面方向，按 32 个方向分块，但双耳和完整 463 点频率轴始终联合输入 CNN。RTX 5060 上 12 被试总耗时 `6.01 s`，峰值 CUDA allocated memory `34.81 MiB`，全部预测 HDF5 完整写入。
+- 严格重建实现：扩展 `residual_learning/matlab/evaluate_test_reconstruction.m`，在不改变 v1/v2 默认调用方式的前提下支持显式输出根目录、缓存根目录、方法键和图例名称；新增 v3 入口 `residual_learning/mlp_cnn_v3/matlab/evaluate_mlp_cnn_v3_reconstruction.m` 与 v1/v2/v3 对比图脚本。预测 residual 逐频点加到 MCA log-magnitude，复数相位完全沿用 MCA。
+- 严格指标结果：MCA 的全球 ERB、对侧 25° ERB、对侧 `>10 kHz` magnitude error、水平面 ILD MAE 分别为 `0.802741/1.860286/4.258336/0.885425 dB`；v3 分别为 `0.584593/1.304415/3.620148/0.661566 dB`，相对 MCA 改善 `27.18%/29.88%/14.99%/25.28%`，四项均为 12/12 被试改善。
+- v3 对 v2：v2 四项严格指标为 `0.611503/1.340068/3.720378/0.646722 dB`。v3 在全球 ERB、对侧 25° ERB和对侧高频上进一步降低 `4.40%/2.66%/2.69%`；ILD MAE 则由 `0.646722` 升至 `0.661566 dB`，相对退化 `2.30%`。因此 v3 的 CNN 频率上下文对三项幅度指标形成稳定增益，但当前训练中的 ILD proxy 未保证严格 HRIR 能量 ILD 相对 v2 单调改善，此结论必须保留，不能只汇报相对 MCA 的正向数字。
+- 重建质量检查：12 被试最大左/右相位误差分别为 `6.00e-16/6.22e-16 rad`，最大幅度回填恒等误差均为 `7.11e-15 dB`，远低于 `1e-5 rad/1e-4 dB` 断言阈值。12 张单被试图、`test12_contralateral_hrtf_overview.png`、`test12_metric_overview.png` 与 `v1_v2_v3_aggregate_comparison.png` 均已生成并完成视觉检查。
+- 实际命令：raw test 使用 `D:\miniconda3\envs\ml\python.exe residual_learning/mlp_cnn_v3/python/evaluate_mlp_cnn_v3.py residual_learning/data/hutubs_residual_v1_n03 residual_learning/mlp_cnn_v3/runs/mlp_cnn_n03_v3_cnn_only_wandb_online/best.pt --split test --allow-test --directions-per-block 32`；预测使用 `D:\miniconda3\envs\ml\python.exe residual_learning/mlp_cnn_v3/python/predict_mlp_cnn_reconstruction.py residual_learning/mlp_cnn_v3/reconstruction/mlp_cnn_n03_v3_cnn_only residual_learning/reconstruction/mlp_n03_v1 residual_learning/mlp_cnn_v3/runs/mlp_cnn_n03_v3_cnn_only_wandb_online/best.pt residual_learning/data/hutubs_residual_v1_n03/training_statistics.json --directions-per-block 32`；MATLAB 使用 `matlab.exe -batch "addpath('D:/cuc/CSMT/MCAR/residual_learning/mlp_cnn_v3/matlab'); evaluate_mlp_cnn_v3_reconstruction; plot_v1_v2_v3_reconstruction_comparison"`。
+- 输出与 Git：本地结果位于 `residual_learning/mlp_cnn_v3/reconstruction/mlp_cnn_n03_v3_cnn_only/`，包括预测 HDF5、CSV、MAT、JSON 和 15 张 PNG；raw test JSON/CSV 位于正式 run 目录。两类生成物均由 v3 的 `.gitignore` 忽略。适合提交的是 Python/MATLAB 源码、README、依赖说明、占位 `.gitignore` 和本实验日志；本次未提交或推送。
+- 运行异常：MATLAB 在受限沙箱内首次启动报 `File system inconsistency`，在已授权的正常本机权限下启动成功。命令接口 60 秒超时后 MATLAB 子进程继续完成全部评估；没有重复启动、没有丢失或覆盖结果。Codex 服务层中途出现一次 503，不影响本地 Python/MATLAB 进程及产物。
+- 结论与下一步：v3 的核心假设得到部分验证——频谱 CNN 在未见 test 上可稳定降低 raw residual 和三项严格幅度误差，但 ILD 相对 v2 小幅退化。下一步不应直接增加模型规模；优先做一个受控 v3.1 实验，在保持当前架构和 test 锁定的前提下，仅在 train/validation 上校准严格 ILD 对齐的可微损失或提高双耳能量约束，随后以 validation 选择 checkpoint，再进行一次最终 test。也可先整理 v3 详细报告和可提交的轻量结果清单。
+
+## 2026-07-25：MLP + CNN v3 完整 validation residual 评估
+
+- 实验目标：在不访问 test 的前提下，对 v3 epoch 9 best checkpoint 执行无随机采样的完整 validation 遍历，计算全部 raw residual MAE/RMSE；同时从同一个 checkpoint 得到 MCA zero-residual、冻结 v2 MLP 和最终 v3 三组结果，验证 CNN 的增益及逐被试稳定性。
+- 评估器：新增 `residual_learning/mlp_cnn_v3/python/evaluate_mlp_cnn_v3.py`。由于 CNN 必须观察完整频谱，评估按 32 个方向分块，但每块保留双耳和全部 463 个频点；每个 HDF5 的 900 个方向全部遍历。`--split test` 必须额外显式提供 `--allow-test`，避免模型选型阶段意外读取 test。
+- 数据范围：固定 validation 被试 pp13、pp35、pp39、pp41、pp51、pp53、pp55、pp56、pp58、pp74、pp84、pp92；12 个文件 × 2 耳 × 900 方向 × 463 频点，共 `10,000,800` 个样本，实际计数完全一致。
+- 汇总结果：MCA zero-residual 的 MAE/RMSE 为 `2.571911/4.143771 dB`；v2 MLP 为 `2.139782/3.506980 dB`；v3 MLP + CNN 为 `2.072657/3.428915 dB`。v3 相对 MCA 的 MAE 改善为 `19.41%`，相对 v2 的 MAE/RMSE 分别降低 `3.14%/2.23%`；全样本 CNN delta 平均绝对值为 `0.5687 dB`。
+- v2 口径交叉检查：评估器内置 v2 MLP 的 MAE/RMSE 与原 `residual_learning/runs/mlp_n03_v2/val_metrics.json` 的差值分别为 `+1.10e-8/-1.83e-8 dB`，远低于 `1e-4 dB` 阈值，证明新评估器的数据遍历、归一化、AMP 和反归一化口径与原 v2 完整评估一致。
+- 逐被试结果：12/12 validation 被试的 v3 MAE 均低于 v2。相对改善依次为 pp13 `1.80%`、pp35 `3.51%`、pp39 `1.58%`、pp41 `3.19%`、pp51 `3.57%`、pp53 `4.44%`、pp55 `2.65%`、pp56 `4.12%`、pp58 `1.74%`、pp74 `2.36%`、pp84 `4.24%`、pp92 `4.28%`；范围 `1.58%–4.44%`，逐被试改善百分比的非加权平均为 `3.12%`，没有退化案例。
+- 资源与完整性：完整评估耗时 `5.15 s`，峰值 CUDA allocated memory `35.20 MiB`；checkpoint epoch 为 9、训练阶段标记 `cnn_only_frozen_mlp`、模型参数 `174,627`。Python 编译、样本计数、逐被试/总计合并和 v2 历史交叉检查均通过。
+- 实际命令：`D:\miniconda3\envs\ml\python.exe residual_learning/mlp_cnn_v3/python/evaluate_mlp_cnn_v3.py residual_learning/data/hutubs_residual_v1_n03 residual_learning/mlp_cnn_v3/runs/mlp_cnn_n03_v3_cnn_only_wandb_online/best.pt --split val --directions-per-block 32`，退出码为 0。
+- 输出与 Git：本地生成 `val_full_metrics.json` 和 `val_per_subject_metrics.csv`，位于正式 v3 run 目录并由 `runs/.gitignore` 忽略；关键结果已记录在本日志与 v3 README，未读取 test，未提交或推送。
+- 结论与下一步：v3 在完整未见 validation 的 raw residual MAE、RMSE 和全部 12 个被试上稳定优于 v2，满足进入固定 test 严格评估的前置条件。下一步锁定 epoch 9 checkpoint，在 12 个 test 被试上先做完整 raw residual 评估，再生成 v3 双耳完整频谱预测、回填 MCA 幅度并使用 MATLAB 计算严格 ERB、对侧高频与 ILD；模型和超参数不再根据 test 调整。
+
+## 2026-07-25：MLP + CNN v3 CNN-only 跨被试在线完整训练
+
+- 实验目标：从原始 v2 epoch 9 checkpoint 重新开始，在 72 train / 12 validation 被试上完整训练双耳频谱 CNN + FiLM；v2 MLP 全程冻结，test 集不参与训练和选型。通过 W&B 在线监控曲线，并以固定 validation 复合损失选择最佳 checkpoint。
+- W&B 运行：project 为 `mcar-mlp-cnn-v3`，run name 为 `mlp_cnn_n03_v3_cnn_only`，run id 为 `qtkrxras`，URL 为 `https://wandb.ai/luyoung/mcar-mlp-cnn-v3/runs/qtkrxras`。第一次从受限进程启动时被系统禁止访问 `api.wandb.ai:443`，进程只停留在 W&B 握手阶段，未写 configuration/history/checkpoint；停止后在新的本地 run 目录以允许网络访问的进程重新启动，在线 run 正常创建并最终以 exit code 0 完成同步。
+- 数据与采样：HUTUBS simulated N=3 residual HDF5；72 个 train 和 12 个 validation 被试；每个 batch 随机选择一个被试、32 个 Fliege 方向、双耳和全部 463 个频点，共 `29,632` 个逐频点样本。validation 每个 epoch 均以 seed `20260726` 重建相同的 96 个 batch，确保 epoch 0 的 v2 基线与所有 v3 epoch 可直接比较。
+- 模型与训练参数：总参数 `174,627`，其中冻结 v2 MLP `100,225`，可训练 CNN + FiLM `74,402`；10 epoch × 500 steps；AdamW 学习率 `3e-4`、weight decay `1e-5`、cosine decay、gradient clip `5.0`、FP16 AMP 初始 scale `1024`。损失保持 residual SmoothL1 + `0.50 × ERB proxy + 0.25 × 对侧高频 + 0.25 × ILD proxy` 的 v2 权重。
+- 固定 validation 基线：训练开始前的 v2 total/residual/ERB/高频/ILD 为 `0.594113 / 2.139116 / 0.695902 / 3.297190 / 0.646540 dB`，CNN delta 为 0。
+- 收敛过程：validation total 从 epoch 1–10 依次为 `0.588567、0.585525、0.581558、0.579968、0.579476、0.575839、0.574931、0.573803、0.573431、0.573586`。前 9 个 epoch 总体持续下降，epoch 10 略回升，因此根据预定规则选择 epoch 9。
+- 最佳 epoch 9：validation total/residual/ERB/高频/ILD 为 `0.573431 / 2.073348 / 0.664612 / 3.216917 / 0.641232 dB`，相对初始 v2 分别降低 `3.48% / 3.07% / 4.50% / 2.43% / 0.82%`，五项均改善；validation CNN delta 平均绝对值为 `0.5657 dB`。训练侧相应 total/residual/ERB/高频/ILD 为 `0.537791 / 1.977483 / 0.645931 / 2.986437 / 0.617659 dB`。
+- epoch 10 取舍：epoch 10 的 residual/ERB 进一步变为 `2.073211/0.663860 dB`，但高频和 ILD 回升到 `3.218165/0.641742 dB`，使 total 为 `0.573586`，未超过 epoch 9；因此不按单一 residual 或 ERB 指标改选 checkpoint。
+- 稳定性与资源：训练总耗时 `364.19 s`（约 6 分 4 秒），峰值 CUDA allocated memory `220.46 MiB`；5000 个优化步均无 AMP 跳步，最终 AMP scale 增长到 `4096`。在线曲线与本地 `history.csv` 一致；正常生成 `training_report.json`。
+- checkpoint 验证：`best.pt` 为 epoch 9，`last.pt` 为 epoch 10；两者均可由 PyTorch 成功重新读取。best checkpoint 的训练阶段标记为 `cnn_only_frozen_mlp`，包含 82 个 state tensors。
+- 输出与 Git：本地结果位于 `residual_learning/mlp_cnn_v3/runs/mlp_cnn_n03_v3_cnn_only_wandb_online`；configuration、initial validation、history、best/last checkpoint、training report 和 W&B 本地缓存均由 v3 `runs/.gitignore` 忽略。W&B 仅同步标量曲线与 summary，没有上传 checkpoint 或数据集。
+- 结论与下一步：冻结 MLP 的频谱 CNN 在严格未见 validation 被试上同时改善五项训练代理指标，证明收益不是 pp91 单被试记忆。增益较 pp91 过拟合明显收缩，尤其 ILD 仅改善 `0.82%`，说明跨被试泛化仍是限制。下一步先为 v3 实现完整 validation 遍历评估，报告全部 `10,000,800` 样本的 raw residual MAE/RMSE；通过后再锁定 epoch 9，在 test 上执行 residual 回填、MATLAB `AKerbError`、对侧高频与 ILD 严格评估。
+
+## 2026-07-25：MLP + CNN v3 训练器接入 Weights & Biases
+
+- 实验目标：为完整 CNN-only 跨被试训练加入在线曲线监控，同时保持本地 CSV、checkpoint 和 JSON 报告为复现主记录；W&B 不自动上传模型权重或数据集。
+- 中断运行状态：原无 W&B 完整训练由用户主动停止。进程停止前已完整保存 epoch 1–6，`best.pt` 与 `last.pt` 均为可读取的 epoch 6，固定 validation total loss 为 `0.57584`，6 个 epoch 均无 AMP 跳步；因未完成全部 10 epoch，不存在只在正常结束时生成的 `training_report.json`。该运行保留在本地忽略目录，不需要清理，也不与新 W&B run 拼接。
+- 训练器修改：`train_mlp_cnn_v3.py` 新增 `--wandb-mode disabled|online|offline`、project、entity、run name、group、job type、tags、notes 和可选 `--wandb-watch`。默认 mode 为 disabled，保证原有本地命令不产生联网行为；正式监控时显式传入 `--wandb-mode online`。默认 project 为 `mcar-mlp-cnn-v3`。
+- 记录指标：W&B 以 epoch 为公共横轴，记录 train/validation 的复合损失、residual MAE、ERB proxy MAE、对侧高频 MAE、ILD proxy MAE 和 CNN delta 平均绝对值；同时记录 validation 相对初始 v2 的五项改善百分比、learning rate、AMP scale、当轮/累计跳步数、epoch 耗时、峰值 CUDA allocated memory、当前 epoch 是否为最佳以及当前最佳 epoch。
+- 运行摘要：正常结束后将最佳 epoch、最佳 validation 五项指标、总耗时、峰值显存和 AMP 跳步总数写入 W&B summary；相同信息仍保存在本地 `training_report.json`。`best.pt`、`last.pt`、HDF5 和其他大型产物不上传 W&B。
+- 本地目录：为避免受限环境下 W&B core 写入用户 AppData 失败，训练器在 import W&B 前将 `WANDB_DIR`、`WANDB_DATA_DIR`、`WANDB_CACHE_DIR`、`WANDB_CONFIG_DIR` 和 `WANDB_ARTIFACT_DIR` 全部指向当前 `runs/<run-name>` 下的忽略目录。首次 offline 测试虽成功但出现 AppData debug-log 权限错误；重定向后的第二次测试不再出现该错误。
+- 依赖：新增 `residual_learning/mlp_cnn_v3/requirements.txt`，复用公共 residual-learning 依赖并要求 `wandb>=0.21,<1`。本机 `ml` 环境已安装并验证 W&B `0.21.1`。
+- 离线集成测试：使用 pp91、4 方向、1 epoch × 2 steps、2 个 validation batch 和 `--wandb-mode offline` 实际运行，退出码为 0。W&B run id 为 `2b1v9fvt`；初始 validation、epoch 1 的全部 train/validation 曲线、改善百分比、optimizer/system/checkpoint 指标以及最终 summary 均成功写入。checkpoint、本地 JSON 和 W&B offline run 同时生成，AMP 跳步为 0。
+- Git 约定：W&B 的 `wandb/`、`wandb_state/`、offline run、checkpoint 和测试输出均位于 v3 `runs/` 下，由嵌套 `.gitignore` 忽略；只保留训练器、v3 README、requirements 和本实验日志。
+- 正式运行建议：从原 v2 epoch 9 checkpoint 重新开始，不复用被中断 run name；本地 run 使用 `mlp_cnn_n03_v3_cnn_only_wandb`，W&B 显示名使用 `mlp_cnn_n03_v3_cnn_only`，保持 72/12 划分、10 epoch × 500 steps、96 个固定 validation batch、32 方向和现有复合损失权重。在线开始前只需确保本机已执行 `python -m wandb login`，API key 不写入项目或命令。
+
 ## 2026-07-25：MLP + CNN v3 的 pp91 CNN-only 过拟合检查
 
 - 实验目标：验证新增双耳频谱 CNN 在冻结 v2 MLP 时，能否从真实 HUTUBS 完整频谱中学习有效的 delta residual，并同时降低 residual、ERB、高频和 ILD 训练代理指标；本实验只作为单被试管线检查，不作为跨被试结论。

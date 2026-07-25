@@ -18,6 +18,33 @@
 - 结论与下一步：
 ```
 
+## 2026-07-25：MLP + CNN v3 的 pp91 CNN-only 过拟合检查
+
+- 实验目标：验证新增双耳频谱 CNN 在冻结 v2 MLP 时，能否从真实 HUTUBS 完整频谱中学习有效的 delta residual，并同时降低 residual、ERB、高频和 ILD 训练代理指标；本实验只作为单被试管线检查，不作为跨被试结论。
+- 训练入口：新增 `residual_learning/mlp_cnn_v3/python/train_mlp_cnn_v3.py`。训练器加载 v2 epoch 9 checkpoint，冻结全部 `100,225` 个 MLP 参数，只优化 `74,402` 个 CNN + FiLM 参数。validation sampler 每次以相同 seed 重新创建，因此初始 v2 与每个 epoch 使用完全相同的固定 validation batch 序列。
+- 数据与采样：HUTUBS simulated pp91、Lebedev N=3 residual HDF5；每个 batch 采样 16 个 Fliege 方向、双耳和全部 463 个频点，共 `14,816` 个逐频点样本。train 和 validation 均使用 pp91，但采样序列分别使用 seed `20260725` 和 `20260726`。
+- 损失与优化：保持 v2 复合损失不变，即 residual SmoothL1 + `0.50 × ERB proxy/target_std + 0.25 × 对侧高频/target_std + 0.25 × ILD proxy/target_std`；AdamW 学习率 `3e-4`、weight decay `1e-5`、cosine decay、gradient clip `5.0`、FP16 AMP。训练为 4 epoch × 120 steps，每 epoch 使用 48 个固定 validation batch。
+- AMP 修正：第一次运行使用 PyTorch 默认初始 loss scale `65536`，零初始化 CNN 输出头的首步放大梯度出现非有限值，训练器按预期中止。烟雾测试的未缩放梯度有限，说明问题来自初始缩放而非数据或损失。训练器现将 `amp_initial_scale` 默认设为 `1024`，并在 unscale 后检测梯度；AMP 溢出步会由 GradScaler 安全跳过并计数。本次完整检查 480 个优化步均未跳过，最终 scale 为 `1024`。
+- 固定验证结果：初始 v2 的复合损失/residual/ERB/高频/ILD 为 `0.53335 / 1.9304 / 0.6441 / 3.0559 / 0.5875 dB`；最佳 epoch 4 为 `0.40730 / 1.6244 / 0.5436 / 2.3722 / 0.3170 dB`。相对初始 v2 分别降低 `23.63% / 15.85% / 15.60% / 22.37% / 46.05%`。epoch 4 的 CNN delta 平均绝对值为 `0.8512 dB`。
+- 收敛过程：validation total loss 从 epoch 1 到 4 依次为 `0.49027、0.44813、0.41958、0.40730`，连续下降；对应高频误差为 `2.817、2.593、2.429、2.372 dB`，ILD 为 `0.457、0.391、0.359、0.317 dB`。最佳点仍位于最后一个 epoch，说明检查没有出现提前退化。
+- 资源与耗时：4 epoch 总训练耗时 `35.74 s`，单 epoch 约 `8.7–9.1 s`；峰值 CUDA allocated memory 为 `119.82 MiB`。本机 RTX 5060 8 GB 有充分余量，完整训练可优先尝试 32 方向 batch。
+- 实际命令：`D:\miniconda3\envs\ml\python.exe residual_learning/mlp_cnn_v3/python/train_mlp_cnn_v3.py residual_learning/data/hutubs_residual_v1_n03 residual_learning/runs/mlp_n03_v2/best.pt --run-name overfit_pp91_cnn_only --overfit-subject 91 --epochs 4 --steps-per-epoch 120 --validation-steps 48 --directions-per-batch 16`，退出码为 0。
+- 输出与 Git：本地结果位于 `residual_learning/mlp_cnn_v3/runs/overfit_pp91_cnn_only`，包含 configuration、initial validation、history、best/last checkpoint 和 training report；该单被试生成目录由 v3 嵌套 `.gitignore` 忽略。训练源码和 README 保留为待提交文件。
+- 结论与下一步：CNN-only 分支已经通过单被试可学习性、指标方向、checkpoint、固定验证和 AMP 稳定性检查。下一步在原 72 train / 12 validation 被试上进行完整 CNN-only 训练，保持 v2 MLP 和损失权重不变；根据固定 validation 复合损失选最佳 epoch，再做完整 validation residual 评估。test 和 MATLAB 严格指标在模型确定前继续锁定。
+
+## 2026-07-25：MLP + CNN v3 独立工作流与真实数据梯度检查
+
+- 实验目标：在 v2 指标感知 MLP 的基础上加入频率上下文建模，同时保持已有 subject-wise 划分、HDF5 数据、复合损失和最终 MATLAB 指标口径不变。第一步只实现推荐的网络结构并验证真实数据前向、v2 无损初始化、复合损失和 CNN 反向传播，不开始完整训练。
+- 工作流目录：新增 `residual_learning/mlp_cnn_v3`，内部独立保存 v3 的 Python 模型与检查脚本，以及后续 `runs/` 和 `reconstruction/`。源码和说明可提交；checkpoint、训练缓存、预测 HDF5 和 MAT 等生成产物由嵌套 `.gitignore` 默认忽略。
+- 模型结构：保留 v2 的 7 输入、宽度 128、3 个 residual block 的 `ResidualMLP` 作为逐频点基础预测器；新增双耳 `BinauralSpectralCNN`，输入为左右耳归一化 MCA magnitude、correction magnitude、v2 residual 以及归一化 log-frequency，共 7 个频谱通道。CNN 使用 48 通道 stem、4 个 kernel 7 的深度可分离 residual block，dilation 为 `1/2/4/8`，理论感受野为 91 个频点；方向 `x/y/z` 经 64 维 MLP 生成逐块 FiLM 调制。CNN 输出左右耳两个 delta residual 通道，并与 v2 MLP 输出相加。
+- 初始化与复杂度：CNN 输出层和 FiLM 线性层零初始化，确保加载 v2 epoch 9 checkpoint 后，训练起点严格满足 `v3 = v2 + 0`。v2 MLP 为 `100,225` 参数，CNN + FiLM 为 `74,402` 参数，总计 `174,627` 参数；冻结 MLP 的第一阶段仅训练 `74,402` 参数。
+- 环境检查：`D:\miniconda3\envs\ml` 中 PyTorch `2.8.0+cu128`、CUDA build `12.8` 和 h5py `3.14.0` 可用，GPU 为 NVIDIA GeForce RTX 5060。v2 `best.pt`、训练统计量和 pp91 N=3 HDF5 均存在并可读取。
+- 烟雾测试：`smoke_test_mlp_cnn.py` 使用真实 pp91 双耳完整 463 点频谱和 v2 复合损失运行两个优化步。4 方向与 16 方向测试均通过；输入/输出分别为 `[direction, 2, 463, 7]` 和 `[direction, 2, 463]`。零初始化时 v3 与 v2 最大逐点差值为 `0`；第一个优化步只有零初始化输出头的 2 个参数张量获得非零梯度，完成一次更新后第二步已有 62 个 CNN 参数张量获得非零梯度，所有已计算梯度和损失均为有限值，冻结 MLP 未产生梯度。
+- 资源检查：16 方向、FP16 AMP、完整 v2 复合损失的峰值 CUDA allocated memory 为 `197.12 MiB`，远低于本机约 8 GB 显存；正式 CNN-only 训练可以从 16 或 32 方向起步。
+- 实际命令：`D:\miniconda3\envs\ml\python.exe residual_learning/mlp_cnn_v3/python/smoke_test_mlp_cnn.py --dataset-root residual_learning/data/hutubs_residual_v1_n03 --checkpoint residual_learning/runs/mlp_n03_v2/best.pt --subject 91 --directions 16`，退出码为 0。
+- 输出文件位置：模型为 `residual_learning/mlp_cnn_v3/python/mlp_cnn_model.py`，真实数据检查为 `residual_learning/mlp_cnn_v3/python/smoke_test_mlp_cnn.py`，结构、运行命令和目录约定见 `residual_learning/mlp_cnn_v3/README.md`。
+- 结论与下一步：v3 第一阶段模型链路已通过，当前不需要补充数据或环境。下一步实现 CNN-only 训练入口，冻结 v2 MLP，保持 v2 的 `0.50/0.25/0.25` ERB/对侧高频/ILD 权重不变；先在 pp91 做短程过拟合检查，再决定正式训练的方向 batch size 与 epoch 数。
+
 ## 2026-07-24：Residual MLP v2 双耳指标感知训练与回填评估
 
 - 实验目标：在 v1 已证明逐频点 residual 可学习的基础上，加入双耳完整频谱与听觉指标感知损失，重点扩大 ERB 改善并消除 pp33、pp81 的 ILD 退化；最终仍在原 12 个严格未见 test 被试上，用 MATLAB `AKerbError`、对侧高频和水平面 ILD 的相同口径评估。

@@ -1,11 +1,11 @@
-# Local IDE project metadata.
+# IDE and operating-system metadata.
 /.idea/
 /.vscode/
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# Python environments, bytecode, test caches, and local tooling state.
+# Python environments, caches, and build products.
 .venv/
 venv/
 __pycache__/
@@ -35,7 +35,6 @@ java.log
 hs_err_pid*
 
 # Large datasets, intermediate arrays, and model checkpoints.
-# Keep lightweight provenance, metrics, and reports as README/CSV/JSON files.
 *.sofa
 *.mat
 *.h5
@@ -52,7 +51,7 @@ hs_err_pid*
 *.joblib
 *.fig
 
-# Runtime logs and temporary process files.
+# Runtime logs and experiment-tracker state.
 *.log
 *.pid
 *.tmp
@@ -65,8 +64,6 @@ hs_err_pid*
 events.out.tfevents.*
 lightning_logs/
 mlruns/
-
-# Experiment tracker state and machine-local credentials.
 wandb/
 wandb_state/
 *.wandb
@@ -74,38 +71,18 @@ wandb_state/
 .env.*
 !.env.example
 
-# Third-party dependency kept locally; do not version its sources or data.
-SUpDEq-master/*
-!SUpDEq-master/README.project.md
+# Machine-local third-party dependency.
+/external/SUpDEq/*
 
-# Reproducible outputs from scripts/run_mca_demo_export.m.
-/figures/mca_demo_ku100_ns3_nd44/*
-!/figures/mca_demo_ku100_ns3_nd44/README.md
+# Regenerable training, reconstruction, and reproduction outputs.
+/artifacts/*
+!/artifacts/README.md
 
-# Large, generated experiment features and intermediate results.
-/outputs/*
-!/outputs/README.md
-
-# Keep reproducible MATLAB entry points, but ignore large checkpoints and
-# generated results under the MCA-paper reproduction workspace. Keep only
-# compact cross-subject tables and publication-ready PNG summaries.
-/reproduce/*
-!/reproduce/*.m
-!/reproduce/hutubs_mca_batch/
-/reproduce/hutubs_mca_batch/*
-!/reproduce/hutubs_mca_batch/aggregate/
-/reproduce/hutubs_mca_batch/aggregate/*
-!/reproduce/hutubs_mca_batch/aggregate/aggregation_report.txt
-!/reproduce/hutubs_mca_batch/aggregate/aggregate_erb_by_order_paper_unweighted.csv
-!/reproduce/hutubs_mca_batch/aggregate/aggregate_binaural_by_order.csv
-!/reproduce/hutubs_mca_batch/aggregate/aggregate_frequency_by_order_quadrature_weighted.csv
-!/reproduce/hutubs_mca_batch/aggregate/mca_improvement_by_order.csv
-!/reproduce/hutubs_mca_batch/aggregate/key_findings.csv
-!/reproduce/hutubs_mca_batch/aggregate/fig05_region_magnitude_error.png
-!/reproduce/hutubs_mca_batch/aggregate/full_sphere_magnitude_error.png
-!/reproduce/hutubs_mca_batch/aggregate/binaural_error_by_order.png
-!/reproduce/hutubs_mca_batch/aggregate/frequency_error_n3_n6.png
-
-# Large HRTF datasets kept locally; track only data/HRTF/README.md.
+# Large HRTF datasets and processed residual tensors.
 /data/HRTF/axd/
 /data/HRTF/hutubs/
+/data/processed/*
+!/data/processed/README.md
+!/data/processed/hutubs_residual_v1_n03/
+/data/processed/hutubs_residual_v1_n03/*
+!/data/processed/hutubs_residual_v1_n03/training_statistics.json

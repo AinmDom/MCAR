@@ -1,0 +1,46 @@
+{
+  "status": "completed",
+  "training_stage": "cnn_only_frozen_mlp",
+  "elapsed_seconds": 364.185171,
+  "completed_epochs": 10,
+  "best_epoch": 9,
+  "best_validation_total_loss": 0.5734305574248234,
+  "total_skipped_optimizer_steps": 0,
+  "final_amp_scale": 4096.0,
+  "peak_cuda_allocated_mib": 220.4638671875,
+  "wandb": {
+    "enabled": true,
+    "mode": "online",
+    "project": "mcar-mlp-cnn-v3",
+    "entity": null,
+    "run_name": "mlp_cnn_n03_v3_cnn_only",
+    "run_id": "qtkrxras",
+    "run_url": "https://wandb.ai/luyoung/mcar-mlp-cnn-v3/runs/qtkrxras"
+  },
+  "initial_validation": {
+    "total_loss": 0.5941134604314963,
+    "residual_mae_db": 2.139115698635578,
+    "erb_mae_db": 0.6959017173697551,
+    "contralateral_high_frequency_mae_db": 3.2971902564167976,
+    "ild_mae_db": 0.6465400091061989,
+    "cnn_delta_mean_absolute_db": 0.0
+  },
+  "best_epoch_metrics": {
+    "epoch": 9,
+    "train_total_loss": 0.5377906285524369,
+    "train_residual_mae_db": 1.9774826598167419,
+    "train_erb_mae_db": 0.6459312282204628,
+    "train_contralateral_high_frequency_mae_db": 2.98643670797348,
+    "train_ild_mae_db": 0.6176589630842209,
+    "train_cnn_delta_mean_absolute_db": 0.5553689740563171,
+    "validation_total_loss": 0.5734305574248234,
+    "validation_residual_mae_db": 2.0733477820952735,
+    "validation_erb_mae_db": 0.6646119977037112,
+    "validation_contralateral_high_frequency_mae_db": 3.2169174775481224,
+    "validation_ild_mae_db": 0.641231844201684,
+    "validation_cnn_delta_mean_absolute_db": 0.5656659724701127,
+    "learning_rate": 2.86474508437579e-05,
+    "epoch_seconds": 36.718613000000005,
+    "skipped_optimizer_steps": 0
+  }
+}

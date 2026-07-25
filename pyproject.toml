@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcar-hrtf"
+version = "0.1.0"
+description = "Lightweight residual learning for MCA-interpolated HRTFs"
+requires-python = ">=3.9"
+dependencies = [
+  "h5py>=3.14,<4",
+  "numpy>=1.26,<3",
+  "torch>=2",
+]
+
+[project.optional-dependencies]
+tracking = ["wandb>=0.21,<1"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

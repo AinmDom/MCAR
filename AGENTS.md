@@ -18,14 +18,16 @@ residual = log|H_ref| - log|H_MCA|
 
 ## 目录与数据约定
 
-- `docs/`：项目状态、实验记录与其他轻量级研究文档，必须提交到 Git。
-- `figures/`：用于论文或实验报告的图片；仅提交可复现或确需保留的结果图。
-- `SUpDEq-master/`：本地第三方 MATLAB 工具包，已由 `.gitignore` 忽略；不要把其源码或数据提交进本仓库。
+- `docs/`：项目状态、实验记录与结构说明，必须提交到 Git。
+- `src/mcar/` 与 `matlab/+mcar/`：项目公共实现；新版本不得复制独立源码树。
+- `baselines/mca/`：MCA/SUpDEq 基线入口，不作为主项目。
+- `artifacts/`：checkpoint、缓存和生成物，已忽略；精选结果放入 `results/`。
+- `external/SUpDEq/`：本地第三方 MATLAB 工具包，已由 `.gitignore` 忽略；不要把其源码或数据提交进本仓库。
 - 大型 HRTF 数据集、MAT 文件、中间缓存和模型权重不得直接提交；需在 `docs/EXPERIMENT_LOG.md` 记录其获取方式、版本和本机路径。
 
 ## 实验约定
 
-- 首先复现 `SUpDEq-master/supdeq_demo_MCA.m`。
+- 首先通过 `baselines/mca/matlab/run_mca_demo_export.m` 复现 MCA demo。
 - 基线顺序：SH only、SUpDEq + SH、MCA、MCA + residual MLP。
 - 优先使用 Lebedev 稀疏网格；重点指标为 LSD、auditory-band magnitude error、ILD error，以及对侧高频误差。
 - 每次实验结束都更新 `docs/EXPERIMENT_LOG.md`：数据集、网格、参数、指标、结论和结果文件位置。

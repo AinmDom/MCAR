@@ -1,0 +1,14 @@
+{
+  "dataset_root": "data/processed/hutubs_residual_v1_n03",
+  "run_name": "mlp_n03_v1",
+  "epochs": 12,
+  "steps_per_epoch": 600,
+  "validation_steps": 96,
+  "directions_per_batch": 64,
+  "frequencies_per_batch": 128,
+  "width": 128,
+  "block_count": 3,
+  "learning_rate": 0.001,
+  "weight_decay": 0.00001,
+  "seed": 20260723
+}

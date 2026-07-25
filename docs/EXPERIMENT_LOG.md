@@ -1,5 +1,9 @@
 # 项目实验日志
 
+> 2026-07-26 项目已按职责重构。本文此前记录的命令保留当时的历史路径；
+> 当前路径与入口以 `README.md`、`docs/PROJECT_STRUCTURE.md` 和
+> `experiments/` 为准。
+
 本文件是项目唯一的进展与实验记录。以日期作为二级标题，按时间倒序记录实验过程、结果、结论、阻塞项和下一步。跨电脑继续项目时，先阅读本文件。
 
 ## 记录模板
@@ -17,6 +21,18 @@
 - 阻塞项：
 - 结论与下一步：
 ```
+
+## 2026-07-26：项目结构职责化重构
+
+- 工作目标：将 MCA/SUpDEq demo 从项目主体降为传统基线，并把公共实现、实验定义、本地运行产物、精选结果和报告彻底分离。
+- 回滚锚点：重构前提交为 `a02e337`；创建标签 `pre-project-restructure-20260726`，在分支 `codex/project-structure-refactor` 上实施。
+- 结构调整：MCA 入口迁入 `baselines/mca/`；Python 公共代码抽取为 `src/mcar/` package；MATLAB 公共函数迁入 `matlab/+mcar/`；数据划分和锁定参数归入 `configs/`；实验说明归入 `experiments/`；技术报告迁入 `reports/`。
+- 数据与产物：约 2.2 GB 本地 SUpDEq、HDF5、checkpoint、MAT、W&B 缓存和批处理结果均在同一磁盘内无损移动到 `external/`、`data/processed/` 和 `artifacts/`，未删除实验数据。v1/v2/v3 精选 CSV、JSON 和 PNG 迁入 `results/`；v3 首次把正式训练及严格重建轻量结果纳入 Git 候选范围。
+- 代码调整：移除 Python 脚本的 `sys.path` 拼接，改用 `mcar.*` 包导入；新增 `pyproject.toml` 和项目根路径 helper；训练输出统一写入 `artifacts/training/`。MATLAB 入口改用 `mcar.*` package，SUpDEq 路径统一为 `external/SUpDEq/`。
+- 文档调整：重写根 README，使项目主体明确为 MCA 后残差学习；新增 `docs/PROJECT_STRUCTURE.md`、baseline/experiment/config/result 说明，并同步更新 AGENTS 路径约定。
+- 验证结果：Python 3.9 `compileall` 通过；所有核心 package 导入和 v1/v3 CLI `--help` 通过；11 个 JSON 文件解析通过；MATLAB 在沙箱外成功解析 5 个新 package/baseline 入口；真实 pp91、2 方向、463 频点的 v3 前后向 smoke test 通过，输出形状为 `2 × 2 × 463`，zero-init identity error 为 0，CNN 第二步得到 62 个非零梯度张量。
+- 输出位置：结构和迁移表见 `docs/PROJECT_STRUCTURE.md`；当前可执行命令见根 README 与 `experiments/`。
+- 结论与下一步：重构未改变模型参数、数据划分或已锁定实验结论。下一步应在新结构上实现 v3.1 可微 ILD 损失，并保持源码复用和 artifacts/results 发布边界。
 
 ## 2026-07-26：MLP + CNN v3 首版完整技术报告
 
@@ -234,7 +250,7 @@
   - 左耳对侧：conventional 加权平均误差为 `5.5850 dB`，MCA 为 `4.6349 dB`，降低 `0.9500 dB`，相对改善 `17.01%`；中位数由 `4.0917 dB` 降至 `3.2449 dB`，相对改善 `20.69%`。
   - 右耳对侧：conventional 加权平均误差为 `5.1573 dB`，MCA 为 `4.6283 dB`，降低 `0.5291 dB`，相对改善 `10.26%`；中位数由 `3.7299 dB` 降至 `3.2801 dB`，相对改善 `12.06%`。
   - 双耳汇总：SH、conventional、MCA 的加权平均误差分别为 `7.5781 dB`、`5.3711 dB`、`4.6316 dB`。MCA 相对 conventional 降低 `0.7395 dB`，相对改善 `13.77%`；中位数由 `3.9044 dB` 降至 `3.2626 dB`，降低 `0.6417 dB`，相对改善 `16.44%`。
-- 输出文件位置：`../figures/mca_demo_ku100_ns3_nd44/contralateral_high_frequency/`。该目录是脚本生成且被 Git 忽略的本地实验产物，包含：
+- 输出文件位置：`../artifacts/figures/mca_demo_ku100_ns3_nd44/contralateral_high_frequency/`。该目录是脚本生成且被 Git 忽略的本地实验产物，包含：
   - `contralateral_high_frequency_summary.csv`
   - `contralateral_high_frequency_improvement.csv`
   - `contralateral_high_frequency_statistics.mat`
@@ -264,15 +280,15 @@
   - 已成功生成 SH、SUpDEq + SH、MCA 的左耳全方向平均 LSD 曲线和 ERB-band magnitude-error 曲线。
   - 已生成 6 张正前方或对侧耳 HRIR 对比图。demo 的对侧示例表明，MCA 能修正约 10 kHz 以上的高频凸起，使结果更接近 reference；该改善尚未形成独立的数值统计。
   - 导出脚本共生成 8 个 `.png`、8 个 `.fig` 和 `mca_demo_metrics.mat`，共 17 个可复现实验产物。
-- 输出文件位置：`../figures/mca_demo_ku100_ns3_nd44/`。该目录以及 `../outputs/` 中的大型 MAT 文件均为本地可复现产物，不提交 Git；下列相对链接需先运行导出脚本：
-  - [正前方 conventional vs MCA HRIR](../figures/mca_demo_ku100_ns3_nd44/01_frontal_conventional_vs_mca_hrir.png)
-  - [对侧耳 SH vs MCA HRIR](../figures/mca_demo_ku100_ns3_nd44/02_contralateral_sh_vs_mca_hrir.png)
-  - [对侧耳 conventional vs MCA HRIR](../figures/mca_demo_ku100_ns3_nd44/03_contralateral_conventional_vs_mca_hrir.png)
-  - [对侧耳 SH vs reference HRIR](../figures/mca_demo_ku100_ns3_nd44/04_contralateral_sh_vs_reference_hrir.png)
-  - [对侧耳 conventional vs reference HRIR](../figures/mca_demo_ku100_ns3_nd44/05_contralateral_conventional_vs_reference_hrir.png)
-  - [对侧耳 MCA vs reference HRIR](../figures/mca_demo_ku100_ns3_nd44/06_contralateral_mca_vs_reference_hrir.png)
-  - [SH、SUpDEq + SH、MCA 的 LSD 曲线](../figures/mca_demo_ku100_ns3_nd44/07_lsd_left_ear.png)
-  - [SH、SUpDEq + SH、MCA 的 ERB-band magnitude-error 曲线](../figures/mca_demo_ku100_ns3_nd44/08_erb_magnitude_error_left_ear.png)
+- 输出文件位置：`../artifacts/figures/mca_demo_ku100_ns3_nd44/`。该目录中的大型 MAT 文件均为本地可复现产物，不提交 Git；下列相对链接需先运行导出脚本：
+  - [正前方 conventional vs MCA HRIR](../artifacts/figures/mca_demo_ku100_ns3_nd44/01_frontal_conventional_vs_mca_hrir.png)
+  - [对侧耳 SH vs MCA HRIR](../artifacts/figures/mca_demo_ku100_ns3_nd44/02_contralateral_sh_vs_mca_hrir.png)
+  - [对侧耳 conventional vs MCA HRIR](../artifacts/figures/mca_demo_ku100_ns3_nd44/03_contralateral_conventional_vs_mca_hrir.png)
+  - [对侧耳 SH vs reference HRIR](../artifacts/figures/mca_demo_ku100_ns3_nd44/04_contralateral_sh_vs_reference_hrir.png)
+  - [对侧耳 conventional vs reference HRIR](../artifacts/figures/mca_demo_ku100_ns3_nd44/05_contralateral_conventional_vs_reference_hrir.png)
+  - [对侧耳 MCA vs reference HRIR](../artifacts/figures/mca_demo_ku100_ns3_nd44/06_contralateral_mca_vs_reference_hrir.png)
+  - [SH、SUpDEq + SH、MCA 的 LSD 曲线](../artifacts/figures/mca_demo_ku100_ns3_nd44/07_lsd_left_ear.png)
+  - [SH、SUpDEq + SH、MCA 的 ERB-band magnitude-error 曲线](../artifacts/figures/mca_demo_ku100_ns3_nd44/08_erb_magnitude_error_left_ear.png)
 - 阻塞项：
   1. 尚未定义并实现对侧耳区域的统一判定规则，也未对 `>10 kHz` 区域计算 conventional 与 MCA 的均值、中位数、误差差值和相对改善百分比，因此目前只有可视化趋势，缺少论文可用的定量结论。
   2. residual MLP 的训练数据生成流程尚未固定：仍需明确输入特征、log-magnitude residual 目标、训练/验证/测试划分以及跨方向或跨个体的划分方式。

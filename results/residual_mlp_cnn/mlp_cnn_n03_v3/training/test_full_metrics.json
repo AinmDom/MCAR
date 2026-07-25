@@ -1,0 +1,31 @@
+{
+  "status": "completed",
+  "split": "test",
+  "subject_file_count": 12,
+  "sample_count": 10000800,
+  "mca_zero_residual_mae_db": 2.600671080206639,
+  "mca_zero_residual_rmse_db": 4.186115450851709,
+  "v2_mlp_mae_db": 2.1683728211852693,
+  "v2_mlp_rmse_db": 3.552562406779391,
+  "v3_mlp_cnn_mae_db": 2.0910410551834753,
+  "v3_mlp_cnn_rmse_db": 3.4521711168278517,
+  "v2_vs_mca_mae_reduction_percent": 16.62256570281163,
+  "v3_vs_mca_mae_reduction_percent": 19.59609690367574,
+  "v3_vs_v2_mae_reduction_percent": 3.566350087321385,
+  "cnn_delta_mean_absolute_db": 0.573592713114516,
+  "checkpoint_epoch": 9,
+  "training_stage": "cnn_only_frozen_mlp",
+  "model_parameter_count": 174627,
+  "device": "NVIDIA GeForce RTX 5060",
+  "amp": true,
+  "directions_per_block": 32,
+  "elapsed_seconds": 5.4600755,
+  "peak_cuda_allocated_mib": 35.20458984375,
+  "improved_subject_count_v3_vs_v2": 12,
+  "v2_reference_comparison": {
+    "reference_path": "results/residual_mlp/mlp_n03_v2/training/test_metrics.json",
+    "mae_difference_db": -7.682269043129963e-09,
+    "rmse_difference_db": -9.183451421534983e-08,
+    "matches_within_1e_4_db": true
+  }
+}

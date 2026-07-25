@@ -18,6 +18,33 @@
 - 结论与下一步：
 ```
 
+## 2026-07-24：Residual MLP v2 双耳指标感知训练与回填评估
+
+- 实验目标：在 v1 已证明逐频点 residual 可学习的基础上，加入双耳完整频谱与听觉指标感知损失，重点扩大 ERB 改善并消除 pp33、pp81 的 ILD 退化；最终仍在原 12 个严格未见 test 被试上，用 MATLAB `AKerbError`、对侧高频和水平面 ILD 的相同口径评估。
+- 模型与初始化：网络仍为 7 输入、宽度 128、3 个 SiLU residual block、单输出的 `ResidualMLP`，可训练参数保持 `100,225`；从 v1 epoch 10 的 `best.pt` 初始化，随后对全部参数继续训练。这样可将 v1 作为稳定起点，并把优化重点转向听觉指标，而不是从零重新学习。
+- 双耳采样：新增 `BinauralSpectrumSampler`。每个 batch 随机选择一个 train 被试和 32 个 Fliege 方向，同时读取左右耳与全部 463 个频点，张量布局为 `[ear=2, direction=32, frequency=463]`，共 `29,632` 个逐频点样本。该布局保证同方向双耳能量和完整导出频谱可同时参与损失。
+- 复合损失：总损失为归一化 residual SmoothL1，加 `0.50 × ERB代理MAE/target_std`、`0.25 × 对侧高频MAE/target_std`、`0.25 × ILD代理MAE/target_std`。ERB 代理使用 50 Hz–20 kHz、41 个 ERB-rate 三角带，对修正后与 reference 的频带能量 dB 做误差；对侧高频项按左右耳相反半球选择 `>10 kHz` 频点；ILD 代理由双耳频谱能量比计算。代理项只用于可微训练，最终结果仍由 MATLAB 原始 `AKerbError` 和 HRIR 能量 ILD 计算。
+- 数值与过拟合检查：真实 pp91 batch 的四项损失均有限，反向梯度全部有限；16 方向检查的 CUDA 峰值分配约 `134.4 MiB`。pp91 短程检查为 4 epoch × 120 steps，validation 代理 ERB 从 epoch 1 的 `0.603` 降至 `0.561 dB`，对侧高频从 `2.538` 降至 `2.331 dB`，ILD 从 `0.411` 降至 `0.358 dB`，证明双耳采样与复合梯度链路有效。
+- 完整训练：72 个 train、12 个 validation 被试；AdamW 学习率 `3e-4`、weight decay `1e-5`、cosine decay、FP16 AMP；10 epoch × 500 steps，每 epoch 96 个 validation batch，总耗时 `331.3 s`（约 5 分 31 秒）。固定 validation batch 上的 v1 初始代理指标为 residual/ERB/高频/ILD `2.164/0.773/3.301/0.739 dB`；根据复合 validation loss 选择 epoch 9，得到 `2.117/0.693/3.267/0.609 dB`。
+- 完整逐频点指标：v2 在 validation 的 MAE 为 `2.1398 dB`，相对 MCA `2.5719 dB` 改善 `16.80%`；在 test 的 MAE 为 `2.1684 dB`，相对 MCA `2.6007 dB` 改善 `16.62%`，RMSE 为 `3.5526 dB`。v1 的 test MAE 为 `2.2172 dB`、改善 `14.75%`，因此 v2 没有以牺牲原始 residual 精度换取听觉指标。
+- 严格论文指标：全空间 ERB error 从 MCA `0.8027 ± 0.0255 dB` 降至 v2 `0.6115 ± 0.0356 dB`，改善 `23.82%`；对侧 25° ERB 从 `1.8603 ± 0.1159 dB` 降至 `1.3401 ± 0.0999 dB`，改善 `27.96%`；对侧半球 `>10 kHz` error 从 `4.2583 ± 0.2641 dB` 降至 `3.7204 ± 0.2436 dB`，改善 `12.63%`；ILD MAE 从 `0.8854 ± 0.2092 dB` 降至 `0.6467 ± 0.2662 dB`，改善 `26.96%`。四项均为 12/12 test 被试改善。
+- v1→v2 增益：相对 v1，v2 进一步降低全空间 ERB `10.57%`、对侧 25° ERB `14.00%`、对侧高频 `0.94%`、ILD `16.31%`。pp33 的 ILD 从 v1 的退化 `-5.57%` 变为相对 MCA 改善 `14.60%`；pp81 从退化 `-18.97%` 变为改善 `0.52%`，说明双耳 ILD 损失解决了主要失败案例，但 pp81 仍是最弱改善被试。
+- 回填与可视化：复用 v1 的 12 份 complex MCA/reference cache，使用 v2 epoch 9 checkpoint 预测 1260 方向 residual，并保持 MCA 相位回填。最大相位误差 `6.29e-16 rad`、幅度恒等误差 `7.11e-15 dB`。输出 12 张逐被试四面板图、12 人对侧 HRTF 总览、逐被试指标总览和 v1/v2 直接对比图。
+- 输出与 Git：训练源码为 `train_residual_mlp_v2.py` 与扩展后的 `residual_data.py`；评估复用 `predict_reconstructed_residuals.py` 和 `evaluate_test_reconstruction.m`，新增 `plot_v1_v2_reconstruction_comparison.m`。训练结果位于 `residual_learning/runs/mlp_n03_v2`，回填结果位于 `residual_learning/reconstruction/mlp_n03_v2`。Git 仅保留训练 history/report、val/test JSON、最终 CSV 和 PNG；checkpoint、本机配置、预测 HDF5、MAT、日志及 `overfit_pp91_v2` 继续忽略。
+- 结论与下一步：v2 的指标感知训练在不增加模型参数的情况下显著扩大 ERB 与 ILD 改善，并让所有 test 被试的四项严格指标都优于 MCA。下一步应进行损失消融（residual+ERB、+高频、+ILD）以量化每个损失项贡献，并将 v2 从固定 N=3 扩展到其他稀疏阶数，优先 N=1、2、4、6。
+
+## 2026-07-24：Residual MLP v1 幅度回填与论文指标评估
+
+- 实验目标：在严格未见的 12 个 test 被试上，将 MLP 预测的 `reference_logmag_db - mca_logmag_db` 回填到 N=3 MCA 幅度，同时逐频点保留原 MCA 相位；计算与传统 MCA 复现一致的 ERB magnitude error、对侧高频误差和水平面 ILD error，并生成 12 个被试的直观 HRTF 对比图。
+- 数据集与被试：HUTUBS simulated HRTF；test 被试为 pp8、pp18、pp22、pp26、pp31、pp33、pp45、pp47、pp59、pp70、pp73、pp81。稀疏输入为 Lebedev N=3（26 点）；评估方向为 Fliege N=29（900 点）和水平面 0–359°（360 点）。pp18 缺少公开人体测量值，沿用此前规则，以 93 名有效被试的平均 Algazi 半径 `0.091021 m` 代替。
+- 重建方法：MATLAB 重新生成每个被试的复数 MCA/reference HRTF 和 correction filter；Python/PyTorch 使用 epoch 10 的 `best.pt`、训练集归一化参数、RTX 5060 FP16 AMP，对 1260 个方向和 463 个频点（实际 `86.13–19982.81 Hz`）预测 residual；回到 MATLAB 后执行 `corrected_logmag = mca_logmag + predicted_residual`，并使用 `exp(j*angle(H_MCA))` 恢复复数 HRTF。20 kHz 以上保持原 MCA 不变。
+- 指标口径：ERB 指标调用与传统基线相同的 `AKerbError`，范围 50 Hz–Nyquist，方向按 Fliege 权重、ERB band 等权；同时报告全空间与每耳对侧 25° 区域。对侧高频指标为每耳相反开放半球、`f > 10 kHz` 至 Nyquist 的绝对 log-magnitude error，方向按 Fliege 权重、频率等权。ILD 为 360 个水平面方向上左右 HRIR 全带能量比 `10*log10(E_L/E_R)` 相对 reference 的平均绝对误差。
+- 汇总结果：全空间 ERB magnitude error 从 MCA `0.8027 ± 0.0255 dB` 降至 `0.6838 ± 0.0326 dB`，平均降低 `0.1189 dB / 14.82%`，12/12 被试改善；对侧 25° ERB error 从 `1.8603 ± 0.1159 dB` 降至 `1.5582 ± 0.0971 dB`，降低 `0.3020 dB / 16.24%`，12/12 改善；对侧半球高频误差从 `4.2583 ± 0.2641 dB` 降至 `3.7557 ± 0.2420 dB`，降低 `0.5026 dB / 11.80%`，12/12 改善；ILD MAE 从 `0.8854 ± 0.2092 dB` 降至 `0.7727 ± 0.3001 dB`，降低 `0.1127 dB / 12.73%`，10/12 改善。
+- 重建质量检查：12 个被试的最大相位保持误差为 `6.22e-16 rad`，最大幅度回填恒等误差为 `7.11e-15 dB`；证明输出确实只改变指定频点的幅度，没有改变 MCA 相位。MATLAB Code Analyzer 对两个新增脚本均报告 0 问题，Python 文件可成功编译；准备阶段 12/12、GPU 推理 12/12、最终评估 12/12 均完成。
+- 可视化：每个 test 被试各有一张四面板图，包括左右耳对侧 HRTF（Reference/MCA/MCA+Residual MLP）、全空间 ERB error 频率曲线和水平面 ILD；另有一张 4×3 的 12 人左耳对侧 HRTF 总览与一张逐被试指标总览。
+- 输出与 Git：源码为 `prepare_test_reconstruction_inputs.m`、`predict_reconstructed_residuals.py`、`evaluate_test_reconstruction.m`；结果位于 `residual_learning/reconstruction/mlp_n03_v1`。Git 仅保留最终 CSV 与 PNG；复数 cache、模型输入、预测 HDF5、MAT、运行日志和含本机路径的推理报告继续忽略。
+- 结论与下一步：首版 100,225 参数 residual MLP 在严格未见被试上不仅降低逐频点 residual MAE，也稳定降低论文口径的 ERB 与对侧高频误差，并整体改善 ILD。下一步应分析 pp33 与 pp81 的 ILD 退化原因，并考虑在训练中加入 ERB/ILD 感知损失或双耳联合特征，而不修改相位。
+
 ## 2026-07-23：Residual MLP v1（HUTUBS N=3，跨被试）
 
 - 实验目标：在已经导出的 HUTUBS N=3 residual 数据集上，实现并验证首版轻量 MLP，确认模型能在严格的 subject-wise 未见被试上降低 `reference_logmag_db - mca_logmag_db`。

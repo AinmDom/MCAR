@@ -1,3 +1,48 @@
+# Local IDE project metadata.
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Python environments, bytecode, test caches, and local tooling state.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# MATLAB generated files and build products.
+*.asv
+*.m~
+slprj/
+codegen/
+*.mexw32
+*.mexw64
+*.mexa64
+*.mexmaci64
+
+# Large datasets, intermediate arrays, and model checkpoints.
+# Keep lightweight provenance, metrics, and reports as README/CSV/JSON files.
+*.sofa
+*.mat
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+
+# Runtime logs and temporary process files.
+*.log
+*.pid
+*.tmp
+*.temp
+
 # Third-party dependency kept locally; do not version its sources or data.
 SUpDEq-master/*
 !SUpDEq-master/README.project.md

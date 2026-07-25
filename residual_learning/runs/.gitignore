@@ -6,3 +6,9 @@ mlp_n03_v1/*
 !mlp_n03_v1/history.csv
 !mlp_n03_v1/val_metrics.json
 !mlp_n03_v1/test_metrics.json
+!mlp_n03_v2/
+mlp_n03_v2/*
+!mlp_n03_v2/history.csv
+!mlp_n03_v2/training_report.json
+!mlp_n03_v2/val_metrics.json
+!mlp_n03_v2/test_metrics.json

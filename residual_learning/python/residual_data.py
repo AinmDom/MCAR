@@ -144,6 +144,108 @@ class ResidualBlockSampler:
         return features, target_normalized, metadata
 
 
+class BinauralSpectrumSampler:
+    """Sample paired-ear, full-spectrum direction blocks.
+
+    This layout keeps both ears and every exported frequency bin together so
+    that ERB-energy and ILD surrogate losses remain differentiable.
+    """
+
+    def __init__(
+        self,
+        files: Sequence[Path],
+        normalization: Normalization,
+        directions_per_batch: int = 32,
+        seed: int = 20260724,
+    ) -> None:
+        self.files = list(files)
+        self.normalization = normalization
+        self.directions_per_batch = directions_per_batch
+        self.rng = np.random.default_rng(seed)
+        self._check_layout()
+
+    @property
+    def batch_size(self) -> int:
+        return 2 * self.directions_per_batch * self.frequency_count
+
+    def _check_layout(self) -> None:
+        if not self.files:
+            raise ValueError("At least one HDF5 file is required")
+        with h5py.File(self.files[0], "r") as handle:
+            shape = handle["mca_logmag_db"].shape
+            if len(shape) != 3 or shape[0] != 2 or shape[1] != 900:
+                raise ValueError(f"Unexpected spectral shape {shape} in {self.files[0]}")
+            if handle["direction_features"].shape != (900, 6):
+                raise ValueError(
+                    f"Unexpected direction features in {self.files[0]}"
+                )
+            if self.directions_per_batch > shape[1]:
+                raise ValueError("directions_per_batch exceeds available directions")
+            self.frequency_count = int(shape[2])
+
+    def sample_batch(
+        self,
+    ) -> tuple[
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        dict[str, int | str],
+    ]:
+        """Return features, normalized/raw targets, MCA, directions, frequencies."""
+        path = self.files[int(self.rng.integers(len(self.files)))]
+        with h5py.File(path, "r") as handle:
+            direction_indices = np.sort(
+                self.rng.choice(
+                    900, size=self.directions_per_batch, replace=False
+                )
+            )
+            mca = handle["mca_logmag_db"][:, direction_indices, :]
+            correction = handle["correction_logmag_db"][:, direction_indices, :]
+            target = handle["target_residual_db"][:, direction_indices, :]
+            direction_features = handle["direction_features"][direction_indices, :]
+            frequency_hz = np.squeeze(handle["frequency_hz"][:])
+            metadata: dict[str, int | str] = {
+                "subject_id": int(np.asarray(handle.attrs["subject_id"]).item()),
+                "sparse_order": int(np.asarray(handle.attrs["sparse_order"]).item()),
+                "split": _decode_attribute(handle.attrs["split"]),
+            }
+
+        ear_features: list[np.ndarray] = []
+        for ear_index in range(2):
+            ear_features.append(
+                build_input_features(
+                    mca[ear_index],
+                    correction[ear_index],
+                    direction_features,
+                    frequency_hz,
+                    ear_index,
+                    self.normalization,
+                ).reshape(
+                    self.directions_per_batch,
+                    self.frequency_count,
+                    -1,
+                )
+            )
+        features = np.stack(ear_features, axis=0).astype(np.float32)
+        target_db = np.asarray(target, dtype=np.float32)
+        target_normalized = (
+            (target_db - self.normalization.target_mean)
+            / self.normalization.target_std
+        ).astype(np.float32)
+        return (
+            features,
+            target_normalized,
+            target_db,
+            np.asarray(mca, dtype=np.float32),
+            np.asarray(direction_features, dtype=np.float32),
+            np.asarray(frequency_hz, dtype=np.float32),
+            metadata,
+        )
+
+
 def build_features(
     mca_db: np.ndarray,
     correction_db: np.ndarray,
@@ -161,8 +263,39 @@ def build_features(
     frequency_hz = np.asarray(frequency_hz, dtype=np.float32)
     if mca_db.shape != correction_db.shape or mca_db.shape != target_db.shape:
         raise ValueError("MCA, correction, and target blocks must have the same shape")
+    features = build_input_features(
+        mca_db,
+        correction_db,
+        direction_features,
+        frequency_hz,
+        ear_index,
+        normalization,
+    )
+    target_normalized = (
+        (target_db.reshape(-1, 1) - normalization.target_mean) / normalization.target_std
+    ).astype(np.float32)
+    return features, target_normalized
+
+
+def build_input_features(
+    mca_db: np.ndarray,
+    correction_db: np.ndarray,
+    direction_features: np.ndarray,
+    frequency_hz: np.ndarray,
+    ear_index: int,
+    normalization: Normalization,
+) -> np.ndarray:
+    """Construct model inputs when reference residuals are unavailable."""
+    mca_db = np.asarray(mca_db, dtype=np.float32)
+    correction_db = np.asarray(correction_db, dtype=np.float32)
+    direction_features = np.asarray(direction_features, dtype=np.float32)
+    frequency_hz = np.asarray(frequency_hz, dtype=np.float32)
+    if mca_db.shape != correction_db.shape:
+        raise ValueError("MCA and correction blocks must have the same shape")
     if mca_db.shape != (direction_features.shape[0], frequency_hz.size):
         raise ValueError("Direction/frequency metadata does not match spectral block")
+    if ear_index not in (0, 1):
+        raise ValueError(f"ear_index must be 0 or 1, got {ear_index}")
 
     direction_count, frequency_count = mca_db.shape
     direction_xyz = np.repeat(direction_features[:, 2:5], frequency_count, axis=0)
@@ -171,12 +304,17 @@ def build_features(
     ) / normalization.log_frequency_std
     normalized_frequency = np.tile(normalized_frequency, direction_count)[:, None]
     ear_feature = np.full(
-        (direction_count * frequency_count, 1), -1.0 if ear_index == 0 else 1.0, dtype=np.float32
+        (direction_count * frequency_count, 1),
+        -1.0 if ear_index == 0 else 1.0,
+        dtype=np.float32,
     )
-    features = np.concatenate(
+    return np.concatenate(
         (
             ((mca_db - normalization.mca_mean) / normalization.mca_std).reshape(-1, 1),
-            ((correction_db - normalization.correction_mean) / normalization.correction_std).reshape(-1, 1),
+            (
+                (correction_db - normalization.correction_mean)
+                / normalization.correction_std
+            ).reshape(-1, 1),
             direction_xyz,
             normalized_frequency.astype(np.float32),
             ear_feature,
@@ -184,10 +322,6 @@ def build_features(
         axis=1,
         dtype=np.float32,
     )
-    target_normalized = (
-        (target_db.reshape(-1, 1) - normalization.target_mean) / normalization.target_std
-    ).astype(np.float32)
-    return features, target_normalized
 
 
 def iterate_file_blocks(

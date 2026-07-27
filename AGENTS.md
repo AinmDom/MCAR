@@ -31,7 +31,7 @@ residual = log|H_ref| - log|H_MCA|
 - 基线顺序：SH only、SUpDEq + SH、MCA、MCA + residual MLP。
 - 优先使用 Lebedev 稀疏网格；重点指标为 LSD、auditory-band magnitude error、ILD error，以及对侧高频误差。
 - 每次实验结束都更新 `docs/EXPERIMENT_LOG.md`：数据集、网格、参数、指标、结论和结果文件位置。
-- 每完成一个可恢复的阶段，按日期更新 `docs/EXPERIMENT_LOG.md` 并创建清晰的 Git 提交。
+- 每完成一个可恢复的阶段，按日期更新 `docs/EXPERIMENT_LOG.md` 并创建清晰的中文 Git 提交信息。
 
 ## Markdown 报告公式兼容性
 

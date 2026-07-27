@@ -33,6 +33,12 @@ residual = log|H_ref| - log|H_MCA|
 - 每次实验结束都更新 `docs/EXPERIMENT_LOG.md`：数据集、网格、参数、指标、结论和结果文件位置。
 - 每完成一个可恢复的阶段，按日期更新 `docs/EXPERIMENT_LOG.md` 并创建清晰的 Git 提交。
 
+## Markdown 报告公式兼容性
+
+- 所有实验报告的行内公式使用 `$...$`；显示公式必须使用 `$$...$$`。
+- 多行显示公式必须使用 `$$\begin{aligned} ... \\ ... \end{aligned}$$`，两个 `$$` 不得单独占一行。
+- 新增或修改报告后，至少在 GitHub Markdown 预览与本地 IDE 预览中检查公式渲染。
+
 ## 验证与交接
 
 - 修改 MATLAB 或 Python 实验代码时，记录实际执行的命令和结果；没有执行时应明确说明原因。

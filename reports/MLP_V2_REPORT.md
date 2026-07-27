@@ -45,27 +45,27 @@ v2 保持 v1 的 7 维输入、宽度 128、3 个 SiLU residual block 和单输�
 
 MCA 结合时间对齐、球谐空间插值和幅度校正，是本项目的强传统基线。残差网络不从零生成 HRTF，而是预测：
 
-$$
+$$\begin{aligned}
 r_{\mathrm{target}}(s,e,\Omega,f)
 =
 L_{\mathrm{ref}}(s,e,\Omega,f)
 -
 L_{\mathrm{MCA}}(s,e,\Omega,f),
-$$
+\end{aligned}$$
 
 其中
 
-$$
+$$\begin{aligned}
 L=20\log_{10}|H|.
-$$
+\end{aligned}$$
 
 模型输出 $\hat r$ 后，修正幅度为：
 
-$$
+$$\begin{aligned}
 \widehat L_{\mathrm{corrected}}
 =
 L_{\mathrm{MCA}}+\hat r.
-$$
+\end{aligned}$$
 
 如果模型输出零，系统自然退化为原 MCA。因此 MCA 也是 residual 模型的 zero-residual baseline。
 
@@ -83,11 +83,11 @@ v1 使用逐方向、逐频率、逐耳朵的 7 维特征，证明了以下结�
 
 v1 每个 batch 只包含一个耳朵，并只随机抽取 128 个频点。其训练目标为单个频点的 residual SmoothL1：
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{v1}}
 =
 \operatorname{SmoothL1}(\hat r_{\mathrm{norm}},r_{\mathrm{norm}}).
-$$
+\end{aligned}$$
 
 这种训练方式存在三个问题：
 
@@ -210,11 +210,11 @@ pp45, pp47, pp59, pp70, pp73, pp81
 
 目标归一化为：
 
-$$
+$$\begin{aligned}
 r_{\mathrm{norm}}
 =
 \frac{r-\mu_r}{\sigma_r}.
-$$
+\end{aligned}$$
 
 validation 和 test 不参与任何均值或标准差估计。
 
@@ -323,9 +323,9 @@ frequency:         [463]
 
 总逐频点样本数为：
 
-$$
+$$\begin{aligned}
 2\times32\times463=29{,}632.
-$$
+\end{aligned}$$
 
 这一布局的关键不是增加样本量，而是保持同一方向的双耳与完整频谱关系，使频带能量和双耳能量差保持可微。
 
@@ -335,14 +335,14 @@ $$
 
 v2 的总损失为：
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{total}}
 =
 \mathcal L_{\mathrm{res}}
 +0.50\frac{\mathcal L_{\mathrm{ERB}}}{\sigma_r}
 +0.25\frac{\mathcal L_{\mathrm{HF}}}{\sigma_r}
 +0.25\frac{\mathcal L_{\mathrm{ILD}}}{\sigma_r},
-$$
+\end{aligned}$$
 
 其中 $\sigma_r=4.062468\ \mathrm{dB}$ 是训练集 target residual 标准差。除 residual loss 已在归一化空间计算外，其余 dB 指标除以 $\sigma_r$，使各项进入相近的数值尺度。
 
@@ -350,12 +350,12 @@ $$
 
 ### 6.2 逐频点 residual loss
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{res}}
 =
 \operatorname{SmoothL1}
 (\hat r_{\mathrm{norm}},r_{\mathrm{norm}};\beta=1).
-$$
+\end{aligned}$$
 
 该项保留 v1 的基本学习目标，防止模型只追求聚合指标而牺牲局部频谱准确度。
 
@@ -363,33 +363,33 @@ $$
 
 首先定义 ERB-rate：
 
-$$
+$$\begin{aligned}
 E(f)=21.4\log_{10}(1+0.004367f).
-$$
+\end{aligned}$$
 
 在 $E(50)$ 至 $E(20000)$ 之间均匀放置 41 个中心。对第 $b$ 个频带构造三角权重：
 
-$$
+$$\begin{aligned}
 w_b(f)
 =
 \max\left(
 0,\,
 1-\frac{|E(f)-c_b|}{1.5\Delta c}
 \right),
-$$
+\end{aligned}$$
 
 并在频率维归一化。对于 log-magnitude $L(f)$，频带能量 dB 为：
 
-$$
+$$\begin{aligned}
 B_b
 =
 10\log_{10}
 \sum_f w_b(f)10^{L(f)/10}.
-$$
+\end{aligned}$$
 
 修正后频谱与 reference 的 ERB 代理误差为：
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{ERB}}
 =
 \operatorname{Mean}_{e,\Omega,b}
@@ -398,7 +398,7 @@ $$
 -
 B^{\mathrm{ref}}_{e,\Omega,b}
 \right|.
-$$
+\end{aligned}$$
 
 方向维使用 Fliege 权重。该项鼓励模型在听觉频带能量层面接近 reference。
 
@@ -412,20 +412,20 @@ $$
 
 高频掩码为 $f>10\ \mathrm{kHz}$。由于
 
-$$
+$$\begin{aligned}
 L_{\mathrm{corrected}}-L_{\mathrm{ref}}
 =
 \hat r-r_{\mathrm{target}},
-$$
+\end{aligned}$$
 
 损失可直接写为对侧高频 residual 误差的加权 MAE：
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{HF}}
 =
 \operatorname{Mean}_{e,\Omega\in\mathrm{contra},f>10\,\mathrm{kHz}}
 |\hat r-r_{\mathrm{target}}|.
-$$
+\end{aligned}$$
 
 方向按 Fliege 权重归一化，频率等权。
 
@@ -433,23 +433,23 @@ $$
 
 对每个耳朵和方向，从完整训练频谱计算宽带能量 dB：
 
-$$
+$$\begin{aligned}
 P_e(\Omega)
 =
 10\log_{10}\sum_f10^{L_e(\Omega,f)/10}.
-$$
+\end{aligned}$$
 
 代理 ILD 为：
 
-$$
+$$\begin{aligned}
 \mathrm{ILD}_{\mathrm{proxy}}(\Omega)
 =
 P_L(\Omega)-P_R(\Omega).
-$$
+\end{aligned}$$
 
 损失为：
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{ILD}}
 =
 \sum_\Omega \widetilde w_\Omega
@@ -458,7 +458,7 @@ $$
 -
 \mathrm{ILD}^{\mathrm{ref}}_{\mathrm{proxy}}(\Omega)
 \right|.
-$$
+\end{aligned}$$
 
 该项使同方向左右耳的总体校正保持协调，是 v2 修复 v1 ILD 失败的核心约束。
 
@@ -599,20 +599,20 @@ ERB 和 ILD 的代理改善明显大于对侧高频，这一趋势与最终严�
 
 对于网络覆盖的频率：
 
-$$
+$$\begin{aligned}
 \widehat L_{\mathrm{corrected}}
 =
 L_{\mathrm{MCA}}+\hat r.
-$$
+\end{aligned}$$
 
 复数 HRTF 使用 MCA 相位：
 
-$$
+$$\begin{aligned}
 \widehat H_{\mathrm{corrected}}
 =
 10^{\widehat L_{\mathrm{corrected}}/20}
 \exp\left(j\angle H_{\mathrm{MCA}}\right).
-$$
+\end{aligned}$$
 
 20 kHz 以上没有参与网络预测的频点保持原 MCA 不变。之后通过 IFFT 得到 HRIR，供 `AKerbError` 和完整 HRIR 能量 ILD 使用。
 
@@ -669,14 +669,14 @@ $$
 
 对水平面 360 个方向计算完整 HRIR 能量：
 
-$$
+$$\begin{aligned}
 E_L=\sum_n|h_L[n]|^2,\qquad
 E_R=\sum_n|h_R[n]|^2,
-$$
+\end{aligned}$$
 
-$$
+$$\begin{aligned}
 \mathrm{ILD}=10\log_{10}\frac{E_L}{E_R}.
-$$
+\end{aligned}$$
 
 最终报告估计 ILD 与 reference ILD 的平均绝对误差。
 

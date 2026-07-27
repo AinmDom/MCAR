@@ -17,30 +17,30 @@
 
 本项目研究如何在 Magnitude-Corrected and Time-Aligned Interpolation（MCA）已经完成 HRTF 空间插值的基础上，使用轻量神经网络进一步降低剩余幅度误差。与直接从稀疏 HRTF 生成完整复数 HRTF 的端到端方法不同，MLP v1 保留 MCA 的时间对齐、球谐插值、幅度校正和相位结果，只学习 dense reference 与 MCA 之间的 log-magnitude residual：
 
-$$
+$$\begin{aligned}
 r_{\mathrm{target}}(s,e,\Omega,f)
 =
 20\log_{10}\left|H_{\mathrm{ref}}(s,e,\Omega,f)\right|
 -
 20\log_{10}\left|H_{\mathrm{MCA}}(s,e,\Omega,f)\right|.
-$$
+\end{aligned}$$
 
 其中 $s$ 为被试，$e$ 为耳朵，$\Omega$ 为空间方向，$f$ 为频率。模型输出预测 residual $\hat r$，并通过
 
-$$
+$$\begin{aligned}
 \widehat L_{\mathrm{corrected}}
 =
 L_{\mathrm{MCA}}+\hat r
-$$
+\end{aligned}$$
 
 修正 MCA 幅度。复数重建时保留原 MCA 相位：
 
-$$
+$$\begin{aligned}
 \widehat H_{\mathrm{corrected}}
 =
 10^{\widehat L_{\mathrm{corrected}}/20}
 \exp\left(j\angle H_{\mathrm{MCA}}\right).
-$$
+\end{aligned}$$
 
 实验使用 96 个 HUTUBS simulated HRTF，被试级固定划分为 72 人训练、12 人验证和 12 人测试。同一被试的左右耳、全部方向和全部频率只属于一个 split。首版实验固定 Lebedev `N=3` 稀疏输入，即使用 26 个方向，通过 MCA 插值至 dense 目标网格。
 
@@ -93,9 +93,9 @@ MLP v1 使用 7 维输入：MCA log-magnitude、MCA correction-filter log-magnit
 
 残差学习只预测：
 
-$$
+$$\begin{aligned}
 r_{\mathrm{target}}=L_{\mathrm{ref}}-L_{\mathrm{MCA}}.
-$$
+\end{aligned}$$
 
 如果模型输出零，系统自然退化为 MCA。因此 MCA 也是 residual 模型的 zero-residual baseline，不需要额外构造对照模型。
 
@@ -288,17 +288,17 @@ pp45, pp47, pp59, pp70, pp73, pp81
 
 对于 magnitude floor `-200 dB` 后的频谱：
 
-$$
+$$\begin{aligned}
 L_{\mathrm{MCA}}=20\log_{10}|H_{\mathrm{MCA}}|,
-$$
+\end{aligned}$$
 
-$$
+$$\begin{aligned}
 L_{\mathrm{ref}}=20\log_{10}|H_{\mathrm{ref}}|,
-$$
+\end{aligned}$$
 
-$$
+$$\begin{aligned}
 r_{\mathrm{target}}=L_{\mathrm{ref}}-L_{\mathrm{MCA}}.
-$$
+\end{aligned}$$
 
 该 residual 是逐 FFT 频点的细粒度 dB 差，不是 41 个 ERB band 的能量误差。
 
@@ -323,9 +323,9 @@ $$
 
 每个被试包含：
 
-$$
+$$\begin{aligned}
 2\times900\times463=833{,}400
-$$
+\end{aligned}$$
 
 个逐频点样本。
 
@@ -394,28 +394,28 @@ export_hutubs_residual_dataset(1:96, 3, 6, 'hutubs_residual_v1_n03');
 
 以 MCA 为例：
 
-$$
+$$\begin{aligned}
 x_{\mathrm{MCA}}
 =
 \frac{L_{\mathrm{MCA}}-\mu_{\mathrm{MCA}}}
 {\sigma_{\mathrm{MCA}}}.
-$$
+\end{aligned}$$
 
 correction 和 log-frequency 同理。
 
 ### 6.3 目标标准化
 
-$$
+$$\begin{aligned}
 y
 =
 \frac{r_{\mathrm{target}}-\mu_r}{\sigma_r}.
-$$
+\end{aligned}$$
 
 模型输出归一化 residual $\hat y$，推理时恢复：
 
-$$
+$$\begin{aligned}
 \hat r=\hat y\sigma_r+\mu_r.
-$$
+\end{aligned}$$
 
 ### 6.4 特征选择说明
 
@@ -486,9 +486,9 @@ x → Linear(128,128) → SiLU → Linear(128,128)
 
 使用 SiLU：
 
-$$
+$$\begin{aligned}
 \operatorname{SiLU}(x)=x\sigma(x).
-$$
+\end{aligned}$$
 
 相对 ReLU，SiLU 在零点附近连续可导，适合回归。残差连接为深层 MLP 提供更直接的梯度路径，并允许 block 学习对已有表示的增量变换。
 
@@ -506,9 +506,9 @@ $$
 
 batch 大小：
 
-$$
+$$\begin{aligned}
 64\times128=8192.
-$$
+\end{aligned}$$
 
 这种方式兼顾随机性和 HDF5 连续读取效率。被试、耳朵和 block 在 step 间有放回，因此一个 epoch 不是完整遍历数据集。
 
@@ -516,11 +516,11 @@ $$
 
 训练 loss 为归一化目标上的 SmoothL1：
 
-$$
+$$\begin{aligned}
 \mathcal L
 =
 \operatorname{SmoothL1}(\hat y,y;\beta=1).
-$$
+\end{aligned}$$
 
 当误差较小时为二次项，较大时近似 L1，能够降低极端 residual 对梯度的支配。
 
@@ -621,17 +621,17 @@ epoch 12 的 train MAE 低于 epoch 10，但 validation 没有继续改善，说
 
 预测值反归一化至 dB 后计算：
 
-$$
+$$\begin{aligned}
 \mathrm{MAE}
 =
 \frac{1}{N}\sum_i|\hat r_i-r_i|,
-$$
+\end{aligned}$$
 
-$$
+$$\begin{aligned}
 \mathrm{RMSE}
 =
 \sqrt{\frac{1}{N}\sum_i(\hat r_i-r_i)^2}.
-$$
+\end{aligned}$$
 
 MCA zero-residual baseline 对应 $\hat r_i=0$。
 
@@ -694,20 +694,20 @@ Python 使用：
 
 网络覆盖频点：
 
-$$
+$$\begin{aligned}
 L_{\mathrm{corrected}}
 =
 L_{\mathrm{MCA}}+\hat r.
-$$
+\end{aligned}$$
 
 复数重建：
 
-$$
+$$\begin{aligned}
 H_{\mathrm{corrected}}
 =
 10^{L_{\mathrm{corrected}}/20}
 \exp(j\angle H_{\mathrm{MCA}}).
-$$
+\end{aligned}$$
 
 20 kHz 以上频点保持原 MCA 不变。重建后通过 IFFT 得到 HRIR。
 
@@ -774,20 +774,20 @@ max magnitude identity error <= 1e-4 dB
 
 对 360 个水平面方向计算：
 
-$$
+$$\begin{aligned}
 E_L(\Omega)=\sum_n|h_L(n,\Omega)|^2,
-$$
+\end{aligned}$$
 
-$$
+$$\begin{aligned}
 E_R(\Omega)=\sum_n|h_R(n,\Omega)|^2,
-$$
+\end{aligned}$$
 
-$$
+$$\begin{aligned}
 \mathrm{ILD}(\Omega)
 =
 10\log_{10}
 \frac{E_L(\Omega)}{E_R(\Omega)}.
-$$
+\end{aligned}$$
 
 最终指标为估计 ILD 与 reference ILD 的平均绝对误差。
 

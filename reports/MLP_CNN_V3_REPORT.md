@@ -30,13 +30,13 @@ v1 证明了 MCA 后的 log-magnitude residual 可以跨被试学习；v2 在不
 v3 保留 v2 MLP 作为稳定的逐频点基线，并增加一个轻量双耳频谱 CNN。模型先由
 冻结 MLP 得到基础预测，再由 CNN 在完整 463 点双耳频谱上预测增量：
 
-$$
+$$\begin{aligned}
 \hat r_{\mathrm{v3}}
 =
 \hat r_{\mathrm{v2}}
 +
 \Delta r_{\mathrm{CNN}}.
-$$
+\end{aligned}$$
 
 CNN 输入由左右耳 MCA、MCA correction、v2 residual 以及共享 log-frequency
 组成，共 7 个频谱通道。网络使用 48 个隐藏通道、4 个深度可分离膨胀卷积
@@ -79,19 +79,19 @@ HRTF 空间上采样需要从少量测量方向恢复 dense 方向上的双耳�
 不让神经网络从零生成 HRTF，而是只学习 MCA 与 reference 之间仍然存在的幅度
 残差：
 
-$$
+$$\begin{aligned}
 r_{\mathrm{target}}(s,e,\Omega,f)
 =
 L_{\mathrm{ref}}(s,e,\Omega,f)
 -
 L_{\mathrm{MCA}}(s,e,\Omega,f),
-$$
+\end{aligned}$$
 
 其中
 
-$$
+$$\begin{aligned}
 L=20\log_{10}|H|.
-$$
+\end{aligned}$$
 
 预测 residual 为零时，系统自然退化为原 MCA。这种设计保留 MCA 已有的时间
 对齐、相位和空间插值结构，把学习任务限制在更容易优化的幅度修正范围内。
@@ -231,7 +231,7 @@ v3 复用 v1/v2 已验证的数据，不重新生成 target，也不重新计算
 
 逐频点 MLP 输入仍为：
 
-$$
+$$\begin{aligned}
 \mathbf{x}
 =
 [\tilde L_{\mathrm{MCA}},
@@ -239,7 +239,7 @@ $$
 x,y,z,
 \widetilde{\log_{10}f},
 e],
-$$
+\end{aligned}$$
 
 其中耳别 $e$ 为左耳 `-1`、右耳 `+1`。MCA、correction、log-frequency 和
 target 使用仅由 72 个 train 被试计算的统计量标准化。validation 和 test
@@ -292,13 +292,13 @@ HRIR ILD 不完全对齐，双耳 CNN 仍可能在幅度误差下降时让严格
 
 v3 不在方向维做卷积，而是用方向向量生成每个 block 的缩放与平移：
 
-$$
+$$\begin{aligned}
 \mathrm{FiLM}(\mathbf{h}\mid\Omega)
 =
 (1+\boldsymbol{\gamma}_{\Omega})\odot\mathbf{h}
 +
 \boldsymbol{\beta}_{\Omega}.
-$$
+\end{aligned}$$
 
 它以较少参数为 CNN 提供连续方向条件。
 
@@ -412,21 +412,21 @@ Conv1d(48,2,kernel_size=1)
 
 两个输出通道分别为左右耳 normalized delta。最终：
 
-$$
+$$\begin{aligned}
 \hat r_{\mathrm{norm,v3}}
 =
 \hat r_{\mathrm{norm,v2}}
 +
 \Delta\hat r_{\mathrm{norm,CNN}}.
-$$
+\end{aligned}$$
 
 反归一化后：
 
-$$
+$$\begin{aligned}
 \hat r_{\mathrm{dB}}
 =
 \hat r_{\mathrm{norm}}\sigma_r+\mu_r.
-$$
+\end{aligned}$$
 
 需要注意，delta 位于 normalized target 空间。报告中的 CNN delta dB 通过乘以
 target 标准差换算得到。
@@ -435,9 +435,9 @@ target 标准差换算得到。
 
 4 个 dilation block 的频率感受野增量为：
 
-$$
+$$\begin{aligned}
 6(1+2+4+8)=90.
-$$
+\end{aligned}$$
 
 若只计算膨胀主干，其感受野为 91 个位置；加上 kernel-7 stem 后，相对原始
 输入的完整理论感受野为 97 个频点。频率间隔约 `43.07 Hz`，对应约
@@ -465,15 +465,15 @@ v3 从 `residual_learning/runs/mlp_n03_v2/best.pt` 加载 MLP。checkpoint epoch
 CNN output convolution 的 weight 和 bias 全部初始化为零。FiLM 的 weight
 和 bias 也初始化为零。因此训练前：
 
-$$
+$$\begin{aligned}
 \Delta r_{\mathrm{CNN}}=0
-$$
+\end{aligned}$$
 
 且
 
-$$
+$$\begin{aligned}
 \hat r_{\mathrm{v3}}=\hat r_{\mathrm{v2}}.
-$$
+\end{aligned}$$
 
 这种初始化具有三点价值：
 
@@ -519,9 +519,9 @@ $$
 
 每个 batch 包含：
 
-$$
+$$\begin{aligned}
 2\times32\times463=29,632
-$$
+\end{aligned}$$
 
 个逐频点监督样本。
 
@@ -549,7 +549,7 @@ validation batch 完全相同。初始 v2 和所有 v3 epoch 可直接比较。
 
 v3 沿用 v2 的复合损失，只改变模型：
 
-$$
+$$\begin{aligned}
 \mathcal L
 =
 \mathcal L_{\mathrm{res}}
@@ -559,19 +559,19 @@ $$
 0.25\frac{\mathcal L_{\mathrm{HF}}}{\sigma_r}
 +
 0.25\frac{\mathcal L_{\mathrm{ILD}}}{\sigma_r}.
-$$
+\end{aligned}$$
 
 $\sigma_r$ 是 train target residual 的标准差，使各 dB 指标与 normalized
 residual loss 大致处于可组合尺度。
 
 ### 8.2 Residual SmoothL1
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{res}}
 =
 \operatorname{SmoothL1}
 (\hat r_{\mathrm{norm}},r_{\mathrm{norm}};\beta=1).
-$$
+\end{aligned}$$
 
 该项提供逐频点监督。训练日志另外记录反归一化后的 residual MAE，单位为 dB。
 
@@ -587,9 +587,9 @@ reference 的 band-energy dB 求绝对差，并用 Fliege 方向权重加权。
 
 频率条件为：
 
-$$
+$$\begin{aligned}
 f>10\,\mathrm{kHz}.
-$$
+\end{aligned}$$
 
 左耳对侧使用横向坐标 $y<0$，右耳对侧使用 $y>0$，排除正中面。误差为预测
 residual 与 target residual 的绝对差，方向维使用归一化权重。
@@ -599,17 +599,17 @@ residual 与 target residual 的绝对差，方向维使用归一化权重。
 由 log-magnitude 恢复各频点功率并在 463 个频点求和，得到每个方向的左右耳
 宽带能量：
 
-$$
+$$\begin{aligned}
 E_e(\Omega)
 =
 10\log_{10}\sum_f10^{L_e(\Omega,f)/10}.
-$$
+\end{aligned}$$
 
 代理 ILD：
 
-$$
+$$\begin{aligned}
 \mathrm{ILD}(\Omega)=E_L(\Omega)-E_R(\Omega).
-$$
+\end{aligned}$$
 
 训练最小化 predicted 与 reference ILD 的方向加权 MAE。
 
@@ -875,20 +875,20 @@ residual_learning/reconstruction/mlp_n03_v1
 
 预测 dB residual 加到 MCA magnitude：
 
-$$
+$$\begin{aligned}
 \widehat L_{\mathrm{v3}}
 =
 L_{\mathrm{MCA}}+\hat r_{\mathrm{v3}}.
-$$
+\end{aligned}$$
 
 复数 HRTF：
 
-$$
+$$\begin{aligned}
 \widehat H_{\mathrm{v3}}
 =
 10^{\widehat L_{\mathrm{v3}}/20}
 \exp(j\angle H_{\mathrm{MCA}}).
-$$
+\end{aligned}$$
 
 训练频率范围外的 bin 不修改。相位完全取自 MCA。
 
@@ -919,9 +919,9 @@ $$
 
 频率范围：
 
-$$
+$$\begin{aligned}
 10\,\mathrm{kHz}<f\leq22.05\,\mathrm{kHz}.
-$$
+\end{aligned}$$
 
 方向为每耳对侧开放半球，排除正中面；方向维加权，频率维等权。
 
@@ -930,12 +930,12 @@ $$
 从重建 HRTF 生成双边频谱，经 IFFT 得到 HRIR并截取原长度。对 360 个水平面
 方向计算：
 
-$$
+$$\begin{aligned}
 \mathrm{ILD}
 =
 10\log_{10}
 \frac{\sum_n h_L^2[n]}{\sum_n h_R^2[n]}.
-$$
+\end{aligned}$$
 
 最终指标为 estimate 与 reference 的平均绝对差。
 
@@ -1241,11 +1241,11 @@ v3 完全保留 MCA 相位，不能改善残余 ITD、群时延或相位误差�
 
 约束 CNN delta 的一阶或二阶频率差分，避免相邻频点产生不必要的高频抖动：
 
-$$
+$$\begin{aligned}
 \mathcal L_{\mathrm{smooth}}
 =
 \|\Delta_f\Delta r_{\mathrm{CNN}}\|_1.
-$$
+\end{aligned}$$
 
 需要注意，正则过强可能抹平真实 notch。
 

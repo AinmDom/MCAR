@@ -1,6 +1,7 @@
 # 处理后数据
 
-这里保存由 MATLAB 导出的 residual-learning HDF5。大型文件不会提交 Git。
+这里保存由 MATLAB 导出的 residual-learning Hierarchical Data Format
+version 5（HDF5）文件。大型文件不会提交 Git。
 
 当前正式数据集：
 

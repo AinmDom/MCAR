@@ -1,4 +1,23 @@
-# MCA Residual MLP v2 完整设计与实验报告
+# 幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）Residual 多层感知机（Multi-Layer Perceptron，MLP）v2 完整设计与实验报告
+
+缩写说明：头相关传输函数（Head-Related Transfer Function，HRTF）、头相关脉冲
+响应（Head-Related Impulse Response，HRIR）、Sigmoid 线性单元（Sigmoid
+Linear Unit，SiLU）、平均绝对误差（Mean Absolute Error，MAE）、均方根误差
+（Root Mean Squared Error，RMSE）、等效矩形带宽（Equivalent Rectangular
+Bandwidth，ERB）、耳间电平差（Interaural Level Difference，ILD）、方向均衡
+空间上采样（Spatial Upsampling by Directional Equalization，SUpDEq）、球谐
+函数（Spherical Harmonics，SH）、耳间时间差（Interaural Time Difference，
+ITD）、空间声学数据格式（Spatially Oriented Format for Acoustics，SOFA）、
+Hierarchical Data Format version 5（HDF5）、快速傅里叶变换（Fast Fourier
+Transform，FFT）、快速傅里叶逆变换（Inverse Fast Fourier Transform，IFFT）、
+图形处理器（Graphics Processing Unit，GPU）、统一计算设备架构（Compute
+Unified Device Architecture，CUDA）、16 位浮点数（16-bit Floating Point，
+FP16）、自动混合精度（Automatic Mixed Precision，AMP）、高频（High
+Frequency，HF）、逗号分隔值（Comma-Separated Values，CSV）、JavaScript 对象
+表示法（JavaScript Object Notation，JSON）、便携式网络图形（Portable Network
+Graphics，PNG）、吉字节（gigabyte，GB）、吉比字节（gibibyte，GiB）和
+兆二进制字节（mebibyte，MiB）。MATLAB MAT-file 缩写为 MAT；HUTUBS、AXD 和
+KU100 是数据集或设备专名，不作首字母展开。
 
 > 路径说明：本报告记录的是重构前实际执行环境；当前源码、数据和结果路径
 > 见 `../docs/PROJECT_STRUCTURE.md` 与 `../experiments/residual_mlp/`。

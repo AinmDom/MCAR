@@ -1,13 +1,15 @@
-# KU100 MCA demo 图表
+# KU100 幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）demo 图表
 
 此目录用于存放 KU100、Lebedev `Ns = 3`、`Nd = 44` 的 MCA baseline 导出结果：8
-个 PNG 图、对应的 MATLAB FIG 文件，以及 `mca_demo_metrics.mat`。这些均为可再
+个便携式网络图形（Portable Network Graphics，PNG）图、对应的 MATLAB
+Figure（FIG）文件，以及 `mca_demo_metrics.mat`。这些均为可再
 生实验产物，不提交到 Git。
 
 ## 生成方式
 
 1. 按 `external/README.md`
-   准备本地 SUpDEq 工具包和其 KU100 示例数据。
+   准备本地方向均衡空间上采样（Spatial Upsampling by Directional
+   Equalization，SUpDEq）工具包和其 KU100 示例数据。
 2. 从项目根目录运行：
 
    ```powershell

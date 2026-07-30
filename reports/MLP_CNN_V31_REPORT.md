@@ -1,4 +1,15 @@
-# MLP + CNN v3.1：严格 HRIR-ILD 对齐微调报告
+# 多层感知机（Multi-Layer Perceptron，MLP）+ 卷积神经网络（Convolutional Neural Network，CNN）v3.1：严格头相关脉冲响应-耳间电平差（Head-Related Impulse Response–Interaural Level Difference，HRIR-ILD）对齐微调报告
+
+缩写说明：幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned
+Interpolation，MCA）、头相关传输函数（Head-Related Transfer Function，
+HRTF）、等效矩形带宽（Equivalent Rectangular Bandwidth，ERB）、平均绝对误差
+（Mean Absolute Error，MAE）、均方根误差（Root Mean Squared Error，RMSE）、
+快速傅里叶逆变换（Inverse Fast Fourier Transform，IFFT）、Hierarchical Data
+Format version 5（HDF5）、统一计算设备架构（Compute Unified Device
+Architecture，CUDA）、Weights & Biases（W&B）、逗号分隔值
+（Comma-Separated Values，CSV）、JavaScript 对象表示法（JavaScript Object
+Notation，JSON）、便携式网络图形（Portable Network Graphics，PNG）和
+兆二进制字节（mebibyte，MiB）。MATLAB MAT-file 缩写为 MAT。
 
 ## 摘要
 
@@ -62,17 +73,17 @@ HRIR 能量 ILD MAE 从 v2 的 `0.646722 dB` 回升到 `0.661566 dB`。原训练
 设网络校正后的选中频点幅度为 \(\hat A[k]\)，MCA 相位为 \(\phi[k]\)。
 选中频点复谱为：
 
-\[
+$$\begin{aligned}
 \hat H[k] = \hat A[k] e^{j\phi[k]}.
-\]
+\end{aligned}$$
 
 频带外频点沿用原 MCA 复谱。拼成 513 点单边谱后，按实信号约束镜像得到
 1024 点双边谱，计算 IFFT 并取前 256 个样本。左右耳能量与 ILD 为：
 
-\[
+$$\begin{aligned}
 E_e = \sum_{n=0}^{255} h_e[n]^2,\qquad
 \mathrm{ILD}=10\log_{10}\frac{E_L+\epsilon}{E_R+\epsilon}.
-\]
+\end{aligned}$$
 
 损失对预测 ILD 与参考 HRIR ILD 取绝对误差，并支持按方向积分权重加权。
 实现位于 `src/mcar/losses.py`，整个过程保留 autograd。

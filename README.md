@@ -1,7 +1,7 @@
-# MCAR：MCA 后的轻量 HRTF 残差学习
+# Magnitude-Corrected and Time-Aligned Interpolation Residual（MCAR）：轻量头相关传输函数（Head-Related Transfer Function，HRTF）残差学习
 
-本项目研究如何在 MCA（Magnitude-Corrected and Time-Aligned
-Interpolation）HRTF 插值结果上，用轻量神经网络降低剩余幅度误差。
+本项目研究如何在幅度校正与时间对齐插值（Magnitude-Corrected and
+Time-Aligned Interpolation，MCA）的 HRTF 插值结果上，用轻量神经网络降低剩余幅度误差。
 MCA 是传统基线，项目主体是残差数据构造、模型训练和严格 HRTF 重建评估。
 
 首版学习目标为：
@@ -12,9 +12,13 @@ residual = log|H_ref| - log|H_MCA|
 
 ## 当前结果
 
-项目已经完成 MLP v1、听觉感知损失 MLP v2、MLP + CNN v3，以及用严格
-HRIR 能量 ILD 损失微调的 v3.1。锁定的 12 名 test 被试上，v3.1 相对 MCA
-的全空间 ERB、对侧 25° ERB、对侧高频和水平面 ILD MAE 分别改善约
+项目已经完成多层感知机（Multi-Layer Perceptron，MLP）v1、听觉感知损失
+MLP v2、MLP + 卷积神经网络（Convolutional Neural Network，CNN）v3，以及用严格
+头相关脉冲响应（Head-Related Impulse Response，HRIR）能量耳间电平差
+（Interaural Level Difference，ILD）损失微调的 v3.1。锁定的 12 名 test
+被试上，v3.1 相对 MCA 的全空间等效矩形带宽（Equivalent Rectangular
+Bandwidth，ERB）、对侧 25° ERB、对侧高频和水平面 ILD 平均绝对误差
+（Mean Absolute Error，MAE）分别改善约
 27.08%、29.56%、15.01% 和 26.31%。相对 v3，v3.1 将严格 ILD MAE 从
 `0.661566` 降到 `0.652495 dB`，同时高频误差略降；全空间 ERB 仅回退
 约 0.14%。这说明与最终重建口径对齐的可微 ILD 损失有效，但 v2 的
@@ -37,8 +41,8 @@ MCAR/
 ├─ experiments/              各实验的运行说明
 ├─ configs/                  数据划分与锁定实验配置
 ├─ data/                     原始及处理后数据
-├─ artifacts/                checkpoint、HDF5、MAT、日志（不提交）
-├─ results/                  精选 CSV、JSON 和论文图
+├─ artifacts/                checkpoint、Hierarchical Data Format version 5（HDF5）、MATLAB MAT-file（MAT）、日志（不提交）
+├─ results/                  精选 Comma-Separated Values（CSV）、JavaScript Object Notation（JSON）和论文图
 ├─ reports/                  完整技术报告
 ├─ external/SUpDEq/          本地第三方工具包（不提交）
 └─ docs/                     实验日志与结构说明

@@ -1,4 +1,4 @@
-HUTUBS MCA reproduction aggregation
+HUTUBS Magnitude-Corrected and Time-Aligned Interpolation (MCA) reproduction aggregation
 Subjects: 96
 Sparse orders: 1-10
 

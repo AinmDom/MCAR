@@ -1,4 +1,4 @@
-# Residual MLP + CNN v3 / v3.1
+# Residual 多层感知机（Multi-Layer Perceptron，MLP）+ 卷积神经网络（Convolutional Neural Network，CNN）v3 / v3.1
 
 v3 冻结 v2 ResidualMLP，在完整双耳频谱上训练轻量一维 CNN。公共模型位于
 `src/mcar/models/residual_mlp_cnn.py`，锁定参数位于
@@ -15,7 +15,8 @@ v3 冻结 v2 ResidualMLP，在完整双耳频谱上训练轻量一维 CNN。公�
 完整实验结论见 `reports/MLP_CNN_V3_REPORT.md`。
 
 v3.1 不改变网络结构，而是从锁定的 v3 checkpoint 继续微调 CNN，并把
-训练中的 ILD 项改为与最终 MATLAB 重建一致的可微 HRIR 能量 ILD：
+训练中的耳间电平差（Interaural Level Difference，ILD）项改为与最终 MATLAB
+重建一致的可微头相关脉冲响应（Head-Related Impulse Response，HRIR）能量 ILD：
 
 ```powershell
 .venv/Scripts/python -m mcar.training.train_mlp_cnn_v3 `

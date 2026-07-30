@@ -1,5 +1,51 @@
 # 项目实验日志
 
+缩写说明：多层感知机（Multi-Layer Perceptron，MLP）、卷积神经网络
+（Convolutional Neural Network，CNN）、头相关传输函数（Head-Related
+Transfer Function，HRTF）、头相关脉冲响应（Head-Related Impulse Response，
+HRIR）、幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned
+Interpolation，MCA）、耳间电平差（Interaural Level Difference，ILD）、
+等效矩形带宽（Equivalent Rectangular Bandwidth，ERB）、平均绝对误差
+（Mean Absolute Error，MAE）、均方根误差（Root Mean Squared Error，RMSE）、
+Hierarchical Data Format version 5（HDF5）、快速傅里叶逆变换（Inverse Fast
+Fourier Transform，IFFT）、快速傅里叶变换（Fast Fourier Transform，FFT）、
+方向均衡空间上采样（Spatial Upsampling by Directional Equalization，
+SUpDEq）、球谐函数（Spherical Harmonics，SH）、耳间时间差（Interaural Time
+Difference，ITD）、空间声学数据格式（Spatially Oriented Format for
+Acoustics，SOFA）、对数谱失真（Log-Spectral Distortion，LSD）、图形处理器
+（Graphics Processing Unit，GPU）、统一计算设备架构（Compute Unified Device
+Architecture，CUDA）、自动混合精度（Automatic Mixed Precision，AMP）、
+16 位浮点数（16-bit Floating Point，FP16）、特征级线性调制（Feature-wise
+Linear Modulation，FiLM）、Sigmoid 线性单元（Sigmoid Linear Unit，SiLU）、
+命令行界面（Command-Line Interface，CLI）、应用程序编程接口（Application
+Programming Interface，API）、统一资源定位符（Uniform Resource Locator，
+URL）、传输层安全协议（Transport Layer Security，TLS）、Weights & Biases
+（W&B）、逗号分隔值（Comma-Separated Values，CSV）、JavaScript 对象表示法
+（JavaScript Object Notation，JSON）、便携式网络图形（Portable Network
+Graphics，PNG）、多边形文件格式（Polygon File Format，PLY）和便携式文档格式
+（Portable Document Format，PDF）、图号（Figure，Fig.）、MATLAB Figure
+（FIG）、冲激响应（Impulse Response，IR）、Network Common Data Form version
+4（NetCDF4）、标识符（Identifier，ID）、吉字节（gigabyte，GB）、吉比字节
+（gibibyte，GiB）和兆二进制字节（mebibyte，MiB）。MATLAB MAT-file 缩写为
+MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开。
+
+## 2026-07-30：项目文档英文缩写首次出现规范化
+
+- 工作目标：修复项目文档中英文缩写首次出现时缺少全称的问题，降低说明页、
+  实验日志和技术报告的阅读门槛。
+- 修改范围：检查全部受 Git 跟踪的 Markdown 文档及结果目录中的文本报告；
+  不修改命令、文件名、类名、数据和实验结论。
+- 统一规则：同一文档内首次自然语言出现采用“中文名称（English Full Name，
+  缩写）”或“English Full Name（缩写）”；HUTUBS、AXD、KU100 等无正式首字母
+  展开方式的数据集或设备名称按专名保留。
+- 核对来源：MCA 使用论文题名中的 `Magnitude-Corrected and Time-Aligned
+  Interpolation`；SUpDEq 使用官方文档中的 `Spatial Upsampling by Directional
+  Equalization`；SOFA 使用规范名称 `Spatially Oriented Format for Acoustics`。
+- 公式兼容性：将 v3.1 报告中两处 `\[...\]` 显示公式同步改为项目约定的
+  `$$\begin{aligned}...\end{aligned}$$` 形式，公式内容未变。
+- 验证结果：缩写首次出现自动审计、`git diff --check` 和报告公式分隔符检查均
+  通过；修改仅涉及文档。
+
 ## 2026-07-27：MLP + CNN v3.1 严格 HRIR-ILD 对齐微调与锁定测试
 
 - 实验目标：修复 v3 训练 ILD proxy 与最终严格 HRIR 能量 ILD 口径不一致的问题；不扩大网络，只在 train/validation 上实现可微严格 ILD、完成受控选型，再对锁定的 12 名 test 被试进行一次最终评估。

@@ -1,10 +1,12 @@
-# MCA 基线
+# 幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）基线
 
-这里保存 MCA/SUpDEq 的复现入口。它们用于生成 SH only、SUpDEq + SH 和
-MCA 三组传统基线，不是 MCAR 残差网络的主项目。
+这里保存 MCA/方向均衡空间上采样（Spatial Upsampling by Directional
+Equalization，SUpDEq）的复现入口。它们用于生成仅球谐函数（Spherical
+Harmonics，SH）、SUpDEq + SH 和 MCA 三组传统基线，不是 Magnitude-Corrected
+and Time-Aligned Interpolation Residual（MCAR）残差网络的主项目。
 
-本地依赖位于 `external/SUpDEq/`，HUTUBS 数据位于
-`data/HRTF/hutubs/`。
+本地依赖位于 `external/SUpDEq/`，柏林工业大学 HUTUBS 头相关传输函数
+（Head-Related Transfer Function，HRTF）数据位于 `data/HRTF/hutubs/`。
 
 主要入口：
 

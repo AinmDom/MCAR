@@ -1,6 +1,7 @@
-# MLP + CNN v3 / v3.1 训练产物
+# 多层感知机（Multi-Layer Perceptron，MLP）+ 卷积神经网络（Convolutional Neural Network，CNN）v3 / v3.1 训练产物
 
-checkpoint、W&B 缓存和本机日志位于 `artifacts/training/`。审核后的训练历史、
+checkpoint、Weights & Biases（W&B）缓存和本机日志位于
+`artifacts/training/`。审核后的训练历史、
 validation/test 指标位于
 `results/residual_mlp_cnn/mlp_cnn_n03_v3/training/`。
 

@@ -2,6 +2,14 @@
 
 ## 设计原则
 
+本文中的头相关传输函数（Head-Related Transfer Function，HRTF）、幅度校正与
+时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）、
+Hierarchical Data Format version 5（HDF5）、逗号分隔值（Comma-Separated
+Values，CSV）、JavaScript 对象表示法（JavaScript Object Notation，JSON）、
+便携式网络图形（Portable Network Graphics，PNG）和方向均衡空间上采样
+（Spatial Upsampling by Directional Equalization，SUpDEq）均在此处给出全称，
+后文使用缩写。MATLAB MAT-file 缩写为 MAT。
+
 项目按职责分为五层：
 
 1. `baselines/`：传统方法与论文复现，不作为主项目源码；

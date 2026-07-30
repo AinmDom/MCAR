@@ -22,6 +22,7 @@ from mcar.models.residual_mlp_cnn import (
     total_parameter_count,
     trainable_parameter_count,
 )
+from mcar.losses import strict_hrir_ild_mae
 from mcar.data import (
     BinauralSpectrumSampler,
     Normalization,
@@ -44,6 +45,7 @@ class EvaluationMetrics:
     erb_mae_db: float
     contralateral_high_frequency_mae_db: float
     ild_mae_db: float
+    ild_spectral_proxy_mae_db: float
     cnn_delta_mean_absolute_db: float
 
 
@@ -55,12 +57,14 @@ class EpochMetrics:
     train_erb_mae_db: float
     train_contralateral_high_frequency_mae_db: float
     train_ild_mae_db: float
+    train_ild_spectral_proxy_mae_db: float
     train_cnn_delta_mean_absolute_db: float
     validation_total_loss: float
     validation_residual_mae_db: float
     validation_erb_mae_db: float
     validation_contralateral_high_frequency_mae_db: float
     validation_ild_mae_db: float
+    validation_ild_spectral_proxy_mae_db: float
     validation_cnn_delta_mean_absolute_db: float
     learning_rate: float
     epoch_seconds: float
@@ -71,6 +75,14 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset_root", type=Path)
     parser.add_argument("initial_checkpoint", type=Path)
+    parser.add_argument(
+        "--initial-cnn-checkpoint",
+        type=Path,
+        help=(
+            "Optional full MLP-CNN checkpoint for v3.1 fine-tuning. "
+            "Without it, the CNN remains zero-initialized as in v3."
+        ),
+    )
     parser.add_argument("--run-name", default="mlp_cnn_n03_v3")
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--steps-per-epoch", type=int, default=500)
@@ -82,6 +94,15 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--erb-weight", type=float, default=0.50)
     parser.add_argument("--high-frequency-weight", type=float, default=0.25)
     parser.add_argument("--ild-weight", type=float, default=0.25)
+    parser.add_argument(
+        "--ild-loss-mode",
+        choices=("spectral_proxy", "strict_hrir"),
+        default="spectral_proxy",
+        help=(
+            "spectral_proxy reproduces v3; strict_hrir reconstructs the "
+            "original-phase HRIR and matches the final MATLAB ILD definition."
+        ),
+    )
     parser.add_argument("--gradient-clip", type=float, default=5.0)
     parser.add_argument("--amp-initial-scale", type=float, default=1024.0)
     parser.add_argument("--seed", type=int, default=20260725)
@@ -124,6 +145,12 @@ def serializable_arguments(
     }
 
 
+def training_stage(arguments: argparse.Namespace) -> str:
+    if arguments.ild_loss_mode == "strict_hrir":
+        return "cnn_only_frozen_mlp_strict_hrir_ild_v31"
+    return "cnn_only_frozen_mlp"
+
+
 def initialize_wandb(
     arguments: argparse.Namespace,
     configuration: dict[str, object],
@@ -157,9 +184,11 @@ def initialize_wandb(
             "device": configuration["device"],
             "torch_version": configuration["torch_version"],
             "cuda_version": configuration["cuda_version"],
-            "initial_checkpoint_epoch": configuration[
-                "initial_checkpoint_epoch"
+            "base_mlp_checkpoint_epoch": configuration[
+                "base_mlp_checkpoint_epoch"
             ],
+            "initial_model_epoch": configuration["initial_model_epoch"],
+            "initial_model_stage": configuration["initial_model_stage"],
             "total_parameter_count": configuration[
                 "total_parameter_count"
             ],
@@ -238,6 +267,9 @@ def log_initial_validation(
                 metrics.contralateral_high_frequency_mae_db
             ),
             "validation/ild_mae_db": metrics.ild_mae_db,
+            "validation/ild_spectral_proxy_mae_db": (
+                metrics.ild_spectral_proxy_mae_db
+            ),
             "validation/cnn_delta_mean_absolute_db": (
                 metrics.cnn_delta_mean_absolute_db
             ),
@@ -274,6 +306,9 @@ def log_epoch_to_wandb(
                 metrics.train_contralateral_high_frequency_mae_db
             ),
             "train/ild_mae_db": metrics.train_ild_mae_db,
+            "train/ild_spectral_proxy_mae_db": (
+                metrics.train_ild_spectral_proxy_mae_db
+            ),
             "train/cnn_delta_mean_absolute_db": (
                 metrics.train_cnn_delta_mean_absolute_db
             ),
@@ -286,6 +321,9 @@ def log_epoch_to_wandb(
                 metrics.validation_contralateral_high_frequency_mae_db
             ),
             "validation/ild_mae_db": metrics.validation_ild_mae_db,
+            "validation/ild_spectral_proxy_mae_db": (
+                metrics.validation_ild_spectral_proxy_mae_db
+            ),
             "validation/cnn_delta_mean_absolute_db": (
                 metrics.validation_cnn_delta_mean_absolute_db
             ),
@@ -347,7 +385,8 @@ def sample_to_device(
         dict[str, int | str],
     ],
     device: torch.device,
-) -> tuple[torch.Tensor, ...]:
+    strict_ild: bool,
+) -> tuple[object, ...]:
     (
         features,
         target_normalized,
@@ -355,12 +394,12 @@ def sample_to_device(
         mca_db,
         direction_features,
         frequency_hz,
-        _,
+        metadata,
     ) = sample
     point_features = torch.from_numpy(
         np.transpose(features, (1, 0, 2, 3))
     ).to(device, non_blocking=True)
-    return (
+    tensors: tuple[object, ...] = (
         point_features,
         torch.from_numpy(target_normalized).to(device, non_blocking=True),
         torch.from_numpy(target_db).to(device, non_blocking=True),
@@ -368,11 +407,24 @@ def sample_to_device(
         torch.from_numpy(direction_features).to(device, non_blocking=True),
         torch.from_numpy(frequency_hz).to(device, non_blocking=True),
     )
+    if not strict_ild:
+        return tensors + (None,)
+    raw_strict = metadata.get("strict_ild")
+    if not isinstance(raw_strict, dict):
+        raise ValueError("Strict HRIR ILD metadata is missing from sampled batch")
+    strict_metadata: dict[str, torch.Tensor | int] = {}
+    for name, value in raw_strict.items():
+        strict_metadata[name] = (
+            torch.from_numpy(value).to(device, non_blocking=True)
+            if isinstance(value, np.ndarray)
+            else int(value)
+        )
+    return tensors + (strict_metadata,)
 
 
 def calculate_model_losses(
     model: ResidualMLPCNN,
-    batch: tuple[torch.Tensor, ...],
+    batch: tuple[object, ...],
     log_erb_weights: torch.Tensor,
     normalization: Normalization,
     arguments: argparse.Namespace,
@@ -385,7 +437,20 @@ def calculate_model_losses(
         mca_db,
         direction_features,
         frequency_hz,
+        strict_metadata,
     ) = batch
+    if not all(
+        isinstance(value, torch.Tensor)
+        for value in (
+            point_features,
+            target_normalized,
+            target_db,
+            mca_db,
+            direction_features,
+            frequency_hz,
+        )
+    ):
+        raise TypeError("Model batch tensors are incomplete")
     with torch.amp.autocast("cuda", enabled=use_amp):
         prediction, _, cnn_delta = model(point_features)
     loss, loss_metrics = calculate_losses(
@@ -400,8 +465,34 @@ def calculate_model_losses(
         normalization.target_std,
         arguments.erb_weight,
         arguments.high_frequency_weight,
-        arguments.ild_weight,
+        (
+            arguments.ild_weight
+            if arguments.ild_loss_mode == "spectral_proxy"
+            else 0.0
+        ),
     )
+    if arguments.ild_loss_mode == "strict_hrir":
+        if not isinstance(strict_metadata, dict):
+            raise ValueError("Strict HRIR ILD mode requires metadata")
+        prediction_db = (
+            prediction.permute(1, 0, 2).float()
+            * normalization.target_std
+            + normalization.target_mean
+        )
+        corrected_selected_db = mca_db.float() + prediction_db
+        strict_ild_mae = strict_hrir_ild_mae(
+            corrected_selected_db,
+            direction_features[:, 5],
+            strict_metadata,
+        )
+        loss = (
+            loss
+            + arguments.ild_weight
+            * strict_ild_mae
+            / normalization.target_std
+        )
+        loss_metrics.total = float(loss.detach().item())
+        loss_metrics.ild_mae_db = float(strict_ild_mae.detach().item())
     return loss, loss_metrics, cnn_delta
 
 
@@ -410,12 +501,14 @@ def make_sampler(
     normalization: Normalization,
     directions_per_batch: int,
     seed: int,
+    strict_ild: bool,
 ) -> BinauralSpectrumSampler:
     return BinauralSpectrumSampler(
         files,
         normalization,
         directions_per_batch=directions_per_batch,
         seed=seed,
+        strict_ild=strict_ild,
     )
 
 
@@ -438,11 +531,16 @@ def evaluate(
         normalization,
         directions_per_batch,
         sampler_seed,
+        arguments.ild_loss_mode == "strict_hrir",
     )
     accumulated = LossMetrics()
     delta_mean_absolute_db = 0.0
     for _ in range(steps):
-        batch = sample_to_device(sampler.sample_batch(), device)
+        batch = sample_to_device(
+            sampler.sample_batch(),
+            device,
+            arguments.ild_loss_mode == "strict_hrir",
+        )
         _, current, cnn_delta = calculate_model_losses(
             model,
             batch,
@@ -465,6 +563,9 @@ def evaluate(
             averaged.contralateral_high_frequency_mae_db
         ),
         ild_mae_db=averaged.ild_mae_db,
+        ild_spectral_proxy_mae_db=(
+            averaged.ild_spectral_proxy_mae_db
+        ),
         cnn_delta_mean_absolute_db=delta_mean_absolute_db / steps,
     )
 
@@ -486,7 +587,7 @@ def save_checkpoint(
             "metrics": asdict(metrics),
             "arguments": serializable_arguments(arguments),
             "initial_checkpoint_epoch": initial_checkpoint_epoch,
-            "training_stage": "cnn_only_frozen_mlp",
+            "training_stage": training_stage(arguments),
         },
         path,
     )
@@ -547,6 +648,7 @@ def main() -> None:
         normalization,
         arguments.directions_per_batch,
         arguments.seed,
+        arguments.ild_loss_mode == "strict_hrir",
     )
     initial = torch.load(
         arguments.initial_checkpoint,
@@ -559,7 +661,21 @@ def main() -> None:
         mlp_block_count=int(initial_arguments["block_count"]),
         cnn_channels=arguments.cnn_channels,
     ).to(device)
-    model.load_mlp_state_dict(initial["model_state"])
+    initial_model_epoch = int(initial["epoch"])
+    initial_model_stage = initial.get("training_stage", "residual_mlp")
+    if arguments.initial_cnn_checkpoint is None:
+        model.load_mlp_state_dict(initial["model_state"])
+    else:
+        initial_cnn = torch.load(
+            arguments.initial_cnn_checkpoint,
+            map_location=device,
+            weights_only=False,
+        )
+        model.load_state_dict(initial_cnn["model_state"])
+        initial_model_epoch = int(initial_cnn["epoch"])
+        initial_model_stage = initial_cnn.get(
+            "training_stage", "mlp_cnn"
+        )
     model.freeze_mlp()
     optimizer = torch.optim.AdamW(
         model.cnn.parameters(),
@@ -592,11 +708,19 @@ def main() -> None:
     validation_seed = arguments.seed + 1
     configuration = {
         "arguments": serializable_arguments(arguments),
+        "training_stage": training_stage(arguments),
         "device": torch.cuda.get_device_name(0),
         "torch_version": torch.__version__,
         "cuda_version": torch.version.cuda,
         "amp": use_amp,
-        "initial_checkpoint_epoch": int(initial["epoch"]),
+        "base_mlp_checkpoint_epoch": int(initial["epoch"]),
+        "initial_model_epoch": initial_model_epoch,
+        "initial_model_stage": initial_model_stage,
+        "initial_cnn_checkpoint": (
+            None
+            if arguments.initial_cnn_checkpoint is None
+            else str(arguments.initial_cnn_checkpoint)
+        ),
         "total_parameter_count": total_parameter_count(model),
         "trainable_parameter_count": trainable_parameter_count(model),
         "frozen_mlp_parameter_count": total_parameter_count(model.mlp),
@@ -654,7 +778,7 @@ def main() -> None:
         encoding="utf-8",
     )
     print(
-        "initial_v2 "
+        "initial_model "
         f"total={initial_validation.total_loss:.5f} "
         f"res={initial_validation.residual_mae_db:.3f} "
         f"erb={initial_validation.erb_mae_db:.3f} "
@@ -671,6 +795,8 @@ def main() -> None:
     history: list[EpochMetrics] = []
     best_validation_total = float("inf")
     best_epoch = 0
+    best_validation_strict_ild = float("inf")
+    best_strict_ild_epoch = 0
     total_skipped_optimizer_steps = 0
     run_started = time.perf_counter()
     torch.cuda.reset_peak_memory_stats()
@@ -681,7 +807,11 @@ def main() -> None:
         delta_mean_absolute_db = 0.0
         skipped_optimizer_steps = 0
         for _ in range(arguments.steps_per_epoch):
-            batch = sample_to_device(train_sampler.sample_batch(), device)
+            batch = sample_to_device(
+                train_sampler.sample_batch(),
+                device,
+                arguments.ild_loss_mode == "strict_hrir",
+            )
             optimizer.zero_grad(set_to_none=True)
             loss, current, cnn_delta = calculate_model_losses(
                 model,
@@ -739,6 +869,9 @@ def main() -> None:
                 train_metrics.contralateral_high_frequency_mae_db
             ),
             train_ild_mae_db=train_metrics.ild_mae_db,
+            train_ild_spectral_proxy_mae_db=(
+                train_metrics.ild_spectral_proxy_mae_db
+            ),
             train_cnn_delta_mean_absolute_db=(
                 delta_mean_absolute_db / arguments.steps_per_epoch
             ),
@@ -749,6 +882,9 @@ def main() -> None:
                 validation.contralateral_high_frequency_mae_db
             ),
             validation_ild_mae_db=validation.ild_mae_db,
+            validation_ild_spectral_proxy_mae_db=(
+                validation.ild_spectral_proxy_mae_db
+            ),
             validation_cnn_delta_mean_absolute_db=(
                 validation.cnn_delta_mean_absolute_db
             ),
@@ -781,7 +917,7 @@ def main() -> None:
             epoch,
             metrics,
             arguments,
-            int(initial["epoch"]),
+            initial_model_epoch,
         )
         is_best = validation.total_loss < best_validation_total
         if is_best:
@@ -794,7 +930,22 @@ def main() -> None:
                 epoch,
                 metrics,
                 arguments,
-                int(initial["epoch"]),
+                initial_model_epoch,
+            )
+        if (
+            arguments.ild_loss_mode == "strict_hrir"
+            and validation.ild_mae_db < best_validation_strict_ild
+        ):
+            best_validation_strict_ild = validation.ild_mae_db
+            best_strict_ild_epoch = epoch
+            save_checkpoint(
+                output_dir / "best_strict_ild.pt",
+                model,
+                optimizer,
+                epoch,
+                metrics,
+                arguments,
+                initial_model_epoch,
             )
         scheduler.step()
         write_history(output_dir / "history.csv", history)
@@ -813,11 +964,17 @@ def main() -> None:
     best_metrics = history[best_epoch - 1]
     report = {
         "status": "completed",
-        "training_stage": "cnn_only_frozen_mlp",
+        "training_stage": training_stage(arguments),
         "elapsed_seconds": elapsed_seconds,
         "completed_epochs": arguments.epochs,
         "best_epoch": best_epoch,
         "best_validation_total_loss": best_validation_total,
+        "best_strict_ild_epoch": best_strict_ild_epoch,
+        "best_validation_strict_ild_mae_db": (
+            best_validation_strict_ild
+            if arguments.ild_loss_mode == "strict_hrir"
+            else None
+        ),
         "total_skipped_optimizer_steps": total_skipped_optimizer_steps,
         "final_amp_scale": float(scaler.get_scale()),
         "peak_cuda_allocated_mib": (
@@ -848,6 +1005,12 @@ def main() -> None:
                 ),
                 "best_validation_ild_mae_db": (
                     best_metrics.validation_ild_mae_db
+                ),
+                "best_strict_ild_epoch": best_strict_ild_epoch,
+                "best_validation_strict_ild_mae_db": (
+                    best_validation_strict_ild
+                    if arguments.ild_loss_mode == "strict_hrir"
+                    else None
                 ),
                 "total_skipped_optimizer_steps": (
                     total_skipped_optimizer_steps

@@ -1,0 +1,18 @@
+{
+  "dataset_root": "data/processed/hutubs_residual_v1_n03",
+  "initial_checkpoint": "artifacts/training/mlp_n03_v2/best.pt",
+  "run_name": "mlp_cnn_n03_v31_strict_ild",
+  "epochs": 10,
+  "steps_per_epoch": 500,
+  "validation_steps": 96,
+  "directions_per_batch": 32,
+  "cnn_channels": 48,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.00001,
+  "erb_weight": 0.5,
+  "high_frequency_weight": 0.25,
+  "ild_weight": 0.25,
+  "ild_loss_mode": "strict_hrir",
+  "gradient_clip": 5.0,
+  "seed": 20260725
+}

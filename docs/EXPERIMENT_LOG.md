@@ -1,5 +1,22 @@
 # 项目实验日志
 
+## 2026-07-27：MLP + CNN v3.1 严格 HRIR-ILD 对齐微调与锁定测试
+
+- 实验目标：修复 v3 训练 ILD proxy 与最终严格 HRIR 能量 ILD 口径不一致的问题；不扩大网络，只在 train/validation 上实现可微严格 ILD、完成受控选型，再对锁定的 12 名 test 被试进行一次最终评估。
+- 数据集与划分：HUTUBS simulated，Lebedev `N=3` MCA residual；固定 72 train / 12 validation / 12 test subject-wise split。为 train/validation 84 个 HDF5 导出 schema 1.1，新增 MCA 选中频点相位、50 个频带外复频点、频点索引、参考 HRIR ILD、513 点单边谱长度和 256 点 HRIR 裁剪长度。开发和选型阶段没有读取 test。
+- 数据完整性：`python -m mcar.data_tools.validate_residual_hdf5 ... --require-strict-ild` 验证 84 个文件、`70,005,600` 个样本、72/12 split、完整 513 点频率覆盖、有限值和零 residual 恒等误差 0，全部通过。
+- 实现：`src/mcar/losses.py` 用预测幅度、原 MCA 相位和未修改的频带外复谱重建 513 点单边谱，镜像为 1024 点双边谱，IFFT 后裁剪 256 点 HRIR，再计算双耳能量 ILD MAE；全链路支持 autograd。训练器新增 `--ild-loss-mode strict_hrir`、`--initial-cnn-checkpoint`、严格/旧 proxy 双日志，以及 `best.pt` 和 `best_strict_ild.pt` 双 checkpoint。评估器新增 `--strict-ild` 完整方向穷举评估。
+- 测试：合成严格 ILD 单元测试得到零误差 `0`、扰动误差 `0.285678 dB`、最大梯度 `0.245291`；真实 pp91 CUDA smoke test 的 zero-init identity error 为 0，严格 ILD 与旧 proxy 不同，第二步共有 62 个 CNN 参数梯度张量非零。
+- 候选实验：从 v2 零初始化 CNN 的严格 ILD 权重 0.25 在完整 validation 上得到 `0.660663 dB`，未超过 v2；权重 1.0 的严格-ILD checkpoint 得到 `0.655195 dB`，但 raw residual MAE 升至 `2.110205 dB`。因此最终改用原 v3 epoch 9 为初始化，以 `1e-4` 学习率和严格 ILD 权重 1.0 微调冻结 MLP 后的 CNN。
+- 正式训练：6 epoch × 500 step，32 directions/block，训练参数 74,402、总参数 174,627，耗时 `286.389 s`，0 个跳过 step，峰值 CUDA allocated memory `221.963 MiB`。W&B run：`https://wandb.ai/luyoung/mcar-mlp-cnn-v31/runs/yhl3z70n`。
+- validation 锁定：查看 test 前以完整 validation 锁定总损失最优 epoch 3。v2 / 原 v3 / v3.1 的 raw residual MAE 为 `2.139782 / 2.072657 / 2.078053 dB`，严格 ILD MAE 为 `0.658844 / 0.656999 / 0.654040 dB`。v3.1 相对 v2 的 validation 严格 ILD 改善 `0.729%`。
+- 锁定 raw test：共 `10,000,800` 样本。MCA / v2 / v3.1 MAE 为 `2.600671 / 2.168373 / 2.092767 dB`，RMSE 为 `4.186115 / 3.552562 / 3.448699 dB`。v3.1 相对 v2 MAE 改善 `3.487%`、相对 MCA 改善 `19.530%`，12/12 被试优于 v2；相对原 v3 `2.091041 dB` 仅回退约 `0.083%`。
+- 严格重建 test：MCA 的全空间 ERB / 对侧 25° ERB / 对侧 `>10 kHz` / 水平面 ILD MAE 为 `0.802741 / 1.860286 / 4.258336 / 0.885425 dB`；v3.1 为 `0.585398 / 1.310334 / 3.618947 / 0.652495 dB`，相对 MCA 改善 `27.08% / 29.56% / 15.01% / 26.31%`，四项均为 12/12 被试改善。
+- v3.1 与 v3：严格 ILD 由 `0.661566` 降到 `0.652495 dB`，改善 `1.371%`，8/12 被试改善；对侧高频改善 `0.033%`；全空间 ERB 和对侧 25° ERB 分别小幅回退 `0.138%` 和 `0.454%`。与 v2 相比，前三项仍改善 `4.269% / 2.219% / 2.726%` 且均为 12/12，但 ILD 仍高 `0.893%`，只有 4/12 优于 v2。
+- 重建质量：12 被试最大左右相位误差 `6.12e-16 / 5.99e-16 rad`，最大幅度恒等误差均为 `7.11e-15 dB`，全部通过断言。已生成 12 张逐被试图、12 被试 HRTF 总览、指标总览、v1/v2/v3/v3.1 总对比与逐被试 ILD 对比，并完成视觉检查。
+- 输出位置：本机 checkpoint 与全量产物位于 `artifacts/training/mlp_cnn_n03_v31_finetune_v3_strict_ild_wandb_online/`、`artifacts/evaluation/` 和 `artifacts/reconstruction/mlp_cnn_n03_v31_finetune_v3/`；精选结果位于 `results/residual_mlp_cnn/mlp_cnn_n03_v31/`；完整报告位于 `reports/MLP_CNN_V31_REPORT.md`。
+- 结论：严格 HRIR-ILD 损失有效收回了 v3 的大部分 ILD 退化，同时几乎保持 v3 幅度性能。v3.1 是当前推荐的 MLP-CNN 多指标折中模型，但 v2 仍保有最低 ILD 单项结果。当前 test 已解封，后续不得据此继续调权重；下一步应在新 validation 设计或交叉验证上研究 Pareto 选型、双耳结构约束及跨稀疏阶数泛化。
+
 > 2026-07-26 项目已按职责重构。本文此前记录的命令保留当时的历史路径；
 > 当前路径与入口以 `README.md`、`docs/PROJECT_STRUCTURE.md` 和
 > `experiments/` 为准。

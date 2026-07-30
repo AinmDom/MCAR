@@ -1,0 +1,150 @@
+{
+  "status": "completed",
+  "checkpoint": "D:\\cuc\\CSMT\\MCAR\\artifacts\\training\\mlp_cnn_n03_v31_finetune_v3_strict_ild_wandb_online\\best.pt",
+  "checkpoint_epoch": 3,
+  "normalization_json": "D:\\cuc\\CSMT\\MCAR\\data\\processed\\hutubs_residual_v1_n03\\training_statistics.json",
+  "input_root": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1",
+  "output_root": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3",
+  "device": "NVIDIA GeForce RTX 5060",
+  "torch_version": "2.8.0+cu128",
+  "amp": true,
+  "directions_per_block": 32,
+  "model_parameter_count": 174627,
+  "processed_subject_count": 12,
+  "elapsed_seconds": 5.0658414,
+  "peak_cuda_allocated_mib": 34.80810546875,
+  "subjects": [
+    {
+      "subject_id": 18,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp18\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp18\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -12.166778564453125,
+      "prediction_max_db": 47.70701217651367,
+      "prediction_mean_db": 0.40821173787117004,
+      "elapsed_seconds": 0.9248516000000002
+    },
+    {
+      "subject_id": 22,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp22\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp22\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.420934677124023,
+      "prediction_max_db": 44.596683502197266,
+      "prediction_mean_db": 0.4433983266353607,
+      "elapsed_seconds": 0.3804075
+    },
+    {
+      "subject_id": 26,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp26\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp26\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.912874221801758,
+      "prediction_max_db": 44.977542877197266,
+      "prediction_mean_db": 0.40473517775535583,
+      "elapsed_seconds": 0.36065270000000016
+    },
+    {
+      "subject_id": 31,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp31\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp31\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.31778621673584,
+      "prediction_max_db": 42.05764389038086,
+      "prediction_mean_db": 0.39702561497688293,
+      "elapsed_seconds": 0.3686672
+    },
+    {
+      "subject_id": 33,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp33\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp33\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.452672958374023,
+      "prediction_max_db": 50.182579040527344,
+      "prediction_mean_db": 0.4538406431674957,
+      "elapsed_seconds": 0.3920402000000003
+    },
+    {
+      "subject_id": 45,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp45\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp45\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.873201370239258,
+      "prediction_max_db": 45.675777435302734,
+      "prediction_mean_db": 0.30941811203956604,
+      "elapsed_seconds": 0.38142989999999966
+    },
+    {
+      "subject_id": 47,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp47\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp47\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -12.230254173278809,
+      "prediction_max_db": 44.977542877197266,
+      "prediction_mean_db": 0.31757810711860657,
+      "elapsed_seconds": 0.3574541
+    },
+    {
+      "subject_id": 59,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp59\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp59\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.595494270324707,
+      "prediction_max_db": 48.84958267211914,
+      "prediction_mean_db": 0.4741414785385132,
+      "elapsed_seconds": 0.37689730000000043
+    },
+    {
+      "subject_id": 70,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp70\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp70\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.825594902038574,
+      "prediction_max_db": 51.73774337768555,
+      "prediction_mean_db": 0.3580009937286377,
+      "elapsed_seconds": 0.3496145999999998
+    },
+    {
+      "subject_id": 73,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp73\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp73\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -12.452421188354492,
+      "prediction_max_db": 45.961421966552734,
+      "prediction_mean_db": 0.22523610293865204,
+      "elapsed_seconds": 0.3832426999999994
+    },
+    {
+      "subject_id": 8,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp8\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp8\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -11.793856620788574,
+      "prediction_max_db": 48.151344299316406,
+      "prediction_mean_db": 0.3656977713108063,
+      "elapsed_seconds": 0.3882979999999998
+    },
+    {
+      "subject_id": 81,
+      "input": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_n03_v1\\subjects\\pp81\\model_input.h5",
+      "output": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\mlp_cnn_n03_v31_finetune_v3\\subjects\\pp81\\predicted_residual.h5",
+      "direction_count": 1260,
+      "frequency_count": 463,
+      "prediction_min_db": -10.413252830505371,
+      "prediction_max_db": 50.88081359863281,
+      "prediction_mean_db": 0.23632171750068665,
+      "elapsed_seconds": 0.3795763000000001
+    }
+  ]
+}

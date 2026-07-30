@@ -157,11 +157,13 @@ class BinauralSpectrumSampler:
         normalization: Normalization,
         directions_per_batch: int = 32,
         seed: int = 20260724,
+        strict_ild: bool = False,
     ) -> None:
         self.files = list(files)
         self.normalization = normalization
         self.directions_per_batch = directions_per_batch
         self.rng = np.random.default_rng(seed)
+        self.strict_ild = strict_ild
         self._check_layout()
 
     @property
@@ -182,6 +184,21 @@ class BinauralSpectrumSampler:
             if self.directions_per_batch > shape[1]:
                 raise ValueError("directions_per_batch exceeds available directions")
             self.frequency_count = int(shape[2])
+            if self.strict_ild:
+                required = (
+                    "strict_ild/mca_selected_phase_rad",
+                    "strict_ild/mca_outside_real",
+                    "strict_ild/mca_outside_imag",
+                    "strict_ild/selected_bin_indices_zero_based",
+                    "strict_ild/outside_bin_indices_zero_based",
+                    "strict_ild/reference_ild_db",
+                )
+                missing = [name for name in required if name not in handle]
+                if missing:
+                    raise ValueError(
+                        f"Strict ILD metadata missing from {self.files[0]}: "
+                        f"{missing}"
+                    )
 
     def sample_batch(
         self,
@@ -207,11 +224,59 @@ class BinauralSpectrumSampler:
             target = handle["target_residual_db"][:, direction_indices, :]
             direction_features = handle["direction_features"][direction_indices, :]
             frequency_hz = np.squeeze(handle["frequency_hz"][:])
-            metadata: dict[str, int | str] = {
+            metadata: dict[str, object] = {
                 "subject_id": int(np.asarray(handle.attrs["subject_id"]).item()),
                 "sparse_order": int(np.asarray(handle.attrs["sparse_order"]).item()),
                 "split": _decode_attribute(handle.attrs["split"]),
             }
+            if self.strict_ild:
+                metadata["strict_ild"] = {
+                    "mca_selected_phase_rad": np.asarray(
+                        handle["strict_ild/mca_selected_phase_rad"][
+                            :, direction_indices, :
+                        ],
+                        dtype=np.float32,
+                    ),
+                    "mca_outside_real": np.asarray(
+                        handle["strict_ild/mca_outside_real"][
+                            :, direction_indices, :
+                        ],
+                        dtype=np.float32,
+                    ),
+                    "mca_outside_imag": np.asarray(
+                        handle["strict_ild/mca_outside_imag"][
+                            :, direction_indices, :
+                        ],
+                        dtype=np.float32,
+                    ),
+                    "selected_bin_indices_zero_based": np.squeeze(
+                        handle[
+                            "strict_ild/selected_bin_indices_zero_based"
+                        ][:]
+                    ).astype(np.int64),
+                    "outside_bin_indices_zero_based": np.squeeze(
+                        handle[
+                            "strict_ild/outside_bin_indices_zero_based"
+                        ][:]
+                    ).astype(np.int64),
+                    "reference_ild_db": np.squeeze(
+                        handle["strict_ild/reference_ild_db"][
+                            direction_indices
+                        ]
+                    ).astype(np.float32),
+                    "single_sided_frequency_count": int(
+                        np.asarray(
+                            handle["strict_ild"].attrs[
+                                "single_sided_frequency_count"
+                            ]
+                        ).item()
+                    ),
+                    "hrir_length": int(
+                        np.asarray(
+                            handle["strict_ild"].attrs["hrir_length"]
+                        ).item()
+                    ),
+                }
 
         ear_features: list[np.ndarray] = []
         for ear_index in range(2):

@@ -19,6 +19,7 @@ from mcar.models.residual_mlp_cnn import (
     ResidualMLPCNN,
     total_parameter_count,
 )
+from mcar.losses import strict_hrir_ild_errors
 from mcar.data import (
     Normalization,
     build_input_features,
@@ -37,6 +38,9 @@ class ErrorAccumulator:
     v3_absolute_error: float = 0.0
     v3_squared_error: float = 0.0
     cnn_delta_absolute_sum: float = 0.0
+    strict_ild_direction_weight_sum: float = 0.0
+    v2_strict_ild_weighted_absolute_error: float = 0.0
+    v3_strict_ild_weighted_absolute_error: float = 0.0
 
     def add(
         self,
@@ -79,13 +83,36 @@ class ErrorAccumulator:
                 getattr(self, field_name) + getattr(other, field_name),
             )
 
+    def add_strict_ild(
+        self,
+        v2_errors_db: torch.Tensor,
+        v3_errors_db: torch.Tensor,
+        direction_weights: torch.Tensor,
+    ) -> None:
+        weights = direction_weights.float()
+        self.strict_ild_direction_weight_sum += float(
+            torch.sum(weights, dtype=torch.float64).item()
+        )
+        self.v2_strict_ild_weighted_absolute_error += float(
+            torch.sum(
+                v2_errors_db.float() * weights,
+                dtype=torch.float64,
+            ).item()
+        )
+        self.v3_strict_ild_weighted_absolute_error += float(
+            torch.sum(
+                v3_errors_db.float() * weights,
+                dtype=torch.float64,
+            ).item()
+        )
+
     def metrics(self) -> dict[str, float | int]:
         if self.sample_count == 0:
             raise ValueError("Cannot calculate metrics without samples")
         mca_mae = self.mca_absolute_error / self.sample_count
         v2_mae = self.v2_absolute_error / self.sample_count
         v3_mae = self.v3_absolute_error / self.sample_count
-        return {
+        output: dict[str, float | int] = {
             "sample_count": self.sample_count,
             "mca_zero_residual_mae_db": mca_mae,
             "mca_zero_residual_rmse_db": math.sqrt(
@@ -112,6 +139,28 @@ class ErrorAccumulator:
                 self.cnn_delta_absolute_sum / self.sample_count
             ),
         }
+        if self.strict_ild_direction_weight_sum > 0:
+            v2_ild = (
+                self.v2_strict_ild_weighted_absolute_error
+                / self.strict_ild_direction_weight_sum
+            )
+            v3_ild = (
+                self.v3_strict_ild_weighted_absolute_error
+                / self.strict_ild_direction_weight_sum
+            )
+            output.update(
+                {
+                    "strict_ild_direction_weight_sum": (
+                        self.strict_ild_direction_weight_sum
+                    ),
+                    "v2_strict_hrir_ild_mae_db": v2_ild,
+                    "v3_strict_hrir_ild_mae_db": v3_ild,
+                    "v3_vs_v2_strict_hrir_ild_reduction_percent": (
+                        100.0 * (v2_ild - v3_ild) / v2_ild
+                    ),
+                }
+            )
+        return output
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -126,6 +175,14 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--directions-per-block", type=int, default=32)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--no-amp", action="store_true")
+    parser.add_argument(
+        "--strict-ild",
+        action="store_true",
+        help=(
+            "Also exhaustively evaluate original-phase, cropped-HRIR ILD. "
+            "Requires schema 1.1 metadata in every selected HDF5 file."
+        ),
+    )
     parser.add_argument(
         "--allow-test",
         action="store_true",
@@ -194,6 +251,50 @@ def write_per_subject_csv(
         writer.writerows(rows)
 
 
+def strict_ild_metadata_to_device(
+    handle: h5py.File,
+    direction_slice: slice,
+    device: torch.device,
+) -> dict[str, torch.Tensor | int]:
+    if "strict_ild" not in handle:
+        raise ValueError("Strict ILD metadata group is missing")
+    group = handle["strict_ild"]
+    arrays = {
+        "mca_selected_phase_rad": np.asarray(
+            group["mca_selected_phase_rad"][:, direction_slice, :],
+            dtype=np.float32,
+        ),
+        "mca_outside_real": np.asarray(
+            group["mca_outside_real"][:, direction_slice, :],
+            dtype=np.float32,
+        ),
+        "mca_outside_imag": np.asarray(
+            group["mca_outside_imag"][:, direction_slice, :],
+            dtype=np.float32,
+        ),
+        "selected_bin_indices_zero_based": np.squeeze(
+            group["selected_bin_indices_zero_based"][:]
+        ).astype(np.int64),
+        "outside_bin_indices_zero_based": np.squeeze(
+            group["outside_bin_indices_zero_based"][:]
+        ).astype(np.int64),
+        "reference_ild_db": np.squeeze(
+            group["reference_ild_db"][direction_slice]
+        ).astype(np.float32),
+    }
+    metadata: dict[str, torch.Tensor | int] = {
+        name: torch.from_numpy(values).to(device, non_blocking=True)
+        for name, values in arrays.items()
+    }
+    metadata["single_sided_frequency_count"] = int(
+        np.asarray(group.attrs["single_sided_frequency_count"]).item()
+    )
+    metadata["hrir_length"] = int(
+        np.asarray(group.attrs["hrir_length"]).item()
+    )
+    return metadata
+
+
 @torch.no_grad()
 def main() -> None:
     arguments = parse_arguments()
@@ -254,6 +355,10 @@ def main() -> None:
             )
             if frequency_hz.size != frequency_count:
                 raise ValueError(f"Frequency mismatch in {file_path}")
+            if arguments.strict_ild and "strict_ild" not in handle:
+                raise ValueError(
+                    f"{file_path} lacks schema 1.1 strict ILD metadata"
+                )
 
             for direction_start in range(
                 0,
@@ -296,6 +401,10 @@ def main() -> None:
                     device,
                     non_blocking=True,
                 )
+                mca_tensor = torch.from_numpy(mca_db).to(
+                    device,
+                    non_blocking=True,
+                )
                 with torch.amp.autocast("cuda", enabled=use_amp):
                     v3_normalized, v2_normalized, delta_normalized = model(
                         point_tensor
@@ -320,6 +429,28 @@ def main() -> None:
                     v3_prediction_db,
                     cnn_delta_db,
                 )
+                if arguments.strict_ild:
+                    strict_metadata = strict_ild_metadata_to_device(
+                        handle,
+                        direction_slice,
+                        device,
+                    )
+                    direction_weights = torch.from_numpy(
+                        direction_features[:, 5]
+                    ).to(device, non_blocking=True)
+                    v2_ild_errors = strict_hrir_ild_errors(
+                        mca_tensor.float() + v2_prediction_db,
+                        strict_metadata,
+                    )
+                    v3_ild_errors = strict_hrir_ild_errors(
+                        mca_tensor.float() + v3_prediction_db,
+                        strict_metadata,
+                    )
+                    subject.add_strict_ild(
+                        v2_ild_errors,
+                        v3_ild_errors,
+                        direction_weights,
+                    )
 
         expected_subject_samples = 2 * direction_count * frequency_count
         if subject.sample_count != expected_subject_samples:
@@ -340,6 +471,12 @@ def main() -> None:
             f"v2_mae={subject_metrics['v2_mlp_mae_db']:.4f} dB "
             f"v3_mae={subject_metrics['v3_mlp_cnn_mae_db']:.4f} dB "
             f"v3_vs_v2={subject_metrics['v3_vs_v2_mae_reduction_percent']:.2f}%"
+            + (
+                " strict_ild="
+                f"{subject_metrics['v3_strict_hrir_ild_mae_db']:.4f} dB"
+                if arguments.strict_ild
+                else ""
+            )
         )
 
     aggregate = total.metrics()
@@ -396,6 +533,7 @@ def main() -> None:
         "device": torch.cuda.get_device_name(0),
         "amp": use_amp,
         "directions_per_block": arguments.directions_per_block,
+        "strict_ild": arguments.strict_ild,
         "elapsed_seconds": time.perf_counter() - evaluation_started,
         "peak_cuda_allocated_mib": (
             torch.cuda.max_memory_allocated() / (1024.0**2)
@@ -404,6 +542,15 @@ def main() -> None:
             float(row["v3_mlp_cnn_mae_db"])
             < float(row["v2_mlp_mae_db"])
             for row in per_subject_rows
+        ),
+        "improved_subject_count_strict_ild_v3_vs_v2": (
+            sum(
+                float(row["v3_strict_hrir_ild_mae_db"])
+                < float(row["v2_strict_hrir_ild_mae_db"])
+                for row in per_subject_rows
+            )
+            if arguments.strict_ild
+            else None
         ),
         "v2_reference_comparison": v2_reference_comparison,
     }

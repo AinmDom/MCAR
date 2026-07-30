@@ -33,6 +33,7 @@ class LossMetrics:
     erb_mae_db: float = 0.0
     contralateral_high_frequency_mae_db: float = 0.0
     ild_mae_db: float = 0.0
+    ild_spectral_proxy_mae_db: float = 0.0
 
 
 @dataclass
@@ -198,6 +199,7 @@ def calculate_losses(
             high_frequency_mae.detach().item()
         ),
         ild_mae_db=float(ild_mae.detach().item()),
+        ild_spectral_proxy_mae_db=float(ild_mae.detach().item()),
     )
     return total, metrics
 

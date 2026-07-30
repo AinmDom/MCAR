@@ -1,0 +1,9 @@
+{
+  "total_loss": 0.6961000338196754,
+  "residual_mae_db": 2.0733477820952735,
+  "erb_mae_db": 0.6646119977037112,
+  "contralateral_high_frequency_mae_db": 3.2169174775481224,
+  "ild_mae_db": 0.6586487280825774,
+  "ild_spectral_proxy_mae_db": 0.641231844201684,
+  "cnn_delta_mean_absolute_db": 0.5656659724701127
+}

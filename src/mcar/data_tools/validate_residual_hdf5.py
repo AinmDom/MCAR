@@ -24,7 +24,75 @@ def scalar_attribute(handle: h5py.File, name: str) -> object:
     return np.asarray(handle.attrs[name]).item()
 
 
-def validate_file(path: Path) -> dict[str, float | int | str]:
+def validate_strict_ild_metadata(
+    handle: h5py.File,
+    path: Path,
+    spectral_shape: tuple[int, ...],
+) -> None:
+    required = (
+        "mca_selected_phase_rad",
+        "mca_outside_real",
+        "mca_outside_imag",
+        "selected_bin_indices_zero_based",
+        "outside_bin_indices_zero_based",
+        "reference_ild_db",
+    )
+    if "strict_ild" not in handle:
+        raise ValueError(f"{path}: strict_ild group is missing")
+    group = handle["strict_ild"]
+    missing = [name for name in required if name not in group]
+    if missing:
+        raise ValueError(f"{path}: missing strict ILD datasets: {missing}")
+    selected_phase = group["mca_selected_phase_rad"][:]
+    outside_real = group["mca_outside_real"][:]
+    outside_imag = group["mca_outside_imag"][:]
+    selected_indices = np.squeeze(
+        group["selected_bin_indices_zero_based"][:]
+    ).astype(np.int64)
+    outside_indices = np.squeeze(
+        group["outside_bin_indices_zero_based"][:]
+    ).astype(np.int64)
+    reference_ild = np.squeeze(group["reference_ild_db"][:])
+    single_sided_count = int(
+        np.asarray(group.attrs["single_sided_frequency_count"]).item()
+    )
+    hrir_length = int(np.asarray(group.attrs["hrir_length"]).item())
+
+    if selected_phase.shape != spectral_shape:
+        raise ValueError(
+            f"{path}: selected phase shape {selected_phase.shape} "
+            f"!= {spectral_shape}"
+        )
+    if outside_real.shape != outside_imag.shape:
+        raise ValueError(f"{path}: outside real/imaginary shapes differ")
+    if outside_real.shape[:2] != spectral_shape[:2]:
+        raise ValueError(f"{path}: outside spectrum dimensions are invalid")
+    if reference_ild.shape != (spectral_shape[1],):
+        raise ValueError(f"{path}: reference ILD shape is invalid")
+    if selected_indices.size != spectral_shape[2]:
+        raise ValueError(f"{path}: selected-bin count is invalid")
+    if outside_indices.size != outside_real.shape[2]:
+        raise ValueError(f"{path}: outside-bin count is invalid")
+    covered = np.sort(np.concatenate((selected_indices, outside_indices)))
+    if not np.array_equal(covered, np.arange(single_sided_count)):
+        raise ValueError(f"{path}: strict ILD bins do not cover full spectrum")
+    if 2 * (single_sided_count - 1) % hrir_length != 0:
+        raise ValueError(f"{path}: HRIR/FFT dimensions are inconsistent")
+    for name, values in (
+        ("selected phase", selected_phase),
+        ("outside real", outside_real),
+        ("outside imaginary", outside_imag),
+        ("reference ILD", reference_ild),
+    ):
+        if not np.all(np.isfinite(values)):
+            raise ValueError(f"{path}: strict ILD {name} is non-finite")
+    if int(scalar_attribute(handle, "strict_ild_metadata")) != 1:
+        raise ValueError(f"{path}: strict ILD metadata flag is not set")
+
+
+def validate_file(
+    path: Path, require_strict_ild: bool = False
+) -> dict[str, float | int | str]:
     with h5py.File(path, "r") as handle:
         missing = [name for name in REQUIRED_DATASETS if name not in handle]
         if missing:
@@ -74,6 +142,8 @@ def validate_file(path: Path) -> dict[str, float | int | str]:
             )
         if int(scalar_attribute(handle, "complete")) != 1:
             raise ValueError(f"{path}: file is not marked complete")
+        if require_strict_ild:
+            validate_strict_ild_metadata(handle, path, mca.shape)
 
         return {
             "file": str(path),
@@ -98,12 +168,20 @@ def main() -> None:
         action="store_true",
         help="Validate every file but print only one aggregate summary.",
     )
+    parser.add_argument(
+        "--require-strict-ild",
+        action="store_true",
+        help="Also require and validate schema 1.1 strict HRIR-ILD metadata.",
+    )
     parser.add_argument("files", nargs="+", type=Path)
     arguments = parser.parse_args()
 
     results = []
     for file_path in arguments.files:
-        result = validate_file(file_path)
+        result = validate_file(
+            file_path,
+            require_strict_ild=arguments.require_strict_ild,
+        )
         results.append(result)
         if not arguments.summary_only:
             print(

@@ -12,17 +12,20 @@ residual = log|H_ref| - log|H_MCA|
 
 ## 当前结果
 
-项目已经完成 MLP v1、听觉感知损失 MLP v2 和 MLP + CNN v3。锁定的 12
-名 test 被试上，v3 相对 MCA 的全空间 ERB、对侧 25° ERB、对侧高频和
-水平面 ILD MAE 分别改善约 27.18%、29.88%、14.99% 和 25.28%。
-v3 相对 v2 的前三项幅度指标继续改善，但严格 ILD MAE 回升约 2.30%，
-这是后续 v3.1 需要解决的主要问题。
+项目已经完成 MLP v1、听觉感知损失 MLP v2、MLP + CNN v3，以及用严格
+HRIR 能量 ILD 损失微调的 v3.1。锁定的 12 名 test 被试上，v3.1 相对 MCA
+的全空间 ERB、对侧 25° ERB、对侧高频和水平面 ILD MAE 分别改善约
+27.08%、29.56%、15.01% 和 26.31%。相对 v3，v3.1 将严格 ILD MAE 从
+`0.661566` 降到 `0.652495 dB`，同时高频误差略降；全空间 ERB 仅回退
+约 0.14%。这说明与最终重建口径对齐的可微 ILD 损失有效，但 v2 的
+`0.646722 dB` 仍是更低的 ILD 单项结果。
 
 详细报告位于：
 
 - `reports/MLP_V1_REPORT.md`
 - `reports/MLP_V2_REPORT.md`
 - `reports/MLP_CNN_V3_REPORT.md`
+- `reports/MLP_CNN_V31_REPORT.md`
 
 ## 项目结构
 
@@ -87,6 +90,18 @@ matlab -batch "addpath('matlab'); mcar.export_hutubs_residual_dataset([], 3, 6, 
   data/processed/hutubs_residual_v1_n03 `
   artifacts/training/mlp_n03_v2/best.pt `
   --run-name mlp_cnn_n03_v3
+```
+
+用 v3 checkpoint 进行严格 ILD 微调（v3.1）：
+
+```powershell
+.venv/Scripts/python -m mcar.training.train_mlp_cnn_v3 `
+  data/processed/hutubs_residual_v1_n03 `
+  artifacts/training/mlp_n03_v2/best.pt `
+  --initial-cnn-checkpoint artifacts/training/mlp_cnn_n03_v3_cnn_only_wandb_online/best.pt `
+  --config configs/experiments/mlp_cnn_v31_finetune_v3.json `
+  --run-name mlp_cnn_n03_v31_finetune_v3_strict_ild `
+  --wandb-mode online
 ```
 
 更完整的训练、验证和重建命令位于 `experiments/`。

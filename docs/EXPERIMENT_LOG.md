@@ -29,6 +29,55 @@ Graphics，PNG）、多边形文件格式（Polygon File Format，PLY）和便�
 （gibibyte，GiB）和兆二进制字节（mebibyte，MiB）。MATLAB MAT-file 缩写为
 MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开。
 
+## 2026-07-30：SONICOM 正式训练队列下载器与全队列可用性检查
+
+- 工作目标：把 SONICOM 官网完整数据集整理为可复现、可断点续传且不会因官网
+  元数据变化而静默漂移的训练数据下载流程；本阶段只实现与验证下载，不改动既有
+  HUTUBS 锁定实验。
+- 数据集与版本：数据根目录为
+  `https://transfer.ic.ac.uk:9090/2022_SONICOM-HRTF-DATASET`；使用官网当前
+  `metadata.csv` 和日期固定的
+  `important_information/Outliers_2026-05-06.csv`。当前快照包含 372 条
+  被试元数据，其中 364 条 `HRTF == TRUE`。
+- 选择口径：仅保留 `HRTF == TRUE`、不在官方 HRTF 异常清单且自由场均衡
+  文件未标记为 `EQ File Corrupted` 的测量被试。12 名官方异常被试、8 名
+  无 HRTF 被试和 2 名自由场均衡损坏被试合计排除 22 名，冻结后的干净队列为
+  350 名。脚本在官网元数据行数或队列人数变化时默认停止，只有人工复核后才允许
+  使用 `--allow-metadata-drift`。
+- 文件版本：每名被试只下载
+  `PXXXX/HRTF/HRTF/44kHz/PXXXX_FreeFieldCompMinPhase_44kHz.sofa`。该版本
+  采用 44.1 kHz 采样率，已进行 5 ms 截窗和最小相位自由场补偿，同时保留个体
+  耳间时间差（ITD）；不下载去 ITD 版本、原始 50 ms 版本、合成 HRTF、扫描网格
+  和其他重复采样率版本。
+- 实现：新增 `src/mcar/data_tools/download_sonicom.py`，仅依赖 Python
+  标准库，支持并发请求、网络重试、HTTP Range 断点续传、`.part` 临时文件、
+  完成后的原子替换、远端 `Content-Length` 校验、重复运行跳过、pilot 被试
+  子集、只下载元数据和全队列只读检查。
+- 可追溯输出：正式运行会把官方元数据和异常说明原样保存，并生成
+  `manifests/clean_subjects.csv`、`manifests/excluded_subjects.csv` 和
+  `manifests/selection_report.json`；报告中记录选择规则及所有元数据文件的
+  SHA-256 摘要。SOFA 默认写入
+  `data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects/`，整个大型数据
+  目录继续由 Git 忽略。
+- 全队列网络检查：实际执行
+  `D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.download_sonicom
+  --dry-run --workers 8`；350/350 个目标 SOFA 的 HEAD 请求全部成功，远端
+  总量为 `872.82 MiB`，耗时约 `162.8 s`，且 dry run 未写入数据文件。
+- 真实下载烟雾测试：在已忽略的
+  `artifacts/download_smoke/sonicom_p0001/` 下载 P0001；首次运行状态为
+  `downloaded`，重复运行为 `already_complete`。用 h5py 读取后得到
+  `Data.IR` 形状 `(793, 2, 256)`、采样率 `44100 Hz`、约定
+  `SimpleFreeFieldHRIR`，全部采样值有限。生成清单为 350 名保留和 22 名排除
+  被试。
+- 验证：Python `compileall`、命令行 `--help`、离线选择规则测试、全队列
+  网络检查、真实单文件下载及重复运行检查均通过。本阶段未下载正式 350 人全量
+  数据，仅保留已忽略的单被试烟雾测试产物。
+- 结论与下一步：下载链路和冻结队列已经可用，无数据侧阻塞。下一步正式执行全量
+  下载，再对 350 个 SOFA 做结构、方向网格、采样率与有限值批量审计；审计通过后
+  按自由场均衡文件或其他可用属性进行 subject-wise 分层，先建立
+  `262 train / 44 validation / 44 test` 的新数据划分，原 HUTUBS test 结论
+  保持锁定。
+
 ## 2026-07-30：项目文档英文缩写首次出现规范化
 
 - 工作目标：修复项目文档中英文缩写首次出现时缺少全称的问题，降低说明页、

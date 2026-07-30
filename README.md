@@ -64,6 +64,21 @@ MATLAB 实验依赖本地 `external/SUpDEq/` 和
 
 ## 主要入口
 
+检查并下载冻结的 SONICOM 干净测量队列：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.download_sonicom `
+  --dry-run `
+  --workers 8
+
+D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.download_sonicom `
+  --workers 8
+```
+
+下载器默认获取 350 名被试的
+`FreeFieldCompMinPhase_44kHz` SOFA；选择规则、pilot 命令和输出清单见
+`data/HRTF/README.md`。
+
 导出 residual 数据：
 
 ```powershell

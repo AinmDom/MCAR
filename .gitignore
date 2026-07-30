@@ -81,6 +81,7 @@ wandb_state/
 # Large HRTF datasets and processed residual tensors.
 /data/HRTF/axd/
 /data/HRTF/hutubs/
+/data/HRTF/sonicom_measured_ffcmp_minphase_44k1/
 /data/processed/*
 !/data/processed/README.md
 !/data/processed/hutubs_residual_v1_n03/

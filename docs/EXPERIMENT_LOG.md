@@ -63,18 +63,22 @@ MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开
   `D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.download_sonicom
   --dry-run --workers 8`；350/350 个目标 SOFA 的 HEAD 请求全部成功，远端
   总量为 `872.82 MiB`，耗时约 `162.8 s`，且 dry run 未写入数据文件。
-- 真实下载烟雾测试：在已忽略的
-  `artifacts/download_smoke/sonicom_p0001/` 下载 P0001；首次运行状态为
-  `downloaded`，重复运行为 `already_complete`。用 h5py 读取后得到
-  `Data.IR` 形状 `(793, 2, 256)`、采样率 `44100 Hz`、约定
-  `SimpleFreeFieldHRIR`，全部采样值有限。生成清单为 350 名保留和 22 名排除
-  被试。
+- 真实下载：先在已忽略的 `artifacts/download_smoke/sonicom_p0001/` 完成
+  P0001 下载及重复运行跳过检查，再向正式目录下载全队列。首轮完成 347/350 个，
+  并保留 P0310 的零字节 `.part`；续传命令只指定 P0310、P0312、P0313，三者
+  全部下载成功，最终得到 350/350 个 SOFA、无残留 `.part`，总量
+  `872.82 MiB`。
+- 全量内容审计：manifest 中 350 名被试与 `subjects/` 中 350 个文件一一对应，
+  无缺失或多余文件。所有文件的 `Data.IR` 形状均为 `(793, 2, 256)`、采样率
+  均为 `44100 Hz`、SOFA 约定均为 `SimpleFreeFieldHRIR`，所有脉冲响应数值
+  有限，且 350 名被试的 793 点 `SourcePosition` 方向网格完全一致。
 - 验证：Python `compileall`、命令行 `--help`、离线选择规则测试、全队列
-  网络检查、真实单文件下载及重复运行检查均通过。本阶段未下载正式 350 人全量
-  数据，仅保留已忽略的单被试烟雾测试产物。
-- 结论与下一步：下载链路和冻结队列已经可用，无数据侧阻塞。下一步正式执行全量
-  下载，再对 350 个 SOFA 做结构、方向网格、采样率与有限值批量审计；审计通过后
-  按自由场均衡文件或其他可用属性进行 subject-wise 分层，先建立
+  网络检查、真实单文件下载及重复运行、全量下载和 350 文件内容审计均通过。
+  正式数据位于
+  `data/HRTF/sonicom_measured_ffcmp_minphase_44k1/`，并由 Git 忽略。
+- 结论与下一步：下载链路、冻结队列和正式训练数据已经就绪，无数据侧阻塞。
+  下一步先检查 MCA 输入所需的稀疏方向是否能从 SONICOM 统一网格直接抽取，
+  再按自由场均衡文件或其他可用属性进行 subject-wise 分层，建立
   `262 train / 44 validation / 44 test` 的新数据划分，原 HUTUBS test 结论
   保持锁定。
 

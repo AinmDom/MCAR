@@ -79,6 +79,16 @@ D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.download_sonicom `
 `FreeFieldCompMinPhase_44kHz` SOFA；选择规则、pilot 命令和输出清单见
 `data/HRTF/README.md`。
 
+生成 SONICOM-Q26-v1 稀疏方向、793 点面积权重和固定被试划分：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.prepare_sonicom_configs
+```
+
+该步骤输出 26 点测量原生稀疏网格以及
+`262 train / 44 validation / 44 test` 的自由场 EQ 分层划分，配置位于
+`configs/data/`。
+
 导出 residual 数据：
 
 ```powershell

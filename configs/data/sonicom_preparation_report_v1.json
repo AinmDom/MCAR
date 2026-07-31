@@ -1,0 +1,212 @@
+{
+  "dataset": {
+    "name": "SONICOM measured clean cohort",
+    "variant": "FreeFieldCompMinPhase_44kHz",
+    "subject_count": 350,
+    "reference_sofa": "subjects/P0001_FreeFieldCompMinPhase_44kHz.sofa",
+    "source_grid_sha256": "7db3907442891b2cb102647798a9e7bf03d873f63fe8367b9baeeab71e6d5038"
+  },
+  "reference_grid": {
+    "direction_count": 793,
+    "elevation_minimum_deg": -45.0,
+    "elevation_maximum_deg": 90.0,
+    "elevation_ring_counts": {
+      "-45": 72,
+      "-30": 72,
+      "-20": 72,
+      "-10": 72,
+      "0": 72,
+      "10": 72,
+      "20": 72,
+      "30": 72,
+      "45": 72,
+      "60": 72,
+      "75": 72,
+      "90": 1
+    },
+    "measured_domain_solid_angle_sr": 10.726068245337952,
+    "normalized_weight_sum": 0.9999999999999999
+  },
+  "lebedev_n3_direct_mapping": {
+    "target_count": 26,
+    "unique_nearest_measured_count": 25,
+    "exact_match_count": 17,
+    "mean_nearest_error_deg": 3.3505814408475794,
+    "maximum_nearest_error_deg": 45.0,
+    "maximum_error_target_azimuth_elevation_deg": [
+      0.0,
+      -90.0
+    ]
+  },
+  "sonicom_q26_v1": {
+    "direction_count": 26,
+    "source_indices_zero_based": [
+      1,
+      11,
+      94,
+      107,
+      141,
+      154,
+      157,
+      169,
+      271,
+      284,
+      287,
+      347,
+      356,
+      388,
+      427,
+      459,
+      468,
+      528,
+      531,
+      544,
+      646,
+      658,
+      661,
+      674,
+      708,
+      721
+    ],
+    "north_seed_source_index_zero_based": 11,
+    "median_seed_source_index_zero_based": 1,
+    "left_right_symmetric": true,
+    "selection_objective": "north pole + best median-plane seed + 12 mirrored pairs; maximize minimum great-circle separation, break ties by regularized order-3 SH log determinant",
+    "minimum_pairwise_angle_deg": 31.915838841829665,
+    "covering_radius_deg": 33.108876102142965,
+    "mean_covering_distance_deg": 15.08025658088313,
+    "p95_covering_distance_deg": 24.814216904592257,
+    "real_sh_order": 3,
+    "real_sh_design_rank": 16,
+    "real_sh_design_condition_number": 2.476613589046003
+  },
+  "subject_split": {
+    "seed": 20260731,
+    "split_targets": {
+      "train": 262,
+      "val": 44,
+      "test": 44
+    },
+    "stratification_key": "Free Field EQ File",
+    "stratum_allocation": {
+      "reference_eq_001": {
+        "train": 156,
+        "val": 26,
+        "test": 26
+      },
+      "reference_eq_002": {
+        "train": 15,
+        "val": 2,
+        "test": 2
+      },
+      "reference_eq_003": {
+        "train": 15,
+        "val": 2,
+        "test": 3
+      },
+      "reference_eq_005": {
+        "train": 2,
+        "val": 0,
+        "test": 0
+      },
+      "reference_eq_006": {
+        "train": 24,
+        "val": 4,
+        "test": 4
+      },
+      "reference_eq_007": {
+        "train": 6,
+        "val": 1,
+        "test": 1
+      },
+      "reference_eq_008": {
+        "train": 16,
+        "val": 3,
+        "test": 3
+      },
+      "reference_eq_009": {
+        "train": 4,
+        "val": 1,
+        "test": 1
+      },
+      "reference_eq_010": {
+        "train": 10,
+        "val": 2,
+        "test": 2
+      },
+      "reference_eq_011": {
+        "train": 10,
+        "val": 2,
+        "test": 1
+      },
+      "reference_eq_012": {
+        "train": 4,
+        "val": 1,
+        "test": 1
+      }
+    },
+    "free_field_eq_distribution_by_split": {
+      "train": {
+        "reference_eq_001": 156,
+        "reference_eq_002": 15,
+        "reference_eq_003": 15,
+        "reference_eq_005": 2,
+        "reference_eq_006": 24,
+        "reference_eq_007": 6,
+        "reference_eq_008": 16,
+        "reference_eq_009": 4,
+        "reference_eq_010": 10,
+        "reference_eq_011": 10,
+        "reference_eq_012": 4
+      },
+      "val": {
+        "reference_eq_001": 26,
+        "reference_eq_002": 2,
+        "reference_eq_003": 2,
+        "reference_eq_006": 4,
+        "reference_eq_007": 1,
+        "reference_eq_008": 3,
+        "reference_eq_009": 1,
+        "reference_eq_010": 2,
+        "reference_eq_011": 2,
+        "reference_eq_012": 1
+      },
+      "test": {
+        "reference_eq_001": 26,
+        "reference_eq_002": 2,
+        "reference_eq_003": 3,
+        "reference_eq_006": 4,
+        "reference_eq_007": 1,
+        "reference_eq_008": 3,
+        "reference_eq_009": 1,
+        "reference_eq_010": 2,
+        "reference_eq_011": 1,
+        "reference_eq_012": 1
+      }
+    },
+    "sex_at_birth_distribution_by_split": {
+      "train": {
+        "Female": 49,
+        "Male": 98,
+        "No Answer": 1,
+        "missing": 114
+      },
+      "val": {
+        "Female": 6,
+        "Male": 14,
+        "missing": 24
+      },
+      "test": {
+        "Female": 6,
+        "Male": 13,
+        "Prefer not to answer": 1,
+        "missing": 24
+      }
+    },
+    "known_age_count_by_split": {
+      "train": 148,
+      "val": 21,
+      "test": 21
+    }
+  }
+}

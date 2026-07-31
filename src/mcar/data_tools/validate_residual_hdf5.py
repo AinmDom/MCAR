@@ -109,12 +109,16 @@ def validate_file(
             raise ValueError(f"{path}: feature tensor shapes differ")
         if mca.shape != residual.shape:
             raise ValueError(f"{path}: target shape {residual.shape} != {mca.shape}")
-        if len(mca.shape) != 3 or mca.shape[0] != 2 or mca.shape[1] != 900:
+        if len(mca.shape) != 3 or mca.shape[0] != 2:
             raise ValueError(
-                f"{path}: expected Python layout [2, 900, F], got {mca.shape}"
+                f"{path}: expected Python layout [2, direction, F], "
+                f"got {mca.shape}"
             )
-        if directions.shape != (900, 6):
-            raise ValueError(f"{path}: expected directions [900, 6], got {directions.shape}")
+        if directions.shape != (mca.shape[1], 6):
+            raise ValueError(
+                f"{path}: expected directions [{mca.shape[1]}, 6], "
+                f"got {directions.shape}"
+            )
         if frequency.ndim != 1 or frequency.size != mca.shape[2]:
             raise ValueError(f"{path}: frequency vector does not match tensor")
         if not np.all(np.diff(frequency) > 0):
@@ -144,6 +148,39 @@ def validate_file(
             raise ValueError(f"{path}: file is not marked complete")
         if require_strict_ild:
             validate_strict_ild_metadata(handle, path, mca.shape)
+        if "sparse_direction_indices_zero_based" in handle:
+            sparse_indices = np.squeeze(
+                handle["sparse_direction_indices_zero_based"][:]
+            ).astype(np.int64)
+            interpolation_mask = np.squeeze(
+                handle["interpolation_evaluation_mask"][:]
+            ).astype(bool)
+            if sparse_indices.shape != (26,):
+                raise ValueError(f"{path}: expected 26 sparse indices")
+            if len(np.unique(sparse_indices)) != sparse_indices.size:
+                raise ValueError(f"{path}: sparse indices are not unique")
+            if np.min(sparse_indices) < 0 or np.max(
+                sparse_indices
+            ) >= mca.shape[1]:
+                raise ValueError(f"{path}: sparse index is out of range")
+            if interpolation_mask.shape != (mca.shape[1],):
+                raise ValueError(
+                    f"{path}: interpolation mask shape is invalid"
+                )
+            expected_mask = np.ones(mca.shape[1], dtype=bool)
+            expected_mask[sparse_indices] = False
+            if not np.array_equal(interpolation_mask, expected_mask):
+                raise ValueError(
+                    f"{path}: interpolation mask does not complement "
+                    "the sparse indices"
+                )
+            weights = directions[:, 5]
+            if np.any(weights <= 0.0) or not np.isclose(
+                np.sum(weights), 1.0, atol=1e-6
+            ):
+                raise ValueError(
+                    f"{path}: SONICOM solid-angle weights are invalid"
+                )
 
         return {
             "file": str(path),
@@ -152,6 +189,7 @@ def validate_file(
             "split": handle.attrs["split"].decode()
             if isinstance(handle.attrs["split"], bytes)
             else str(handle.attrs["split"]),
+            "direction_count": int(mca.shape[1]),
             "frequency_count": int(frequency.size),
             "sample_count": int(residual.size),
             "residual_mean_db": float(np.mean(residual)),
@@ -186,7 +224,8 @@ def main() -> None:
         if not arguments.summary_only:
             print(
                 "{file}: subject={subject_id}, N={sparse_order}, split={split}, "
-                "shape_samples={sample_count}, frequencies={frequency_count}, "
+                "directions={direction_count}, shape_samples={sample_count}, "
+                "frequencies={frequency_count}, "
                 "mean={residual_mean_db:.6f} dB, std={residual_std_db:.6f} dB, "
                 "|residual|={residual_abs_mean_db:.6f} dB, identity_error="
                 "{residual_identity_max_error_db:.3g} dB".format(**result)

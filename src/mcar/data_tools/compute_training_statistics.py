@@ -60,7 +60,7 @@ def main() -> None:
     output_path = arguments.output or (
         arguments.dataset_root / "training_statistics.json"
     )
-    files = sorted((arguments.dataset_root / "subjects").glob("pp*/n*.h5"))
+    files = sorted((arguments.dataset_root / "subjects").glob("*/*.h5"))
     if not files:
         raise FileNotFoundError(f"No subject HDF5 files under {arguments.dataset_root}")
 
@@ -72,6 +72,7 @@ def main() -> None:
     train_subjects: list[int] = []
     frequency_hz: np.ndarray | None = None
     direction_features: np.ndarray | None = None
+    direction_feature_order: str | None = None
 
     for file_path in files:
         with h5py.File(file_path, "r") as handle:
@@ -82,18 +83,30 @@ def main() -> None:
                 running.update(handle[dataset_name][:])
             current_frequency = np.squeeze(handle["frequency_hz"][:]).astype(np.float64)
             current_direction = handle["direction_features"][:].astype(np.float64)
+            current_feature_order = decode_attribute(
+                handle.attrs["direction_feature_order"]
+            )
             if frequency_hz is None:
                 frequency_hz = current_frequency
                 direction_features = current_direction
+                direction_feature_order = current_feature_order
             else:
                 if not np.array_equal(frequency_hz, current_frequency):
                     raise ValueError(f"Frequency grid differs in {file_path}")
                 if not np.array_equal(direction_features, current_direction):
                     raise ValueError(f"Direction grid differs in {file_path}")
+                if direction_feature_order != current_feature_order:
+                    raise ValueError(
+                        f"Direction feature order differs in {file_path}"
+                    )
 
-    if len(train_subjects) != 72:
-        raise ValueError(f"Expected 72 training subjects, found {len(train_subjects)}")
-    assert frequency_hz is not None and direction_features is not None
+    if not train_subjects:
+        raise ValueError("No training subjects were found")
+    assert (
+        frequency_hz is not None
+        and direction_features is not None
+        and direction_feature_order is not None
+    )
 
     log_frequency = np.log10(frequency_hz)
     result = {
@@ -112,14 +125,7 @@ def main() -> None:
             "log10_std_population": float(log_frequency.std()),
         },
         "direction_features": {
-            "feature_order": [
-                "azimuth_deg",
-                "elevation_deg",
-                "x",
-                "y",
-                "z",
-                "fliege_weight",
-            ],
+            "feature_order": direction_feature_order.split(","),
             "mean": direction_features.mean(axis=0).tolist(),
             "std_population": direction_features.std(axis=0).tolist(),
         },

@@ -89,6 +89,14 @@ D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.prepare_sonicom_configs
 `262 train / 44 validation / 44 test` 的自由场 EQ 分层划分，配置位于
 `configs/data/`。
 
+使用已锁定的 Q26 和 Tikhonov 参数导出 SONICOM train/validation residual：
+
+```powershell
+matlab -batch "addpath('matlab'); ids=readtable('configs/data/sonicom_subject_split_v1.csv','TextType','string'); ids=ids.subject_id(ids.split~=\"test\"); mcar.export_sonicom_residual_dataset(ids,6,'sonicom_residual_q26_v1',1e-2,true,false)"
+```
+
+详细 pilot、参数选择和验证命令见 `experiments/sonicom_data/README.md`。
+
 导出 residual 数据：
 
 ```powershell

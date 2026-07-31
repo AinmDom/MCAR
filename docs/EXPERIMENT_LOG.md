@@ -29,6 +29,64 @@ Graphics，PNG）、多边形文件格式（Polygon File Format，PLY）和便�
 （gibibyte，GiB）和兆二进制字节（mebibyte，MiB）。MATLAB MAT-file 缩写为
 MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开。
 
+## 2026-07-31：SONICOM Q26 MCA pilot 与 Tikhonov 参数锁定
+
+- 工作目标：在不读取 44 名锁定 test 被试的前提下，验证 SONICOM-Q26-v1
+  能否完整运行 SUpDEq + SH + MCA，建立 793/767 双口径 HDF5，并根据
+  validation 选择无权三阶球谐最小二乘的 Tikhonov epsilon。
+- 导出实现：新增
+  `matlab/+mcar/export_sonicom_residual_dataset.m`。每名被试直接对
+  `(793, 2, 256)` HRIR 做 1024 点 FFT，从固定 26 个真实测量索引取得稀疏
+  HRTF，以实际 Q26 方位角/余纬度做三阶球谐变换，再在原始 793 点上运行 MCA。
+  头半径使用所有 SOFA 共有的 nominal `0.09 m` ReceiverPosition，频率范围
+  为 `50 Hz～20 kHz` 共 463 点。
+- 防泄漏：导出器默认 `allowTest=false`，在初始化 SUpDEq 或读取 SOFA 前检查
+  固定 split；用 P0003 实测保护逻辑，得到预期的 locked-test 错误并通过断言。
+  正式开发命令只能处理 train/validation，最终评估必须显式启用 test。
+- HDF5 schema 2.0：每名被试保存
+  `mca/reference/correction/target_residual`，Python 布局均为
+  `[2, 793, 463]`；同时保存 793 点面积权重、26 个稀疏索引、767 点纯插值
+  mask、MCA 选中频点相位、50 个频带外复频点、参考严格 HRIR-ILD 和 256 点
+  HRIR 裁剪长度。每文件包含 `734,318` 个 residual 样本。
+- Python 兼容：`src/mcar/data.py`、训练统计和 HDF5 验证器从固定 900 方向改为
+  动态方向数，文件发现从 HUTUBS 专用 `pp*/n*.h5` 泛化为 `*/*.h5`；已用旧
+  HUTUBS `pp1/n03.h5` 回归验证 900 点路径不变。SONICOM 的方向特征第六列为
+  `normalized_solid_angle_weight`，训练统计从 HDF5 属性读取名称，不再硬编码
+  `fliege_weight`。
+- pilot 被试：P0002/P0243/P0238 为 train，P0001/P0277/P0242 为 validation，
+  分别覆盖 `reference_eq_001/006/008`，test 为 0。首先用 P0002/P0001
+  完成真实双被试 smoke test，约 10 秒/人，平均绝对 residual 分别为
+  `3.311601/3.290179 dB`；纯插值 767 点为 `3.331109/3.310949 dB`，
+  证明全 793 点会被输入方向轻微乐观化。
+- 参数扫描：固定 Q26 和其余 MCA 参数，扫描 epsilon
+  `0 / 1e-8 / 1e-6 / 1e-4 / 1e-2 / 3e-2 / 1e-1 / 3e-1 / 1`。选择规则在
+  汇总前固定为“validation 767 点 ERB proxy MAE 最低；再依次以 residual MAE、
+  严格 HRIR-ILD MAE 和较小 epsilon 打破并列”。
+- validation 结果：epsilon `0` 的 767 点 residual/ERB/对侧高频/严格 ILD
+  为 `3.289591 / 1.275841 / 4.779132 / 0.977043 dB`；`0.01` 为
+  `3.276051 / 1.264245 / 4.772924 / 0.986837 dB`；`0.03` 为
+  `3.272364 / 1.265599 / 4.786129 / 1.035681 dB`；`0.1` 已全面退化至
+  `3.380890 / 1.404554 / 5.006937 / 1.340158 dB`。因此 `0.01` 是 ERB
+  内部最优点并被锁定；相对无正则 ERB 改善约 `0.91%`，代价是严格 ILD
+  增加约 `1.00%`。
+- 全量 pilot 验证：9 档 × 6 人共 54 个 HDF5、`39,653,172` 个样本全部通过
+  strict-ILD、有限值、频率覆盖、方向权重、26/767 mask 互补、残差恒等和
+  complete 标记检查；最大 MCA correction 恒等误差
+  `7.6294e-06 dB`，所有 residual 恒等误差为 0。全量 pilot HDF5 约
+  `713.28 MiB`，由 `data/processed/*` 忽略。锁定 epsilon 的 3 名 train
+  被试可正常生成训练统计；逐点 sampler 输出 `(512, 7)`，严格 ILD 双耳 sampler
+  输出 `(2, 4, 463, 7)`，证明 793 点数据已可直接进入现有 MLP/CNN 管线。
+- 结果与配置：评估脚本为
+  `src/mcar/evaluation/evaluate_sonicom_tikhonov_pilot.py`；逐被试 CSV、
+  聚合 CSV 和 JSON 位于
+  `results/sonicom_data_preparation/tikhonov_pilot_v1/`；正式锁定参数位于
+  `configs/experiments/sonicom_q26_residual_v1.json`；完整命令见
+  `experiments/sonicom_data/README.md`。
+- 结论与下一步：SONICOM Q26 MCA residual 链路已经打通，epsilon 锁定为
+  `0.01`。下一步用 6 个 MATLAB worker 导出 262 train + 44 validation
+  共 306 人，继续保持 test 未导出；全量 HDF5 通过后只用 262 名 train 计算
+  归一化统计，再开始 SONICOM-only residual MLP 基线。
+
 ## 2026-07-31：SONICOM-Q26-v1 几何配置与固定被试划分
 
 - 工作目标：在正式 350 人 SONICOM 测量队列上建立不会伪造缺失方向、可供

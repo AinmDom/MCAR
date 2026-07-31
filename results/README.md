@@ -6,7 +6,9 @@
   （Spatial Upsampling by Directional Equalization，SUpDEq）+ SH 和幅度校正与
   时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）基线汇总；
 - `residual_mlp/`：多层感知机（Multi-Layer Perceptron，MLP）v1/v2 的训练指标与严格重建结果；
-- `residual_mlp_cnn/`：v3 的训练指标、严格重建表格和精选图片。
+- `residual_mlp_cnn/`：v3 的训练指标、严格重建表格和精选图片；
+- `sonicom_data_preparation/`：SONICOM-Q26 几何、MCA pilot 和参数选择的轻量
+  汇总结果。
 
 checkpoint、Hierarchical Data Format version 5（HDF5）、MATLAB MAT-file
 （MAT）、日志及未筛选图片应留在 `artifacts/`。

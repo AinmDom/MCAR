@@ -48,7 +48,7 @@ def list_hdf5_files(
 ) -> list[Path]:
     requested_subjects = set(subject_ids) if subject_ids is not None else None
     files: list[Path] = []
-    for path in sorted((dataset_root / "subjects").glob("pp*/n*.h5")):
+    for path in sorted((dataset_root / "subjects").glob("*/*.h5")):
         with h5py.File(path, "r") as handle:
             current_split = _decode_attribute(handle.attrs["split"])
             subject_id = int(np.asarray(handle.attrs["subject_id"]).item())
@@ -96,9 +96,10 @@ class ResidualBlockSampler:
         with h5py.File(self.files[0], "r") as handle:
             shape = handle["mca_logmag_db"].shape
             direction_shape = handle["direction_features"].shape
-            if len(shape) != 3 or shape[0] != 2 or shape[1] != 900:
+            if len(shape) != 3 or shape[0] != 2:
                 raise ValueError(f"Unexpected spectral shape {shape} in {self.files[0]}")
-            if direction_shape != (900, 6):
+            self.direction_count = int(shape[1])
+            if direction_shape != (self.direction_count, 6):
                 raise ValueError(
                     f"Unexpected direction feature shape {direction_shape} in {self.files[0]}"
                 )
@@ -112,7 +113,11 @@ class ResidualBlockSampler:
         with h5py.File(path, "r") as handle:
             ear_index = int(self.rng.integers(2))
             direction_indices = np.sort(
-                self.rng.choice(900, size=self.directions_per_batch, replace=False)
+                self.rng.choice(
+                    self.direction_count,
+                    size=self.directions_per_batch,
+                    replace=False,
+                )
             )
             frequency_count = handle["mca_logmag_db"].shape[2]
             frequency_indices = np.sort(
@@ -175,9 +180,13 @@ class BinauralSpectrumSampler:
             raise ValueError("At least one HDF5 file is required")
         with h5py.File(self.files[0], "r") as handle:
             shape = handle["mca_logmag_db"].shape
-            if len(shape) != 3 or shape[0] != 2 or shape[1] != 900:
+            if len(shape) != 3 or shape[0] != 2:
                 raise ValueError(f"Unexpected spectral shape {shape} in {self.files[0]}")
-            if handle["direction_features"].shape != (900, 6):
+            self.direction_count = int(shape[1])
+            if handle["direction_features"].shape != (
+                self.direction_count,
+                6,
+            ):
                 raise ValueError(
                     f"Unexpected direction features in {self.files[0]}"
                 )
@@ -216,7 +225,9 @@ class BinauralSpectrumSampler:
         with h5py.File(path, "r") as handle:
             direction_indices = np.sort(
                 self.rng.choice(
-                    900, size=self.directions_per_batch, replace=False
+                    self.direction_count,
+                    size=self.directions_per_batch,
+                    replace=False,
                 )
             )
             mca = handle["mca_logmag_db"][:, direction_indices, :]
@@ -401,9 +412,16 @@ def iterate_file_blocks(
         directions = handle["direction_features"][:]
         frequency_count = frequency_hz.size
         for ear_index in range(2):
-            for direction_start in range(0, 900, directions_per_block):
+            direction_count = handle["mca_logmag_db"].shape[1]
+            for direction_start in range(
+                0, direction_count, directions_per_block
+            ):
                 direction_slice = slice(
-                    direction_start, min(900, direction_start + directions_per_block)
+                    direction_start,
+                    min(
+                        direction_count,
+                        direction_start + directions_per_block,
+                    ),
                 )
                 for frequency_start in range(0, frequency_count, frequencies_per_block):
                     frequency_slice = slice(

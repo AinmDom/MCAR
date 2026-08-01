@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-07-31",
+  "experiment_config": "configs/experiments/sonicom_q26_residual_v1.json",
+  "output_root": "data/processed/sonicom_residual_q26_v1",
+  "tikhonov_epsilon": 0.01,
+  "matlab_worker_count": 6,
+  "export": {
+    "expected_non_test_subjects": 306,
+    "completed_hdf5_files": 306,
+    "train_files": 262,
+    "validation_files": 44,
+    "test_files": 0,
+    "missing_files": 0,
+    "unexpected_files": 0,
+    "test_leaks": 0,
+    "total_bytes": 4254380898,
+    "first_file_completed": "2026-07-31T12:35:46+08:00",
+    "last_file_completed": "2026-07-31T12:47:59+08:00",
+    "first_to_last_completion_seconds": 733
+  },
+  "validation": {
+    "validated_files": 306,
+    "total_residual_samples": 224701308,
+    "mean_subject_absolute_residual_db": 3.255523,
+    "maximum_residual_identity_error_db": 0.0,
+    "strict_ild_metadata_required": true,
+    "all_checks_passed": true
+  },
+  "train_only_statistics": {
+    "subject_count": 262,
+    "sample_count": 192391316,
+    "target_residual_mean_db": -0.062128262808566065,
+    "target_residual_std_population_db": 4.954314859581426,
+    "target_residual_mean_absolute_db": 3.250640100334182,
+    "target_residual_minimum_db": -87.84457397460938,
+    "target_residual_maximum_db": 82.28356170654297
+  },
+  "test_policy": "The locked 44-subject test split was not exported or read."
+}

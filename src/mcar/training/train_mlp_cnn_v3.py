@@ -89,6 +89,29 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--validation-steps", type=int, default=96)
     parser.add_argument("--directions-per-batch", type=int, default=16)
     parser.add_argument("--cnn-channels", type=int, default=48)
+    parser.add_argument(
+        "--interpolation-only",
+        action="store_true",
+        help=(
+            "Sample only directions marked by interpolation_evaluation_mask."
+        ),
+    )
+    parser.add_argument(
+        "--direction-weighted-residual",
+        action="store_true",
+        help=(
+            "Apply direction_features[:, 5] weights to residual SmoothL1 "
+            "and residual MAE."
+        ),
+    )
+    parser.add_argument(
+        "--horizontal-only",
+        action="store_true",
+        help=(
+            "Sample only directions with zero elevation. Intended for "
+            "strict horizontal-plane HRIR ILD fine-tuning."
+        ),
+    )
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--weight-decay", type=float, default=1e-5)
     parser.add_argument("--erb-weight", type=float, default=0.50)
@@ -147,6 +170,8 @@ def serializable_arguments(
 
 def training_stage(arguments: argparse.Namespace) -> str:
     if arguments.ild_loss_mode == "strict_hrir":
+        if arguments.horizontal_only:
+            return "cnn_only_frozen_mlp_strict_horizontal_hrir_ild_v31"
         return "cnn_only_frozen_mlp_strict_hrir_ild_v31"
     return "cnn_only_frozen_mlp"
 
@@ -470,6 +495,7 @@ def calculate_model_losses(
             if arguments.ild_loss_mode == "spectral_proxy"
             else 0.0
         ),
+        arguments.direction_weighted_residual,
     )
     if arguments.ild_loss_mode == "strict_hrir":
         if not isinstance(strict_metadata, dict):
@@ -502,6 +528,8 @@ def make_sampler(
     directions_per_batch: int,
     seed: int,
     strict_ild: bool,
+    interpolation_only: bool,
+    horizontal_only: bool,
 ) -> BinauralSpectrumSampler:
     return BinauralSpectrumSampler(
         files,
@@ -509,6 +537,8 @@ def make_sampler(
         directions_per_batch=directions_per_batch,
         seed=seed,
         strict_ild=strict_ild,
+        interpolation_only=interpolation_only,
+        horizontal_only=horizontal_only,
     )
 
 
@@ -532,6 +562,8 @@ def evaluate(
         directions_per_batch,
         sampler_seed,
         arguments.ild_loss_mode == "strict_hrir",
+        arguments.interpolation_only,
+        arguments.horizontal_only,
     )
     accumulated = LossMetrics()
     delta_mean_absolute_db = 0.0
@@ -649,6 +681,8 @@ def main() -> None:
         arguments.directions_per_batch,
         arguments.seed,
         arguments.ild_loss_mode == "strict_hrir",
+        arguments.interpolation_only,
+        arguments.horizontal_only,
     )
     initial = torch.load(
         arguments.initial_checkpoint,
@@ -727,6 +761,13 @@ def main() -> None:
         "cnn_parameter_count": total_parameter_count(model.cnn),
         "batch_sample_count": train_sampler.batch_size,
         "frequency_count": train_sampler.frequency_count,
+        "eligible_direction_count": int(
+            train_sampler.eligible_direction_indices.size
+        ),
+        "interpolation_only": arguments.interpolation_only,
+        "direction_weighted_residual": (
+            arguments.direction_weighted_residual
+        ),
         "train_subject_count": len(train_files),
         "validation_subject_count": len(validation_files),
         "validation_sampler_seed": validation_seed,

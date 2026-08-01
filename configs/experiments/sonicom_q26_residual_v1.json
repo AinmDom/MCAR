@@ -3,6 +3,7 @@
   "dataset_variant": "FreeFieldCompMinPhase_44kHz",
   "dataset_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1",
   "output_root": "data/processed/sonicom_residual_q26_v1",
+  "training_statistics": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
   "subject_split": "configs/data/sonicom_subject_split_v1.csv",
   "sparse_grid": "configs/data/sonicom_sparse_grid_q26_v1.csv",
   "reference_grid": "configs/data/sonicom_reference_grid_v1.csv",

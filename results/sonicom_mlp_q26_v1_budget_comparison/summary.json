@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-07-31",
+  "status": "completed",
+  "selection_metric": "full validation interpolation-only solid-angle-weighted residual MAE",
+  "full_validation_subject_count": 44,
+  "full_validation_sample_count": 31250648,
+  "mca_baseline": {
+    "mae_db": 3.322288971698815,
+    "rmse_db": 5.029169521740049
+  },
+  "candidates": {
+    "e12": {
+      "training_budget_epochs": 12,
+      "selected_epoch": 12,
+      "elapsed_seconds": 346.34525920000004,
+      "mae_db": 2.8726426137551893,
+      "rmse_db": 4.2651426865882085,
+      "mae_improvement_vs_mca_percent": 13.534233830168741,
+      "wandb_run_url": "https://wandb.ai/luyoung/mcar-sonicom/runs/6wi22jix"
+    },
+    "e20": {
+      "training_budget_epochs": 20,
+      "selected_epoch": 19,
+      "elapsed_seconds": 602.7465629999999,
+      "mae_db": 2.8255148374916392,
+      "rmse_db": 4.218638875081485,
+      "mae_improvement_vs_mca_percent": 14.95276715658952,
+      "mae_improvement_vs_e12_percent": 1.6405722047666569,
+      "wandb_run_url": "https://wandb.ai/luyoung/mcar-sonicom/runs/ek1nvkhh"
+    }
+  },
+  "selected_candidate": "e20",
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_q26_v1_e20/best.pt",
+  "selected_epoch": 19,
+  "test_subject_count_read": 0
+}

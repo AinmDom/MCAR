@@ -1,0 +1,23 @@
+{
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "run_name": "sonicom_mlp_q26_smoke_v1",
+  "purpose": "GPU and data-pipeline smoke training before locking the full SONICOM MLP budget",
+  "epochs": 3,
+  "steps_per_epoch": 120,
+  "validation_steps": 64,
+  "directions_per_batch": 64,
+  "frequencies_per_batch": 128,
+  "direction_sampling": "solid_angle",
+  "interpolation_only": true,
+  "width": 128,
+  "block_count": 3,
+  "learning_rate": 0.001,
+  "weight_decay": 0.00001,
+  "seed": 20260731,
+  "amp": true,
+  "wandb_mode": "online",
+  "wandb_project": "mcar-sonicom",
+  "wandb_group": "q26-smoke",
+  "wandb_job_type": "mlp-v1-smoke",
+  "test_policy": "The locked test split must not be exported or read."
+}

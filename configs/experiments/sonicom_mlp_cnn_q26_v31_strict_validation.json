@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "split": "val",
+  "validation_subject_count": 44,
+  "test_subject_count_read": 0,
+  "v3_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "v31_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v31_horizontal_formal_ild200/best.pt",
+  "v3_prediction_run_name": "sonicom_q26_validation_mlp_cnn_v3",
+  "v31_prediction_run_name": "sonicom_q26_validation_mlp_cnn_v31",
+  "output_name": "sonicom_mlp_cnn_q26_v31_strict_validation",
+  "methods": [
+    "MCA",
+    "MLP v1",
+    "MLP v2",
+    "MLP+CNN v3",
+    "MLP+CNN v3.1"
+  ],
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "aggregate_metrics_db": {
+    "full_sphere_erb": {
+      "v3": 0.8874671710397809,
+      "v31": 0.9178346585846809,
+      "v31_improvement_vs_v3_percent": -3.4218153116943646
+    },
+    "contralateral_25_erb": {
+      "v3": 1.3882652827403683,
+      "v31": 1.3989969268031006,
+      "v31_improvement_vs_v3_percent": -0.7730254581853808
+    },
+    "contralateral_high_frequency": {
+      "v3": 3.6493898359935457,
+      "v31": 3.7129546597995557,
+      "v31_improvement_vs_v3_percent": -1.7417931945520564
+    },
+    "horizontal_ild_mae": {
+      "v3": 0.6448039040552092,
+      "v31": 0.6229048257200536,
+      "v31_improvement_vs_v3_percent": 3.396238483891151
+    }
+  },
+  "improved_subject_count_v31_vs_v3": {
+    "full_sphere_erb": 0,
+    "contralateral_25_erb": 18,
+    "contralateral_high_frequency": 3,
+    "horizontal_ild_mae": 29
+  },
+  "result_root": "results/sonicom_mlp_cnn_q26_v31_strict_validation",
+  "test_policy": "The locked test split must not be exported or read."
+}

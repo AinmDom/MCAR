@@ -38,10 +38,22 @@ def main() -> None:
                 data=rng.normal(size=shape).astype(np.float32),
             )
             directions = np.zeros((7, 6), dtype=np.float32)
-            directions[:, 2:5] = rng.normal(size=(7, 3))
-            directions[:, 5] = 1.0 / 7.0
+            directions[:, 2] = np.arange(7, dtype=np.float32)
+            directions[:, 1] = np.array(
+                [10.0, 0.0, 0.0, 15.0, 0.0, -10.0, 0.0],
+                dtype=np.float32,
+            )
+            directions[:, 5] = np.arange(1, 8, dtype=np.float32)
+            directions[:, 5] /= np.sum(directions[:, 5])
             handle.create_dataset(
                 "direction_features", data=directions
+            )
+            handle.create_dataset(
+                "interpolation_evaluation_mask",
+                data=np.array(
+                    [False, False, True, True, True, True, True],
+                    dtype=np.uint8,
+                ),
             )
             handle.create_dataset(
                 "frequency_hz",
@@ -74,6 +86,23 @@ def main() -> None:
         assert features.shape == (12, 7)
         assert target.shape == (12, 1)
 
+        weighted_sampler = ResidualBlockSampler(
+            files,
+            normalization,
+            directions_per_batch=3,
+            frequencies_per_batch=4,
+            seed=1,
+            direction_sampling="solid_angle",
+            interpolation_only=True,
+        )
+        weighted_features, weighted_target, _ = (
+            weighted_sampler.sample_batch()
+        )
+        assert weighted_features.shape == (12, 7)
+        assert weighted_target.shape == (12, 1)
+        assert np.all(weighted_features[:, 2] >= 2.0)
+        assert weighted_sampler.eligible_direction_indices.size == 5
+
         binaural_sampler = BinauralSpectrumSampler(
             files,
             normalization,
@@ -93,6 +122,34 @@ def main() -> None:
         assert binaural_target.shape == (2, 4, 5)
         assert sampled_directions.shape == (4, 6)
         assert frequency.shape == (5,)
+
+        interpolation_binaural_sampler = BinauralSpectrumSampler(
+            files,
+            normalization,
+            directions_per_batch=4,
+            seed=1,
+            interpolation_only=True,
+        )
+        interpolation_sample = (
+            interpolation_binaural_sampler.sample_batch()
+        )
+        assert np.all(interpolation_sample[4][:, 2] >= 2.0)
+        assert (
+            interpolation_binaural_sampler.eligible_direction_indices.size
+            == 5
+        )
+
+        horizontal_binaural_sampler = BinauralSpectrumSampler(
+            files,
+            normalization,
+            directions_per_batch=3,
+            seed=1,
+            interpolation_only=True,
+            horizontal_only=True,
+        )
+        horizontal_sample = horizontal_binaural_sampler.sample_batch()
+        assert np.all(np.abs(horizontal_sample[4][:, 1]) <= 1e-6)
+        assert horizontal_binaural_sampler.eligible_direction_indices.size == 3
         print(
             {
                 "status": "passed",

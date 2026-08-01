@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v31_horizontal_formal_ild200/best.pt",
+  "selected_epoch": 6,
+  "training_stage": "cnn_only_frozen_mlp_strict_horizontal_hrir_ild_v31",
+  "training": {
+    "epochs": 6,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "elapsed_seconds": 296.5633364,
+    "peak_cuda_allocated_mib": 221.96337890625,
+    "skipped_optimizer_steps": 0
+  },
+  "fixed_horizontal_validation": {
+    "initial_v3": {
+      "residual_mae_db": 2.7217178319891295,
+      "erb_mae_db": 1.1305105406790972,
+      "contralateral_high_frequency_mae_db": 3.6380680898825326,
+      "strict_hrir_ild_mae_db": 0.6595251290127635
+    },
+    "v31_epoch_6": {
+      "residual_mae_db": 2.682673109074434,
+      "erb_mae_db": 1.099313821643591,
+      "contralateral_high_frequency_mae_db": 3.5850385949015617,
+      "strict_hrir_ild_mae_db": 0.6357048870995641
+    },
+    "improvement_percent": {
+      "residual_mae": 1.43456,
+      "erb_mae": 2.75952,
+      "contralateral_high_frequency_mae": 1.45763,
+      "strict_hrir_ild_mae": 3.61173
+    }
+  },
+  "full_validation_diagnostic": {
+    "subject_count": 44,
+    "sample_count": 31250648,
+    "raw_residual_mae_db": 2.6377481095456448,
+    "raw_residual_rmse_db": 3.9790805204398407,
+    "raw_mae_improvement_vs_v2_percent": 6.056512161629435,
+    "full_sphere_strict_hrir_ild_mae_db": 0.6299764999080925,
+    "note": "The model is optimized for horizontal strict ILD; full-sphere ILD is diagnostic only."
+  },
+  "wandb": {
+    "run_id": "ta1d0lzk",
+    "sync_status": "offline"
+  },
+  "prediction": {
+    "run_name": "sonicom_q26_validation_mlp_cnn_v31",
+    "subject_count": 44,
+    "elapsed_seconds": 9.2279024,
+    "status": "completed"
+  },
+  "strict_matlab_validation_status": "completed",
+  "strict_matlab_validation": {
+    "result_root": "results/sonicom_mlp_cnn_q26_v31_strict_validation",
+    "full_sphere_erb_mae_db": 0.9178346585846809,
+    "contralateral_25_erb_mae_db": 1.3989969268031006,
+    "contralateral_high_frequency_mae_db": 3.7129546597995557,
+    "horizontal_ild_mae_db": 0.6229048257200536,
+    "horizontal_ild_improvement_vs_v3_percent": 3.396238483891151
+  },
+  "test_subject_count_read": 0
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "selected_epoch": 10,
+  "model": {
+    "total_parameter_count": 174627,
+    "frozen_mlp_parameter_count": 100225,
+    "trainable_cnn_parameter_count": 74402
+  },
+  "training": {
+    "epochs": 10,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "elapsed_seconds": 376.4719739,
+    "peak_cuda_allocated_mib": 220.46435546875,
+    "total_skipped_optimizer_steps": 0
+  },
+  "fixed_sampled_validation": {
+    "initial_v2": {
+      "residual_mae_db": 2.825701452791691,
+      "erb_proxy_mae_db": 1.1193633272002141,
+      "contralateral_high_frequency_mae_db": 3.993006020784378,
+      "ild_proxy_mae_db": 0.6512903071319064
+    },
+    "v3_epoch_10": {
+      "residual_mae_db": 2.5996135423580804,
+      "erb_proxy_mae_db": 1.0528539872417848,
+      "contralateral_high_frequency_mae_db": 3.6593492378791175,
+      "ild_proxy_mae_db": 0.6217703570922216
+    },
+    "improvement_percent": {
+      "residual_mae": 8.00113,
+      "erb_proxy_mae": 5.94171,
+      "contralateral_high_frequency_mae": 8.35603,
+      "ild_proxy_mae": 4.53253
+    }
+  },
+  "full_validation": {
+    "subject_count": 44,
+    "sample_count": 31250648,
+    "v3_mae_db": 2.5818727332680944,
+    "v3_rmse_db": 3.9351661322834697,
+    "v2_mae_db": 2.807803042275672,
+    "v2_rmse_db": 4.210356341964789,
+    "mca_mae_db": 3.322288883436573,
+    "mae_improvement_vs_v2_percent": 8.046515571279722,
+    "mae_improvement_vs_mca_percent": 22.28632657021062,
+    "full_sphere_v2_strict_hrir_ild_mae_db": 0.6411568152135325,
+    "full_sphere_v3_strict_hrir_ild_mae_db": 0.6219803616958941,
+    "strict_hrir_ild_improvement_vs_v2_percent": 2.9909147126903486,
+    "improved_subject_count_mae_vs_v2": 44,
+    "improved_subject_count_strict_ild_vs_v2": 35
+  },
+  "wandb": {
+    "run_id": "5mjq0y51",
+    "sync_status": "offline"
+  },
+  "test_subject_count_read": 0,
+  "next_stage": "Strict MATLAB reconstruction evaluation for AKerbError, contralateral high frequency, horizontal HRIR ILD, and 44-subject HRTF overview."
+}

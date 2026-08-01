@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "candidate_ild_weights": [0.5, 1.0, 2.0],
+  "selected_ild_weight": 2.0,
+  "selection_reason": "All candidates passed the amplitude hard constraints; weight 2.0 maximized strict horizontal HRIR ILD improvement at 0.92895 percent.",
+  "selected_candidate": {
+    "run_name": "sonicom_mlp_cnn_q26_v31_horizontal_pilot_ild200",
+    "wandb_run_id": "3qp5jdhc",
+    "best_epoch": 3,
+    "residual_improvement_percent": 0.87286,
+    "erb_improvement_percent": 1.22368,
+    "high_frequency_improvement_percent": 1.00674,
+    "strict_horizontal_ild_improvement_percent": 0.92895,
+    "elapsed_seconds": 68.0319964,
+    "peak_cuda_allocated_mib": 221.96337890625,
+    "skipped_optimizer_steps": 0
+  },
+  "wandb_sync_status": "offline",
+  "test_subject_count_read": 0
+}

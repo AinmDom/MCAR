@@ -31,6 +31,7 @@ from mcar.paths import project_root
 @dataclass
 class ErrorAccumulator:
     sample_count: int = 0
+    metric_weight_sum: float = 0.0
     mca_absolute_error: float = 0.0
     mca_squared_error: float = 0.0
     v2_absolute_error: float = 0.0
@@ -48,31 +49,65 @@ class ErrorAccumulator:
         v2_prediction_db: torch.Tensor,
         v3_prediction_db: torch.Tensor,
         cnn_delta_db: torch.Tensor,
+        direction_weights: torch.Tensor | None = None,
     ) -> None:
         mca_error = target_db
         v2_error = target_db - v2_prediction_db
         v3_error = target_db - v3_prediction_db
         self.sample_count += target_db.numel()
+        if direction_weights is None:
+            weights = torch.ones(
+                target_db.shape[1], device=target_db.device, dtype=torch.float32
+            )
+        else:
+            weights = direction_weights.float()
+        sample_weights = weights.view(1, -1, 1)
+        self.metric_weight_sum += float(
+            torch.sum(weights, dtype=torch.float64).item()
+            * target_db.shape[0]
+            * target_db.shape[2]
+        )
         self.mca_absolute_error += float(
-            torch.sum(torch.abs(mca_error), dtype=torch.float64).item()
+            torch.sum(
+                torch.abs(mca_error) * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
         self.mca_squared_error += float(
-            torch.sum(mca_error.square(), dtype=torch.float64).item()
+            torch.sum(
+                mca_error.square() * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
         self.v2_absolute_error += float(
-            torch.sum(torch.abs(v2_error), dtype=torch.float64).item()
+            torch.sum(
+                torch.abs(v2_error) * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
         self.v2_squared_error += float(
-            torch.sum(v2_error.square(), dtype=torch.float64).item()
+            torch.sum(
+                v2_error.square() * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
         self.v3_absolute_error += float(
-            torch.sum(torch.abs(v3_error), dtype=torch.float64).item()
+            torch.sum(
+                torch.abs(v3_error) * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
         self.v3_squared_error += float(
-            torch.sum(v3_error.square(), dtype=torch.float64).item()
+            torch.sum(
+                v3_error.square() * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
         self.cnn_delta_absolute_sum += float(
-            torch.sum(torch.abs(cnn_delta_db), dtype=torch.float64).item()
+            torch.sum(
+                torch.abs(cnn_delta_db) * sample_weights,
+                dtype=torch.float64,
+            ).item()
         )
 
     def merge(self, other: "ErrorAccumulator") -> None:
@@ -109,22 +144,25 @@ class ErrorAccumulator:
     def metrics(self) -> dict[str, float | int]:
         if self.sample_count == 0:
             raise ValueError("Cannot calculate metrics without samples")
-        mca_mae = self.mca_absolute_error / self.sample_count
-        v2_mae = self.v2_absolute_error / self.sample_count
-        v3_mae = self.v3_absolute_error / self.sample_count
+        if self.metric_weight_sum <= 0.0:
+            raise ValueError("Metric weight sum must be positive")
+        mca_mae = self.mca_absolute_error / self.metric_weight_sum
+        v2_mae = self.v2_absolute_error / self.metric_weight_sum
+        v3_mae = self.v3_absolute_error / self.metric_weight_sum
         output: dict[str, float | int] = {
             "sample_count": self.sample_count,
+            "metric_weight_sum": self.metric_weight_sum,
             "mca_zero_residual_mae_db": mca_mae,
             "mca_zero_residual_rmse_db": math.sqrt(
-                self.mca_squared_error / self.sample_count
+                self.mca_squared_error / self.metric_weight_sum
             ),
             "v2_mlp_mae_db": v2_mae,
             "v2_mlp_rmse_db": math.sqrt(
-                self.v2_squared_error / self.sample_count
+                self.v2_squared_error / self.metric_weight_sum
             ),
             "v3_mlp_cnn_mae_db": v3_mae,
             "v3_mlp_cnn_rmse_db": math.sqrt(
-                self.v3_squared_error / self.sample_count
+                self.v3_squared_error / self.metric_weight_sum
             ),
             "v2_vs_mca_mae_reduction_percent": (
                 100.0 * (mca_mae - v2_mae) / mca_mae
@@ -136,7 +174,7 @@ class ErrorAccumulator:
                 100.0 * (v2_mae - v3_mae) / v2_mae
             ),
             "cnn_delta_mean_absolute_db": (
-                self.cnn_delta_absolute_sum / self.sample_count
+                self.cnn_delta_absolute_sum / self.metric_weight_sum
             ),
         }
         if self.strict_ild_direction_weight_sum > 0:
@@ -173,6 +211,16 @@ def parse_arguments() -> argparse.Namespace:
         default="val",
     )
     parser.add_argument("--directions-per-block", type=int, default=32)
+    parser.add_argument(
+        "--direction-weighting",
+        choices=("uniform", "solid_angle"),
+        default="uniform",
+    )
+    parser.add_argument(
+        "--interpolation-only",
+        action="store_true",
+        help="Evaluate only interpolation_evaluation_mask directions.",
+    )
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--no-amp", action="store_true")
     parser.add_argument(
@@ -253,7 +301,7 @@ def write_per_subject_csv(
 
 def strict_ild_metadata_to_device(
     handle: h5py.File,
-    direction_slice: slice,
+    direction_slice: slice | np.ndarray,
     device: torch.device,
 ) -> dict[str, torch.Tensor | int]:
     if "strict_ild" not in handle:
@@ -360,16 +408,48 @@ def main() -> None:
                     f"{file_path} lacks schema 1.1 strict ILD metadata"
                 )
 
+            eligible_mask = np.ones(direction_count, dtype=bool)
+            if arguments.interpolation_only:
+                if "interpolation_evaluation_mask" not in handle:
+                    raise ValueError(
+                        f"{file_path} lacks interpolation evaluation mask"
+                    )
+                eligible_mask = np.squeeze(
+                    handle["interpolation_evaluation_mask"][:]
+                ).astype(bool)
+            eligible_directions = np.flatnonzero(eligible_mask)
+            all_direction_features = np.asarray(
+                handle["direction_features"][:], dtype=np.float32
+            )
+            if arguments.direction_weighting == "solid_angle":
+                all_direction_weights = np.asarray(
+                    all_direction_features[:, 5], dtype=np.float32
+                )
+                selected_weight_sum = float(
+                    np.sum(all_direction_weights[eligible_directions])
+                )
+                if selected_weight_sum <= 0.0:
+                    raise ValueError(f"Invalid direction weights in {file_path}")
+                all_direction_weights = (
+                    all_direction_weights / selected_weight_sum
+                )
+            else:
+                all_direction_weights = np.ones(
+                    direction_count, dtype=np.float32
+                )
+
             for direction_start in range(
                 0,
-                direction_count,
+                eligible_directions.size,
                 arguments.directions_per_block,
             ):
                 direction_stop = min(
-                    direction_count,
+                    eligible_directions.size,
                     direction_start + arguments.directions_per_block,
                 )
-                direction_slice = slice(direction_start, direction_stop)
+                direction_slice = eligible_directions[
+                    direction_start:direction_stop
+                ]
                 mca_db = np.asarray(
                     handle["mca_logmag_db"][:, direction_slice, :],
                     dtype=np.float32,
@@ -383,9 +463,12 @@ def main() -> None:
                     dtype=np.float32,
                 )
                 direction_features = np.asarray(
-                    handle["direction_features"][direction_slice, :],
+                    all_direction_features[direction_slice, :],
                     dtype=np.float32,
                 )
+                direction_weights = torch.from_numpy(
+                    all_direction_weights[direction_slice]
+                ).to(device, non_blocking=True)
                 point_features = build_point_features(
                     mca_db,
                     correction_db,
@@ -428,6 +511,7 @@ def main() -> None:
                     v2_prediction_db,
                     v3_prediction_db,
                     cnn_delta_db,
+                    direction_weights,
                 )
                 if arguments.strict_ild:
                     strict_metadata = strict_ild_metadata_to_device(
@@ -452,7 +536,9 @@ def main() -> None:
                         direction_weights,
                     )
 
-        expected_subject_samples = 2 * direction_count * frequency_count
+        expected_subject_samples = (
+            2 * eligible_directions.size * frequency_count
+        )
         if subject.sample_count != expected_subject_samples:
             raise AssertionError(
                 f"pp{subject_id} sample count {subject.sample_count} "
@@ -494,7 +580,10 @@ def main() -> None:
         / f"{arguments.split}_metrics.json"
     )
     v2_reference_comparison: Optional[dict[str, object]] = None
-    if v2_reference_metrics_path.exists():
+    if (
+        arguments.dataset_root.name == "hutubs_residual_v1_n03"
+        and v2_reference_metrics_path.exists()
+    ):
         reference = json.loads(
             v2_reference_metrics_path.read_text(encoding="utf-8")
         )
@@ -533,6 +622,8 @@ def main() -> None:
         "device": torch.cuda.get_device_name(0),
         "amp": use_amp,
         "directions_per_block": arguments.directions_per_block,
+        "direction_weighting": arguments.direction_weighting,
+        "interpolation_only": arguments.interpolation_only,
         "strict_ild": arguments.strict_ild,
         "elapsed_seconds": time.perf_counter() - evaluation_started,
         "peak_cuda_allocated_mib": (

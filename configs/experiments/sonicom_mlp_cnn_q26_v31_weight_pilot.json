@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "base_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "initial_cnn_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "training_stage": "cnn_only_frozen_mlp_strict_horizontal_hrir_ild_v31",
+  "epochs": 3,
+  "steps_per_epoch": 120,
+  "validation_steps": 64,
+  "directions_per_batch": 32,
+  "eligible_direction_count": 72,
+  "interpolation_only": true,
+  "horizontal_only": true,
+  "direction_weighted_residual": true,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.00001,
+  "erb_weight": 0.75,
+  "high_frequency_weight": 0.25,
+  "ild_loss_mode": "strict_hrir",
+  "ild_weight_candidates": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "gradient_clip": 5.0,
+  "seed": 20260731,
+  "selection_rule": {
+    "checkpoint_per_candidate": "best.pt selected by the candidate's total validation objective",
+    "hard_constraints": [
+      "strict horizontal HRIR ILD MAE must improve relative to initial v3",
+      "validation residual MAE may not regress by more than 0.5 percent",
+      "validation ERB proxy may not regress by more than 0.5 percent",
+      "validation contralateral high-frequency MAE may not regress by more than 0.5 percent"
+    ],
+    "ranking": [
+      "largest relative strict horizontal HRIR ILD improvement",
+      "largest minimum relative improvement across residual, ERB, and high-frequency metrics",
+      "lowest ILD weight"
+    ]
+  },
+  "wandb_mode": "offline",
+  "wandb_project": "mcar-sonicom",
+  "wandb_group": "q26-v31-horizontal-strict-ild-pilot",
+  "selected_ild_weight": 2.0,
+  "selection_result": "All candidates passed the hard constraints; weight 2.0 produced the largest strict horizontal HRIR ILD improvement.",
+  "result_root": "results/sonicom_mlp_cnn_q26_v31_weight_pilot",
+  "test_policy": "The locked test split must not be exported or read."
+}

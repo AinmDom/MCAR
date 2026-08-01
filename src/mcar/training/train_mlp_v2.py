@@ -6,10 +6,12 @@ import argparse
 import csv
 import json
 import math
+import os
 import random
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Any, Optional
 
 import numpy as np
 import torch
@@ -68,8 +70,34 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--high-frequency-weight", type=float, default=0.25)
     parser.add_argument("--ild-weight", type=float, default=0.25)
     parser.add_argument("--seed", type=int, default=20260724)
+    parser.add_argument(
+        "--interpolation-only",
+        action="store_true",
+        help="Exclude sparse input directions from paired-ear sampling.",
+    )
+    parser.add_argument(
+        "--direction-weighted-residual",
+        action="store_true",
+        help=(
+            "Apply direction_features[:, 5] weights to residual SmoothL1 "
+            "and MAE, matching the perceptual loss spatial quadrature."
+        ),
+    )
     parser.add_argument("--overfit-subject", type=int)
     parser.add_argument("--no-amp", action="store_true")
+    parser.add_argument(
+        "--wandb-mode",
+        choices=("disabled", "online", "offline"),
+        default="disabled",
+    )
+    parser.add_argument("--wandb-project", default="mcar-residual-mlp-v2")
+    parser.add_argument("--wandb-entity")
+    parser.add_argument("--wandb-run-name")
+    parser.add_argument("--wandb-group")
+    parser.add_argument("--wandb-job-type", default="mlp-v2-train")
+    parser.add_argument("--wandb-tags", nargs="*")
+    parser.add_argument("--wandb-notes")
+    parser.add_argument("--wandb-watch", action="store_true")
     return parser.parse_args()
 
 
@@ -85,6 +113,71 @@ def serializable_arguments(arguments: argparse.Namespace) -> dict[str, object]:
         name: str(value) if isinstance(value, Path) else value
         for name, value in vars(arguments).items()
     }
+
+
+def initialize_wandb(
+    arguments: argparse.Namespace,
+    configuration: dict[str, object],
+    output_dir: Path,
+    model: nn.Module,
+) -> Optional[Any]:
+    if arguments.wandb_mode == "disabled":
+        return None
+    wandb_state_root = output_dir / "wandb_state"
+    directories = {
+        "WANDB_DIR": output_dir,
+        "WANDB_DATA_DIR": wandb_state_root / "data",
+        "WANDB_CACHE_DIR": wandb_state_root / "cache",
+        "WANDB_CONFIG_DIR": wandb_state_root / "config",
+        "WANDB_ARTIFACT_DIR": wandb_state_root / "artifacts",
+    }
+    for environment_name, directory in directories.items():
+        directory.mkdir(parents=True, exist_ok=True)
+        os.environ.setdefault(environment_name, str(directory.resolve()))
+    try:
+        import wandb
+    except ImportError as error:
+        raise RuntimeError(
+            "W&B tracking was requested but wandb is not installed."
+        ) from error
+    run = wandb.init(
+        project=arguments.wandb_project,
+        entity=arguments.wandb_entity,
+        name=arguments.wandb_run_name or arguments.run_name,
+        group=arguments.wandb_group,
+        job_type=arguments.wandb_job_type,
+        tags=arguments.wandb_tags or ["mlp-v2"],
+        notes=arguments.wandb_notes,
+        config={
+            **serializable_arguments(arguments),
+            "device": configuration["device"],
+            "parameter_count": configuration["parameter_count"],
+            "paired_batch_samples": configuration["batch_size"],
+            "train_subject_count": configuration["train_subject_count"],
+            "validation_subject_count": configuration[
+                "validation_subject_count"
+            ],
+            "eligible_direction_count": configuration[
+                "eligible_direction_count"
+            ],
+        },
+        mode=arguments.wandb_mode,
+        dir=str(output_dir),
+    )
+    run.define_metric("epoch")
+    run.define_metric("train/*", step_metric="epoch")
+    run.define_metric("validation/*", step_metric="epoch")
+    run.define_metric("optimizer/*", step_metric="epoch")
+    run.define_metric("system/*", step_metric="epoch")
+    run.define_metric("checkpoint/*", step_metric="epoch")
+    if arguments.wandb_watch:
+        run.watch(
+            model,
+            log="gradients",
+            log_freq=max(1, arguments.steps_per_epoch // 5),
+            log_graph=False,
+        )
+    return run
 
 
 def erb_rate(frequency_hz: np.ndarray) -> np.ndarray:
@@ -141,16 +234,33 @@ def calculate_losses(
     erb_weight: float,
     high_frequency_weight: float,
     ild_weight: float,
+    direction_weighted_residual: bool = False,
 ) -> tuple[torch.Tensor, LossMetrics]:
     prediction_db = prediction_normalized.float() * target_std + target_mean
     corrected_db = mca_db.float() + prediction_db
     reference_db = mca_db.float() + target_db.float()
-    residual_smooth_l1 = nn.functional.smooth_l1_loss(
-        prediction_normalized.float(), target_normalized.float(), beta=1.0
-    )
-    residual_mae = torch.mean(torch.abs(prediction_db - target_db))
-
     direction_weights = direction_features[:, 5].float()
+    if direction_weighted_residual:
+        residual_smooth_l1 = weighted_direction_mean(
+            nn.functional.smooth_l1_loss(
+                prediction_normalized.float(),
+                target_normalized.float(),
+                beta=1.0,
+                reduction="none",
+            ),
+            direction_weights,
+        )
+        residual_mae = weighted_direction_mean(
+            torch.abs(prediction_db - target_db),
+            direction_weights,
+        )
+    else:
+        residual_smooth_l1 = nn.functional.smooth_l1_loss(
+            prediction_normalized.float(),
+            target_normalized.float(),
+            beta=1.0,
+        )
+        residual_mae = torch.mean(torch.abs(prediction_db - target_db))
     predicted_erb_db = band_energy_db(corrected_db, log_erb_weights)
     reference_erb_db = band_energy_db(reference_db, log_erb_weights)
     erb_mae = weighted_direction_mean(
@@ -278,6 +388,7 @@ def evaluate(
             arguments.erb_weight,
             arguments.high_frequency_weight,
             arguments.ild_weight,
+            arguments.direction_weighted_residual,
         )
         add_metrics(accumulated, metrics)
     return average_metrics(accumulated, steps)
@@ -326,15 +437,19 @@ def main() -> None:
     train_sampler = BinauralSpectrumSampler(
         train_files,
         normalization,
-        arguments.directions_per_batch,
-        arguments.seed,
+        directions_per_batch=arguments.directions_per_batch,
+        seed=arguments.seed,
+        interpolation_only=arguments.interpolation_only,
     )
-    validation_sampler = BinauralSpectrumSampler(
-        validation_files,
-        normalization,
-        arguments.directions_per_batch,
-        arguments.seed + 1,
-    )
+
+    def make_validation_sampler() -> BinauralSpectrumSampler:
+        return BinauralSpectrumSampler(
+            validation_files,
+            normalization,
+            directions_per_batch=arguments.directions_per_batch,
+            seed=arguments.seed + 1,
+            interpolation_only=arguments.interpolation_only,
+        )
 
     initial = torch.load(
         arguments.initial_checkpoint, map_location=device, weights_only=False
@@ -377,22 +492,99 @@ def main() -> None:
         "frequency_count": train_sampler.frequency_count,
         "erb_proxy_band_count": int(erb_weights.shape[0]),
         "initial_checkpoint_epoch": int(initial["epoch"]),
+        "initial_checkpoint": str(arguments.initial_checkpoint),
+        "eligible_direction_count": int(
+            train_sampler.eligible_direction_indices.size
+        ),
+        "interpolation_only": arguments.interpolation_only,
+        "direction_weighted_residual": (
+            arguments.direction_weighted_residual
+        ),
+        "train_subject_count": len(train_files),
+        "validation_subject_count": len(validation_files),
+        "validation_sampler_seed": arguments.seed + 1,
+        "validation_batches_are_fixed_each_epoch": True,
         "train_files": [str(path) for path in train_files],
         "validation_files": [str(path) for path in validation_files],
     }
+    wandb_run = initialize_wandb(
+        arguments,
+        configuration,
+        output_dir,
+        model,
+    )
+    configuration["wandb"] = {
+        "enabled": wandb_run is not None,
+        "mode": arguments.wandb_mode,
+        "project": arguments.wandb_project,
+        "entity": arguments.wandb_entity,
+        "run_name": arguments.wandb_run_name or arguments.run_name,
+        "run_id": None if wandb_run is None else wandb_run.id,
+        "run_url": None if wandb_run is None else wandb_run.url,
+    }
     (output_dir / "configuration.json").write_text(
-        json.dumps(configuration, indent=2), encoding="utf-8"
+        json.dumps(configuration, indent=2) + "\n", encoding="utf-8"
     )
     print(
         f"device={configuration['device']}, "
         f"parameters={configuration['parameter_count']}, "
         f"paired_batch_samples={configuration['batch_size']}, "
-        f"train_files={len(train_files)}, val_files={len(validation_files)}"
+        f"train_files={len(train_files)}, val_files={len(validation_files)}, "
+        f"eligible_directions={configuration['eligible_direction_count']}"
     )
+
+    initial_validation = evaluate(
+        model,
+        make_validation_sampler(),
+        arguments.validation_steps,
+        device,
+        use_amp,
+        log_erb_weights,
+        normalization,
+        arguments,
+    )
+    (output_dir / "initial_validation.json").write_text(
+        json.dumps(asdict(initial_validation), indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "initial_v1 "
+        f"total={initial_validation.total:.5f} "
+        f"res={initial_validation.residual_mae_db:.3f} "
+        f"erb={initial_validation.erb_mae_db:.3f} "
+        f"hf={initial_validation.contralateral_high_frequency_mae_db:.3f} "
+        f"ild={initial_validation.ild_mae_db:.3f}"
+    )
+    if wandb_run is not None:
+        wandb_run.log(
+            {
+                "epoch": 0,
+                "validation/total_loss": initial_validation.total,
+                "validation/residual_mae_db": (
+                    initial_validation.residual_mae_db
+                ),
+                "validation/erb_mae_db": initial_validation.erb_mae_db,
+                "validation/contralateral_high_frequency_mae_db": (
+                    initial_validation.contralateral_high_frequency_mae_db
+                ),
+                "validation/ild_spectral_proxy_mae_db": (
+                    initial_validation.ild_mae_db
+                ),
+                "optimizer/learning_rate": float(
+                    optimizer.param_groups[0]["lr"]
+                ),
+                "optimizer/amp_scale": float(scaler.get_scale()),
+                "checkpoint/is_best": 0,
+                "checkpoint/best_epoch_so_far": 0,
+            },
+            step=0,
+        )
 
     history: list[EpochMetrics] = []
     best_validation_total = float("inf")
+    best_epoch = 0
     run_started = time.perf_counter()
+    torch.cuda.reset_peak_memory_stats()
     for epoch in range(1, arguments.epochs + 1):
         epoch_started = time.perf_counter()
         model.train()
@@ -423,6 +615,7 @@ def main() -> None:
                 arguments.erb_weight,
                 arguments.high_frequency_weight,
                 arguments.ild_weight,
+                arguments.direction_weighted_residual,
             )
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
@@ -434,7 +627,7 @@ def main() -> None:
         train_metrics = average_metrics(accumulated, arguments.steps_per_epoch)
         validation_metrics = evaluate(
             model,
-            validation_sampler,
+            make_validation_sampler(),
             arguments.validation_steps,
             device,
             use_amp,
@@ -483,8 +676,10 @@ def main() -> None:
             metrics,
             arguments,
         )
-        if validation_metrics.total < best_validation_total:
+        is_best = validation_metrics.total < best_validation_total
+        if is_best:
             best_validation_total = validation_metrics.total
+            best_epoch = epoch
             save_checkpoint(
                 output_dir / "best.pt",
                 model,
@@ -500,16 +695,84 @@ def main() -> None:
             writer = csv.DictWriter(handle, fieldnames=asdict(metrics).keys())
             writer.writeheader()
             writer.writerows(asdict(item) for item in history)
+        if wandb_run is not None:
+            wandb_run.log(
+                {
+                    "epoch": epoch,
+                    "train/total_loss": metrics.train_total_loss,
+                    "train/residual_mae_db": metrics.train_residual_mae_db,
+                    "train/erb_mae_db": metrics.train_erb_mae_db,
+                    "train/contralateral_high_frequency_mae_db": (
+                        metrics.train_contralateral_high_frequency_mae_db
+                    ),
+                    "train/ild_spectral_proxy_mae_db": (
+                        metrics.train_ild_mae_db
+                    ),
+                    "validation/total_loss": metrics.validation_total_loss,
+                    "validation/residual_mae_db": (
+                        metrics.validation_residual_mae_db
+                    ),
+                    "validation/erb_mae_db": metrics.validation_erb_mae_db,
+                    "validation/contralateral_high_frequency_mae_db": (
+                        metrics.validation_contralateral_high_frequency_mae_db
+                    ),
+                    "validation/ild_spectral_proxy_mae_db": (
+                        metrics.validation_ild_mae_db
+                    ),
+                    "optimizer/learning_rate": metrics.learning_rate,
+                    "optimizer/amp_scale": float(scaler.get_scale()),
+                    "system/epoch_seconds": metrics.elapsed_seconds,
+                    "system/peak_cuda_allocated_mib": (
+                        torch.cuda.max_memory_allocated() / (1024.0**2)
+                    ),
+                    "checkpoint/is_best": int(is_best),
+                    "checkpoint/best_epoch_so_far": best_epoch,
+                },
+                step=epoch,
+            )
 
+    best_metrics = history[best_epoch - 1]
     report = {
+        "status": "completed",
         "elapsed_seconds": time.perf_counter() - run_started,
         "best_validation_total_loss": best_validation_total,
+        "best_epoch": best_epoch,
         "completed_epochs": arguments.epochs,
+        "peak_cuda_allocated_mib": (
+            torch.cuda.max_memory_allocated() / (1024.0**2)
+        ),
+        "wandb": configuration["wandb"],
+        "initial_validation": asdict(initial_validation),
+        "best_epoch_metrics": asdict(best_metrics),
     }
     (output_dir / "training_report.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(report, indent=2))
+    if wandb_run is not None:
+        wandb_run.summary.update(
+            {
+                "best_epoch": best_epoch,
+                "best_validation_total_loss": best_validation_total,
+                "best_validation_residual_mae_db": (
+                    best_metrics.validation_residual_mae_db
+                ),
+                "best_validation_erb_mae_db": (
+                    best_metrics.validation_erb_mae_db
+                ),
+                "best_validation_contralateral_high_frequency_mae_db": (
+                    best_metrics.validation_contralateral_high_frequency_mae_db
+                ),
+                "best_validation_ild_spectral_proxy_mae_db": (
+                    best_metrics.validation_ild_mae_db
+                ),
+                "elapsed_seconds": report["elapsed_seconds"],
+                "peak_cuda_allocated_mib": report[
+                    "peak_cuda_allocated_mib"
+                ],
+            }
+        )
+        wandb_run.finish(exit_code=0)
 
 
 if __name__ == "__main__":

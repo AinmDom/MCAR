@@ -1,0 +1,243 @@
+"""Predict full-spectrum residuals for the sealed SONICOM development split."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+
+import h5py
+import numpy as np
+import torch
+
+from mcar.data import Normalization, build_input_features, list_hdf5_files
+from mcar.models.residual_mlp import ResidualMLP, parameter_count
+from mcar.paths import project_root
+
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dataset_root", type=Path)
+    parser.add_argument("checkpoint", type=Path)
+    parser.add_argument("run_name")
+    parser.add_argument("--directions-per-block", type=int, default=64)
+    parser.add_argument("--frequencies-per-block", type=int, default=128)
+    parser.add_argument("--subject-limit", type=int)
+    parser.add_argument("--no-amp", action="store_true")
+    parser.add_argument("--overwrite", action="store_true")
+    return parser.parse_args()
+
+
+def decode_attribute(value: object) -> str:
+    scalar = np.asarray(value).item()
+    return scalar.decode() if isinstance(scalar, bytes) else str(scalar)
+
+
+@torch.no_grad()
+def predict_subject(
+    source_path: Path,
+    output_path: Path,
+    checkpoint_path: Path,
+    model: ResidualMLP,
+    normalization: Normalization,
+    device: torch.device,
+    directions_per_block: int,
+    frequencies_per_block: int,
+    use_amp: bool,
+) -> dict[str, object]:
+    started = time.perf_counter()
+    with h5py.File(source_path, "r") as source:
+        split = decode_attribute(source.attrs["split"])
+        if split != "val":
+            raise ValueError(
+                f"Refusing to predict non-validation file {source_path}: {split}"
+            )
+        subject_id = int(np.asarray(source.attrs["subject_id"]).item())
+        subject_label = decode_attribute(source.attrs["subject_label"])
+        mca = source["mca_logmag_db"]
+        correction = source["correction_logmag_db"]
+        if mca.shape != correction.shape or len(mca.shape) != 3:
+            raise ValueError(f"Unexpected spectral layout in {source_path}")
+        if mca.shape[0] != 2:
+            raise ValueError(f"Expected two ears in {source_path}")
+        directions = np.asarray(source["direction_features"][:], dtype=np.float32)
+        frequency_hz = np.squeeze(source["frequency_hz"][:]).astype(np.float32)
+        if directions.shape != (mca.shape[1], 6):
+            raise ValueError(f"Unexpected direction features in {source_path}")
+        if frequency_hz.shape != (mca.shape[2],):
+            raise ValueError(f"Unexpected frequency vector in {source_path}")
+
+        prediction = np.empty(mca.shape, dtype=np.float32)
+        for ear_index in range(2):
+            for direction_start in range(0, mca.shape[1], directions_per_block):
+                direction_stop = min(
+                    mca.shape[1], direction_start + directions_per_block
+                )
+                direction_slice = slice(direction_start, direction_stop)
+                for frequency_start in range(
+                    0, mca.shape[2], frequencies_per_block
+                ):
+                    frequency_stop = min(
+                        mca.shape[2], frequency_start + frequencies_per_block
+                    )
+                    frequency_slice = slice(frequency_start, frequency_stop)
+                    features = build_input_features(
+                        mca[ear_index, direction_slice, frequency_slice],
+                        correction[ear_index, direction_slice, frequency_slice],
+                        directions[direction_slice, :],
+                        frequency_hz[frequency_slice],
+                        ear_index,
+                        normalization,
+                    )
+                    feature_tensor = torch.from_numpy(features).to(
+                        device, non_blocking=True
+                    )
+                    with torch.amp.autocast("cuda", enabled=use_amp):
+                        normalized_prediction = model(feature_tensor)
+                    predicted_db = (
+                        normalized_prediction.float() * normalization.target_std
+                        + normalization.target_mean
+                    )
+                    prediction[
+                        ear_index, direction_slice, frequency_slice
+                    ] = (
+                        predicted_db.reshape(
+                            direction_stop - direction_start,
+                            frequency_stop - frequency_start,
+                        )
+                        .cpu()
+                        .numpy()
+                    )
+
+    temporary_path = output_path.with_suffix(output_path.suffix + ".partial")
+    temporary_path.unlink(missing_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with h5py.File(temporary_path, "w") as destination:
+        destination.create_dataset(
+            "predicted_residual_db",
+            data=prediction,
+            chunks=(1, min(64, prediction.shape[1]), min(128, prediction.shape[2])),
+            compression="gzip",
+            compression_opts=4,
+        )
+        destination.attrs["schema_version"] = "1.0"
+        destination.attrs["complete"] = 1
+        destination.attrs["subject_id"] = subject_id
+        destination.attrs["subject_label"] = subject_label
+        destination.attrs["split"] = split
+        destination.attrs["tensor_layout"] = "ear,direction,frequency"
+        destination.attrs["checkpoint"] = str(checkpoint_path.resolve())
+        destination.attrs["source_hdf5"] = str(source_path.resolve())
+    temporary_path.replace(output_path)
+
+    return {
+        "subject_id": subject_id,
+        "subject_label": subject_label,
+        "output": str(output_path),
+        "shape": list(prediction.shape),
+        "minimum_db": float(np.min(prediction)),
+        "maximum_db": float(np.max(prediction)),
+        "mean_db": float(np.mean(prediction)),
+        "elapsed_seconds": time.perf_counter() - started,
+    }
+
+
+def main() -> None:
+    arguments = parse_arguments()
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is required for SONICOM reconstruction inference")
+    if arguments.directions_per_block < 1 or arguments.frequencies_per_block < 1:
+        raise ValueError("Block dimensions must be positive")
+    if arguments.subject_limit is not None and arguments.subject_limit < 1:
+        raise ValueError("subject-limit must be positive")
+
+    validation_files = list_hdf5_files(arguments.dataset_root, split="val")
+    if len(validation_files) != 44:
+        raise ValueError(
+            f"Expected the locked 44 validation files, found {len(validation_files)}"
+        )
+    if arguments.subject_limit is not None:
+        validation_files = validation_files[: arguments.subject_limit]
+
+    device = torch.device("cuda")
+    checkpoint = torch.load(
+        arguments.checkpoint, map_location=device, weights_only=False
+    )
+    training_arguments = checkpoint["arguments"]
+    model = ResidualMLP(
+        width=int(training_arguments["width"]),
+        block_count=int(training_arguments["block_count"]),
+    ).to(device)
+    model.load_state_dict(checkpoint["model_state"])
+    model.eval()
+    normalization = Normalization.from_json(
+        arguments.dataset_root / "training_statistics.json"
+    )
+    output_root = (
+        project_root() / "artifacts" / "reconstruction" / arguments.run_name
+    )
+    output_root.mkdir(parents=True, exist_ok=True)
+    use_amp = not arguments.no_amp
+
+    started = time.perf_counter()
+    reports: list[dict[str, object]] = []
+    for index, source_path in enumerate(validation_files, start=1):
+        with h5py.File(source_path, "r") as source:
+            subject_label = decode_attribute(source.attrs["subject_label"])
+        output_path = output_root / "subjects" / subject_label / "prediction.h5"
+        if output_path.exists() and not arguments.overwrite:
+            with h5py.File(output_path, "r") as existing:
+                complete = int(np.asarray(existing.attrs.get("complete", 0)).item())
+                existing_checkpoint = decode_attribute(
+                    existing.attrs.get("checkpoint", "")
+                )
+            if complete == 1 and existing_checkpoint == str(
+                arguments.checkpoint.resolve()
+            ):
+                print(f"skip complete [{index}/{len(validation_files)}]: {subject_label}")
+                continue
+        report = predict_subject(
+            source_path,
+            output_path,
+            arguments.checkpoint,
+            model,
+            normalization,
+            device,
+            arguments.directions_per_block,
+            arguments.frequencies_per_block,
+            use_amp,
+        )
+        reports.append(report)
+        print(
+            f"predicted [{index}/{len(validation_files)}] {subject_label} "
+            f"in {report['elapsed_seconds']:.2f}s"
+        )
+
+    summary = {
+        "schema_version": "1.0",
+        "status": "completed",
+        "split": "val",
+        "test_subject_count_read": 0,
+        "checkpoint": str(arguments.checkpoint.resolve()),
+        "checkpoint_epoch": int(checkpoint["epoch"]),
+        "dataset_root": str(arguments.dataset_root.resolve()),
+        "run_name": arguments.run_name,
+        "output_root": str(output_root.resolve()),
+        "validation_subject_count": len(validation_files),
+        "newly_processed_subject_count": len(reports),
+        "device": torch.cuda.get_device_name(0),
+        "torch_version": torch.__version__,
+        "amp": use_amp,
+        "model_parameter_count": parameter_count(model),
+        "elapsed_seconds": time.perf_counter() - started,
+        "subjects": reports,
+    }
+    report_path = output_root / "inference_report.json"
+    report_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(summary, indent=2))
+    print(f"output={report_path}")
+
+
+if __name__ == "__main__":
+    main()

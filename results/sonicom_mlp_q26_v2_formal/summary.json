@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-07-31",
+  "status": "completed",
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "selected_epoch": 10,
+  "weights": {
+    "erb": 0.75,
+    "contralateral_high_frequency": 0.25,
+    "ild_spectral_proxy": 0.25
+  },
+  "training": {
+    "epochs": 10,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "elapsed_seconds": 296.3393316,
+    "peak_cuda_allocated_mib": 144.29150390625
+  },
+  "fixed_sampled_validation": {
+    "initial_v1": {
+      "residual_mae_db": 2.8476737812161446,
+      "erb_proxy_mae_db": 1.1751226348181565,
+      "contralateral_high_frequency_mae_db": 4.02740669498841,
+      "ild_proxy_mae_db": 0.7383886277675629
+    },
+    "v2_epoch_10": {
+      "residual_mae_db": 2.825701452791691,
+      "erb_proxy_mae_db": 1.1193633272002141,
+      "contralateral_high_frequency_mae_db": 3.993006020784378,
+      "ild_proxy_mae_db": 0.6512903071319064
+    },
+    "improvement_percent": {
+      "residual_mae": 0.7715886759708165,
+      "erb_proxy_mae": 4.74497775515751,
+      "contralateral_high_frequency_mae": 0.8541643993103338,
+      "ild_proxy_mae": 11.7957288831748
+    }
+  },
+  "full_validation_raw_residual": {
+    "subject_count": 44,
+    "sample_count": 31250648,
+    "v2_mae_db": 2.8078031095599294,
+    "v2_rmse_db": 4.210356391119714,
+    "v1_mae_db": 2.8255148374916392,
+    "v1_rmse_db": 4.218638875081485,
+    "mae_improvement_vs_v1_percent": 0.6268495814176464,
+    "rmse_improvement_vs_v1_percent": 0.19633071725321782,
+    "mca_mae_db": 3.322288971698815,
+    "mae_improvement_vs_mca_percent": 15.485885379675723
+  },
+  "wandb": {
+    "run_id": "h7kmgoxc",
+    "sync_status": "offline_pending_explicit_upload_authorization"
+  },
+  "test_subject_count_read": 0,
+  "conclusion": "The formal v2 improves every fixed-validation proxy and full-validation raw MAE; strict reconstructed ERB/ILD evaluation remains the next stage."
+}

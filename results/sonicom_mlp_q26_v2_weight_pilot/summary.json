@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-07-31",
+  "status": "completed",
+  "initial_v1_validation": {
+    "residual_mae_db": 2.8532862290740013,
+    "erb_proxy_mae_db": 1.1704914346337318,
+    "contralateral_high_frequency_mae_db": 4.053157404065132,
+    "ild_proxy_mae_db": 0.7585580078884959
+  },
+  "selection_rule": "Residual regression <= 0.5%; maximize minimum relative improvement across ERB, contralateral HF, and ILD; then mean improvement, residual MAE, and smaller total weight.",
+  "selected_candidate": "erb_heavy",
+  "selected_weights": {
+    "erb": 0.75,
+    "contralateral_high_frequency": 0.25,
+    "ild_spectral_proxy": 0.25
+  },
+  "selected_pilot_metrics": {
+    "residual_mae_db": 2.849610760807991,
+    "erb_proxy_mae_db": 1.1498046852648258,
+    "contralateral_high_frequency_mae_db": 4.031655117869377,
+    "ild_proxy_mae_db": 0.7044643890112638,
+    "minimum_perceptual_improvement_percent": 0.5305070603522378,
+    "mean_perceptual_improvement_percent": 3.1429915528560906
+  },
+  "test_subject_count_read": 0,
+  "wandb_note": "Three new pilot runs are stored offline pending explicit upload authorization; the previously completed balanced run is synced."
+}

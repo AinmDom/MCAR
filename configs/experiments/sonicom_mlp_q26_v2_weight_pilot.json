@@ -1,0 +1,66 @@
+{
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "initial_checkpoint": "artifacts/training/sonicom_mlp_q26_v1_e20/best.pt",
+  "initial_checkpoint_epoch": 19,
+  "purpose": "Select SONICOM MLP v2 perceptual-loss weights using validation only",
+  "common_training": {
+    "epochs": 3,
+    "steps_per_epoch": 120,
+    "validation_steps": 32,
+    "directions_per_batch": 32,
+    "interpolation_only": true,
+    "direction_weighted_residual": true,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.00001,
+    "seed": 20260731,
+    "amp": true
+  },
+  "candidates": [
+    {
+      "name": "balanced",
+      "run_name": "sonicom_mlp_q26_v2_smoke",
+      "erb_weight": 0.5,
+      "high_frequency_weight": 0.25,
+      "ild_weight": 0.25,
+      "reuse_completed_run": true
+    },
+    {
+      "name": "erb_heavy",
+      "run_name": "sonicom_mlp_q26_v2_pilot_erb075_ild025",
+      "erb_weight": 0.75,
+      "high_frequency_weight": 0.25,
+      "ild_weight": 0.25
+    },
+    {
+      "name": "ild_heavy",
+      "run_name": "sonicom_mlp_q26_v2_pilot_erb050_ild050",
+      "erb_weight": 0.5,
+      "high_frequency_weight": 0.25,
+      "ild_weight": 0.5
+    },
+    {
+      "name": "erb_ild_heavy",
+      "run_name": "sonicom_mlp_q26_v2_pilot_erb075_ild050",
+      "erb_weight": 0.75,
+      "high_frequency_weight": 0.25,
+      "ild_weight": 0.5
+    }
+  ],
+  "selection_rule": {
+    "residual_mae_maximum_regression_percent_vs_initial_v1": 0.5,
+    "required_perceptual_metrics": [
+      "erb_proxy_mae_db",
+      "contralateral_high_frequency_mae_db",
+      "ild_spectral_proxy_mae_db"
+    ],
+    "primary": "maximize the minimum relative improvement across the three required perceptual metrics",
+    "tie_breakers": [
+      "maximize mean relative perceptual improvement",
+      "minimize residual MAE",
+      "prefer smaller total perceptual weight"
+    ]
+  },
+  "wandb_project": "mcar-sonicom",
+  "wandb_group": "q26-mlp-v2-weight-pilot",
+  "test_policy": "The locked test split must not be exported or read."
+}

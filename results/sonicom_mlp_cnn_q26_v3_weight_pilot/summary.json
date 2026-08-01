@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "initial_v2_validation": {
+    "residual_mae_db": 2.832959622144699,
+    "erb_proxy_mae_db": 1.1154731921851635,
+    "contralateral_high_frequency_mae_db": 4.011764585971832,
+    "ild_proxy_mae_db": 0.6703554755076766
+  },
+  "selected_ild_weight": 0.75,
+  "selection_rule": "Require residual, ERB, and contralateral high frequency not to regress; maximize the minimum relative improvement across ERB, contralateral high frequency, and ILD.",
+  "selected_pilot_metrics": {
+    "residual_mae_db": 2.7966142520308495,
+    "erb_proxy_mae_db": 1.109021134674549,
+    "contralateral_high_frequency_mae_db": 3.9483341351151466,
+    "ild_proxy_mae_db": 0.6842941176146269,
+    "residual_improvement_percent": 1.28295,
+    "erb_improvement_percent": 0.57841,
+    "high_frequency_improvement_percent": 1.58111,
+    "ild_improvement_percent": -2.07929
+  },
+  "test_subject_count_read": 0,
+  "wandb_sync_status": "offline"
+}

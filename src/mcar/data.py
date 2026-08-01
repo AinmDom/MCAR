@@ -80,12 +80,20 @@ class ResidualBlockSampler:
         directions_per_batch: int = 64,
         frequencies_per_batch: int = 128,
         seed: int = 20260723,
+        direction_sampling: str = "uniform",
+        interpolation_only: bool = False,
     ) -> None:
         self.files = list(files)
         self.normalization = normalization
         self.directions_per_batch = directions_per_batch
         self.frequencies_per_batch = frequencies_per_batch
         self.rng = np.random.default_rng(seed)
+        if direction_sampling not in ("uniform", "solid_angle"):
+            raise ValueError(
+                "direction_sampling must be 'uniform' or 'solid_angle'"
+            )
+        self.direction_sampling = direction_sampling
+        self.interpolation_only = interpolation_only
         self._check_layout()
 
     @property
@@ -103,10 +111,41 @@ class ResidualBlockSampler:
                 raise ValueError(
                     f"Unexpected direction feature shape {direction_shape} in {self.files[0]}"
                 )
-            if self.directions_per_batch > shape[1]:
+            eligible_mask = np.ones(self.direction_count, dtype=bool)
+            if self.interpolation_only:
+                if "interpolation_evaluation_mask" not in handle:
+                    raise ValueError(
+                        "interpolation_only requires "
+                        "/interpolation_evaluation_mask"
+                    )
+                eligible_mask = np.squeeze(
+                    handle["interpolation_evaluation_mask"][:]
+                ).astype(bool)
+                if eligible_mask.shape != (self.direction_count,):
+                    raise ValueError(
+                        "Unexpected interpolation_evaluation_mask shape "
+                        f"{eligible_mask.shape} in {self.files[0]}"
+                    )
+            self.eligible_direction_indices = np.flatnonzero(eligible_mask)
+            if self.directions_per_batch > self.eligible_direction_indices.size:
                 raise ValueError("directions_per_batch exceeds available directions")
             if self.frequencies_per_batch > shape[2]:
                 raise ValueError("frequencies_per_batch exceeds available frequencies")
+            self.direction_probabilities: np.ndarray | None = None
+            if self.direction_sampling == "solid_angle":
+                weights = np.asarray(
+                    handle["direction_features"][:, 5],
+                    dtype=np.float64,
+                )[self.eligible_direction_indices]
+                if (
+                    not np.all(np.isfinite(weights))
+                    or np.any(weights <= 0.0)
+                    or float(np.sum(weights)) <= 0.0
+                ):
+                    raise ValueError(
+                        f"Invalid solid-angle weights in {self.files[0]}"
+                    )
+                self.direction_probabilities = weights / np.sum(weights)
 
     def sample_batch(self) -> tuple[np.ndarray, np.ndarray, dict[str, int | str]]:
         path = self.files[int(self.rng.integers(len(self.files)))]
@@ -114,9 +153,10 @@ class ResidualBlockSampler:
             ear_index = int(self.rng.integers(2))
             direction_indices = np.sort(
                 self.rng.choice(
-                    self.direction_count,
+                    self.eligible_direction_indices,
                     size=self.directions_per_batch,
                     replace=False,
+                    p=self.direction_probabilities,
                 )
             )
             frequency_count = handle["mca_logmag_db"].shape[2]
@@ -163,12 +203,16 @@ class BinauralSpectrumSampler:
         directions_per_batch: int = 32,
         seed: int = 20260724,
         strict_ild: bool = False,
+        interpolation_only: bool = False,
+        horizontal_only: bool = False,
     ) -> None:
         self.files = list(files)
         self.normalization = normalization
         self.directions_per_batch = directions_per_batch
         self.rng = np.random.default_rng(seed)
         self.strict_ild = strict_ild
+        self.interpolation_only = interpolation_only
+        self.horizontal_only = horizontal_only
         self._check_layout()
 
     @property
@@ -192,6 +236,32 @@ class BinauralSpectrumSampler:
                 )
             if self.directions_per_batch > shape[1]:
                 raise ValueError("directions_per_batch exceeds available directions")
+            eligible_mask = np.ones(self.direction_count, dtype=bool)
+            if self.interpolation_only:
+                if "interpolation_evaluation_mask" not in handle:
+                    raise ValueError(
+                        "interpolation_only requires "
+                        "/interpolation_evaluation_mask"
+                    )
+                eligible_mask = np.squeeze(
+                    handle["interpolation_evaluation_mask"][:]
+                ).astype(bool)
+                if eligible_mask.shape != (self.direction_count,):
+                    raise ValueError(
+                        "Unexpected interpolation_evaluation_mask shape "
+                        f"{eligible_mask.shape} in {self.files[0]}"
+                    )
+            if self.horizontal_only:
+                directions = np.asarray(
+                    handle["direction_features"][:], dtype=np.float32
+                )
+                horizontal_mask = np.abs(directions[:, 1]) <= 1e-6
+                eligible_mask &= horizontal_mask
+            self.eligible_direction_indices = np.flatnonzero(eligible_mask)
+            if self.directions_per_batch > self.eligible_direction_indices.size:
+                raise ValueError(
+                    "directions_per_batch exceeds eligible directions"
+                )
             self.frequency_count = int(shape[2])
             if self.strict_ild:
                 required = (
@@ -225,7 +295,7 @@ class BinauralSpectrumSampler:
         with h5py.File(path, "r") as handle:
             direction_indices = np.sort(
                 self.rng.choice(
-                    self.direction_count,
+                    self.eligible_direction_indices,
                     size=self.directions_per_batch,
                     replace=False,
                 )

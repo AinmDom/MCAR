@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-07-31",
+  "status": "completed",
+  "purpose": "SONICOM MLP GPU, sampling, W&B, and full-validation pipeline smoke test",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "experiment_config": "configs/experiments/sonicom_mlp_q26_smoke_v1.json",
+  "checkpoint": "artifacts/training/sonicom_mlp_q26_smoke_v1/best.pt",
+  "data_policy": {
+    "train_subject_count": 262,
+    "validation_subject_count": 44,
+    "test_subject_count_read": 0,
+    "eligible_direction_count": 767,
+    "direction_sampling": "solid_angle",
+    "interpolation_only": true
+  },
+  "model": {
+    "name": "ResidualMLP",
+    "parameter_count": 100225,
+    "width": 128,
+    "block_count": 3
+  },
+  "training": {
+    "device": "NVIDIA GeForce RTX 5060",
+    "amp": true,
+    "epochs": 3,
+    "steps_per_epoch": 120,
+    "batch_sample_count": 8192,
+    "elapsed_seconds": 24.0951038,
+    "peak_cuda_allocated_mib": 54.08984375,
+    "best_epoch": 3,
+    "sampled_validation_model_mae_db": 3.1388824582099915,
+    "sampled_validation_mca_mae_db": 3.3740406706929207,
+    "sampled_validation_improvement_percent": 6.969631828256395
+  },
+  "full_validation": {
+    "subject_count": 44,
+    "sample_count": 31250648,
+    "direction_weighting": "solid_angle",
+    "interpolation_only": true,
+    "model_mae_db": 3.100075021842738,
+    "model_rmse_db": 4.580354176339898,
+    "mca_mae_db": 3.322288971698815,
+    "mca_rmse_db": 5.029169521740049,
+    "mae_improvement_percent": 6.6885798240016054
+  },
+  "wandb": {
+    "project": "mcar-sonicom",
+    "run_id": "hmekqxio",
+    "run_url": "https://wandb.ai/luyoung/mcar-sonicom/runs/hmekqxio",
+    "sync_status": "completed"
+  },
+  "conclusion": "The pipeline is ready; this short run is not a locked final model."
+}

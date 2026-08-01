@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-07-31",
+  "status": "completed",
+  "purpose": "SONICOM paired-ear perceptual-loss MLP v2 smoke test",
+  "initial_checkpoint": "artifacts/training/sonicom_mlp_q26_v1_e20/best.pt",
+  "initial_checkpoint_epoch": 19,
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_smoke/best.pt",
+  "selected_epoch": 3,
+  "data_policy": {
+    "train_subject_count": 262,
+    "validation_subject_count": 44,
+    "test_subject_count_read": 0,
+    "eligible_direction_count": 767,
+    "interpolation_only": true,
+    "direction_sampling": "uniform_without_replacement",
+    "direction_weighted_residual": true
+  },
+  "loss_weights": {
+    "erb": 0.5,
+    "contralateral_high_frequency": 0.25,
+    "ild_spectral_proxy": 0.25
+  },
+  "training": {
+    "epochs": 3,
+    "steps_per_epoch": 120,
+    "directions_per_batch": 32,
+    "elapsed_seconds": 33.145536,
+    "peak_cuda_allocated_mib": 144.29150390625
+  },
+  "fixed_sampled_validation": {
+    "initial_v1": {
+      "total_loss": 0.642436683177948,
+      "residual_mae_db": 2.8532862290740013,
+      "erb_proxy_mae_db": 1.1704914346337318,
+      "contralateral_high_frequency_mae_db": 4.053157404065132,
+      "ild_spectral_proxy_mae_db": 0.7585580078884959
+    },
+    "v2_epoch_3": {
+      "total_loss": 0.636945141479373,
+      "residual_mae_db": 2.849955476820469,
+      "erb_proxy_mae_db": 1.1529475077986717,
+      "contralateral_high_frequency_mae_db": 4.031838454306126,
+      "ild_spectral_proxy_mae_db": 0.7036882266402245
+    },
+    "improvement_percent": {
+      "total_loss": 0.8547988996222874,
+      "residual_mae": 0.1167338986041146,
+      "erb_proxy_mae": 1.49885136413236,
+      "contralateral_high_frequency_mae": 0.5259837611444491,
+      "ild_spectral_proxy_mae": 7.233432470247817
+    }
+  },
+  "full_validation_raw_residual": {
+    "subject_count": 44,
+    "sample_count": 31250648,
+    "v2_mae_db": 2.824471809391476,
+    "v2_rmse_db": 4.229951057304311,
+    "v1_mae_db": 2.8255148374916392,
+    "v1_rmse_db": 4.218638875081485,
+    "v2_mae_improvement_vs_v1_percent": 0.03691462123374176,
+    "mca_mae_db": 3.322288971698815,
+    "v2_mae_improvement_vs_mca_percent": 14.984162020463444
+  },
+  "wandb": {
+    "run_id": "buhhtjwi",
+    "run_url": "https://wandb.ai/luyoung/mcar-sonicom/runs/buhhtjwi",
+    "sync_status": "completed"
+  },
+  "conclusion": "All perceptual proxies improved without raw-MAE regression; proceed to formal v2 weight and budget selection."
+}

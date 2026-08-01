@@ -78,12 +78,22 @@ wandb_state/
 /artifacts/*
 !/artifacts/README.md
 
-# Large HRTF datasets and processed residual tensors.
-/data/HRTF/axd/
-/data/HRTF/hutubs/
-/data/HRTF/sonicom_measured_ffcmp_minphase_44k1/
+# Large HRTF datasets and processed residual tensors. Keep only the
+# acquisition/provenance README; every dataset payload remains local.
+/data/HRTF/*
+!/data/HRTF/README.md
 /data/processed/*
 !/data/processed/README.md
 !/data/processed/hutubs_residual_v1_n03/
 /data/processed/hutubs_residual_v1_n03/*
 !/data/processed/hutubs_residual_v1_n03/training_statistics.json
+
+# Future raw downloads and disposable dataset caches.
+/data/raw/
+/data/downloads/
+/data/cache/
+/data/staging/
+/data/**/*.zip
+/data/**/*.7z
+/data/**/*.tar
+/data/**/*.gz

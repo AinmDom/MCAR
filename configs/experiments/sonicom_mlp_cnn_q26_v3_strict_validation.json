@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-01",
+  "status": "completed",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "split": "val",
+  "validation_subject_count": 44,
+  "test_subject_count_read": 0,
+  "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "checkpoint_epoch": 10,
+  "prediction_run_name": "sonicom_q26_validation_mlp_cnn_v3",
+  "output_name": "sonicom_mlp_cnn_q26_v3_strict_validation",
+  "methods": [
+    "MCA",
+    "MLP v1",
+    "MLP v2",
+    "MLP+CNN v3"
+  ],
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "direction_scope": "767 pure interpolation directions",
+  "direction_weighting": "solid_angle",
+  "reconstruction": "predicted magnitude with original MCA phase and MCA outside modeled bins",
+  "aggregate_metrics_db": {
+    "full_sphere_erb": {
+      "mca": 1.0957382794104624,
+      "mlp_v2": 0.9348257270332548,
+      "mlp_cnn_v3": 0.8874671710397809,
+      "v3_improvement_vs_v2_percent": 5.066030450806072
+    },
+    "contralateral_25_erb": {
+      "mca": 1.763507810897204,
+      "mlp_v2": 1.449138912276242,
+      "mlp_cnn_v3": 1.3882652827403683,
+      "v3_improvement_vs_v2_percent": 4.200675933838259
+    },
+    "contralateral_high_frequency": {
+      "mca": 4.74920799412808,
+      "mlp_v2": 3.9658645109530624,
+      "mlp_cnn_v3": 3.6493898359935457,
+      "v3_improvement_vs_v2_percent": 7.97996689209795
+    },
+    "horizontal_ild_mae": {
+      "mca": 0.8300137728355138,
+      "mlp_v2": 0.6534614907282763,
+      "mlp_cnn_v3": 0.6448039040552092,
+      "v3_improvement_vs_v2_percent": 1.3248809296196411
+    }
+  },
+  "improved_subject_count_vs_v2": {
+    "full_sphere_erb": 44,
+    "contralateral_25_erb": 41,
+    "contralateral_high_frequency": 44,
+    "horizontal_ild_mae": 27
+  },
+  "result_root": "results/sonicom_mlp_cnn_q26_v3_strict_validation",
+  "test_policy": "The locked test split must not be exported or read."
+}

@@ -1,0 +1,4 @@
+ild_weight,residual_mae_db,erb_proxy_mae_db,contralateral_high_frequency_mae_db,ild_proxy_mae_db,residual_improvement_percent,erb_improvement_percent,high_frequency_improvement_percent,ild_improvement_percent,minimum_perceptual_improvement_percent,validation_total_loss,wandb_run_id,wandb_sync_status
+0.25,2.7677099481,1.1052352767,3.9175448492,0.6938402001,2.30323,0.91781,2.34859,-3.50332,-3.50332,0.6691959053,m3420dmz,offline
+0.50,2.7837978005,1.1078224499,3.9345473647,0.6889752084,1.73535,0.68587,1.92477,-2.77759,-2.77759,0.7074554879,wjpgbeeo,offline
+0.75,2.7966142520,1.1090211347,3.9483341351,0.6842941176,1.28295,0.57841,1.58111,-2.07929,-2.07929,0.7444521897,4pms4j6p,offline

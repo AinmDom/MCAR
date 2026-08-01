@@ -1,0 +1,32 @@
+{
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "purpose": "Lock the SONICOM residual MLP v1 training budget using validation only",
+  "candidate_runs": [
+    {
+      "run_name": "sonicom_mlp_q26_v1_e12",
+      "epochs": 12
+    },
+    {
+      "run_name": "sonicom_mlp_q26_v1_e20",
+      "epochs": 20
+    }
+  ],
+  "steps_per_epoch": 600,
+  "validation_steps": 96,
+  "directions_per_batch": 64,
+  "frequencies_per_batch": 128,
+  "direction_sampling": "solid_angle",
+  "interpolation_only": true,
+  "width": 128,
+  "block_count": 3,
+  "learning_rate": 0.001,
+  "weight_decay": 0.00001,
+  "seed": 20260731,
+  "amp": true,
+  "selection_metric": "full validation interpolation-only solid-angle-weighted residual MAE",
+  "wandb_mode": "online",
+  "wandb_project": "mcar-sonicom",
+  "wandb_group": "q26-mlp-v1-formal",
+  "wandb_job_type": "mlp-v1-formal",
+  "test_policy": "The locked test split must not be exported or read during budget selection."
+}

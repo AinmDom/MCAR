@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "split": "val",
+  "subject_count": 44,
+  "test_subject_count_read": 0,
+  "interpolation_only": true,
+  "interpolation_direction_count": 767,
+  "v1_checkpoint": "artifacts/training/sonicom_mlp_q26_v1_e20/best.pt",
+  "v2_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "v1_prediction_root": "artifacts/reconstruction/sonicom_q26_validation_v1",
+  "v2_prediction_root": "artifacts/reconstruction/sonicom_q26_validation_v2",
+  "reconstruction_definition": "Predicted residual magnitude is added to MCA log magnitude from 50-20000 Hz; the original MCA phase and MCA frequency bins outside that range are preserved before both-sided IFFT and cropping to the original 256-sample HRIR length.",
+  "erb_metric": {
+    "implementation": "AKerbError",
+    "frequency_range_hz": [50, 22050],
+    "spatial_weighting": "normalized SONICOM solid-angle weights over pure interpolation directions",
+    "regions": ["full sphere", "ear-specific contralateral 25-degree cap"]
+  },
+  "contralateral_high_frequency_metric": {
+    "frequency_range_hz": [10000, 20000],
+    "region": "ear-specific open contralateral hemisphere",
+    "spatial_weighting": "normalized SONICOM solid-angle weights"
+  },
+  "ild_metric": {
+    "definition": "10*log10(left HRIR energy/right HRIR energy)",
+    "region": "horizontal-plane pure interpolation directions"
+  },
+  "results_root": "results/sonicom_mlp_q26_v2_strict_validation"
+}

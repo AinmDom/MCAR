@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "model_name": "ResidualMLPCNN",
+  "variant": "v3.1 horizontal strict HRIR ILD fine-tune",
+  "role": "ILD-optimized validation baseline; v3 remains the balanced magnitude baseline",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "base_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "initial_v3_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v31_horizontal_formal_ild200/best.pt",
+  "selected_epoch": 6,
+  "training_stage": "cnn_only_frozen_mlp_strict_horizontal_hrir_ild_v31",
+  "eligible_direction_count": 72,
+  "learning_rate": 0.0001,
+  "erb_weight": 0.75,
+  "high_frequency_weight": 0.25,
+  "strict_horizontal_hrir_ild_weight": 2.0,
+  "strict_validation": {
+    "full_sphere_erb_mae_db": 0.9178346585846809,
+    "contralateral_25_erb_mae_db": 1.3989969268031006,
+    "contralateral_high_frequency_mae_db": 3.7129546597995557,
+    "horizontal_ild_mae_db": 0.6229048257200536,
+    "horizontal_ild_improvement_vs_v3_percent": 3.396238483891151,
+    "magnitude_tradeoff_vs_v3_percent": {
+      "full_sphere_erb": -3.4218153116943646,
+      "contralateral_25_erb": -0.7730254581853808,
+      "contralateral_high_frequency": -1.7417931945520564
+    }
+  },
+  "wandb_run_id": "ta1d0lzk",
+  "wandb_sync_status": "offline",
+  "test_policy": "The locked test split was not exported or read."
+}

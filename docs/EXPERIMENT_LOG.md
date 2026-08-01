@@ -29,6 +29,362 @@ Graphics，PNG）、多边形文件格式（Polygon File Format，PLY）和便�
 （gibibyte，GiB）和兆二进制字节（mebibyte，MiB）。MATLAB MAT-file 缩写为
 MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开。
 
+## 2026-08-01：SONICOM Q26 MLP+CNN v3.1 水平面严格 ILD 微调
+
+- 工作目标：从锁定 v3 epoch 10 继续微调冻结 MLP 的 CNN，使训练损失与最终
+  水平面 HRIR 能量 ILD 完全对齐，同时保持 residual、ERB 和对侧高频收益；
+  44 名 test 继续不导出、不读取。
+- 对齐改动：`BinauralSpectrumSampler` 和 `train_mlp_cnn_v3.py` 新增默认关闭的
+  `horizontal_only`/`--horizontal-only`。SONICOM v3.1 将 767 个纯插值方向与
+  零仰角条件取交集，得到 72 个水平面方向；HUTUBS 与既有 v3/v3.1 默认行为不变。
+  回归测试覆盖插值 mask 与水平面 mask 的交集。
+- 代码 smoke：从 v3 checkpoint 初始化，1 epoch、2 step、32 方向，严格 HRIR
+  IFFT-ILD 可正常反传，0 个跳步，峰值 CUDA allocated memory `221.96 MiB`。
+- 权重预实验：固定 ERB/高频权重 `0.75/0.25`、学习率 `1e-4`，比较严格水平面
+  ILD 权重 `0.5/1.0/2.0`，每组 `3 epoch × 120 step`。三组 residual、ERB、
+  高频和严格 ILD 均相对初始 v3 改善；严格 ILD 改善依次为
+  `0.40% / 0.68% / 0.93%`。按预声明规则选择 `2.0`，其 residual/ERB/高频仍
+  改善 `0.87% / 1.22% / 1.01%`。比较位于
+  `results/sonicom_mlp_cnn_q26_v31_weight_pilot/`。
+- 正式训练：从 v3 epoch 10 初始化，冻结 100,225 参数 MLP，只训练 74,402 参数
+  CNN；`6 epoch × 500 step`、96 个固定 validation block、每 batch 32 个水平面
+  方向、AdamW、cosine schedule、AMP、seed `20260731`。用时 `296.56 s`，峰值
+  显存 `221.96 MiB`，0 个跳步；总目标与严格 ILD 最优点均为 epoch 6。
+- 固定水平面 validation：v3 到 v3.1 的 residual 为
+  `2.721718 → 2.682673 dB`，ERB 为 `1.130511 → 1.099314 dB`，对侧高频为
+  `3.638068 → 3.585039 dB`，严格 HRIR ILD 为 `0.659525 → 0.635705 dB`，分别
+  改善 `1.43% / 2.76% / 1.46% / 3.61%`。
+- 完整诊断：44 人、767 个纯插值方向的 raw residual MAE/RMSE 为
+  `2.637748 / 3.979081 dB`，相对 v2 MAE 改善 `6.06%`；全空间严格 ILD 为
+  `0.629976 dB`。由于本模型只针对水平面微调，全空间 ILD 仅作诊断，不用于
+  checkpoint 选择。
+- 产物：正式 checkpoint 位于已忽略的
+  `artifacts/training/sonicom_mlp_cnn_q26_v31_horizontal_formal_ild200/best.pt`；
+  精选曲线与摘要位于 `results/sonicom_mlp_cnn_q26_v31_formal/`。44 人完整 residual
+  已生成到 `artifacts/reconstruction/sonicom_q26_validation_mlp_cnn_v31/`，用时
+  `9.23 s`。W&B run `ta1d0lzk` 当前为本地 offline，未经授权不上传。
+- MATLAB smoke：经用户明确授权后，以 P0001 运行 MCA/v1/v2/v3/v3.1 五方法
+  端到端严格重建，进程正常退出。v3.1 相对 v3 的全空间 ERB、对侧 25° ERB、
+  对侧高频分别回退 `4.32% / 0.55% / 1.88%`，水平面 ILD 改善 `2.24%`；
+  smoke 只用于确认链路，不用于模型结论。
+- 44 人严格重建：正式 MATLAB 批处理正常退出。MCA/v2/v3/v3.1 的全空间 ERB
+  分别为 `1.095738 / 0.934826 / 0.887467 / 0.917835 dB`；对侧 25° ERB 为
+  `1.763508 / 1.449139 / 1.388265 / 1.398997 dB`；对侧高频为
+  `4.749208 / 3.965865 / 3.649390 / 3.712955 dB`；水平面严格 ILD MAE 为
+  `0.830014 / 0.653461 / 0.644804 / 0.622905 dB`。
+- 最终结论：v3.1 相对 v3 将目标水平面 ILD 改善 `3.40%`，29/44 人改善；
+  全空间 ERB、对侧 25° ERB、对侧高频分别回退
+  `3.42% / 0.77% / 1.74%`。但 v3.1 三项幅度指标仍相对 v2 改善
+  `1.82% / 3.46% / 6.38%`，ILD 相对 v2 改善 `4.68%`。因此保留 v3 为
+  幅度均衡基线，保留 v3.1 为 ILD 优化基线；下一轮若要单模型兼顾，应在
+  validation 上做多目标/Pareto 折中，而不能宣称 v3.1 全面优于 v3。
+- 质量与产物：44 行逐被试表、880 行 method-metric 长表、44 行质量检查和三张
+  总览图位于 `results/sonicom_mlp_cnn_q26_v31_strict_validation/`；配置位于
+  `configs/experiments/sonicom_mlp_cnn_q26_v31_strict_validation.json`。
+  五方法 44 人 HRTF 总览已人工检查，44 个子图与六条曲线完整；test 读取数仍为 0。
+
+## 2026-08-01：SONICOM Q26 MLP+CNN v3 严格 validation 重建评估
+
+- 工作目标：把锁定 v3 epoch 10 的完整 residual 回填到 MCA 幅度，在固定 44 名
+  validation 被试上按最终 HRTF/HRIR 口径计算 `AKerbError`、对侧高频和水平面
+  严格 ILD，并生成 44 人 HRTF 总览；test 继续不导出、不读取。
+- 推理实现：新增 `predict_sonicom_mlp_cnn_residuals.py`，以完整双耳频谱调用
+  `ResidualMLPCNN`，按方向分块并原子写出 `2×793×463` residual。1 人 smoke
+  通过后正式处理 44 人，用时 `14.34 s`，RTX 5060、AMP、174,627 参数，输出
+  位于已忽略的 `artifacts/reconstruction/sonicom_q26_validation_mlp_cnn_v3/`。
+- MATLAB 实现：将 `evaluate_sonicom_validation_reconstruction.m` 扩展为可选
+  v3 模式，第四个参数指定 v3 prediction run；省略时仍严格复现原 MCA/v1/v2
+  行为。代码检查只有既存的动态扩展性能提示，1 人端到端 smoke 和 44 人正式
+  运行均成功，正式 MATLAB 进程退出码为 0。
+- 最终指标：MCA/v2/v3 的全空间 ERB 为
+  `1.095738 / 0.934826 / 0.887467 dB`，v3 相对 v2 改善 `5.07%`、相对 MCA
+  改善 `19.01%`，44/44 人优于 v2。
+- 对侧 25° ERB：MCA/v2/v3 为
+  `1.763508 / 1.449139 / 1.388265 dB`，v3 相对 v2 改善 `4.20%`、相对 MCA
+  改善 `21.28%`，41/44 人优于 v2。
+- 对侧高频：MCA/v2/v3 为
+  `4.749208 / 3.965865 / 3.649390 dB`，v3 相对 v2 改善 `7.98%`、相对 MCA
+  改善 `23.16%`，44/44 人优于 v2。
+- 水平面严格 ILD：MCA/v2/v3 为
+  `0.830014 / 0.653461 / 0.644804 dB`，v3 相对 v2 改善 `1.32%`、相对 MCA
+  改善 `22.31%`，27/44 人优于 v2。总体均值改善与全空间严格 ILD 诊断方向一致，
+  但被试级稳定性弱于 ERB 和高频。
+- 质量与产物：44 个 per-subject 行、704 个 method-metric 长表行、44 个质量检查
+  行均完整且全部数值有限；配置位于
+  `configs/experiments/sonicom_mlp_cnn_q26_v3_strict_validation.json`，完整 CSV、
+  JSON、聚合图、逐被试指标图和 44 人对侧 HRTF 总览位于
+  `results/sonicom_mlp_cnn_q26_v3_strict_validation/`。总览图已人工检查，包含
+  Reference、MCA、MLP v1、MLP v2 和 MLP+CNN v3 五条曲线且 44 个子图完整。
+- 结论与下一步：v3 在最终重建口径上四项总体指标均优于 v2，尤其对侧高频新增
+  `7.98%` 收益，证明频率 CNN 的主要价值成立。下一步可锁定 v3 为 SONICOM
+  MLP+CNN 基线，并在 validation 上开展与水平面 HRIR 能量完全对齐的 v3.1 ILD
+  微调预实验；在损失与训练预算再次锁定前继续保持 test 零读取。
+
+## 2026-08-01：SONICOM Q26 MLP+CNN v3 正式训练与全量 validation
+
+- 工作目标：以已锁定的 SONICOM MLP v2 epoch 10 为基线，在不读取 44 名 test
+  的前提下加入沿频率轴建模局部谱形的 1D CNN，完成权重预实验、CNN-only
+  正式训练和 44 名 validation 的全量评估。
+- 兼容性改动：`train_mlp_cnn_v3.py` 新增 `--interpolation-only` 与
+  `--direction-weighted-residual`，并将两项写入 checkpoint/config；SONICOM
+  只采样 767 个纯插值方向，residual 损失按 solid-angle weight 加权。默认值
+  保持关闭，因此不改变既有 HUTUBS v3/v3.1 入口。`evaluate_mlp_cnn_v3.py`
+  同步支持纯插值筛选、solid-angle 加权与加权样本累计。
+- 模型：锁定 v2 MLP 的 `100,225` 个参数，只训练 `74,402` 参数的频率 1D CNN；
+  总参数为 `174,627`，CNN channel 为 48。CNN 输出层零初始化，训练前模型与
+  v2 输出严格一致。最小代码 smoke 为 1 epoch、2 step，初始 CNN delta 为 0，
+  峰值 CUDA allocated memory `70.32 MiB`，无跳步。
+- 权重预实验：固定 `ERB / 对侧高频 = 0.75 / 0.25`，比较 ILD proxy 权重
+  `0.25 / 0.50 / 0.75`，每组 `3 epoch × 120 step`。预先声明的选择规则要求
+  residual、ERB 和高频不退化，再最大化 ERB、高频和 ILD 三项改善率最小值。
+  三组短 run 的 ILD proxy 分别退化 `3.50% / 2.78% / 2.08%`，因此选择退化
+  最小且满足其他约束的 `0.75`，计划依靠正式预算与最终 HRIR 口径复核。
+- 正式训练：损失权重 `0.75 / 0.25 / 0.75`，`10 epoch × 500 step`、96 个固定
+  validation block、每 block 32 个方向、AdamW、cosine schedule、AMP、seed
+  `20260731`。运行用时 `376.47 s`，峰值 CUDA allocated memory
+  `220.46 MiB`，跳过 optimizer step 数为 0，最佳点为 epoch 10。
+- 固定 validation proxy：v2 到 v3 的 residual MAE 为
+  `2.825701 → 2.599614 dB`，ERB 为 `1.119363 → 1.052854 dB`，对侧高频为
+  `3.993006 → 3.659349 dB`，ILD proxy 为 `0.651290 → 0.621770 dB`；分别改善
+  `8.00% / 5.94% / 8.36% / 4.53%`。短预算 ILD 退化在正式训练中已反转。
+- 完整 validation raw 指标：44 人、767 个纯插值方向、`31,250,648` 个逐频点
+  样本上，MCA/v2/v3 MAE 为 `3.322289 / 2.807803 / 2.581873 dB`，v3 RMSE 为
+  `3.935166 dB`。v3 MAE 相对 v2 改善 `8.05%`、相对 MCA 改善 `22.29%`，并在
+  44/44 人上优于 v2。
+- 全空间严格 HRIR ILD 诊断：v2/v3 MAE 为
+  `0.641157 / 0.621980 dB`，v3 改善 `2.99%`，35/44 人改善。该指标直接使用
+  reference HRIR 能量，但采用全空间口径；后续仍需 MATLAB 重建评估水平面 ILD。
+- 产物：权重比较位于 `results/sonicom_mlp_cnn_q26_v3_weight_pilot/`，正式曲线
+  与摘要位于 `results/sonicom_mlp_cnn_q26_v3_formal/`，锁定配置为
+  `configs/experiments/sonicom_mlp_cnn_q26_v3_locked.json`。checkpoint 和完整
+  per-subject 评估继续保存在 Git 忽略的 `artifacts/`。W&B run ID 为
+  `5mjq0y51`，当前为本地 offline，未经用户明确授权不上传。
+- 运行问题：第一次完整评估在 44 人计算结束后触发旧 HUTUBS 固定参考值断言；
+  已把断言限定到 `hutubs_residual_v1_n03` 并成功重跑，训练和 checkpoint 无需
+  重跑。此次恢复也先检查了后台进程与现有输出，未启动重复训练。
+- 结论与下一步：冻结 MLP、只训练频率 CNN 已同时改善 raw residual、四项固定
+  proxy 和全空间严格 ILD，v3 可进入最终 reconstruction 复核。下一步输出 44 人
+  v3 residual，按 MATLAB 最终口径计算 `AKerbError`、对侧高频、水平面严格
+  HRIR ILD，并生成 44 人 HRTF 总览；test 读取数继续保持为 0。
+
+## 2026-08-01：SONICOM Q26 MLP v1/v2 严格 validation 重建评估
+
+- 工作目标：只在锁定的 44 名 validation 被试上，将正式 v1/v2 residual 回填
+  到 MCA 幅度，按最终 HRTF/HRIR 重建口径比较 `AKerbError`、对侧高频误差和
+  水平面严格 ILD；test 继续不导出、不读取。
+- 推理实现：新增 `predict_sonicom_residuals.py`，强制只接受 split=`val` 的
+  HDF5，原子写出完整 `2×793×463` residual。v1 epoch 19 与 v2 epoch 10 的
+  44 人 GPU 推理分别用时 `8.661 s` 和 `8.432 s`，RTX 5060、AMP、100,225
+  参数；两套预测位于已忽略的 `artifacts/reconstruction/`。
+- 严格重建：新增 `evaluate_sonicom_validation_reconstruction.m`。在
+  `50–20000 Hz` 把 residual 加到 MCA log magnitude，保留 MCA 相位和频段外
+  复数谱，转换双边频谱后 IFFT 并裁剪到原始 256-sample HRIR。原始 validation
+  SOFA 只用于 reference HRIR，未重新运行 MCA。
+- 指标口径：ERB 使用与 HUTUBS 论文复现一致的 `AKerbError`，范围
+  `50–22050 Hz`；全空间和耳特异对侧 25° 区域均只纳入 767 个纯插值方向并按
+  SONICOM solid-angle weight 加权。对侧高频为 `10–20 kHz` 对侧开放半球的
+  面积加权幅度 MAE。严格 ILD 为水平面纯插值方向上完整 HRIR 能量比的 MAE。
+- 全空间 ERB：MCA/v1/v2 均值为
+  `1.095738 / 0.987171 / 0.934826 dB`；v2 相对 MCA 改善 `14.69%`，相对 v1
+  再改善 `5.30%`。v2 在 44/44 人上优于 v1。
+- 对侧 25° ERB：MCA/v1/v2 为
+  `1.763508 / 1.520947 / 1.449139 dB`；v2 相对 MCA 改善 `17.83%`，相对 v1
+  再改善 `4.72%`。v2 在 44/44 人上优于 v1。
+- 对侧高频：MCA/v1/v2 为
+  `4.749208 / 3.989510 / 3.965865 dB`；v2 相对 MCA 改善 `16.49%`，相对 v1
+  再改善 `0.59%`。v2 在 33/44 人上优于 v1，说明正式 v2 保持了 v1 的主要
+  高频收益，但增量较小。
+- 水平面严格 ILD：MCA/v1/v2 为
+  `0.830014 / 0.741741 / 0.653461 dB`；v2 相对 MCA 改善 `21.27%`，相对 v1
+  再改善 `11.90%`，37/44 人改善。该严格结果与训练期 ILD proxy 的方向一致。
+- 质量检查：44 个 per-subject 行、528 个 method-metric 长表行和全部数值有限；
+  HDF5 reference ILD 与原始 SOFA HRIR 重算值的最大差异为 `9.54e-7 dB`。
+  单人 smoke 先发现并修正 HDF5 行/列向量隐式扩展问题，正式运行无异常。
+- 产物：配置位于
+  `configs/experiments/sonicom_mlp_q26_v2_strict_validation.json`；完整 CSV、
+  JSON、44 人指标曲线、聚合柱状图和对侧 HRTF 总览位于
+  `results/sonicom_mlp_q26_v2_strict_validation/`。响应流在正式 MATLAB 运行
+  中途断开，但后台进程正常完成并写出 `status=completed`，没有重跑或并发写入。
+- 结论与下一步：严格 reconstruction 指标确认 v2 的主要增益集中在 ERB 与
+  ILD，高频相对 v1 仅小幅改善但没有总体退化。SONICOM v2 可视为 validation
+  阶段锁定；在解封 44 名 test 前，应先决定是否把当前 v2 作为最终 MLP 基线，
+  或继续在同一开发划分上训练 SONICOM MLP+CNN。
+
+## 2026-07-31：SONICOM Q26 residual MLP v2 权重选择与正式锁定
+
+- 工作目标：在不读取 44 名 test 的前提下，用少量固定预算选择 SONICOM v2
+  的 ERB、对侧高频和 ILD spectral proxy 权重，并完成正式训练与完整
+  validation raw residual 评估。
+- 选择规则：所有候选必须满足 residual MAE 相对初始 v1 退化不超过 `0.5%`；
+  首先最大化 ERB、对侧高频、ILD 三项相对改善率的最小值，再依次比较三项平均
+  改善、residual MAE 和较小总权重。该规则在候选训练前锁定，避免根据结果临时
+  改口径。
+- 候选设置：四组均使用 3 epoch × 120 step、32 个固定 validation block、
+  32 个插值方向、完整 463 频点、方向面积加权损失、AdamW `3e-4`、AMP 和 seed
+  `20260731`。权重分别为 balanced `0.50/0.25/0.25`、erb_heavy
+  `0.75/0.25/0.25`、ild_heavy `0.50/0.25/0.50`、erb_ild_heavy
+  `0.75/0.25/0.50`。
+- 候选结果：四组的 ERB/高频/ILD 最小相对改善率依次为
+  `0.5260% / 0.5305% / 0.4986% / 0.5050%`；三项平均改善率依次为
+  `3.0861% / 3.1430% / 3.5051% / 3.5107%`。根据预定的首要 maximin 规则，
+  选择 `erb_heavy = 0.75/0.25/0.25`，而不是用平均值事后偏向更高 ILD 权重。
+- 正式训练：10 epoch × 500 step、96 个固定 validation block、cosine schedule，
+  其余采样和优化设置与 pilot 相同。RTX 5060 上用时 `296.339 s`，峰值 CUDA
+  allocated memory `144.292 MiB`，最佳 epoch 为 10。
+- 固定 validation：初始 v1 的 residual/ERB/高频/ILD 为
+  `2.847674 / 1.175123 / 4.027407 / 0.738389 dB`；epoch 10 为
+  `2.825701 / 1.119363 / 3.993006 / 0.651290 dB`，分别改善
+  `0.77% / 4.74% / 0.85% / 11.80%`，四项同时改善。
+- 完整 raw validation：遍历 44 人、767 个纯插值方向和 `31,250,648` 个样本。
+  v2 MAE/RMSE 为 `2.807803 / 4.210356 dB`，锁定 v1 为
+  `2.825515 / 4.218639 dB`，分别改善 `0.63% / 0.20%`；相对 MCA
+  `3.322289 dB`，v2 MAE 改善 `15.49%`。
+- 锁定产物：正式 checkpoint 为
+  `artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt`；锁定配置为
+  `configs/experiments/sonicom_mlp_q26_v2_locked.json`；权重比较和正式精选结果
+  分别位于 `results/sonicom_mlp_q26_v2_weight_pilot/` 与
+  `results/sonicom_mlp_q26_v2_formal/`。checkpoint 和完整运行状态继续由
+  `artifacts/` 忽略。
+- W&B 状态：balanced run `buhhtjwi` 已在线。三个新增 pilot run
+  `n2jlw45k / vpwlyqc8 / q5g8hg2h` 和正式 run `h7kmgoxc` 已完整保存在本地
+  offline 目录。由于上传可能包含配置与本机路径信息，当前未获得明确上传授权，
+  因此没有绕过限制进行同步。
+- 防泄漏与结论：处理目录仍只有 262 train + 44 validation，test 读取数为 0。
+  v2 已按 validation 锁定；下一步是在 validation 上回填 residual，执行严格
+  重建 ERB magnitude error、对侧高频误差与 HRIR ILD 评估。严格指标完成前
+  不导出 test。
+
+## 2026-07-31：SONICOM Q26 residual MLP v2 感知损失 smoke
+
+- 工作目标：以锁定的 v1 epoch 19 checkpoint 初始化 MLP v2，验证 SONICOM
+  双耳完整频谱、ERB、对侧高频、ILD spectral proxy、面积权重和 W&B 链路；
+  开发阶段继续不读取 44 名 test。
+- 加权策略：`BinauralSpectrumSampler` 新增 interpolation-only 模式，在 767
+  个合格方向中均匀无放回抽样；损失内部使用第六列 solid-angle weight。
+  residual SmoothL1 和 MAE 同步改为可选方向加权，SONICOM 启用该选项，避免
+  方向按面积抽样后又在损失内加权造成双重面积权重。HUTUBS 默认行为不变。
+- 损失与配置：模型仍为 100,225 参数；每 batch 包含双耳、32 方向和全部 463
+  频点，共 29,632 个样本；总损失为面积加权 residual SmoothL1，加
+  `0.50 × ERB + 0.25 × 对侧高频 + 0.25 × ILD proxy`，各感知项除以
+  target std。smoke 为 3 epoch × 120 step、32 个固定 validation block、
+  AdamW `3e-4`、AMP、seed `20260731`。
+- 实现与验证：v2 训练器新增 W&B、固定 validation sampler、epoch 0 的 v1
+  基准、CUDA 峰值和完整报告。合成可变方向测试、Python compileall 和真实
+  `2×8×463` GPU 前向/反向均通过；真实梯度 smoke 四项损失有限，峰值显存
+  `51.89 MiB`。
+- smoke 结果：正式短程耗时 `33.146 s`，峰值显存 `144.292 MiB`，最佳 epoch
+  3。固定 validation 从 v1 到 v2 的 residual/ERB/高频/ILD 为
+  `2.853286→2.849955 / 1.170491→1.152948 / 4.053157→4.031838 /
+  0.758558→0.703688 dB`，分别改善 `0.12% / 1.50% / 0.53% / 7.23%`；
+  复合 loss 改善 `0.85%`。
+- 完整 raw validation：遍历 44 人、767 插值方向和 `31,250,648` 个样本，
+  v2 MAE/RMSE 为 `2.824472 / 4.229951 dB`；v1 为
+  `2.825515 / 4.218639 dB`。MAE 略改善 `0.037%`，RMSE 小幅波动，说明短程
+  感知微调没有以明显 raw residual 退化换取代理指标。
+- W&B 与产物：run ID `buhhtjwi`，地址
+  `https://wandb.ai/luyoung/mcar-sonicom/runs/buhhtjwi`；配置位于
+  `configs/experiments/sonicom_mlp_q26_v2_smoke.json`，精选 history/summary
+  位于 `results/sonicom_mlp_q26_v2_smoke/`，checkpoint 继续由 artifacts 忽略。
+- 结论与下一步：默认 HUTUBS v2 权重在 SONICOM 上方向正确，四项 validation
+  代理均改善。下一步只在 train/validation 上比较少量权重候选与正式预算，
+  优先保留 ILD 权重、检查更高 ERB 权重是否扩大听觉收益且不损害 raw MAE；
+  test 继续不导出。
+
+## 2026-07-31：SONICOM Q26 residual MLP v1 正式训练与预算锁定
+
+- 工作目标：比较 12/20 epoch 正式预算，以完整 validation 的 767 点面积加权
+  residual MAE 锁定 SONICOM MLP v1；44 名 test 继续未导出、未读取。
+- 公共设置：262 train、44 validation；ResidualMLP 宽度 128、3 个 residual
+  block、100,225 参数；每 epoch 600 个训练 block、96 个固定 validation
+  block，每 block 8192 样本；solid-angle、interpolation-only、AdamW、初始
+  学习率 `1e-3`、cosine schedule、AMP、seed `20260731`。
+- 12-epoch 候选：耗时 `346.345 s`，抽样 validation 最佳为 epoch 12，MAE
+  `2.912809 dB`。完整 validation MAE/RMSE 为
+  `2.872643 / 4.265143 dB`，相对 MCA MAE 改善 `13.53%`；W&B run ID
+  `6wi22jix`。
+- 20-epoch 候选：耗时 `602.747 s`，抽样 validation 最佳为 epoch 19，MAE
+  `2.866083 dB`，epoch 20 为 `2.866198 dB`。完整 validation MAE/RMSE 为
+  `2.825515 / 4.218639 dB`，相对 MCA `3.322289 / 5.029170 dB` 的 MAE
+  改善 `14.95%`；W&B run ID `ek1nvkhh`。
+- 选择结论：20-epoch 候选的完整 validation MAE 相对 12-epoch 再降低
+  `1.64%`，因此锁定 `sonicom_mlp_q26_v1_e20/best.pt` 的 epoch 19。后期曲线
+  已基本平台化，暂不继续增加 epoch。
+- 中断恢复：首次启动 20-epoch 命令时界面中断；检查确认无 Python/W&B 进程、
+  输出目录或半成品 checkpoint，随后从头安全重跑，不存在 checkpoint 混合。
+- 产物：预算配置和锁定配置位于 `configs/experiments/`；比较表、两条 history
+  和摘要位于 `results/sonicom_mlp_q26_v1_budget_comparison/`。checkpoint 与
+  W&B 本地状态继续由 `artifacts/` 忽略。
+- 下一步：以 epoch 19 checkpoint 初始化 SONICOM MLP v2，在 train/validation
+  上调节 ERB、对侧高频和 ILD 感知损失；v2 锁定前继续不导出 test。
+
+## 2026-07-31：SONICOM Q26 residual MLP smoke training
+
+- 工作目标：在不读取锁定 test 的前提下，验证 SONICOM 全量开发数据能否进入
+  现有 100,225 参数轻量 ResidualMLP，并打通 RTX 5060、自动混合精度、球面
+  面积采样、纯插值 mask、固定 validation、完整 validation 和 W&B 在线记录。
+- 兼容改动：`ResidualBlockSampler` 新增可选 `solid_angle` 方向抽样和
+  `interpolation_only` 模式，默认仍为 HUTUBS 原有的 uniform + 全方向。
+  SONICOM 训练按 `direction_features[:, 5]` 的正面积权重，从 767 个
+  interpolation directions 无放回抽样，不让 26 个稀疏输入点稀释训练指标。
+- 训练器：`train_mlp_v1` 新增 W&B 参数、固定 validation seed、epoch 耗时、
+  CUDA 峰值、训练报告和 W&B run 元数据。每个 epoch 都从同一 validation seed
+  重建 sampler，保证候选 epoch 使用相同随机 validation blocks。
+- smoke 配置：262 train、44 validation、0 test；3 epoch × 120 train step，
+  每步 `64 directions × 128 frequencies = 8192` 样本；每 epoch 64 个固定
+  validation block；宽度 128、3 个 residual block、AdamW、初始学习率
+  `1e-3`、AMP，seed `20260731`。
+- 运行结果：RTX 5060 上耗时 `24.095 s`，峰值 CUDA allocated memory
+  `54.090 MiB`，无异常退出。抽样 validation 的 MCA MAE 固定为
+  `3.374041 dB`；模型在 epoch 1/2/3 为
+  `3.235233 / 3.172290 / 3.138882 dB`，最佳 epoch 3 改善 `6.97%`。
+- 完整 validation：扩展 `evaluate_residual_mlp` 支持 interpolation-only 和
+  solid-angle weighting。遍历 44 名 validation、767 方向、双耳和 463
+  频点，共 `31,250,648` 个样本；MCA 的 MAE/RMSE 为
+  `3.322289 / 5.029170 dB`，模型为 `3.100075 / 4.580354 dB`，MAE 改善
+  `6.69%`。
+- W&B：在线同步完成，run ID `hmekqxio`，地址为
+  `https://wandb.ai/luyoung/mcar-sonicom/runs/hmekqxio`。第一次在受限沙箱
+  内初始化时网络访问被拒，尚未开始训练；随后使用受控网络权限重跑成功，不存在
+  checkpoint 混用。
+- 防泄漏与产物：复查 processed 目录仍为 306 个 train/validation HDF5，
+  锁定 test 文件为 0。checkpoint、W&B 本地状态和完整配置位于已忽略的
+  `artifacts/training/sonicom_mlp_q26_smoke_v1/`；精选 history 与摘要位于
+  `results/sonicom_mlp_q26_smoke_v1/`。
+- 结论与下一步：面积加权 SONICOM-only MLP 链路已经可训练，且极短训练已取得
+  明确 validation 改善，但 smoke 预算不足以作为最终结论。下一步应保持同一
+  数据口径，先比较 12/20 epoch 的正式 MLP v1 学习曲线并以完整 validation
+  锁定 checkpoint；再在不读取 test 的情况下进入感知损失 v2。
+
+## 2026-07-31：SONICOM Q26 正式 MCA residual 数据导出
+
+- 工作目标：使用 pilot 锁定的 `SONICOM-Q26-v1`、三阶球谐和
+  Tikhonov epsilon `0.01`，生成 SONICOM-only 网络训练所需的完整
+  train/validation MCA residual 数据；继续禁止读取 44 名锁定 test 被试。
+- 实际执行：从固定 split 读取全部非 test ID，以 6 个 MATLAB process worker
+  调用 `mcar.export_sonicom_residual_dataset`。导出器使用原子写入和完成文件
+  跳过机制；从首个到最后一个文件完成历时约 `733 s`。
+- 导出结果：306/306 个逐被试 HDF5 完成，其中 `262 train / 44 validation /
+  0 test`；无缺失、无意外 ID、无 test 泄漏。总大小 `4,254,380,898 bytes`
+  （约 `3.96 GiB`），每名被试为 2 耳 × 793 方向 × 463 频点，共
+  `734,318` 个 residual 样本。
+- 全量验证：使用 `validate_residual_hdf5 --summary-only
+  --require-strict-ild` 遍历 306 个文件和 `224,701,308` 个样本。所有必需
+  dataset、有限值、动态方向尺寸、26 个稀疏索引、767 点纯插值 mask、方向
+  权重、完整频谱 strict-ILD 元数据和完成标记均通过；`reference - MCA =
+  target_residual` 的最大恒等误差为 `0 dB`。
+- train-only 统计：`compute_training_statistics` 仅纳入 262 名 train 的
+  `192,391,316` 个样本；target residual 的 mean/std/mean absolute 为
+  `-0.062128 / 4.954315 / 3.250640 dB`，范围为
+  `-87.844574～82.283562 dB`。完整统计保存于已忽略数据目录的
+  `training_statistics.json`，实验配置已记录其相对路径。
+- 产物策略：大型 HDF5 及完整 train ID 统计继续位于
+  `data/processed/sonicom_residual_q26_v1/` 并由 Git 忽略；可提交的运行摘要
+  位于 `results/sonicom_data_preparation/full_export_v1/summary.json`。
+- 结论与下一步：SONICOM-only residual 网络所需的开发数据已经就绪且无
+  test 泄漏。下一步先对现有轻量 residual MLP 做最小改动的 SONICOM smoke
+  training，确认 793 点面积权重、动态方向 sampler、validation 全量评估和
+  W&B 日志，再锁定正式训练预算；test 继续保持未导出。
+
 ## 2026-07-31：SONICOM Q26 MCA pilot 与 Tikhonov 参数锁定
 
 - 工作目标：在不读取 44 名锁定 test 被试的前提下，验证 SONICOM-Q26-v1

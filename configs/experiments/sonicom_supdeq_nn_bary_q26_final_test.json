@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "status": "completed_horizontal_baseline",
+  "created_on": "2026-08-05",
+  "entry_point": "mcar.evaluate_sonicom_interpolation_baselines",
+  "split": "test",
+  "allow_test": true,
+  "subject_limit": null,
+  "expected_subject_count": 44,
+  "output_name": "sonicom_supdeq_nn_bary_q26_final_test",
+  "publish_results": true,
+  "mcar_prediction_name": "sonicom_q26_test_mlp_cnn_v32_locked_ild075",
+  "sparse_grid": "SONICOM-Q26-v1",
+  "sparse_direction_count": 26,
+  "interpolation_direction_count": 767,
+  "spherical_harmonic_order": 3,
+  "head_radius_m": 0.09,
+  "sh_tikhonov_epsilon": 0.01,
+  "methods": [
+    "SH only",
+    "SUpDEq + SH",
+    "SUpDEq + Natural Neighbor",
+    "SUpDEq + Barycentric",
+    "MCA",
+    "MCAR v3.2"
+  ],
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "upstream_parity_check": {
+    "subject": "first locked split subject",
+    "natural_neighbor_max_complex_error_threshold": 1e-9,
+    "barycentric_max_complex_error_threshold": 1e-9
+  },
+  "test_usage_policy": "Non-learning baselines only; no retraining, checkpoint selection, model changes, or hyperparameter tuning.",
+  "command": "matlab -batch \"addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(inf,'sonicom_supdeq_nn_bary_q26_final_test',true,'test','sonicom_q26_test_mlp_cnn_v32_locked_ild075',true)\""
+}

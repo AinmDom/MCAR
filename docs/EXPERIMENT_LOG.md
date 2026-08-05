@@ -1,5 +1,17 @@
 # 项目实验日志
 
+## 2026-08-05：SONICOM Q26 SUpDEq + NN/Barycentric 横向基线
+
+- 工作目标：在已经冻结且完成一次性 test 评价的 MCAR v3.2 之外，补齐非学习型横向方法。未重新训练、选择 checkpoint 或修改 MCAR；所有方法统一使用 `SONICOM-Q26-v1`、三阶 SH、头半径 `0.09 m`、44 名锁定 test 被试、767 个纯插值方向和既有四项严格指标。
+- 方法范围：同一评价脚本同时计算 SH only、SUpDEq + SH、SUpDEq + Natural Neighbor（NN）、SUpDEq + Barycentric、MCA 和冻结的 MCAR v3.2。SH 两条链路固定使用与 MCA 数据导出一致的 Tikhonov epsilon `0.01`；NN/Bary 不使用 magnitude correction，直接调用上游 SUpDEq 的方向均衡、自然邻域和重心插值定义。
+- 实现：新增 `matlab/+mcar/evaluate_sonicom_interpolation_baselines.m`。NN/Bary 的空间权重只由固定 Q26 和 793 点参考网格决定，因此用上游 `findvoronoi` 和 `TriangleRayIntersection` 一次构建后供 44 人复用。首名被试同时通过原生 `supdeq_interpHRTF(..., 'SUpDEq', 'NN'/'Bary', nan, ...)` 重算；批量算子与原生入口的最大复频谱差分别为 `4.97e-16` 和 `4.58e-16`。
+- 兼容性：SUpDEq 所带 SFS Toolbox 2.5.0 的 `findvoronoi.m` 有两处旧式 `1:size(idx)`，当前 MATLAB 会拒绝向量冒号操作。脚本从未修改或提交 `external/SUpDEq/`，而是在 `artifacts/matlab_compat/` 生成仅把两处循环上界改为 `size(idx,1)` 的临时优先路径副本；其余数值运算保持上游实现不变，并由上述原生入口一致性检查验证。
+- smoke：实际命令为 `matlab -batch "addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(1,'sonicom_supdeq_nn_bary_q26_smoke',false,'val','sonicom_q26_validation_mlp_cnn_v32_locked_ild075',false)"`。P0001 完成六方法、四指标、原生一致性与 reference ILD 校验；MATLAB `checkcode` 零告警。
+- 最终 test：实际命令为 `matlab -batch "addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(inf,'sonicom_supdeq_nn_bary_q26_final_test',true,'test','sonicom_q26_test_mlp_cnn_v32_locked_ild075',true)"`，正常退出，44/44 被试完成。`metric_long.csv` 为 `44 × 6 × 4 = 1056` 行，逐被试表和质量检查均为 44 行，全部指标为有限数；reference ILD 元数据最大误差维持在 `1e-6 dB` 量级。
+- 最终均值 ± 被试标准差（dB，越低越好）：SH only 为 `2.685±0.107 / 3.835±0.448 / 9.067±0.824 / 3.551±0.664`；SUpDEq + SH 为 `1.882±0.506 / 2.228±0.195 / 5.994±0.344 / 2.018±1.564`；SUpDEq + NN 为 `1.852±0.290 / 2.241±0.212 / 5.595±0.258 / 1.637±0.469`；SUpDEq + Barycentric 为 `1.752±0.257 / 2.182±0.193 / 5.476±0.217 / 1.615±0.442`；MCA 为 `1.082±0.096 / 1.746±0.155 / 4.699±0.266 / 0.829±0.158`；MCAR v3.2 为 `0.868±0.162 / 1.365±0.167 / 3.612±0.277 / 0.687±0.274`。四列依次为全空间 ERB、对侧 25° ERB、对侧高频和水平面严格 ILD。
+- 横向结论：MCAR v3.2 相对 SUpDEq + NN 的四项均值降低 `53.14% / 39.06% / 35.45% / 58.03%`，相对 SUpDEq + Barycentric 降低 `50.47% / 37.43% / 34.04% / 57.46%`；两组比较的四项逐被试胜出数均为 `44/44`。MCA/MCAR 两个锚点与既有 `sonicom_mlp_cnn_q26_v32_final_test_strict` 聚合值逐项差为 0，证明新横向链路没有改变冻结评价口径。SUpDEq + SH 在 P0339 出现明显离群（全空间 ERB `4.898 dB`、水平 ILD `11.772 dB`），正文应保留均值 ± 标准差和逐被试/稳健性信息，不把 NN/Bary 相对 SH 的差异作为核心主张。
+- 产物：论文表、逐被试表、长表、聚合表、质量检查、JSON、说明和聚合图位于 `results/sonicom_supdeq_nn_bary_q26_final_test/`。核心横向结论是 MCAR 相对两种新增非学习插值基线具有一致且逐被试稳定的优势；这些客观结果不替代后续主观感知实验。
+
 缩写说明：多层感知机（Multi-Layer Perceptron，MLP）、卷积神经网络
 （Convolutional Neural Network，CNN）、头相关传输函数（Head-Related
 Transfer Function，HRTF）、头相关脉冲响应（Head-Related Impulse Response，

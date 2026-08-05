@@ -12,6 +12,19 @@ residual = log|H_ref| - log|H_MCA|
 
 ## 当前结果
 
+SONICOM Q26 的一次性最终 test 已在模型完全锁定并获得用户明确授权后完成。论文主模型为
+MLP+CNN v3.2（严格 ILD 权重 `0.75`、epoch 6）：44 名 test 被试上的全空间 ERB、
+对侧 25° ERB、对侧高频和水平面严格 ILD MAE 分别为
+`0.867805 / 1.365327 / 3.611854 / 0.686999 dB`；相对 MCA 分别改善
+`19.81% / 21.79% / 23.13% / 17.17%`，相对正式 v3 分别改善
+`0.493% / 0.400% / 0.227% / 2.830%`。v3.2 与 v3.1 的 test ILD 均值近似相同，
+但 v3.2 的三项幅度明显更好，因此保持为预声明的单模型主方法。完整最终结果位于
+`results/sonicom_mlp_cnn_q26_v32_final_test/` 和
+`results/sonicom_mlp_cnn_q26_v32_final_test_strict/`；可直接用于论文的主表、
+消融表、配对统计和矢量图位于 `results/sonicom_mlp_cnn_q26_v32_paper/`，完整
+结果分析见 `reports/SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`。test 已经使用，任何后续方法改进
+不得再用该拆分选模；需要新的未见拆分或外部数据。以下段落保留此前各阶段的历史结果。
+
 项目已经完成多层感知机（Multi-Layer Perceptron，MLP）v1、听觉感知损失
 MLP v2、MLP + 卷积神经网络（Convolutional Neural Network，CNN）v3，以及用严格
 头相关脉冲响应（Head-Related Impulse Response，HRIR）能量耳间电平差
@@ -70,6 +83,7 @@ SONICOM MLP+CNN v3.1 已完成面向 72 个纯插值水平面方向的严格 HRI
 - `reports/MLP_V2_REPORT.md`
 - `reports/MLP_CNN_V3_REPORT.md`
 - `reports/MLP_CNN_V31_REPORT.md`
+- `reports/SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`
 
 ## 项目结构
 

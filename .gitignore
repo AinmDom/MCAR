@@ -97,3 +97,12 @@ wandb_state/
 /data/**/*.7z
 /data/**/*.tar
 /data/**/*.gz
+/data/**/*.bz2
+/data/**/*.xz
+/data/**/*.rar
+/data/**/*.nc
+/data/**/*.nc4
+/data/**/*.cdf
+/data/**/*.ply
+/data/**/*.wav
+/data/**/*.flac

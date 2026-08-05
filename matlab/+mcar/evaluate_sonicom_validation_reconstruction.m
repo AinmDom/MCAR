@@ -1,13 +1,17 @@
-function evaluate_sonicom_validation_reconstruction(subjectLimit, outputName, publishResults, v3PredictionName, v31PredictionName)
-%EVALUATE_SONICOM_VALIDATION_RECONSTRUCTION Strict validation metrics.
+function evaluate_sonicom_validation_reconstruction(subjectLimit, outputName, ...
+        publishResults, v3PredictionName, v31PredictionName, comparisonLabel, ...
+        splitName, v1PredictionName, v2PredictionName, allowTest)
+%EVALUATE_SONICOM_VALIDATION_RECONSTRUCTION Strict SONICOM split metrics.
 %
-% The function reads only the locked SONICOM validation split. It combines
+% The function defaults to the locked SONICOM validation split. It combines
 % predicted residual magnitudes with the original MCA phase stored in the
 % residual HDF5 files, reconstructs HRIRs, and compares MCA, MLP v1 and MLP
 % v2 with AKerbError, contralateral high-frequency error and HRIR-energy ILD.
 % Pass a v3 reconstruction run name as the fourth argument to include the
-% locked MLP+CNN v3 in the same evaluation and figures. Pass a v3.1 run as
-% the fifth argument to compare MCA, both MLPs, v3 and v3.1 together.
+% locked MLP+CNN v3 in the same evaluation and figures. Pass a comparison run
+% as the fifth argument and its display label as the optional sixth argument.
+% The legacy default label is MLP+CNN v3.1.
+% Test evaluation additionally requires splitName='test' and allowTest=true.
 
 if nargin < 1 || isempty(subjectLimit)
     subjectLimit = inf;
@@ -24,15 +28,44 @@ end
 if nargin < 5
     v31PredictionName = '';
 end
+if nargin < 6 || isempty(comparisonLabel)
+    comparisonLabel = 'MLP+CNN v3.1';
+end
+if nargin < 7 || isempty(splitName)
+    splitName = 'val';
+end
+if nargin < 8 || isempty(v1PredictionName)
+    v1PredictionName = 'sonicom_q26_validation_v1';
+end
+if nargin < 9 || isempty(v2PredictionName)
+    v2PredictionName = 'sonicom_q26_validation_v2';
+end
+if nargin < 10 || isempty(allowTest)
+    allowTest = false;
+end
 validateattributes(subjectLimit, {'numeric'}, {'scalar', 'positive'});
 validateattributes(outputName, {'char', 'string'}, {'scalartext'});
 validateattributes(publishResults, {'logical', 'numeric'}, {'scalar'});
 validateattributes(v3PredictionName, {'char', 'string'}, {'scalartext'});
 validateattributes(v31PredictionName, {'char', 'string'}, {'scalartext'});
+validateattributes(comparisonLabel, {'char', 'string'}, {'scalartext'});
+validateattributes(splitName, {'char', 'string'}, {'scalartext'});
+validateattributes(v1PredictionName, {'char', 'string'}, {'scalartext'});
+validateattributes(v2PredictionName, {'char', 'string'}, {'scalartext'});
+validateattributes(allowTest, {'logical', 'numeric'}, {'scalar'});
 outputName = char(outputName);
 publishResults = logical(publishResults);
 v3PredictionName = char(v3PredictionName);
 v31PredictionName = char(v31PredictionName);
+comparisonLabel = char(comparisonLabel);
+splitName = string(splitName);
+v1PredictionName = char(v1PredictionName);
+v2PredictionName = char(v2PredictionName);
+allowTest = logical(allowTest);
+assert(any(splitName == ["val", "test"]), ...
+    'splitName must be val or test.');
+assert(splitName ~= "test" || allowTest, ...
+    'The locked SONICOM test split requires allowTest=true.');
 includeV3 = ~isempty(v3PredictionName);
 includeV31 = ~isempty(v31PredictionName);
 assert(~includeV31 || includeV3, ...
@@ -48,9 +81,9 @@ sofaRoot = fullfile(projectRoot, 'data', 'HRTF', ...
 splitFile = fullfile(projectRoot, 'configs', 'data', ...
     'sonicom_subject_split_v1.csv');
 v1PredictionRoot = fullfile(projectRoot, 'artifacts', ...
-    'reconstruction', 'sonicom_q26_validation_v1');
+    'reconstruction', v1PredictionName);
 v2PredictionRoot = fullfile(projectRoot, 'artifacts', ...
-    'reconstruction', 'sonicom_q26_validation_v2');
+    'reconstruction', v2PredictionName);
 if includeV3
     v3PredictionRoot = fullfile(projectRoot, 'artifacts', ...
         'reconstruction', v3PredictionName);
@@ -85,23 +118,30 @@ supdeq_start;
 cd(projectRoot);
 
 splitTable = readtable(splitFile, 'TextType', 'string');
-validationRows = splitTable(splitTable.split == "val", :);
-assert(height(validationRows) == 44, ...
-    'Expected exactly 44 locked validation subjects.');
-subjectCount = min(height(validationRows), floor(subjectLimit));
-validationRows = validationRows(1:subjectCount, :);
+splitRows = splitTable(splitTable.split == splitName, :);
+assert(height(splitRows) == 44, ...
+    'Expected exactly 44 locked %s subjects.', splitName);
+subjectCount = min(height(splitRows), floor(subjectLimit));
+splitRows = splitRows(1:subjectCount, :);
+if splitName == "val"
+    splitDisplayName = 'validation';
+else
+    splitDisplayName = 'test';
+end
+figurePrefix = sprintf('%s%d', splitDisplayName, subjectCount);
 
 configuration = struct( ...
     'schemaVersion', '1.0', ...
     'createdOn', char(datetime('now', 'TimeZone', 'local')), ...
-    'split', 'val', ...
-    'testSubjectCountRead', 0, ...
+    'split', char(splitName), ...
+    'testSubjectCountRead', subjectCount * double(splitName == "test"), ...
     'subjectCount', subjectCount, ...
     'datasetRoot', datasetRoot, ...
     'v1PredictionRoot', v1PredictionRoot, ...
     'v2PredictionRoot', v2PredictionRoot, ...
     'v3PredictionRoot', v3PredictionRoot, ...
     'v31PredictionRoot', v31PredictionRoot, ...
+    'comparisonLabel', comparisonLabel, ...
     'erbFunction', 'AKerbError', ...
     'erbFrequencyRangeHz', [50, 22050], ...
     'contralateralRegionRadiusDegrees', 25, ...
@@ -117,7 +157,7 @@ if includeV3
     methodNames(end + 1) = "MLPCNNv3";
 end
 if includeV31
-    methodNames(end + 1) = "MLPCNNv31";
+    methodNames(end + 1) = string(comparisonLabel);
 end
 methodCount = numel(methodNames);
 perSubject = table();
@@ -129,7 +169,7 @@ overview = repmat(struct( ...
     'v3Db', [], 'v31Db', [], 'elevationDeg', NaN), subjectCount, 1);
 
 for subjectIndex = 1:subjectCount
-    subjectLabel = validationRows.subject_id(subjectIndex);
+    subjectLabel = splitRows.subject_id(subjectIndex);
     subjectNumber = sscanf(char(subjectLabel), 'P%d');
     sourceFile = fullfile(datasetRoot, 'subjects', char(subjectLabel), 'q26.h5');
     v1PredictionFile = fullfile(v1PredictionRoot, 'subjects', ...
@@ -161,19 +201,19 @@ for subjectIndex = 1:subjectCount
         assert(isfile(v31PredictionFile), ...
             'Missing v3.1 prediction: %s', v31PredictionFile);
     end
-    assert(isfile(sofaFile), 'Missing validation SOFA: %s', sofaFile);
-    assert(string(h5readatt(sourceFile, '/', 'split')) == "val", ...
-        'Refusing to read non-validation HDF5: %s', sourceFile);
-    assert(string(h5readatt(v1PredictionFile, '/', 'split')) == "val" && ...
-        string(h5readatt(v2PredictionFile, '/', 'split')) == "val", ...
-        'Prediction split is not validation for %s.', subjectLabel);
+    assert(isfile(sofaFile), 'Missing %s SOFA: %s', splitName, sofaFile);
+    assert(string(h5readatt(sourceFile, '/', 'split')) == splitName, ...
+        'Source HDF5 split is not %s: %s', splitName, sourceFile);
+    assert(string(h5readatt(v1PredictionFile, '/', 'split')) == splitName && ...
+        string(h5readatt(v2PredictionFile, '/', 'split')) == splitName, ...
+        'Prediction split is not %s for %s.', splitName, subjectLabel);
     if includeV3
-        assert(string(h5readatt(v3PredictionFile, '/', 'split')) == "val", ...
-            'v3 prediction split is not validation for %s.', subjectLabel);
+        assert(string(h5readatt(v3PredictionFile, '/', 'split')) == splitName, ...
+            'v3 prediction split is not %s for %s.', splitName, subjectLabel);
     end
     if includeV31
-        assert(string(h5readatt(v31PredictionFile, '/', 'split')) == "val", ...
-            'v3.1 prediction split is not validation for %s.', subjectLabel);
+        assert(string(h5readatt(v31PredictionFile, '/', 'split')) == splitName, ...
+            'Comparison prediction split is not %s for %s.', splitName, subjectLabel);
     end
 
     mcaDb = double(h5read(sourceFile, '/mca_logmag_db'));
@@ -415,8 +455,8 @@ for subjectIndex = 1:subjectCount
     overview(subjectIndex).azimuthDeg = azimuthDeg(overviewIndex);
     overview(subjectIndex).elevationDeg = elevationDeg(overviewIndex);
 
-    fprintf('Strict SONICOM validation [%d/%d]: %s\n', ...
-        subjectIndex, subjectCount, subjectLabel);
+    fprintf('Strict SONICOM %s [%d/%d]: %s\n', ...
+        splitDisplayName, subjectIndex, subjectCount, subjectLabel);
 end
 
 aggregate = make_aggregate(perSubject, metricNames, includeV3, includeV31);
@@ -424,21 +464,24 @@ writetable(perSubject, fullfile(outputRoot, 'per_subject_metrics.csv'));
 writetable(metricLong, fullfile(outputRoot, 'metric_long.csv'));
 writetable(qualityRows, fullfile(outputRoot, 'quality_checks.csv'));
 writetable(aggregate, fullfile(outputRoot, 'aggregate_metrics.csv'));
-plot_metric_overview(perSubject, figuresRoot, includeV3, includeV31);
-plot_aggregate_metrics(aggregate, figuresRoot, includeV3, includeV31);
-plot_hrtf_overview(overview, figuresRoot, includeV3, includeV31);
+plot_metric_overview(perSubject, figuresRoot, includeV3, includeV31, ...
+    comparisonLabel, splitDisplayName, figurePrefix);
+plot_aggregate_metrics(aggregate, figuresRoot, includeV3, includeV31, ...
+    comparisonLabel, splitDisplayName, figurePrefix);
+plot_hrtf_overview(overview, figuresRoot, includeV3, includeV31, ...
+    comparisonLabel, splitDisplayName, figurePrefix);
 
 summary = struct( ...
     'schema_version', '1.0', ...
     'status', 'completed', ...
-    'split', 'val', ...
-    'test_subject_count_read', 0, ...
+    'split', char(splitName), ...
+    'test_subject_count_read', subjectCount * double(splitName == "test"), ...
     'subject_count', subjectCount, ...
     'metric_count', height(aggregate), ...
     'aggregate', table2struct(aggregate), ...
     'configuration', configuration);
 write_json(fullfile(outputRoot, 'summary.json'), summary);
-fprintf('SONICOM strict validation complete: %s\n', outputRoot);
+fprintf('SONICOM strict %s complete: %s\n', splitDisplayName, outputRoot);
 disp(aggregate);
 clear restoreDirectory;
 end
@@ -566,7 +609,8 @@ function value = improvement_percent(baseline, estimate)
 value = 100 * (baseline - estimate) / baseline;
 end
 
-function plot_metric_overview(perSubject, figuresRoot, includeV3, includeV31)
+function plot_metric_overview(perSubject, figuresRoot, includeV3, includeV31, ...
+        comparisonLabel, splitDisplayName, figurePrefix)
 figureHandle = figure('Visible', 'off', 'Color', 'w', ...
     'Position', [60, 60, 1800, 1200]);
 layout = tiledlayout(figureHandle, 2, 2, ...
@@ -581,7 +625,7 @@ if includeV31
     values(:, end + 1) = perSubject.MLPCNNv31FullSphereERB_dB;
 end
 plot_grouped_metric(nexttile(layout), values, ...
-    'Full-sphere ERB', 'ERB error (dB)', includeV3, includeV31);
+    'Full-sphere ERB', 'ERB error (dB)', includeV3, includeV31, comparisonLabel);
 values = [perSubject.MCAContralateral25ERB_dB, ...
     perSubject.MLPv1Contralateral25ERB_dB, ...
     perSubject.MLPv2Contralateral25ERB_dB];
@@ -592,7 +636,7 @@ if includeV31
     values(:, end + 1) = perSubject.MLPCNNv31Contralateral25ERB_dB;
 end
 plot_grouped_metric(nexttile(layout), values, ...
-    'Contralateral 25-degree ERB', 'ERB error (dB)', includeV3, includeV31);
+    'Contralateral 25-degree ERB', 'ERB error (dB)', includeV3, includeV31, comparisonLabel);
 values = [perSubject.MCAContralateralHighFrequency_dB, ...
     perSubject.MLPv1ContralateralHighFrequency_dB, ...
     perSubject.MLPv2ContralateralHighFrequency_dB];
@@ -603,7 +647,7 @@ if includeV31
     values(:, end + 1) = perSubject.MLPCNNv31ContralateralHighFrequency_dB;
 end
 plot_grouped_metric(nexttile(layout), values, ...
-    'Contralateral high frequency', 'Magnitude error (dB)', includeV3, includeV31);
+    'Contralateral high frequency', 'Magnitude error (dB)', includeV3, includeV31, comparisonLabel);
 values = [perSubject.MCAHorizontalILDMAE_dB, ...
     perSubject.MLPv1HorizontalILDMAE_dB, ...
     perSubject.MLPv2HorizontalILDMAE_dB];
@@ -614,15 +658,16 @@ if includeV31
     values(:, end + 1) = perSubject.MLPCNNv31HorizontalILDMAE_dB;
 end
 plot_grouped_metric(nexttile(layout), values, ...
-    'Horizontal-plane strict ILD', 'ILD MAE (dB)', includeV3, includeV31);
-title(layout, 'SONICOM validation: strict reconstruction metrics', ...
+    'Horizontal-plane strict ILD', 'ILD MAE (dB)', includeV3, includeV31, comparisonLabel);
+title(layout, sprintf('SONICOM %s: strict reconstruction metrics', ...
+    splitDisplayName), ...
     'FontWeight', 'bold');
 exportgraphics(figureHandle, fullfile(figuresRoot, ...
-    'validation44_metric_overview.png'), 'Resolution', 180);
+    [figurePrefix '_metric_overview.png']), 'Resolution', 180);
 close(figureHandle);
 end
 
-function plot_grouped_metric(axisHandle, values, titleText, yLabelText, includeV3, includeV31)
+function plot_grouped_metric(axisHandle, values, titleText, yLabelText, includeV3, includeV31, comparisonLabel)
 plot(axisHandle, values(:, 1), '-', 'LineWidth', 1.0);
 hold(axisHandle, 'on');
 plot(axisHandle, values(:, 2), '-', 'LineWidth', 1.0);
@@ -647,12 +692,13 @@ if includeV3
     labels(end + 1) = "MLP+CNN v3";
 end
 if includeV31
-    labels(end + 1) = "MLP+CNN v3.1";
+    labels(end + 1) = string(comparisonLabel);
 end
 legend(axisHandle, labels, 'Location', 'best');
 end
 
-function plot_aggregate_metrics(aggregate, figuresRoot, includeV3, includeV31)
+function plot_aggregate_metrics(aggregate, figuresRoot, includeV3, includeV31, ...
+        comparisonLabel, splitDisplayName, figurePrefix)
 figureHandle = figure('Visible', 'off', 'Color', 'w', ...
     'Position', [100, 100, 1500, 700]);
 values = [aggregate.MCAMean_dB, aggregate.MLPv1Mean_dB, ...
@@ -664,7 +710,7 @@ if includeV3
 end
 if includeV31
     values(:, end + 1) = aggregate.MLPCNNv31Mean_dB;
-    labels(end + 1) = "MLP+CNN v3.1";
+    labels(end + 1) = string(comparisonLabel);
 end
 bar(values);
 grid on;
@@ -672,13 +718,15 @@ xticks(1:height(aggregate));
 xticklabels(["Full ERB", "Contra25 ERB", "Contra HF", "ILD"]);
 ylabel('Mean error (dB)');
 legend(labels, 'Location', 'best');
-title('SONICOM validation aggregate strict reconstruction metrics');
+title(sprintf('SONICOM %s aggregate strict reconstruction metrics', ...
+    splitDisplayName));
 exportgraphics(figureHandle, fullfile(figuresRoot, ...
-    'validation44_aggregate_metrics.png'), 'Resolution', 180);
+    [figurePrefix '_aggregate_metrics.png']), 'Resolution', 180);
 close(figureHandle);
 end
 
-function plot_hrtf_overview(overview, figuresRoot, includeV3, includeV31)
+function plot_hrtf_overview(overview, figuresRoot, includeV3, includeV31, ...
+        comparisonLabel, splitDisplayName, figurePrefix)
 figureHandle = figure('Visible', 'off', 'Color', 'w', ...
     'Position', [30, 30, 2200, 1900]);
 layout = tiledlayout(figureHandle, 8, 6, ...
@@ -714,15 +762,15 @@ for index = 1:numel(overview)
             labels(end + 1) = "MLP+CNN v3";
         end
         if includeV31
-            labels(end + 1) = "MLP+CNN v3.1";
+            labels(end + 1) = string(comparisonLabel);
         end
         legend(axisHandle, labels, 'Location', 'southwest', 'FontSize', 6);
     end
 end
-title(layout, ['SONICOM validation: left-ear contralateral HRTF ', ...
+title(layout, ['SONICOM ' splitDisplayName ': left-ear contralateral HRTF ', ...
     '(nearest pure interpolation direction)'], 'FontWeight', 'bold');
 exportgraphics(figureHandle, fullfile(figuresRoot, ...
-    'validation44_contralateral_hrtf_overview.png'), 'Resolution', 180);
+    [figurePrefix '_contralateral_hrtf_overview.png']), 'Resolution', 180);
 close(figureHandle);
 end
 

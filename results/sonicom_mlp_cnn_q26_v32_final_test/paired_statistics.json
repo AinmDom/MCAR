@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "split": "test",
+  "subject_count": 44,
+  "method": {
+    "bootstrap": "Paired subject bootstrap of baseline error minus v3.2 error",
+    "bootstrap_seed": 20260804,
+    "bootstrap_replicates": 100000,
+    "confidence_interval": 0.95,
+    "sign_test": "Exact two-sided sign test without multiple-comparison correction"
+  },
+  "v32_vs_v3": [
+    {"metric": "FullSphereERB", "improved_subject_count": 37, "mean_reduction_db": 0.004302036061207788, "bootstrap_95_ci_db": [0.002755870492439416, 0.006303059177113613], "exact_sign_test_two_sided_p": 0.000005299581744111492},
+    {"metric": "Contralateral25ERB", "improved_subject_count": 31, "mean_reduction_db": 0.005487640812707483, "bootstrap_95_ci_db": [0.002426550794923626, 0.008593118298221637], "exact_sign_test_two_sided_p": 0.009559878856634896},
+    {"metric": "ContralateralHighFrequency", "improved_subject_count": 36, "mean_reduction_db": 0.008232349521082287, "bootstrap_95_ci_db": [0.004625051448766745, 0.012749495630375847], "exact_sign_test_two_sided_p": 0.000025448598648836196},
+    {"metric": "HorizontalILDMAE", "improved_subject_count": 29, "mean_reduction_db": 0.020007481554028317, "bootstrap_95_ci_db": [0.005576491387517326, 0.03542467100781182], "exact_sign_test_two_sided_p": 0.048766765904474596}
+  ],
+  "v32_vs_v31": [
+    {"metric": "FullSphereERB", "improved_subject_count": 44, "mean_reduction_db": 0.032127323339971314, "bootstrap_95_ci_db": [0.029946578641442043, 0.03437812368946109], "exact_sign_test_two_sided_p": 1.1368683772161603e-13},
+    {"metric": "Contralateral25ERB", "improved_subject_count": 38, "mean_reduction_db": 0.017814419152377026, "bootstrap_95_ci_db": [0.012314043338447116, 0.024430511401159476], "exact_sign_test_two_sided_p": 9.430375484953402e-7},
+    {"metric": "ContralateralHighFrequency", "improved_subject_count": 40, "mean_reduction_db": 0.0722806588730832, "bootstrap_95_ci_db": [0.05520483984600512, 0.08943402647945145], "exact_sign_test_two_sided_p": 1.7051434042514302e-8},
+    {"metric": "HorizontalILDMAE", "improved_subject_count": 21, "mean_reduction_db": 0.0007178222181453773, "bootstrap_95_ci_db": [-0.006871873277247431, 0.008147559390685805], "exact_sign_test_two_sided_p": 0.880395821280672}
+  ]
+}

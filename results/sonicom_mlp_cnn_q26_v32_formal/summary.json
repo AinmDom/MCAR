@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-04",
+  "status": "completed_and_locked_after_strict_validation",
+  "selected_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_locked_ild075/best.pt",
+  "selected_epoch": 6,
+  "training_stage": "cnn_only_frozen_mlp_global_magnitude_horizontal_hrir_ild_v32",
+  "training": {
+    "epochs": 6,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "elapsed_seconds": 892.1934638,
+    "peak_cuda_allocated_mib": 399.22216796875,
+    "skipped_optimizer_steps": 0,
+    "trainable_parameter_count": 74402,
+    "frozen_mlp_parameter_count": 100225
+  },
+  "loss_weights": {
+    "erb": 0.75,
+    "contralateral_high_frequency": 0.25,
+    "strict_horizontal_hrir_ild": 0.75
+  },
+  "fixed_validation": {
+    "initial_v3": {
+      "residual_mae_db": 2.5736968740820885,
+      "erb_mae_db": 1.039439957588911,
+      "contralateral_high_frequency_mae_db": 3.626686247686545,
+      "strict_horizontal_hrir_ild_mae_db": 0.6417895760387182
+    },
+    "v32_epoch_6": {
+      "residual_mae_db": 2.566081220904986,
+      "erb_mae_db": 1.0360211028407018,
+      "contralateral_high_frequency_mae_db": 3.614896627763907,
+      "strict_horizontal_hrir_ild_mae_db": 0.6215047693500916
+    }
+  },
+  "strict_matlab_validation": {
+    "result_root": "results/sonicom_mlp_cnn_q26_v32_locked_strict_validation",
+    "subject_count": 44,
+    "full_sphere_erb_mae_db": 0.8846520852333515,
+    "contralateral_25_erb_mae_db": 1.3831743869471063,
+    "contralateral_high_frequency_mae_db": 3.6376380077479125,
+    "horizontal_ild_mae_db": 0.6250147829265432,
+    "improvement_vs_v3_percent": {
+      "full_sphere_erb": 0.3172045004359075,
+      "contralateral_25_erb": 0.3667091482121392,
+      "contralateral_high_frequency": 0.3220217289401702,
+      "horizontal_ild": 3.069013851220658
+    },
+    "acceptance_gate_passed": true
+  },
+  "wandb": {
+    "run_id": "9zg62j1b",
+    "sync_status": "offline"
+  },
+  "test_subject_count_read": 0
+}

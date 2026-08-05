@@ -25,6 +25,8 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("dataset_root", type=Path)
     parser.add_argument("checkpoint", type=Path)
     parser.add_argument("run_name")
+    parser.add_argument("--split", choices=("val", "test"), default="val")
+    parser.add_argument("--allow-test", action="store_true")
     parser.add_argument("--directions-per-block", type=int, default=64)
     parser.add_argument("--subject-limit", type=int)
     parser.add_argument("--no-amp", action="store_true")
@@ -47,13 +49,14 @@ def predict_subject(
     device: torch.device,
     directions_per_block: int,
     use_amp: bool,
+    expected_split: str,
 ) -> dict[str, object]:
     started = time.perf_counter()
     with h5py.File(source_path, "r") as source:
         split = decode_attribute(source.attrs["split"])
-        if split != "val":
+        if split != expected_split:
             raise ValueError(
-                f"Refusing to predict non-validation file {source_path}: {split}"
+                f"Expected split {expected_split!r} in {source_path}, found {split!r}"
             )
         subject_id = int(np.asarray(source.attrs["subject_id"]).item())
         subject_label = decode_attribute(source.attrs["subject_label"])
@@ -141,14 +144,20 @@ def main() -> None:
         raise ValueError("directions-per-block must be positive")
     if arguments.subject_limit is not None and arguments.subject_limit < 1:
         raise ValueError("subject-limit must be positive")
-
-    validation_files = list_hdf5_files(arguments.dataset_root, split="val")
-    if len(validation_files) != 44:
+    if arguments.split == "test" and not arguments.allow_test:
         raise ValueError(
-            f"Expected the locked 44 validation files, found {len(validation_files)}"
+            "The locked SONICOM test split requires explicit --allow-test"
+        )
+
+    subject_files = list_hdf5_files(
+        arguments.dataset_root, split=arguments.split
+    )
+    if len(subject_files) != 44:
+        raise ValueError(
+            f"Expected 44 {arguments.split} files, found {len(subject_files)}"
         )
     if arguments.subject_limit is not None:
-        validation_files = validation_files[: arguments.subject_limit]
+        subject_files = subject_files[: arguments.subject_limit]
 
     device = torch.device("cuda")
     checkpoint = torch.load(
@@ -174,7 +183,7 @@ def main() -> None:
 
     started = time.perf_counter()
     reports: list[dict[str, object]] = []
-    for index, source_path in enumerate(validation_files, start=1):
+    for index, source_path in enumerate(subject_files, start=1):
         with h5py.File(source_path, "r") as source:
             subject_label = decode_attribute(source.attrs["subject_label"])
         output_path = output_root / "subjects" / subject_label / "prediction.h5"
@@ -187,7 +196,7 @@ def main() -> None:
             if complete == 1 and existing_checkpoint == str(
                 arguments.checkpoint.resolve()
             ):
-                print(f"skip complete [{index}/{len(validation_files)}]: {subject_label}")
+                print(f"skip complete [{index}/{len(subject_files)}]: {subject_label}")
                 continue
         report = predict_subject(
             source_path,
@@ -198,25 +207,31 @@ def main() -> None:
             device,
             arguments.directions_per_block,
             use_amp,
+            arguments.split,
         )
         reports.append(report)
         print(
-            f"predicted [{index}/{len(validation_files)}] {subject_label} "
+            f"predicted [{index}/{len(subject_files)}] {subject_label} "
             f"in {report['elapsed_seconds']:.2f}s"
         )
 
     summary = {
         "schema_version": "1.0",
         "status": "completed",
-        "split": "val",
-        "test_subject_count_read": 0,
+        "split": arguments.split,
+        "test_subject_count_read": (
+            len(subject_files) if arguments.split == "test" else 0
+        ),
         "checkpoint": str(arguments.checkpoint.resolve()),
         "checkpoint_epoch": int(checkpoint["epoch"]),
         "training_stage": checkpoint.get("training_stage", "unknown"),
         "dataset_root": str(arguments.dataset_root.resolve()),
         "run_name": arguments.run_name,
         "output_root": str(output_root.resolve()),
-        "validation_subject_count": len(validation_files),
+        "subject_count": len(subject_files),
+        "validation_subject_count": (
+            len(subject_files) if arguments.split == "val" else 0
+        ),
         "newly_processed_subject_count": len(reports),
         "device": torch.cuda.get_device_name(0),
         "torch_version": torch.__version__,

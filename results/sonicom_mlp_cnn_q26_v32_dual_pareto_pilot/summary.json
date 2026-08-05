@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "status": "completed_fixed_validation_pilot",
+  "split": "val",
+  "test_subject_count_read": 0,
+  "initial_v3_fixed_validation": {
+    "residual_mae_db": 2.622267432510853,
+    "erb_mae_db": 1.0643360819667578,
+    "contralateral_high_frequency_mae_db": 3.6451068222522736,
+    "strict_horizontal_ild_mae_db": 0.6495080776512623
+  },
+  "selection_rule": "Keep candidates whose fixed-validation ERB and contralateral high-frequency errors do not regress by more than 0.5 percent from v3, and whose horizontal strict ILD improves. All eligible candidates advance to 44-subject strict MATLAB reconstruction.",
+  "eligible_candidates": ["ild075", "ild100", "ild125", "ild150"],
+  "fixed_validation_frontier": {
+    "lowest_ild": "ild150",
+    "lowest_erb": "ild075",
+    "lowest_high_frequency_error": "ild075",
+    "note": "No single candidate dominates the others on fixed validation; final selection requires strict reconstruction metrics."
+  },
+  "next_stage": "Pending explicit authorization to launch local MATLAB for validation-only strict reconstruction."
+}

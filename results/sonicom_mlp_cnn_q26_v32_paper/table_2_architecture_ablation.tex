@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Architecture and training-strategy ablation on 44 held-out SONICOM Q26 test subjects. Values are mean errors in dB; lower is better.}
+\label{tab:sonicom-ablation}
+\begin{tabular}{lp{5.2cm}rrrr}
+\toprule
+Method & Change & Full-sphere ERB & Contralateral ERB & Contralateral HF & Horizontal ILD \\
+\midrule
+MLP v2 & Perceptual-loss MLP baseline & 0.915 & 1.431 & 3.895 & 0.722 \\
+MLP+CNN v3 & Frequency CNN & 0.872 & 1.371 & 3.620 & 0.707 \\
+MLP+CNN v3.1 & Horizontal strict-ILD fine-tuning & 0.900 & 1.383 & 3.684 & 0.688 \\
+MLP+CNN v3.2 & Dual global-magnitude / horizontal-ILD sampling & \textbf{0.868} & \textbf{1.365} & \textbf{3.612} & \textbf{0.687} \\
+\bottomrule
+\end{tabular}
+\end{table*}

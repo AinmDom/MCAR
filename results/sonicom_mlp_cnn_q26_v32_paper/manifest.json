@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-05",
+  "source_split": "test",
+  "subject_count": 44,
+  "primary_model": "MLP+CNN v3.2 locked (ILD 0.75), epoch 6",
+  "model_selection_used_test": false,
+  "source_files": [
+    "results/sonicom_mlp_cnn_q26_v32_final_test/comparison.csv",
+    "results/sonicom_mlp_cnn_q26_v32_final_test/paired_statistics.json",
+    "results/sonicom_mlp_cnn_q26_v32_final_test/summary.json",
+    "results/sonicom_mlp_cnn_q26_v32_final_test_strict/summary.json",
+    "results/sonicom_mlp_cnn_q26_v31_final_test_strict/summary.json"
+  ],
+  "policy": "Reformatting only. No dataset, checkpoint, prediction, or model selection was performed."
+}

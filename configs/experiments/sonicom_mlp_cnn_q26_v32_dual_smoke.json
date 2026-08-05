@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-03",
+  "status": "completed",
+  "purpose": "Validate v3.2 global-magnitude plus horizontal strict-HRIR-ILD dual sampling on SONICOM train/validation without reading test.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "base_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "initial_cnn_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "run_name": "sonicom_mlp_cnn_q26_v32_dual_smoke_ild100",
+  "epochs": 1,
+  "steps_per_epoch": 2,
+  "validation_steps": 2,
+  "global_directions_per_batch": 32,
+  "horizontal_ild_directions_per_batch": 32,
+  "global_eligible_direction_count": 767,
+  "horizontal_ild_eligible_direction_count": 72,
+  "interpolation_only": true,
+  "direction_weighted_residual": true,
+  "loss": {
+    "global_residual": "SmoothL1, solid-angle weighted",
+    "global_erb_weight": 0.75,
+    "global_contralateral_high_frequency_weight": 0.25,
+    "horizontal_strict_hrir_ild_weight": 1.0
+  },
+  "learning_rate": 0.0001,
+  "weight_decay": 0.00001,
+  "gradient_clip": 5.0,
+  "seed": 20260803,
+  "wandb_mode": "offline",
+  "wandb_project": "mcar-sonicom",
+  "wandb_group": "q26-v32-dual-smoke",
+  "execution": {
+    "completed_epochs": 1,
+    "elapsed_seconds": 4.6150393,
+    "peak_cuda_allocated_mib": 399.22216796875,
+    "skipped_optimizer_steps": 0,
+    "wandb_run_id": "hh4ybnyc",
+    "wandb_sync_status": "offline",
+    "training_stage": "cnn_only_frozen_mlp_global_magnitude_horizontal_hrir_ild_v32"
+  },
+  "test_policy": "The locked test split must not be exported or read."
+}

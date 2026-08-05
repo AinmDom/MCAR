@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-04",
+  "status": "completed_strict_validation_rejected",
+  "purpose": "Validation-only v3.3 continuation pilot. Increase the contralateral high-frequency loss from the balanced v3.2 checkpoint while retaining the dual-sampling strict-HRIR ILD objective.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "initial_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "initial_cnn_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_dual_pilot_ild075/best.pt",
+  "split_policy": "train and locked validation only; no test export or read",
+  "training_budget": {
+    "epochs": 3,
+    "steps_per_epoch": 120,
+    "validation_steps": 32,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "learning_rate": 0.0001,
+    "erb_weight": 0.75,
+    "strict_horizontal_hrir_ild_weight": 0.75,
+    "seed": 20260804
+  },
+  "candidates": [
+    {
+      "name": "hf035",
+      "contralateral_high_frequency_weight": 0.35
+    },
+    {
+      "name": "hf050",
+      "contralateral_high_frequency_weight": 0.5
+    }
+  ],
+  "selection_protocol": {
+    "stage_1": "On the fixed validation sampler, retain a candidate only when contralateral high-frequency error does not regress versus its v3.2 ILD=0.75 initialization and neither ERB nor strict ILD regresses by more than 0.5 percent.",
+    "stage_2": "Only eligible candidates receive 44-subject strict MATLAB reconstruction on validation. Test remains sealed until a user explicitly selects one final model."
+  },
+  "strict_validation_results": {
+    "test_subject_count_read": 0,
+    "hf035": {
+      "full_sphere_erb_db": 0.8904547685,
+      "contralateral_25_degree_erb_db": 1.3907340081,
+      "contralateral_high_frequency_db": 3.6487321985,
+      "horizontal_strict_ild_db": 0.6383149575,
+      "selected": false
+    },
+    "hf050": {
+      "full_sphere_erb_db": 0.8904037289,
+      "contralateral_25_degree_erb_db": 1.390762117,
+      "contralateral_high_frequency_db": 3.6483362608,
+      "horizontal_strict_ild_db": 0.6382540193,
+      "selected": false
+    },
+    "decision": "Reject both candidates: their sub-0.03 percent high-frequency gains versus v3 do not offset ERB regressions, and neither improves on the balanced v3.2 ILD=0.75 candidate."
+  }
+}

@@ -112,6 +112,23 @@ def parse_arguments() -> argparse.Namespace:
             "strict horizontal-plane HRIR ILD fine-tuning."
         ),
     )
+    parser.add_argument(
+        "--dual-sampling-strict-ild",
+        action="store_true",
+        help=(
+            "v3.2 mode: calculate residual/ERB/high-frequency losses on a "
+            "global interpolation batch and strict HRIR ILD on a separate "
+            "horizontal interpolation batch."
+        ),
+    )
+    parser.add_argument(
+        "--ild-directions-per-batch",
+        type=int,
+        help=(
+            "Direction count for the separate horizontal strict-ILD batch. "
+            "Defaults to --directions-per-batch."
+        ),
+    )
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--weight-decay", type=float, default=1e-5)
     parser.add_argument("--erb-weight", type=float, default=0.50)
@@ -169,11 +186,22 @@ def serializable_arguments(
 
 
 def training_stage(arguments: argparse.Namespace) -> str:
+    if arguments.dual_sampling_strict_ild:
+        return "cnn_only_frozen_mlp_global_magnitude_horizontal_hrir_ild_v32"
     if arguments.ild_loss_mode == "strict_hrir":
         if arguments.horizontal_only:
             return "cnn_only_frozen_mlp_strict_horizontal_hrir_ild_v31"
         return "cnn_only_frozen_mlp_strict_hrir_ild_v31"
     return "cnn_only_frozen_mlp"
+
+
+def strict_ild_directions_per_batch(arguments: argparse.Namespace) -> int:
+    """Return the horizontal batch size, defaulting to the global size."""
+    return (
+        arguments.directions_per_batch
+        if arguments.ild_directions_per_batch is None
+        else arguments.ild_directions_per_batch
+    )
 
 
 def initialize_wandb(
@@ -352,31 +380,31 @@ def log_epoch_to_wandb(
             "validation/cnn_delta_mean_absolute_db": (
                 metrics.validation_cnn_delta_mean_absolute_db
             ),
-            "validation/total_improvement_vs_v2_percent": (
+            "validation/total_improvement_vs_initial_model_percent": (
                 relative_improvement_percent(
                     initial.total_loss,
                     metrics.validation_total_loss,
                 )
             ),
-            "validation/residual_improvement_vs_v2_percent": (
+            "validation/residual_improvement_vs_initial_model_percent": (
                 relative_improvement_percent(
                     initial.residual_mae_db,
                     metrics.validation_residual_mae_db,
                 )
             ),
-            "validation/erb_improvement_vs_v2_percent": (
+            "validation/erb_improvement_vs_initial_model_percent": (
                 relative_improvement_percent(
                     initial.erb_mae_db,
                     metrics.validation_erb_mae_db,
                 )
             ),
-            "validation/high_frequency_improvement_vs_v2_percent": (
+            "validation/high_frequency_improvement_vs_initial_model_percent": (
                 relative_improvement_percent(
                     initial.contralateral_high_frequency_mae_db,
                     metrics.validation_contralateral_high_frequency_mae_db,
                 )
             ),
-            "validation/ild_improvement_vs_v2_percent": (
+            "validation/ild_improvement_vs_initial_model_percent": (
                 relative_improvement_percent(
                     initial.ild_mae_db,
                     metrics.validation_ild_mae_db,
@@ -454,6 +482,7 @@ def calculate_model_losses(
     normalization: Normalization,
     arguments: argparse.Namespace,
     use_amp: bool,
+    include_strict_ild: bool = True,
 ) -> tuple[torch.Tensor, LossMetrics, torch.Tensor]:
     (
         point_features,
@@ -497,7 +526,7 @@ def calculate_model_losses(
         ),
         arguments.direction_weighted_residual,
     )
-    if arguments.ild_loss_mode == "strict_hrir":
+    if arguments.ild_loss_mode == "strict_hrir" and include_strict_ild:
         if not isinstance(strict_metadata, dict):
             raise ValueError("Strict HRIR ILD mode requires metadata")
         prediction_db = (
@@ -520,6 +549,84 @@ def calculate_model_losses(
         loss_metrics.total = float(loss.detach().item())
         loss_metrics.ild_mae_db = float(strict_ild_mae.detach().item())
     return loss, loss_metrics, cnn_delta
+
+
+def calculate_strict_ild_loss(
+    model: ResidualMLPCNN,
+    batch: tuple[object, ...],
+    normalization: Normalization,
+    arguments: argparse.Namespace,
+    use_amp: bool,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Calculate only the strict HRIR ILD term for a horizontal batch."""
+    (
+        point_features,
+        _target_normalized,
+        _target_db,
+        mca_db,
+        direction_features,
+        _frequency_hz,
+        strict_metadata,
+    ) = batch
+    if not isinstance(point_features, torch.Tensor) or not isinstance(
+        mca_db, torch.Tensor
+    ) or not isinstance(direction_features, torch.Tensor):
+        raise TypeError("Strict ILD batch tensors are incomplete")
+    if not isinstance(strict_metadata, dict):
+        raise ValueError("Strict HRIR ILD mode requires metadata")
+    with torch.amp.autocast("cuda", enabled=use_amp):
+        prediction, _, cnn_delta = model(point_features)
+    prediction_db = (
+        prediction.permute(1, 0, 2).float() * normalization.target_std
+        + normalization.target_mean
+    )
+    strict_ild_mae = strict_hrir_ild_mae(
+        mca_db.float() + prediction_db,
+        direction_features[:, 5],
+        strict_metadata,
+    )
+    return (
+        arguments.ild_weight * strict_ild_mae / normalization.target_std,
+        strict_ild_mae,
+        cnn_delta,
+    )
+
+
+def calculate_dual_sampling_losses(
+    model: ResidualMLPCNN,
+    global_batch: tuple[object, ...],
+    horizontal_ild_batch: tuple[object, ...],
+    log_erb_weights: torch.Tensor,
+    normalization: Normalization,
+    arguments: argparse.Namespace,
+    use_amp: bool,
+) -> tuple[torch.Tensor, LossMetrics, torch.Tensor]:
+    """Combine global spectral losses with horizontal strict HRIR ILD.
+
+    The two batches are sampled independently to prevent the ILD objective
+    from shrinking the spatial support of residual, ERB, and high-frequency
+    supervision.
+    """
+    global_loss, metrics, global_delta = calculate_model_losses(
+        model,
+        global_batch,
+        log_erb_weights,
+        normalization,
+        arguments,
+        use_amp,
+        include_strict_ild=False,
+    )
+    strict_loss, strict_ild_mae, _ = calculate_strict_ild_loss(
+        model,
+        horizontal_ild_batch,
+        normalization,
+        arguments,
+        use_amp,
+    )
+    total_loss = global_loss + strict_loss
+    metrics.total = float(total_loss.detach().item())
+    metrics.ild_mae_db = float(strict_ild_mae.detach().item())
+    return total_loss, metrics, global_delta
 
 
 def make_sampler(
@@ -561,26 +668,57 @@ def evaluate(
         normalization,
         directions_per_batch,
         sampler_seed,
-        arguments.ild_loss_mode == "strict_hrir",
+        (
+            arguments.ild_loss_mode == "strict_hrir"
+            and not arguments.dual_sampling_strict_ild
+        ),
         arguments.interpolation_only,
-        arguments.horizontal_only,
+        arguments.horizontal_only and not arguments.dual_sampling_strict_ild,
     )
+    horizontal_ild_sampler: BinauralSpectrumSampler | None = None
+    if arguments.dual_sampling_strict_ild:
+        horizontal_ild_sampler = make_sampler(
+            files,
+            normalization,
+            strict_ild_directions_per_batch(arguments),
+            sampler_seed + 10_000,
+            True,
+            True,
+            True,
+        )
     accumulated = LossMetrics()
     delta_mean_absolute_db = 0.0
     for _ in range(steps):
         batch = sample_to_device(
             sampler.sample_batch(),
             device,
-            arguments.ild_loss_mode == "strict_hrir",
+            (
+                arguments.ild_loss_mode == "strict_hrir"
+                and not arguments.dual_sampling_strict_ild
+            ),
         )
-        _, current, cnn_delta = calculate_model_losses(
-            model,
-            batch,
-            log_erb_weights,
-            normalization,
-            arguments,
-            use_amp,
-        )
+        if horizontal_ild_sampler is None:
+            _, current, cnn_delta = calculate_model_losses(
+                model,
+                batch,
+                log_erb_weights,
+                normalization,
+                arguments,
+                use_amp,
+            )
+        else:
+            horizontal_ild_batch = sample_to_device(
+                horizontal_ild_sampler.sample_batch(), device, True
+            )
+            _, current, cnn_delta = calculate_dual_sampling_losses(
+                model,
+                batch,
+                horizontal_ild_batch,
+                log_erb_weights,
+                normalization,
+                arguments,
+                use_amp,
+            )
         add_metrics(accumulated, current)
         delta_mean_absolute_db += float(
             torch.mean(torch.abs(cnn_delta.float())).item()
@@ -657,6 +795,22 @@ def main() -> None:
         raise ValueError("epochs and steps_per_epoch must be positive")
     if arguments.validation_steps < 1:
         raise ValueError("validation_steps must be positive")
+    if arguments.dual_sampling_strict_ild:
+        if arguments.ild_loss_mode != "strict_hrir":
+            raise ValueError(
+                "--dual-sampling-strict-ild requires --ild-loss-mode strict_hrir"
+            )
+        if arguments.horizontal_only:
+            raise ValueError(
+                "--horizontal-only conflicts with --dual-sampling-strict-ild; "
+                "the global batch must cover all interpolation directions"
+            )
+        if not arguments.interpolation_only:
+            raise ValueError(
+                "--dual-sampling-strict-ild requires --interpolation-only"
+            )
+        if strict_ild_directions_per_batch(arguments) < 1:
+            raise ValueError("--ild-directions-per-batch must be positive")
     set_seed(arguments.seed)
     torch.set_float32_matmul_precision("high")
     device = torch.device("cuda")
@@ -680,10 +834,24 @@ def main() -> None:
         normalization,
         arguments.directions_per_batch,
         arguments.seed,
-        arguments.ild_loss_mode == "strict_hrir",
+        (
+            arguments.ild_loss_mode == "strict_hrir"
+            and not arguments.dual_sampling_strict_ild
+        ),
         arguments.interpolation_only,
-        arguments.horizontal_only,
+        arguments.horizontal_only and not arguments.dual_sampling_strict_ild,
     )
+    train_horizontal_ild_sampler: BinauralSpectrumSampler | None = None
+    if arguments.dual_sampling_strict_ild:
+        train_horizontal_ild_sampler = make_sampler(
+            train_files,
+            normalization,
+            strict_ild_directions_per_batch(arguments),
+            arguments.seed + 10_000,
+            True,
+            True,
+            True,
+        )
     initial = torch.load(
         arguments.initial_checkpoint,
         map_location=device,
@@ -765,6 +933,28 @@ def main() -> None:
             train_sampler.eligible_direction_indices.size
         ),
         "interpolation_only": arguments.interpolation_only,
+        "horizontal_only": arguments.horizontal_only,
+        "dual_sampling_strict_ild": arguments.dual_sampling_strict_ild,
+        "global_eligible_direction_count": int(
+            train_sampler.eligible_direction_indices.size
+        ),
+        "strict_ild_directions_per_batch": (
+            None
+            if train_horizontal_ild_sampler is None
+            else train_horizontal_ild_sampler.directions_per_batch
+        ),
+        "strict_ild_batch_sample_count": (
+            None
+            if train_horizontal_ild_sampler is None
+            else train_horizontal_ild_sampler.batch_size
+        ),
+        "strict_ild_eligible_direction_count": (
+            None
+            if train_horizontal_ild_sampler is None
+            else int(
+                train_horizontal_ild_sampler.eligible_direction_indices.size
+            )
+        ),
         "direction_weighted_residual": (
             arguments.direction_weighted_residual
         ),
@@ -851,17 +1041,34 @@ def main() -> None:
             batch = sample_to_device(
                 train_sampler.sample_batch(),
                 device,
-                arguments.ild_loss_mode == "strict_hrir",
+                (
+                    arguments.ild_loss_mode == "strict_hrir"
+                    and not arguments.dual_sampling_strict_ild
+                ),
             )
             optimizer.zero_grad(set_to_none=True)
-            loss, current, cnn_delta = calculate_model_losses(
-                model,
-                batch,
-                log_erb_weights,
-                normalization,
-                arguments,
-                use_amp,
-            )
+            if train_horizontal_ild_sampler is None:
+                loss, current, cnn_delta = calculate_model_losses(
+                    model,
+                    batch,
+                    log_erb_weights,
+                    normalization,
+                    arguments,
+                    use_amp,
+                )
+            else:
+                horizontal_ild_batch = sample_to_device(
+                    train_horizontal_ild_sampler.sample_batch(), device, True
+                )
+                loss, current, cnn_delta = calculate_dual_sampling_losses(
+                    model,
+                    batch,
+                    horizontal_ild_batch,
+                    log_erb_weights,
+                    normalization,
+                    arguments,
+                    use_amp,
+                )
             if not bool(torch.isfinite(loss).item()):
                 raise RuntimeError("Encountered a non-finite training loss")
             scaler.scale(loss).backward()

@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-04",
+  "status": "completed_primary_model_unchanged",
+  "split": "test",
+  "subject_count": 44,
+  "test_subject_count_read": 44,
+  "primary_model": "MLP+CNN v3.2 locked (ILD 0.75), epoch 6",
+  "model_selection_used_test": false,
+  "raw_diagnostic": {
+    "sample_count": 31250648,
+    "mca_mae_db": 3.3192153684833254,
+    "mlp_v2_mae_db": 2.795765554060766,
+    "mlp_cnn_v32_mae_db": 2.5749282987731874,
+    "v32_improvement_vs_mca_percent": 22.42358470550921,
+    "v32_improvement_vs_v2_percent": 7.898990491774931,
+    "v32_improved_vs_v2_subject_count": 44,
+    "full_sphere_strict_ild_v2_mae_db": 0.7020750780485067,
+    "full_sphere_strict_ild_v32_mae_db": 0.678218273563491,
+    "full_sphere_strict_ild_improvement_percent": 3.398041780848889
+  },
+  "validation_to_test_generalization": {
+    "validation_metrics_db": {
+      "full_sphere_erb": 0.8846520852333515,
+      "contralateral_25_degree_erb": 1.3831743869471063,
+      "contralateral_high_frequency": 3.6376380077479125,
+      "horizontal_ild_mae": 0.6250147829265432
+    },
+    "test_change_relative_to_validation_percent": {
+      "full_sphere_erb": -1.904395479357767,
+      "contralateral_25_degree_erb": -1.290340329995692,
+      "contralateral_high_frequency": -0.7088168300204076,
+      "horizontal_ild_mae": 9.917285241744006
+    },
+    "note": "The three magnitude metrics are slightly lower on test, whereas horizontal ILD is 9.92 percent higher than on validation. This split shift does not change the predeclared model and v3.2 still improves test ILD over v3 by 2.83 percent."
+  },
+  "strict_reconstruction": {
+    "main_result_root": "results/sonicom_mlp_cnn_q26_v32_final_test_strict",
+    "v31_ablation_result_root": "results/sonicom_mlp_cnn_q26_v31_final_test_strict",
+    "metrics_db": {
+      "full_sphere_erb": 0.8678048109141233,
+      "contralateral_25_degree_erb": 1.3653267299981573,
+      "contralateral_high_frequency": 3.6118538173337766,
+      "horizontal_ild_mae": 0.6869992817524356
+    },
+    "improvement_vs_mca_percent": {
+      "full_sphere_erb": 19.81091661978956,
+      "contralateral_25_degree_erb": 21.79162596807009,
+      "contralateral_high_frequency": 23.12994402268117,
+      "horizontal_ild_mae": 17.1676202875322
+    },
+    "improvement_vs_v3_percent": {
+      "full_sphere_erb": 0.4932923157441539,
+      "contralateral_25_degree_erb": 0.4003197609798246,
+      "contralateral_high_frequency": 0.2274075572138949,
+      "horizontal_ild_mae": 2.829885454059741
+    },
+    "improved_vs_v3_subject_count": {
+      "full_sphere_erb": 37,
+      "contralateral_25_degree_erb": 31,
+      "contralateral_high_frequency": 36,
+      "horizontal_ild_mae": 29
+    }
+  },
+  "interpretation": "The predeclared v3.2 primary model improves all four test means over v3. Its three magnitude metrics are clearly better than the v3.1 ILD-focused ablation. The v3.2 and v3.1 horizontal ILD means differ by only 0.000718 dB, with a paired bootstrap interval crossing zero; report them as statistically indistinguishable for ILD rather than claiming a v3.2 ILD advantage.",
+  "post_test_policy": "The primary model remains the predeclared v3.2 epoch 6 checkpoint. No model or hyperparameter may be changed using these test results."
+}

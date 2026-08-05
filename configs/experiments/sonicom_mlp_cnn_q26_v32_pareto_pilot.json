@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-03",
+  "status": "completed_fixed_validation_pilot",
+  "purpose": "Pre-registered validation-only Pareto pilot for v3.2 dual sampling. Select candidates before any test access.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "initial_cnn_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "training_budget": {
+    "epochs": 3,
+    "steps_per_epoch": 120,
+    "validation_steps": 32,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "learning_rate": 0.0001,
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "seed": 20260803
+  },
+  "candidates": [
+    {"name": "ild075", "strict_horizontal_hrir_ild_weight": 0.75},
+    {"name": "ild100", "strict_horizontal_hrir_ild_weight": 1.0},
+    {"name": "ild125", "strict_horizontal_hrir_ild_weight": 1.25},
+    {"name": "ild150", "strict_horizontal_hrir_ild_weight": 1.5}
+  ],
+  "selection_protocol": {
+    "stage_1": "Keep candidates whose fixed validation global ERB and contralateral high-frequency errors do not exceed the initial v3 values by more than 0.5 percent, and whose horizontal strict ILD improves over v3.",
+    "stage_2": "For eligible candidates, run complete 44-subject validation reconstruction and retain the Pareto frontier over full-sphere ERB, contralateral 25-degree ERB, contralateral high frequency, and horizontal strict ILD.",
+    "stage_3": "Select a single balanced checkpoint only if horizontal ILD improves over v3 and no magnitude metric regresses by more than 0.5 percent; otherwise retain separate v3 magnitude and v3.1 ILD baselines."
+  },
+  "pilot_results": {
+    "initial_v3": {
+      "residual_mae_db": 2.622267432510853,
+      "erb_mae_db": 1.0643360819667578,
+      "contralateral_high_frequency_mae_db": 3.6451068222522736,
+      "strict_horizontal_ild_mae_db": 0.6495080776512623
+    },
+    "candidates": [
+      {"name": "ild075", "run_id": "rnll52k3", "best_epoch": 2, "erb_change_percent": 0.045014878, "high_frequency_change_percent": -0.250133700, "strict_ild_change_percent": 1.258573101, "stage_1_eligible": true},
+      {"name": "ild100", "run_id": "i9zup50o", "best_epoch": 2, "erb_change_percent": -0.038402825, "high_frequency_change_percent": -0.332788366, "strict_ild_change_percent": 1.468046954, "stage_1_eligible": true},
+      {"name": "ild125", "run_id": "mx6gwabw", "best_epoch": 2, "erb_change_percent": -0.084820721, "high_frequency_change_percent": -0.388999663, "strict_ild_change_percent": 1.562816558, "stage_1_eligible": true},
+      {"name": "ild150", "run_id": "8nw0m13r", "best_epoch": 2, "erb_change_percent": -0.110605135, "high_frequency_change_percent": -0.421366939, "strict_ild_change_percent": 1.666669420, "stage_1_eligible": true}
+    ],
+    "result_root": "results/sonicom_mlp_cnn_q26_v32_dual_pareto_pilot"
+  },
+  "next_stage": "Pending explicit authorization to launch local MATLAB for validation-only strict reconstruction.",
+  "validation_prediction_runs": {
+    "ild075": "sonicom_q26_validation_mlp_cnn_v32_dual_ild075",
+    "ild100": "sonicom_q26_validation_mlp_cnn_v32_dual_ild100",
+    "ild125": "sonicom_q26_validation_mlp_cnn_v32_dual_ild125",
+    "ild150": "sonicom_q26_validation_mlp_cnn_v32_dual_ild150"
+  },
+  "test_policy": "The locked test split must not be exported or read."
+}

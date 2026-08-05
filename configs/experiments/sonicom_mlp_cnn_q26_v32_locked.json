@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-04",
+  "status": "completed_and_locked_after_strict_validation",
+  "purpose": "Pre-registered formal v3.2 training configuration selected from validation-only Pareto pilots. Hyperparameters and checkpoint selection rules are locked before training, with the test split sealed.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "base_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "initial_cnn_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v32_locked_ild075",
+  "model": {
+    "architecture": "frozen residual MLP plus trainable directional CNN",
+    "freeze_mlp": true,
+    "train_cnn_only": true
+  },
+  "training": {
+    "epochs": 6,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "dual_sampling_strict_ild": true,
+    "ild_loss_mode": "strict_hrir",
+    "interpolation_only": true,
+    "direction_weighted_residual": true,
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "strict_horizontal_hrir_ild_weight": 0.75,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.00001,
+    "gradient_clip": 5.0,
+    "scheduler": "cosine",
+    "automatic_mixed_precision": true,
+    "seed": 20260804
+  },
+  "checkpoint_selection": {
+    "primary": "minimum fixed validation total loss",
+    "secondary_artifact": "minimum fixed validation strict horizontal HRIR ILD loss",
+    "final_candidate": "best.pt",
+    "strict_reconstruction_acceptance": "On all 44 validation subjects, strict horizontal ILD must improve over formal v3 and none of full-sphere ERB, contralateral 25-degree ERB, or contralateral high-frequency error may regress by more than 0.5 percent relative to formal v3."
+  },
+  "tracking": {
+    "wandb_mode": "offline",
+    "wandb_project": "mcar-sonicom",
+    "wandb_group": "q26-v32-locked",
+    "wandb_job_type": "mlp-cnn-v32-locked"
+  },
+  "formal_result": {
+    "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_locked_ild075/best.pt",
+    "best_epoch": 6,
+    "elapsed_seconds": 892.1934638,
+    "total_skipped_optimizer_steps": 0,
+    "wandb_offline_run_id": "9zg62j1b",
+    "validation_prediction_root": "artifacts/reconstruction/sonicom_q26_validation_mlp_cnn_v32_locked_ild075",
+    "strict_validation_result_root": "results/sonicom_mlp_cnn_q26_v32_locked_strict_validation",
+    "strict_validation_subject_count": 44,
+    "strict_validation_metrics_db": {
+      "full_sphere_erb": 0.8846520852333515,
+      "contralateral_25_degree_erb": 1.3831743869471063,
+      "contralateral_high_frequency": 3.6376380077479125,
+      "horizontal_ild_mae": 0.6250147829265432
+    },
+    "acceptance_gate_passed": true,
+    "test_subject_count_read": 0
+  },
+  "final_test": {
+    "authorization_received_on": "2026-08-04",
+    "protocol": "configs/experiments/sonicom_mlp_cnn_q26_v32_final_test.json",
+    "result_summary": "results/sonicom_mlp_cnn_q26_v32_final_test/summary.json",
+    "test_subject_count_read": 44,
+    "primary_model_changed_after_test": false
+  },
+  "test_policy": "The locked test split was read once after explicit user authorization and after the epoch 6 checkpoint was locked. The result is final and must not be used for further model selection or tuning."
+}

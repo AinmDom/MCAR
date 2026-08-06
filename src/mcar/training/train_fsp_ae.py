@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import time
 from pathlib import Path
@@ -25,6 +26,16 @@ from mcar.paths import project_root
 
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json_atomic(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    partial = path.with_suffix(path.suffix + ".partial")
+    partial.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    os.replace(partial, path)
 
 
 def target_indices(
@@ -176,9 +187,12 @@ def save_checkpoint(
     scheduler: torch.optim.lr_scheduler.LRScheduler,
     epoch: int,
     best_validation_loss: float,
+    best_epoch: int,
     config: dict[str, Any],
+    generator: torch.Generator,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    partial = path.with_suffix(path.suffix + ".partial")
     torch.save(
         {
             "model": model.state_dict(),
@@ -187,22 +201,36 @@ def save_checkpoint(
             "scheduler": scheduler.state_dict(),
             "epoch": epoch,
             "best_validation_loss": best_validation_loss,
+            "best_epoch": best_epoch,
+            "training_generator_state": generator.get_state(),
             "config": config,
             "method": "FSP-AE-Q26 adaptation",
             "upstream": "https://github.com/ikets/FSP-AE",
             "upstream_license": "CC BY 4.0",
         },
-        path,
+        partial,
     )
+    os.replace(partial, path)
 
 
 def main() -> None:
     root = project_root()
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "config", type=Path, default=root / "configs" / "experiments" / "sonicom_fsp_ae_q26_smoke.json"
+        "config",
+        type=Path,
+        default=(
+            root
+            / "configs"
+            / "experiments"
+            / "sonicom_fsp_ae_q26_smoke.json"
+        ),
     )
-    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument(
+        "--device",
+        default="cuda" if torch.cuda.is_available() else "cpu",
+    )
+    parser.add_argument("--resume", type=Path)
     args = parser.parse_args()
     config = load_json(args.config)
     seed = int(config["training"]["seed"])
@@ -243,14 +271,39 @@ def main() -> None:
         gamma=float(config["training"].get("learning_rate_gamma", 0.1)),
     )
     run_root = root / "artifacts" / "training" / config["run_name"]
+    if args.resume is None and run_root.exists() and any(run_root.iterdir()):
+        raise FileExistsError(
+            f"training output already exists; use --resume: {run_root}"
+        )
     run_root.mkdir(parents=True, exist_ok=True)
-    (run_root / "config.json").write_text(
-        json.dumps(config, indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
     history: list[dict[str, Any]] = []
     best_validation_loss = float("inf")
+    best_epoch = 0
     generator = torch.Generator().manual_seed(seed)
+    start_epoch = 1
+    if args.resume is not None:
+        checkpoint = torch.load(
+            args.resume, map_location="cpu", weights_only=False
+        )
+        if checkpoint.get("config", {}).get("run_name") != config["run_name"]:
+            raise ValueError("resume checkpoint run_name differs from config")
+        model.load_state_dict(checkpoint["model"])
+        model.stats = checkpoint["stats"]
+        optimizer.load_state_dict(checkpoint["optimizer"])
+        scheduler.load_state_dict(checkpoint["scheduler"])
+        best_validation_loss = float(checkpoint["best_validation_loss"])
+        best_epoch = int(checkpoint.get("best_epoch", checkpoint["epoch"]))
+        start_epoch = int(checkpoint["epoch"]) + 1
+        if "training_generator_state" in checkpoint:
+            generator.set_state(checkpoint["training_generator_state"])
+        history_path = run_root / "history.json"
+        if history_path.is_file():
+            history = [
+                record
+                for record in load_json(history_path)
+                if int(record["epoch"]) < start_epoch
+            ]
+    write_json_atomic(run_root / "config.json", config)
     started = time.perf_counter()
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
@@ -262,7 +315,13 @@ def main() -> None:
     itd_weight = float(config["training"]["itd_loss_weight"])
     gradient_clip = float(config["training"]["gradient_clip"])
 
-    for epoch in range(1, epochs + 1):
+    if start_epoch > epochs:
+        raise ValueError("resume checkpoint already reached configured epochs")
+    checkpoint_epochs = {
+        int(value) for value in config["training"].get("checkpoint_epochs", [])
+    }
+
+    for epoch in range(start_epoch, epochs + 1):
         model.train()
         order = torch.randperm(len(train_files), generator=generator).tolist()
         if steps_per_epoch is not None:
@@ -297,7 +356,7 @@ def main() -> None:
             int(config["validation"]["target_directions_per_chunk"]),
             itd_weight,
             device,
-            seed + 10_000,
+            int(config["validation"].get("fixed_seed", seed + 10_000)),
         )
         record = {
             "epoch": epoch,
@@ -307,8 +366,12 @@ def main() -> None:
         }
         history.append(record)
         print(record)
-        if validation_metrics["loss"] < best_validation_loss:
+        improved = validation_metrics["loss"] < best_validation_loss
+        if improved:
             best_validation_loss = validation_metrics["loss"]
+            best_epoch = epoch
+        scheduler.step()
+        if improved:
             save_checkpoint(
                 run_root / "best.pt",
                 model,
@@ -316,9 +379,23 @@ def main() -> None:
                 scheduler,
                 epoch,
                 best_validation_loss,
+                best_epoch,
                 config,
+                generator,
             )
-        scheduler.step()
+        if epoch in checkpoint_epochs or epoch == epochs:
+            save_checkpoint(
+                run_root / f"checkpoint_epoch_{epoch:04d}.pt",
+                model,
+                optimizer,
+                scheduler,
+                epoch,
+                best_validation_loss,
+                best_epoch,
+                config,
+                generator,
+            )
+        write_json_atomic(run_root / "history.json", history)
 
     elapsed = time.perf_counter() - started
     summary = {
@@ -329,6 +406,7 @@ def main() -> None:
         "validation_subject_count_read": len(validation_files),
         "test_subject_count_read": 0,
         "best_validation_loss": best_validation_loss,
+        "best_epoch": best_epoch,
         "elapsed_seconds": elapsed,
         "device": str(device),
         "peak_cuda_allocated_mib": (
@@ -337,12 +415,8 @@ def main() -> None:
             else 0.0
         ),
     }
-    (run_root / "history.json").write_text(
-        json.dumps(history, indent=2) + "\n", encoding="utf-8"
-    )
-    (run_root / "summary.json").write_text(
-        json.dumps(summary, indent=2) + "\n", encoding="utf-8"
-    )
+    write_json_atomic(run_root / "history.json", history)
+    write_json_atomic(run_root / "summary.json", summary)
     print(summary)
 
 

@@ -1,5 +1,17 @@
 # 项目实验日志
 
+## 2026-08-06：FSP-AE-Q26 正式预算锁定与严格 validation
+
+- 工作目标：在端到端 smoke 通过后，只使用 262 train / 44 validation 比较预声明的 10/20/40 epoch 预算，按固定 validation 复合损失锁定 checkpoint，再执行 44 人、767 个纯插值方向的七方法严格横向评价。test 不参与训练、选模、推理或评价，全部摘要中的读取数为 0。
+- 可恢复训练：`train_fsp_ae.py` 新增原子 checkpoint/JSON 写入、epoch 快照、最佳 epoch、训练随机发生器状态与 `--resume`。实际用 1 train / 1 validation 的两轮恢复 smoke 验证从 epoch 1 快照继续到 epoch 2；优化器、调度器、历史与最佳点均恢复正确。正式配置为 `configs/experiments/sonicom_fsp_ae_q26_formal_budget.json`，快照固定在 epoch 10/20/40，学习率在 epoch 24/36 后从 `1e-3` 降至 `1e-4 / 1e-5`。
+- 正式训练：实际命令为 `D:\miniconda3\envs\ml\python.exe -u -m mcar.training.train_fsp_ae configs\experiments\sonicom_fsp_ae_q26_formal_budget.json --device cuda`。每轮遍历全部 262 名 train 被试、每人随机 32 个目标方向；validation 固定为全部 44 人、每人 128 个目标方向。40 epoch 用时 `972.423 s`，峰值 CUDA allocated memory `526.671 MiB`，test 读取为 0。
+- 预算结果：epoch 10/20/40 的 validation LSD 为 `3.367172 / 3.195450 / 2.994123 dB`，ITD L1 为 `3.095580e-5 / 2.167831e-5 / 1.304956e-5 s`，复合损失为 `3.444562 / 3.249646 / 3.026746`。两次降学习率后都继续改善，最佳点为 epoch 40，因此按预声明主规则锁定 `artifacts/training/sonicom_fsp_ae_q26_formal_budget_40/best.pt`；没有使用严格指标或 test 事后改变预算。
+- 完整推理：实际命令为 `D:\miniconda3\envs\ml\python.exe -u -m mcar.evaluation.predict_sonicom_fsp_ae artifacts\training\sonicom_fsp_ae_q26_formal_budget_40\best.pt sonicom_fsp_ae_q26_formal_validation --split val --target-directions-per-chunk 16 --device cuda`。44/44 被试、793 方向、512 频点与 256 点 HRIR 全部写出，用时 `595.218 s`，test 读取为 0。
+- 严格评价：实际命令为 `matlab.exe -batch "addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(inf,'sonicom_fsp_ae_q26_formal_strict_validation',false,'val','sonicom_q26_validation_mlp_cnn_v32_locked_ild075',false,'sonicom_fsp_ae_q26_formal_validation')"`，用时 `781.4 s`，正常退出。七方法全部重算，FSP-AE 频率网格最大误差为 0，reference ILD 元数据最大误差为 `9.536e-7 dB`，44 个被试和全部指标均完整有限。
+- 正式均值 ± 被试标准差（dB）：FSP-AE-Q26 的全空间 ERB、对侧 25° ERB、对侧高频与水平面严格 ILD 为 `1.160±0.162 / 1.848±0.175 / 3.104±0.254 / 0.598±0.153`；MCA 为 `1.096±0.145 / 1.764±0.177 / 4.749±0.234 / 0.830±0.181`；MCAR v3.2 为 `0.885±0.149 / 1.383±0.165 / 3.638±0.257 / 0.625±0.175`。
+- 横向解释：FSP-AE 相对 MCA 的四项变化为 `-5.89% / -4.79% / +34.65% / +27.99%`，逐被试胜出为 `21/44 / 13/44 / 44/44 / 38/44`；相对 MCAR v3.2 为 `-31.16% / -33.60% / +14.68% / +4.37%`，胜出为 `0/44 / 0/44 / 44/44 / 24/44`。它在对侧高频和水平面 ILD 上具有明确互补优势，但全局与对侧 ERB 不及以 MCA 为物理先验的 MCAR，不能视为全面替代。
+- 产物与下一步：精选 CSV/JSON、训练轨迹和质量检查位于 `results/sonicom_fsp_ae_q26_formal_validation/`，完整报告位于 `reports/FSP_AE_Q26_VALIDATION_REPORT.md`。正式 checkpoint、完整预测与原始 MATLAB 输出继续位于 Git 忽略的 `artifacts/`。若研究 FSP-AE 与 MCAR 融合，必须在新的未见拆分或外部数据上预声明规则；不得使用已经完成一次性评价的 SONICOM test 继续选模。
+
 ## 2026-08-06：FSP-AE-Q26 横向基线端到端验证
 
 - 工作目标：新增频率与声源位置条件自编码器（Frequency and Source Position-conditioned Autoencoder，FSP-AE）横向学习基线，先依次验证官方实现等价、SONICOM 单被试数据口径、短训练预算、validation 推理以及既有 MATLAB 严格评价接口。当前阶段只使用 262 train / 44 validation，test 读取数保持为 0；任何 smoke 或 pilot 结果均不参与最终模型主张。

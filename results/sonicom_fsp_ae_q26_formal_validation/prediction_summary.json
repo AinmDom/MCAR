@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "run_name": "sonicom_fsp_ae_q26_formal_validation",
+  "split": "val",
+  "subject_count": 44,
+  "test_subject_count_read": 0,
+  "frequency_count": 512,
+  "target_direction_count": 793,
+  "hrir_length": 256,
+  "elapsed_seconds": 595.2180224,
+  "checkpoint": "artifacts\\training\\sonicom_fsp_ae_q26_formal_budget_40\\best.pt"
+}

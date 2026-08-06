@@ -25,10 +25,13 @@ MLP+CNN v3.2（严格 ILD 权重 `0.75`、epoch 6）：44 名 test 被试上的�
 结果分析见 `reports/SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`。test 已经使用，任何后续方法改进
 不得再用该拆分选模；需要新的未见拆分或外部数据。以下段落保留此前各阶段的历史结果。
 
-新增的 FSP-AE-Q26 横向基线已完成官方 checkpoint 逐值等价、SONICOM train-only
-预处理、GPU 训练、validation 推理和 MATLAB 严格评价的端到端验证。当前仅完成两轮
-预算 pilot，validation LSD 从 `5.965827` 降至 `5.177868 dB`；这不是已锁定的正式
-结果，也未读取 test。方法边界和可复现命令见 `experiments/fsp_ae/README.md`。
+新增的 FSP-AE-Q26 横向基线已完成官方 checkpoint 逐值等价、40 epoch 正式训练、
+44 人 validation 推理和 MATLAB 严格评价。锁定 epoch 40 的全空间 ERB、对侧 25°
+ERB、对侧高频与水平面严格 ILD 为 `1.160 / 1.848 / 3.104 / 0.598 dB`；相对
+MCAR v3.2，前两项回退 `31.16% / 33.60%`，后两项改善 `14.68% / 4.37%`。
+该结果说明 FSP-AE 是高频与双耳线索互补基线，而不是 MCAR 的全面替代。test 未读取；
+完整结果见 `reports/FSP_AE_Q26_VALIDATION_REPORT.md` 和
+`results/sonicom_fsp_ae_q26_formal_validation/`。
 
 项目已经完成多层感知机（Multi-Layer Perceptron，MLP）v1、听觉感知损失
 MLP v2、MLP + 卷积神经网络（Convolutional Neural Network，CNN）v3，以及用严格
@@ -89,6 +92,7 @@ SONICOM MLP+CNN v3.1 已完成面向 72 个纯插值水平面方向的严格 HRI
 - `reports/MLP_CNN_V3_REPORT.md`
 - `reports/MLP_CNN_V31_REPORT.md`
 - `reports/SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`
+- `reports/FSP_AE_Q26_VALIDATION_REPORT.md`
 
 ## 项目结构
 

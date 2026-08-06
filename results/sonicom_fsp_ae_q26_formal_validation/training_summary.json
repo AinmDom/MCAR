@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "run_name": "sonicom_fsp_ae_q26_formal_budget_40",
+  "parameter_count": 235065,
+  "train_subject_count_read": 262,
+  "validation_subject_count_read": 44,
+  "test_subject_count_read": 0,
+  "best_validation_loss": 3.02674641720225,
+  "best_epoch": 40,
+  "elapsed_seconds": 972.4230127999999,
+  "device": "cuda",
+  "peak_cuda_allocated_mib": 526.67138671875
+}

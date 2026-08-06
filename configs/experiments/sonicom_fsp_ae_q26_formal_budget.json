@@ -1,0 +1,48 @@
+{
+  "run_name": "sonicom_fsp_ae_q26_formal_budget_40",
+  "method": "FSP-AE-Q26 adaptation",
+  "purpose": "Predeclared 10/20/40-epoch train-validation budget comparison",
+  "data": {
+    "cache_root": "data/processed/sonicom_fsp_ae_q26_v1",
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "train_subject_limit": null,
+    "validation_subject_limit": null,
+    "allow_incomplete_normalization": false,
+    "sampling_rate_hz": 44100,
+    "nfft": 1024,
+    "frequency_bins": 512
+  },
+  "training": {
+    "seed": 20260806,
+    "epochs": 40,
+    "steps_per_epoch": null,
+    "target_direction_limit": 32,
+    "target_directions_per_chunk": 16,
+    "learning_rate": 0.001,
+    "learning_rate_milestones": [24, 36],
+    "learning_rate_gamma": 0.1,
+    "itd_loss_weight": 2500.0,
+    "gradient_clip": 5.0,
+    "checkpoint_epochs": [10, 20, 40]
+  },
+  "validation": {
+    "target_direction_limit": 128,
+    "target_directions_per_chunk": 16,
+    "fixed_seed": 20270806
+  },
+  "selection": {
+    "primary": "minimum composite validation loss over epochs 1-40",
+    "tie_breakers": ["lower validation LSD", "earlier epoch"],
+    "budget_snapshots": [10, 20, 40],
+    "strict_evaluation_split": "validation only"
+  },
+  "test_access": {
+    "allowed": false,
+    "expected_subject_count_read": 0
+  },
+  "upstream": {
+    "repository": "https://github.com/ikets/FSP-AE",
+    "license": "CC BY 4.0",
+    "paper_doi": "10.1109/OJSP.2025.3613132"
+  }
+}

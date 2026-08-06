@@ -42,6 +42,21 @@ D:\miniconda3\envs\ml\python.exe -m mcar.training.train_fsp_ae `
   configs/experiments/sonicom_fsp_ae_q26_budget_pilot.json --device cuda
 ```
 
+预声明 10/20/40 epoch 快照的正式 train/validation 轨迹：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe -m mcar.training.train_fsp_ae `
+  configs/experiments/sonicom_fsp_ae_q26_formal_budget.json --device cuda
+```
+
+长训练中断后可从最近的原子快照恢复：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe -m mcar.training.train_fsp_ae `
+  configs/experiments/sonicom_fsp_ae_q26_formal_budget.json --device cuda `
+  --resume artifacts/training/sonicom_fsp_ae_q26_formal_budget_40/checkpoint_epoch_0020.pt
+```
+
 validation 推理示例：
 
 ```powershell
@@ -66,4 +81,10 @@ matlab -batch "addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(
 - 两轮 pilot 的 validation LSD 为 `5.965827 → 5.177868 dB`，复合损失为
   `6.452062 → 5.474776`；RTX 5060 用时 `14.236 s`，峰值 CUDA allocated memory
   为 `526.671 MiB`。
-- 单步 checkpoint 的单人严格指标只用于验证接口，不能用于模型比较或论文结论。下一阶段应先在 validation 上确定正式训练预算，再冻结 checkpoint；不得重用已经完成一次性评价的 SONICOM test 进行选模。
+- 正式 40 epoch 轨迹在 epoch 40 取得最低 validation 复合损失 `3.026746`；
+  44 人严格指标为 `1.160 / 1.848 / 3.104 / 0.598 dB`。完整解释和精选表位于
+  `reports/FSP_AE_Q26_VALIDATION_REPORT.md` 与
+  `results/sonicom_fsp_ae_q26_formal_validation/`。
+- 单步 checkpoint 的单人严格指标只用于验证接口，不能用于模型比较或论文结论。
+  正式 checkpoint 已在 validation 上锁定；不得重用已经完成一次性评价的 SONICOM
+  test 进行调参或选模。

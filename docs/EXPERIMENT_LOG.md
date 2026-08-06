@@ -1,5 +1,18 @@
 # 项目实验日志
 
+## 2026-08-06：FSP-AE-Q26 横向基线端到端验证
+
+- 工作目标：新增频率与声源位置条件自编码器（Frequency and Source Position-conditioned Autoencoder，FSP-AE）横向学习基线，先依次验证官方实现等价、SONICOM 单被试数据口径、短训练预算、validation 推理以及既有 MATLAB 严格评价接口。当前阶段只使用 262 train / 44 validation，test 读取数保持为 0；任何 smoke 或 pilot 结果均不参与最终模型主张。
+- 上游与署名：方法来自 Ito 等人的 IEEE OJSP 2025 论文，DOI `10.1109/OJSP.2025.3613132`；参考实现为 `https://github.com/ikets/FSP-AE`，许可证 CC BY 4.0。项目没有提交上游仓库与 checkpoint，只新增带来源说明的兼容实现、测试和 SONICOM 适配入口。
+- 官方等价性：使用单独获取的官方 `exp/v1/checkpoint_best.pt`，在相同随机输入下并排载入官方类与本项目类。模型参数数为 `235,065`，预测幅度、ITD 和最小相位加 ITD 的 HRIR 重建最大绝对误差均为 0。实际命令为 `D:\miniconda3\envs\ml\python.exe tests\test_fsp_ae_official_compatibility.py C:\Users\27334\AppData\Local\Temp\codex-fsp-ae-review C:\Users\27334\AppData\Local\Temp\codex-fsp-ae-review\exp\v1\checkpoint_best.pt`。
+- SONICOM 适配：固定使用 SONICOM-Q26-v1 的 26 个测量方向、793 个参考方向、`44.1 kHz`、`1024` 点 FFT 和 512 个非直流正频率点。损失保持官方形式，即幅度 LSD 加 `2500 × ITD L1`。为适配 512 个频点并控制显存，每名被试抽取目标方向且分块解码；因此方法名称固定为 FSP-AE-Q26 adaptation，不等同于上游多数据集、随机稀疏度训练协议。
+- 数据准备：实际命令为 `D:\miniconda3\envs\ml\python.exe -u -m mcar.data_tools.prepare_sonicom_fsp_ae --splits train val`，用时 `259.5 s`，输出 262 train / 44 validation 缓存。train-only 幅度均值/总体标准差为 `-26.0814984268 / 18.3203195278 dB`，样本数 `212,752,384`；ITD 均值/总体标准差为 `1.7151331712e-6 / 3.7930226798e-4 s`，样本数 `207,766`。归一化记录 `complete=true`，test 被试数与读取数均为 0；安全回归测试确认默认 test 访问会被拒绝。
+- 单步 GPU smoke：实际命令为 `D:\miniconda3\envs\ml\python.exe -u -m mcar.training.train_fsp_ae configs\experiments\sonicom_fsp_ae_q26_smoke.json --device cuda`。1 train / 1 validation 被试、1 epoch / 1 step 正常反向传播；validation LSD、ITD L1 和复合损失分别为 `19.384510 dB / 5.683e-4 s / 20.805220`，RTX 5060 用时 `1.733 s`，test 读取数为 0。该 checkpoint 只验证链路。
+- 预算 pilot：实际命令为 `D:\miniconda3\envs\ml\python.exe -u -m mcar.training.train_fsp_ae configs\experiments\sonicom_fsp_ae_q26_budget_pilot.json --device cuda`。两轮各随机读取 64 名 train 被试，validation 固定为前 8 名；epoch 1/2 的 train LSD 为 `8.532744 / 5.353823 dB`，validation LSD 为 `5.965827 / 5.177868 dB`，validation 复合损失为 `6.452062 / 5.474776`。总用时 `14.236 s`，峰值 CUDA allocated memory `526.671 MiB`，读取计数为 262 train / 8 validation / 0 test。曲线明确下降，支持扩大预算，但两轮不足以锁定正式 checkpoint。
+- 推理与严格评价：用单步 checkpoint 对 P0001 的全部 793 方向分块预测幅度、ITD 和 256 点 HRIR，用时 `14.5 s`；随后运行 `matlab -batch "addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(1,'sonicom_fsp_ae_q26_smoke_strict',false,'val','sonicom_q26_validation_mlp_cnn_v32_locked_ild075',false,'sonicom_fsp_ae_q26_smoke_validation')"`。MATLAB `checkcode` 零告警，频率网格、数组形状、严格 HRIR ILD 与既有六基线均完成。FSP-AE smoke 的四项指标为 `13.797 / 11.690 / 12.673 / 18.508 dB`，仅证明接口能完整运行；单步随机模型数值没有科学比较意义，不得进入论文表或用于否定该方法。
+- 验证与产物：`test_fsp_ae_model.py`、`test_fsp_ae_data_safety.py`、官方兼容测试和 Python 编译均通过；分块解码与完整解码的逐参数梯度最大绝对误差为 `3.815e-6`。checkpoint、缓存、预测和 MATLAB smoke 位于 Git 忽略的 `artifacts/` 与 `data/processed/`；公共实现位于 `src/mcar/`，配置位于 `configs/experiments/`，完整运行说明位于 `experiments/fsp_ae/README.md`。
+- 结论与下一步：官方结构与信号链已经无误差复现，SONICOM-Q26 端到端训练和严格评价已打通，短预算下损失稳定下降。下一步应只在 train/validation 上比较预声明的训练预算和收敛曲线，完成 44 人 validation 严格评价后冻结 FSP-AE checkpoint；由于 SONICOM test 已被既有主实验一次性使用，FSP-AE 不得据此调参或选模，正式横向结论需要新的未见拆分或外部数据。
+
 ## 2026-08-05：SONICOM Q26 SUpDEq + NN/Barycentric 横向基线
 
 - 工作目标：在已经冻结且完成一次性 test 评价的 MCAR v3.2 之外，补齐非学习型横向方法。未重新训练、选择 checkpoint 或修改 MCAR；所有方法统一使用 `SONICOM-Q26-v1`、三阶 SH、头半径 `0.09 m`、44 名锁定 test 被试、767 个纯插值方向和既有四项严格指标。

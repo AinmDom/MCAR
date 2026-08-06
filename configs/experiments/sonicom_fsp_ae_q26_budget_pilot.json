@@ -1,0 +1,40 @@
+{
+  "run_name": "sonicom_fsp_ae_q26_budget_pilot",
+  "method": "FSP-AE-Q26 adaptation",
+  "purpose": "Two-epoch budget/convergence pilot; validation only",
+  "data": {
+    "cache_root": "data/processed/sonicom_fsp_ae_q26_v1",
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "train_subject_limit": null,
+    "validation_subject_limit": 8,
+    "allow_incomplete_normalization": false,
+    "sampling_rate_hz": 44100,
+    "nfft": 1024,
+    "frequency_bins": 512
+  },
+  "training": {
+    "seed": 20260806,
+    "epochs": 2,
+    "steps_per_epoch": 64,
+    "target_direction_limit": 32,
+    "target_directions_per_chunk": 16,
+    "learning_rate": 0.001,
+    "learning_rate_milestones": [],
+    "learning_rate_gamma": 0.1,
+    "itd_loss_weight": 2500.0,
+    "gradient_clip": 5.0
+  },
+  "validation": {
+    "target_direction_limit": 64,
+    "target_directions_per_chunk": 16
+  },
+  "test_access": {
+    "allowed": false,
+    "expected_subject_count_read": 0
+  },
+  "upstream": {
+    "repository": "https://github.com/ikets/FSP-AE",
+    "license": "CC BY 4.0",
+    "paper_doi": "10.1109/OJSP.2025.3613132"
+  }
+}

@@ -25,6 +25,11 @@ MLP+CNN v3.2（严格 ILD 权重 `0.75`、epoch 6）：44 名 test 被试上的�
 结果分析见 `reports/SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`。test 已经使用，任何后续方法改进
 不得再用该拆分选模；需要新的未见拆分或外部数据。以下段落保留此前各阶段的历史结果。
 
+新增的 FSP-AE-Q26 横向基线已完成官方 checkpoint 逐值等价、SONICOM train-only
+预处理、GPU 训练、validation 推理和 MATLAB 严格评价的端到端验证。当前仅完成两轮
+预算 pilot，validation LSD 从 `5.965827` 降至 `5.177868 dB`；这不是已锁定的正式
+结果，也未读取 test。方法边界和可复现命令见 `experiments/fsp_ae/README.md`。
+
 项目已经完成多层感知机（Multi-Layer Perceptron，MLP）v1、听觉感知损失
 MLP v2、MLP + 卷积神经网络（Convolutional Neural Network，CNN）v3，以及用严格
 头相关脉冲响应（Head-Related Impulse Response，HRIR）能量耳间电平差
@@ -138,6 +143,17 @@ D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.download_sonicom `
 ```powershell
 D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.prepare_sonicom_configs
 ```
+
+准备并验证 FSP-AE-Q26 横向基线（默认仅 train/validation）：
+
+```powershell
+D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.prepare_sonicom_fsp_ae `
+  --splits train val
+D:\miniconda3\envs\ml\python.exe -m mcar.training.train_fsp_ae `
+  configs/experiments/sonicom_fsp_ae_q26_budget_pilot.json --device cuda
+```
+
+完整协议、推理与严格 MATLAB 评价命令见 `experiments/fsp_ae/README.md`。
 
 该步骤输出 26 点测量原生稀疏网格以及
 `262 train / 44 validation / 44 test` 的自由场 EQ 分层划分，配置位于

@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 tracking = ["wandb>=0.21,<1"]
 fsp-ae = ["torchaudio>=2,<3"]
+plotting = ["Pillow>=10,<12"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

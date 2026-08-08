@@ -27,6 +27,20 @@ FSP-AE 相对 MCA 的四项变化为 `-5.89% / -4.79% / +34.65% / +27.99%`；
 MCAR 的胜出数依次为 `0/44 / 0/44 / 44/44 / 24/44`。因此它不是 MCAR 的
 全面替代，但为对侧高频与水平面 ILD 提供了有价值的互补横向基线。
 
+## 直观对比图
+
+七方法均值 ± 被试标准差：
+
+![七方法严格指标总览](figures/figure_1_method_overview.png)
+
+FSP-AE 与 MCAR v3.2 的 44 人逐被试配对散点：
+
+![FSP-AE 与 MCAR 逐被试对比](figures/figure_2_fsp_vs_mcar_subjects.png)
+
+FSP-AE 相对 MCA/MCAR 的改善与回退：
+
+![FSP-AE 横向权衡](figures/figure_3_fsp_tradeoff.png)
+
 ## 文件
 
 - `aggregate_metrics.csv`：方法 × 指标聚合结果
@@ -37,4 +51,4 @@ MCAR 的胜出数依次为 `0/44 / 0/44 / 44/44 / 24/44`。因此它不是 MCAR 
 - `training_history.json` / `training_summary.json`：40 epoch 预算轨迹与训练摘要
 - `prediction_summary.json`：44 人预测摘要
 - `summary.json`：严格评价完整摘要
-
+- `figures/`：三张高分辨率横向对比图及数据校验清单

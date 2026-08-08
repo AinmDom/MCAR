@@ -73,6 +73,13 @@ D:\miniconda3\envs\ml\python.exe -m mcar.evaluation.predict_sonicom_fsp_ae `
 matlab -batch "addpath('matlab'); mcar.evaluate_sonicom_interpolation_baselines(1,'sonicom_fsp_ae_q26_smoke_strict',false,'val','sonicom_q26_validation_mlp_cnn_v32_locked_ild075',false,'sonicom_fsp_ae_q26_smoke_validation')"
 ```
 
+从锁定 CSV 重新生成横向对比图：
+
+```powershell
+.venv/Scripts/python -m pip install -e ".[plotting]"
+.venv/Scripts/python scripts/plot_fsp_ae_horizontal_comparison.py
+```
+
 ## 当前验证状态
 
 - 官方 HUTUBS checkpoint 的幅度、ITD 和 HRIR 重建逐值比较最大绝对误差均为 0。

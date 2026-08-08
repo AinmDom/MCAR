@@ -1,5 +1,14 @@
 # 项目实验日志
 
+## 2026-08-09：FSP-AE-Q26 横向结果可视化
+
+- 工作目标：把已经锁定的 44 人 validation 横向结果整理为无需依赖表格即可理解的图形；不重新训练、不重新评价、不读取 test，也不改变任何统计口径。
+- 数据来源：只读取 `results/sonicom_fsp_ae_q26_formal_validation/aggregate_metrics.csv` 与 `per_subject_metrics.csv`。脚本校验七方法 × 四指标的 28 个聚合单元和 44 个逐被试行；生成清单明确记录 `test_subject_count_read=0`。
+- 图 1：七方法四指标均值 ± 被试标准差的 2×2 横向条形图。统一保留零起点，MCAR v3.2 与 FSP-AE-Q26 分别用蓝色和橙色突出，避免只看相对百分比掩盖绝对误差。
+- 图 2：FSP-AE 与 MCAR v3.2 的逐被试配对散点，使用等比例坐标和恒等线；四项胜出数为 `0/44 / 0/44 / 44/44 / 24/44`，可直观看出两项 ERB 的一致回退、高频的全员改善和 ILD 的个体差异。
+- 图 3：FSP-AE 相对 MCA 与 MCAR 的发散条形图，正值表示误差降低、负值表示回退；相对 MCAR 的四项变化为 `-31.16% / -33.60% / +14.68% / +4.37%`。
+- 实现与产物：新增 `scripts/plot_fsp_ae_horizontal_comparison.py`，使用可选 `plotting` 依赖 Pillow，从 CSV 确定性生成三张 `1800×1180` PNG。图片和 `manifest.json` 位于 `results/sonicom_fsp_ae_q26_formal_validation/figures/`，并已逐张检查标签、坐标尺度、误差棒和数据一致性。
+
 ## 2026-08-06：FSP-AE-Q26 正式预算锁定与严格 validation
 
 - 工作目标：在端到端 smoke 通过后，只使用 262 train / 44 validation 比较预声明的 10/20/40 epoch 预算，按固定 validation 复合损失锁定 checkpoint，再执行 44 人、767 个纯插值方向的七方法严格横向评价。test 不参与训练、选模、推理或评价，全部摘要中的读取数为 0。

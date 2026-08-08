@@ -69,3 +69,10 @@ FSP-AE 相对 MCA 在高频和 ILD 上改善 `34.65% / 27.99%`，逐被试胜出
 
 精选结果位于 `results/sonicom_fsp_ae_q26_formal_validation/`。
 
+## 横向结果图
+
+![七方法严格指标总览](../results/sonicom_fsp_ae_q26_formal_validation/figures/figure_1_method_overview.png)
+
+![FSP-AE 与 MCAR 逐被试对比](../results/sonicom_fsp_ae_q26_formal_validation/figures/figure_2_fsp_vs_mcar_subjects.png)
+
+![FSP-AE 横向权衡](../results/sonicom_fsp_ae_q26_formal_validation/figures/figure_3_fsp_tradeoff.png)

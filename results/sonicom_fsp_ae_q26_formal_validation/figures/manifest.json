@@ -1,0 +1,35 @@
+{
+  "status": "completed",
+  "source_split": "validation",
+  "subject_count": 44,
+  "test_subject_count_read": 0,
+  "figures": [
+    "figure_1_method_overview.png",
+    "figure_2_fsp_vs_mcar_subjects.png",
+    "figure_3_fsp_tradeoff.png"
+  ],
+  "fsp_wins_vs_mcar": {
+    "FullSphereERB": 0,
+    "Contralateral25ERB": 0,
+    "ContralateralHighFrequency": 44,
+    "HorizontalILDMAE": 24
+  },
+  "fsp_improvement_percent": {
+    "FullSphereERB": {
+      "vs_mca_percent": -5.893049162066501,
+      "vs_mcar_percent": -31.160113028800072
+    },
+    "Contralateral25ERB": {
+      "vs_mca_percent": -4.786452666908568,
+      "vs_mcar_percent": -33.59973225224932
+    },
+    "ContralateralHighFrequency": {
+      "vs_mca_percent": 34.64574780508919,
+      "vs_mcar_percent": 14.675144609429596
+    },
+    "HorizontalILDMAE": {
+      "vs_mca_percent": 27.988151859311206,
+      "vs_mcar_percent": 4.368940708501654
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "validation",
+  "training_seeds": [
+    20260809,
+    20260810,
+    20260811
+  ],
+  "fixed_validation_sampler_seed": 20260805,
+  "epochs_per_seed": 10,
+  "completed_seed_count": 3,
+  "test_subject_count_read": 0,
+  "model_checkpoints_saved": false,
+  "best_epochs": [
+    10,
+    9,
+    10
+  ],
+  "aggregate": {
+    "best_validation_total_loss": {
+      "mean": 0.6710274462691611,
+      "sample_std": 0.00034641167611410755,
+      "minimum": 0.6706623043864965,
+      "maximum": 0.6713514548415939,
+      "range": 0.0006891504550973204
+    },
+    "best_validation_residual_mae_db": {
+      "mean": 2.561169933527708,
+      "sample_std": 0.0004357256226049041,
+      "minimum": 2.5607100228468576,
+      "maximum": 2.561576576282581,
+      "range": 0.0008665534357232829
+    },
+    "best_validation_erb_mae_db": {
+      "mean": 1.0337253920733929,
+      "sample_std": 0.0006011965831623397,
+      "minimum": 1.0333669371902943,
+      "maximum": 1.034419468914469,
+      "range": 0.0010525317241747434
+    },
+    "best_validation_high_frequency_mae_db": {
+      "mean": 3.607325900759962,
+      "sample_std": 0.0013874800809394892,
+      "minimum": 3.6058269316951432,
+      "maximum": 3.6085652013619742,
+      "range": 0.0027382696668309947
+    },
+    "best_validation_strict_ild_mae_db": {
+      "mean": 0.6150384431497918,
+      "sample_std": 0.001606584945087362,
+      "minimum": 0.6132800756022334,
+      "maximum": 0.6164297039310137,
+      "range": 0.003149628328780296
+    },
+    "final_validation_total_loss": {
+      "mean": 0.6710502229010066,
+      "sample_std": 0.0003526584877952734,
+      "minimum": 0.6706623043864965,
+      "maximum": 0.6713514548415939,
+      "range": 0.0006891504550973204
+    },
+    "final_validation_residual_mae_db": {
+      "mean": 2.5612006497879825,
+      "sample_std": 0.00038769456483474485,
+      "minimum": 2.5608021716276803,
+      "maximum": 2.561576576282581,
+      "range": 0.000774404654900529
+    },
+    "final_validation_erb_mae_db": {
+      "mean": 1.033879529684782,
+      "sample_std": 0.0005267984819104044,
+      "minimum": 1.0333669371902943,
+      "maximum": 1.034419468914469,
+      "range": 0.0010525317241747434
+    },
+    "final_validation_high_frequency_mae_db": {
+      "mean": 3.6073601891597114,
+      "sample_std": 0.0013983343327834412,
+      "minimum": 3.6058269316951432,
+      "maximum": 3.6085652013619742,
+      "range": 0.0027382696668309947
+    },
+    "final_validation_strict_ild_mae_db": {
+      "mean": 0.6152133461501863,
+      "sample_std": 0.0016927824990572427,
+      "minimum": 0.6132800756022334,
+      "maximum": 0.6164297039310137,
+      "range": 0.003149628328780296
+    }
+  },
+  "interpretation_policy": "Diagnostic seed variability only; the locked v3.2 paper model and its consumed final test result remain unchanged."
+}

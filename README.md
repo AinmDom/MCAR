@@ -25,6 +25,14 @@ MLP+CNN v3.2（严格 ILD 权重 `0.75`、epoch 6）：44 名 test 被试上的�
 结果分析见 `reports/SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`。test 已经使用，任何后续方法改进
 不得再用该拆分选模；需要新的未见拆分或外部数据。以下段落保留此前各阶段的历史结果。
 
+v3.2 的三 seed 稳定性诊断也已完成：固定同一 validation sampler，训练 seed
+`20260809/20260810/20260811` 各运行 `10 epoch × 500 step`，不保存任何模型权重。
+最佳 epoch 为 `10/9/10`，validation total loss 为
+`0.671027 ± 0.000346`，ERB、高频和 strict ILD 的 seed 间样本标准差分别为
+`0.000601 / 0.001387 / 0.001607 dB`。说明训练指标具有较高 seed 稳定性，且
+10 epoch 相对原 6 epoch 仍有小幅 proxy 收益；由于权重未保留且 test 已消费，
+该诊断不替换论文模型。结果位于 `results/sonicom_mlp_cnn_q26_v32_seed_stability/`。
+
 新增的 FSP-AE-Q26 横向基线已完成官方 checkpoint 逐值等价、40 epoch 正式训练、
 44 人 validation 推理和 MATLAB 严格评价。锁定 epoch 40 的全空间 ERB、对侧 25°
 ERB、对侧高频与水平面严格 ILD 为 `1.160 / 1.848 / 3.104 / 0.598 dB`；相对

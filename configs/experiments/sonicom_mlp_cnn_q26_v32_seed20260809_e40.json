@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-09",
+  "status": "locked_before_execution",
+  "purpose": "Retrain the validation-best seed from the three-seed diagnostic for 40 epochs, select the minimum fixed-validation-total-loss checkpoint, and perform validation-only strict reconstruction.",
+  "seed_selection": {
+    "source": "results/sonicom_mlp_cnn_q26_v32_seed_stability/per_seed_summary.csv",
+    "rule": "minimum best_validation_total_loss among the three predeclared 10-epoch seeds",
+    "selected_seed": 20260809,
+    "selected_seed_best_validation_total_loss": 0.6706623043864965,
+    "selection_split": "validation"
+  },
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "base_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "initial_cnn_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v3_formal_ild075/best.pt",
+  "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40",
+  "training": {
+    "epochs": 40,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "training_seed": 20260809,
+    "fixed_validation_sampler_seed": 20260805,
+    "dual_sampling_strict_ild": true,
+    "ild_loss_mode": "strict_hrir",
+    "interpolation_only": true,
+    "direction_weighted_residual": true,
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "strict_horizontal_hrir_ild_weight": 0.75,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.00001,
+    "gradient_clip": 5.0,
+    "scheduler": "cosine",
+    "automatic_mixed_precision": true,
+    "checkpoint_selection": "minimum fixed validation total loss"
+  },
+  "checkpoint_policy": {
+    "primary": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt",
+    "secondary_strict_ild": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best_strict_ild.pt",
+    "last": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/last.pt",
+    "reconstruction_checkpoint": "primary"
+  },
+  "validation_reconstruction": {
+    "prediction_run": "sonicom_q26_validation_mlp_cnn_v32_seed20260809_e40",
+    "strict_result_root": "results/sonicom_mlp_cnn_q26_v32_seed20260809_e40_strict_validation",
+    "comparison_baseline": "locked v3.2 epoch 6",
+    "split": "validation"
+  },
+  "tracking": {
+    "wandb_mode": "offline",
+    "wandb_project": "mcar-sonicom",
+    "wandb_group": "q26-v32-seed20260809-e40",
+    "wandb_job_type": "validation-only-budget-extension"
+  },
+  "test_policy": "The consumed test split is forbidden. This validation-only experiment cannot replace or revise the locked paper test result.",
+  "test_subject_count_read": 0
+}

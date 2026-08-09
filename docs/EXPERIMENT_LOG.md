@@ -1,5 +1,40 @@
 # 项目实验日志
 
+## 2026-08-09：SONICOM Q26 v3.2 三 seed、10 epoch 稳定性诊断
+
+- 用户要求：先评估训练随机性，运行三个 seed、每个 10 epoch，并且不保存每次
+  生成的模型。该实验只使用 262 train / 44 validation；已消费 test 不参与，
+  runner 状态和最终摘要均记录 `test_subject_count_read=0`。
+- 科学控制：训练 seed 固定为 `20260809 / 20260810 / 20260811`，三次共享与正式
+  v3.2 相同的 validation sampler seed `20260805`，避免把 validation batch 差异
+  误计为训练方差。其余配方保持 v3.2：从正式 v3 初始化、冻结 MLP、双采样、
+  `ERB/HF/strict ILD=0.75/0.25/0.75`、每轮 500 step、96 个固定 validation block。
+- 存储实现：`train_mlp_cnn_v3.py` 新增默认关闭的 `--no-save-checkpoints` 和可选
+  `--validation-seed`。默认行为不变；诊断模式仍写配置、初始评估、history 和报告，
+  但不写 `last.pt/best.pt/best_strict_ild.pt`。1 step GPU smoke 实测完成、
+  `checkpoint_files_saved=false`、`.pt` 数量为 0。
+- 可恢复队列：新增 `scripts/run_v32_seed_stability.py` 与预注册配置
+  `configs/experiments/sonicom_mlp_cnn_q26_v32_seed_stability.json`。runner 顺序使用
+  单张 RTX 5060；对已完成 seed 可跳过，并在全部完成后生成聚合 CSV/JSON。实际
+  主命令为 `D:\miniconda3\envs\ml\python.exe -u scripts\run_v32_seed_stability.py`。
+- 完成情况：三个 seed 最佳 epoch 为 `10 / 9 / 10`，耗时分别为
+  `854.864 / 773.962 / 775.703 s`，总计 `2404.529 s`；显存峰值均为
+  `399.222 MiB`，30 个 epoch 总 optimizer skip 为 0。三个正式输出目录逐一检查，
+  `.pt` 文件数全部为 0。
+- 最佳固定 validation 均值 ± seed 间样本标准差：total loss
+  `0.671027 ± 0.000346`；residual `2.561170 ± 0.000436 dB`；ERB
+  `1.033725 ± 0.000601 dB`；对侧高频 `3.607326 ± 0.001387 dB`；strict ILD
+  `0.615038 ± 0.001607 dB`。相对标准差依次为
+  `0.052% / 0.017% / 0.058% / 0.038% / 0.261%`，训练指标整体高度稳定，ILD
+  仍是最敏感的一项。
+- 预算诊断：相对正式 v3.2 第 6 epoch 的同口径 validation，三 seed 最佳均值在
+  total/residual/ERB/HF/ILD 上分别低 `0.356% / 0.191% / 0.222% / 0.209% /
+  1.040%`。由于比较同时包含 seed 和预算变化，且没有保留权重进行完整 MATLAB
+  重建，这只能支持“10 epoch 值得在新协议中继续验证”，不能替换锁定论文模型。
+- 产物：`results/sonicom_mlp_cnn_q26_v32_seed_stability/` 中包含 3 行逐 seed
+  汇总、30 行 history、JSON 统计和 README。论文 v3.2 epoch 6 checkpoint 与既有
+  一次性 test 结论保持不变。
+
 ## 2026-08-09：FSP-AE-Q26 横向结果可视化
 
 - 工作目标：把已经锁定的 44 人 validation 横向结果整理为无需依赖表格即可理解的图形；不重新训练、不重新评价、不读取 test，也不改变任何统计口径。

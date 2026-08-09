@@ -1,6 +1,7 @@
 # IDE and operating-system metadata.
-/.idea/
-/.vscode/
+.idea/
+.vscode/
+*.iml
 .DS_Store
 Thumbs.db
 Desktop.ini

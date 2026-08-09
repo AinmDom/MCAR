@@ -146,8 +146,26 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--gradient-clip", type=float, default=5.0)
     parser.add_argument("--amp-initial-scale", type=float, default=1024.0)
     parser.add_argument("--seed", type=int, default=20260725)
+    parser.add_argument(
+        "--validation-seed",
+        type=int,
+        help=(
+            "Optional fixed validation sampler seed. By default it is the "
+            "training seed plus one. Set this when comparing training seeds "
+            "against identical validation batches."
+        ),
+    )
     parser.add_argument("--overfit-subject", type=int)
     parser.add_argument("--no-amp", action="store_true")
+    parser.add_argument(
+        "--no-save-checkpoints",
+        action="store_true",
+        help=(
+            "Keep configuration, history, and reports but do not write "
+            "last.pt, best.pt, or best_strict_ild.pt. Intended for "
+            "diagnostic seed studies where trained weights are not needed."
+        ),
+    )
     parser.add_argument(
         "--wandb-mode",
         choices=("disabled", "online", "offline"),
@@ -907,7 +925,11 @@ def main() -> None:
 
     output_dir = project_root() / "artifacts" / "training" / arguments.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
-    validation_seed = arguments.seed + 1
+    validation_seed = (
+        arguments.seed + 1
+        if arguments.validation_seed is None
+        else arguments.validation_seed
+    )
     configuration = {
         "arguments": serializable_arguments(arguments),
         "training_stage": training_stage(arguments),
@@ -1158,21 +1180,9 @@ def main() -> None:
             f"skipped={metrics.skipped_optimizer_steps} "
             f"time={metrics.epoch_seconds:.1f}s"
         )
-        save_checkpoint(
-            output_dir / "last.pt",
-            model,
-            optimizer,
-            epoch,
-            metrics,
-            arguments,
-            initial_model_epoch,
-        )
-        is_best = validation.total_loss < best_validation_total
-        if is_best:
-            best_validation_total = validation.total_loss
-            best_epoch = epoch
+        if not arguments.no_save_checkpoints:
             save_checkpoint(
-                output_dir / "best.pt",
+                output_dir / "last.pt",
                 model,
                 optimizer,
                 epoch,
@@ -1180,21 +1190,36 @@ def main() -> None:
                 arguments,
                 initial_model_epoch,
             )
+        is_best = validation.total_loss < best_validation_total
+        if is_best:
+            best_validation_total = validation.total_loss
+            best_epoch = epoch
+            if not arguments.no_save_checkpoints:
+                save_checkpoint(
+                    output_dir / "best.pt",
+                    model,
+                    optimizer,
+                    epoch,
+                    metrics,
+                    arguments,
+                    initial_model_epoch,
+                )
         if (
             arguments.ild_loss_mode == "strict_hrir"
             and validation.ild_mae_db < best_validation_strict_ild
         ):
             best_validation_strict_ild = validation.ild_mae_db
             best_strict_ild_epoch = epoch
-            save_checkpoint(
-                output_dir / "best_strict_ild.pt",
-                model,
-                optimizer,
-                epoch,
-                metrics,
-                arguments,
-                initial_model_epoch,
-            )
+            if not arguments.no_save_checkpoints:
+                save_checkpoint(
+                    output_dir / "best_strict_ild.pt",
+                    model,
+                    optimizer,
+                    epoch,
+                    metrics,
+                    arguments,
+                    initial_model_epoch,
+                )
         scheduler.step()
         write_history(output_dir / "history.csv", history)
         log_epoch_to_wandb(
@@ -1228,6 +1253,7 @@ def main() -> None:
         "peak_cuda_allocated_mib": (
             torch.cuda.max_memory_allocated() / (1024.0**2)
         ),
+        "checkpoint_files_saved": not arguments.no_save_checkpoints,
         "wandb": configuration["wandb"],
         "initial_validation": asdict(initial_validation),
         "best_epoch_metrics": asdict(best_metrics),

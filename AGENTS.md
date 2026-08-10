@@ -39,6 +39,23 @@ residual = log|H_ref| - log|H_MCA|
 - 多行显示公式必须使用 `$$\begin{aligned} ... \\ ... \end{aligned}$$`，两个 `$$` 不得单独占一行。
 - 新增或修改报告后，至少在 GitHub Markdown 预览与本地 IDE 预览中检查公式渲染。
 
+## MATLAB
+
+Use the configured MATLAB MCP whenever MATLAB execution is useful for verifying the task.
+
+In particular, use MATLAB MCP when:
+
+- running or debugging `.m` files;
+- checking numerical or algorithmic results;
+- running MATLAB tests;
+- validating MATLAB code changes;
+- working with MATLAB toolboxes;
+- executing or validating Simulink-related work.
+
+Do not claim that MATLAB code has been executed unless it was actually executed through MATLAB MCP.
+
+For simple source-code reading, documentation edits, or refactoring that does not require execution, MATLAB MCP is optional.
+
 ## 验证与交接
 
 - 修改 MATLAB 或 Python 实验代码时，记录实际执行的命令和结果；没有执行时应明确说明原因。

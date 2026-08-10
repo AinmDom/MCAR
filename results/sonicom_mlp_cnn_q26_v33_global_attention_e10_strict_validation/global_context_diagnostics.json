@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "split": "val",
+  "test_subject_count_read": 0,
+  "prediction_delta": {
+    "sample_count": 32309992,
+    "mean_absolute_global_delta_db": 0.0120064876973629,
+    "root_mean_square_global_delta_db": 0.015279363840818405,
+    "mean_signed_global_delta_db": -0.007463529706001282,
+    "median_absolute_global_delta_db": 0.009676456451416016,
+    "p95_absolute_global_delta_db": 0.029029369354248047,
+    "maximum_absolute_global_delta_db": 0.09313523769378662,
+    "mean_absolute_delta_10_20khz_db": 0.013214530866943294
+  },
+  "checkpoint": {
+    "source_checkpoint_sha256": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "candidate_checkpoint_sha256": "F9B7E345960B3F1F6A98294F75357CF3820CAAADA5BF541374C1A94DBCB68AB2",
+    "frozen_mlp_local_cnn_max_absolute_parameter_delta": 0.0,
+    "gate_bias": [
+      -2.008798599243164,
+      -2.008540153503418
+    ],
+    "gate_bias_sigmoid": [
+      0.11828222125768661,
+      0.11830917745828629
+    ],
+    "gate_weight_l2": 0.10924497246742249,
+    "gate_weight_max_absolute": 0.023720499128103256
+  }
+}

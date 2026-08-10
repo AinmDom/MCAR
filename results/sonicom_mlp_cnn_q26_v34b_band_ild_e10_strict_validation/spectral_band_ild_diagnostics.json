@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "split": "val",
+  "test_subject_count_read": 0,
+  "subject_count": 44,
+  "spectral_band_ild": {
+    "definition": {
+      "band_count": 35,
+      "minimum_band_center_hz": 200.0,
+      "maximum_band_center_hz": 18000.0,
+      "smooth_l1_beta_db": 0.5,
+      "direction_subset": "all horizontal interpolation directions",
+      "spatial_weighting": "normalized solid-angle weights per subject",
+      "subject_aggregation": "equal mean over 44 validation subjects"
+    },
+    "smooth_l1": {
+      "metric": "HorizontalSpectralBandILDSmoothL1_dB",
+      "subject_count": 44,
+      "baseline_mean": 1.4078907858241687,
+      "candidate_mean": 1.3972092270851135,
+      "mean_candidate_minus_baseline": -0.010681558739055286,
+      "improvement_vs_baseline_percent": 0.7586922825695092,
+      "ci95_low": -0.012097434557063374,
+      "ci95_high": -0.0092656829210472,
+      "paired_t_p_value": 6.453188501697085e-19,
+      "wilcoxon_p_value": 2.2737367544323206e-13,
+      "cohen_dz": -2.293626769853094,
+      "candidate_better_subject_count": 43
+    },
+    "mae": {
+      "metric": "HorizontalSpectralBandILDMAE_dB",
+      "subject_count": 44,
+      "baseline_mean": 1.6294382377104326,
+      "candidate_mean": 1.617898865179582,
+      "mean_candidate_minus_baseline": -0.011539372530850496,
+      "improvement_vs_baseline_percent": 0.7081810321982415,
+      "ci95_low": -0.01302693352449875,
+      "ci95_high": -0.010051811537202244,
+      "paired_t_p_value": 2.330317927406405e-19,
+      "wilcoxon_p_value": 2.2737367544323206e-13,
+      "cohen_dz": -2.358417519576636,
+      "candidate_better_subject_count": 43
+    },
+    "improved_band_count": 35
+  },
+  "checkpoint": {
+    "source_checkpoint_sha256": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "candidate_checkpoint_sha256": "EABFAA1B303F6016F9F8F7507D510813C44C948C81D9C074EECA0A8E84AA4DAF",
+    "candidate_checkpoint_epoch": 7,
+    "mlp": {
+      "tensor_count": 16,
+      "parameter_count": 100225,
+      "maximum_absolute_parameter_delta": 0.0,
+      "l2_parameter_delta": 0.0,
+      "relative_l2_parameter_delta": 0.0,
+      "bitwise_unchanged": true
+    },
+    "local_cnn": {
+      "tensor_count": 66,
+      "parameter_count": 74402,
+      "maximum_absolute_parameter_delta": 0.004594139754772186,
+      "l2_parameter_delta": 0.11659768957771605,
+      "relative_l2_parameter_delta": 0.0029889228869203286,
+      "bitwise_unchanged": false
+    }
+  },
+  "training": {
+    "status": "completed",
+    "training_stage": "cnn_only_frozen_mlp_global_magnitude_horizontal_hrir_ild_spectral_band_ild_v34b",
+    "elapsed_seconds": 820.9057564999999,
+    "completed_epochs": 10,
+    "best_epoch": 7,
+    "best_validation_total_loss": 0.689034299304088,
+    "best_strict_ild_epoch": 4,
+    "best_validation_strict_ild_mae_db": 0.5873100965594252,
+    "total_skipped_optimizer_steps": 0,
+    "final_amp_scale": 4096.0,
+    "peak_cuda_allocated_mib": 410.8701171875,
+    "checkpoint_files_saved": true,
+    "wandb": {
+      "enabled": true,
+      "mode": "offline",
+      "project": "mcar-sonicom",
+      "entity": null,
+      "run_name": "sonicom_mlp_cnn_q26_v34b_band_ild_e10",
+      "run_id": "u8cv7js1",
+      "run_url": null
+    },
+    "initial_validation": {
+      "total_loss": 0.6896631916364034,
+      "residual_mae_db": 2.542327451209227,
+      "erb_mae_db": 1.0216416337837775,
+      "contralateral_high_frequency_mae_db": 3.5785751392443976,
+      "ild_mae_db": 0.5893678230543932,
+      "ild_spectral_proxy_mae_db": 0.6111641740426421,
+      "high_frequency_first_difference_mae_db_per_bin": 0.0,
+      "high_frequency_second_difference_mae_db_per_bin2": 0.0,
+      "spectral_band_ild_smooth_l1_db": 1.4143434030314286,
+      "spectral_band_ild_mae_db": 1.6361026962598164,
+      "cnn_delta_mean_absolute_db": 1.1442477355690859
+    },
+    "best_epoch_metrics": {
+      "epoch": 7,
+      "train_total_loss": 0.6635301244258881,
+      "train_residual_mae_db": 2.4886144206523895,
+      "train_erb_mae_db": 0.9938948791027069,
+      "train_contralateral_high_frequency_mae_db": 3.538304909706116,
+      "train_ild_mae_db": 0.5170519859194755,
+      "train_ild_spectral_proxy_mae_db": 0.6266383742690086,
+      "train_high_frequency_first_difference_mae_db_per_bin": 0.0,
+      "train_high_frequency_second_difference_mae_db_per_bin2": 0.0,
+      "train_spectral_band_ild_smooth_l1_db": 1.3898128188848495,
+      "train_spectral_band_ild_mae_db": 1.6102784113883972,
+      "train_cnn_delta_mean_absolute_db": 1.113516740248376,
+      "validation_total_loss": 0.689034299304088,
+      "validation_residual_mae_db": 2.5420105904340744,
+      "validation_erb_mae_db": 1.0209640910228093,
+      "validation_contralateral_high_frequency_mae_db": 3.5786685099204383,
+      "validation_ild_mae_db": 0.5877574508388838,
+      "validation_ild_spectral_proxy_mae_db": 0.6114990189671516,
+      "validation_high_frequency_first_difference_mae_db_per_bin": 0.0,
+      "validation_high_frequency_second_difference_mae_db_per_bin2": 0.0,
+      "validation_spectral_band_ild_smooth_l1_db": 1.403706652422746,
+      "validation_spectral_band_ild_mae_db": 1.624715968966484,
+      "validation_cnn_delta_mean_absolute_db": 1.1430257357566986,
+      "learning_rate": 3.4549150281252635e-06,
+      "mlp_learning_rate": null,
+      "epoch_seconds": 81.6863826,
+      "skipped_optimizer_steps": 0
+    }
+  }
+}

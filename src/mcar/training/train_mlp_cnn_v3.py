@@ -1,4 +1,4 @@
-"""Train the v3 binaural spectral CNN while keeping the v2 MLP frozen."""
+"""Train or jointly fine-tune the v3 binaural spectral residual model."""
 
 from __future__ import annotations
 
@@ -22,7 +22,10 @@ from mcar.models.residual_mlp_cnn import (
     total_parameter_count,
     trainable_parameter_count,
 )
-from mcar.losses import strict_hrir_ild_mae
+from mcar.losses import (
+    spectral_band_ild_smooth_l1_and_mae,
+    strict_hrir_ild_mae,
+)
 from mcar.data import (
     BinauralSpectrumSampler,
     Normalization,
@@ -33,6 +36,7 @@ from mcar.training.train_mlp_v2 import (
     add_metrics,
     average_metrics,
     calculate_losses,
+    make_erb_center_frequencies_hz,
     make_erb_weights,
 )
 from mcar.paths import project_root
@@ -46,6 +50,11 @@ class EvaluationMetrics:
     contralateral_high_frequency_mae_db: float
     ild_mae_db: float
     ild_spectral_proxy_mae_db: float
+    high_frequency_first_difference_mae_db_per_bin: float
+    high_frequency_second_difference_mae_db_per_bin2: float
+    spectral_band_ild_smooth_l1_db: float
+    spectral_band_ild_mae_db: float
+    notch_depth_mae_db: float
     cnn_delta_mean_absolute_db: float
 
 
@@ -58,6 +67,11 @@ class EpochMetrics:
     train_contralateral_high_frequency_mae_db: float
     train_ild_mae_db: float
     train_ild_spectral_proxy_mae_db: float
+    train_high_frequency_first_difference_mae_db_per_bin: float
+    train_high_frequency_second_difference_mae_db_per_bin2: float
+    train_spectral_band_ild_smooth_l1_db: float
+    train_spectral_band_ild_mae_db: float
+    train_notch_depth_mae_db: float
     train_cnn_delta_mean_absolute_db: float
     validation_total_loss: float
     validation_residual_mae_db: float
@@ -65,8 +79,14 @@ class EpochMetrics:
     validation_contralateral_high_frequency_mae_db: float
     validation_ild_mae_db: float
     validation_ild_spectral_proxy_mae_db: float
+    validation_high_frequency_first_difference_mae_db_per_bin: float
+    validation_high_frequency_second_difference_mae_db_per_bin2: float
+    validation_spectral_band_ild_smooth_l1_db: float
+    validation_spectral_band_ild_mae_db: float
+    validation_notch_depth_mae_db: float
     validation_cnn_delta_mean_absolute_db: float
     learning_rate: float
+    mlp_learning_rate: float | None
     epoch_seconds: float
     skipped_optimizer_steps: int
 
@@ -89,6 +109,26 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--validation-steps", type=int, default=96)
     parser.add_argument("--directions-per-batch", type=int, default=16)
     parser.add_argument("--cnn-channels", type=int, default=48)
+    parser.add_argument(
+        "--global-context-attention",
+        action="store_true",
+        help=(
+            "Add a downsampled full-spectrum attention branch and gated "
+            "residual fusion while retaining the local dilated CNN."
+        ),
+    )
+    parser.add_argument("--global-attention-width", type=int, default=32)
+    parser.add_argument("--global-attention-heads", type=int, default=4)
+    parser.add_argument("--global-attention-blocks", type=int, default=2)
+    parser.add_argument("--global-attention-stride", type=int, default=4)
+    parser.add_argument(
+        "--freeze-local-cnn",
+        action="store_true",
+        help=(
+            "Freeze the source local CNN and train only the new global "
+            "context branch/gate (plus MLP only if explicitly unfrozen)."
+        ),
+    )
     parser.add_argument(
         "--interpolation-only",
         action="store_true",
@@ -130,9 +170,100 @@ def parse_arguments() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--learning-rate", type=float, default=3e-4)
+    parser.add_argument(
+        "--unfreeze-mlp",
+        action="store_true",
+        help=(
+            "Jointly fine-tune the base MLP and CNN. The default keeps the "
+            "MLP frozen for backward-compatible v3/v3.1/v3.2 training."
+        ),
+    )
+    parser.add_argument(
+        "--mlp-learning-rate",
+        type=float,
+        help=(
+            "Learning rate for the MLP parameter group when --unfreeze-mlp "
+            "is enabled. A separate explicit value is required to avoid "
+            "accidental full-rate MLP updates."
+        ),
+    )
     parser.add_argument("--weight-decay", type=float, default=1e-5)
     parser.add_argument("--erb-weight", type=float, default=0.50)
     parser.add_argument("--high-frequency-weight", type=float, default=0.25)
+    parser.add_argument(
+        "--high-frequency-first-difference-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for the direction-weighted first spectral-difference "
+            "MAE above --spectral-difference-minimum-frequency-hz."
+        ),
+    )
+    parser.add_argument(
+        "--high-frequency-second-difference-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for the direction-weighted second spectral-difference "
+            "MAE above --spectral-difference-minimum-frequency-hz."
+        ),
+    )
+    parser.add_argument(
+        "--spectral-difference-minimum-frequency-hz",
+        type=float,
+        default=4000.0,
+    )
+    parser.add_argument(
+        "--spectral-band-ild-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for horizontal auditory-band ILD SmoothL1. This "
+            "auxiliary objective requires --dual-sampling-strict-ild."
+        ),
+    )
+    parser.add_argument(
+        "--spectral-band-ild-minimum-center-hz",
+        type=float,
+        default=200.0,
+    )
+    parser.add_argument(
+        "--spectral-band-ild-maximum-center-hz",
+        type=float,
+        default=18000.0,
+    )
+    parser.add_argument(
+        "--spectral-band-ild-beta-db",
+        type=float,
+        default=0.5,
+    )
+    parser.add_argument(
+        "--notch-depth-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for multi-scale notch-depth-map MAE on the global "
+            "interpolation batch."
+        ),
+    )
+    parser.add_argument(
+        "--notch-minimum-frequency-hz", type=float, default=4000.0
+    )
+    parser.add_argument(
+        "--notch-maximum-frequency-hz", type=float, default=18000.0
+    )
+    parser.add_argument(
+        "--notch-radii-bins",
+        type=int,
+        nargs="+",
+        default=[4, 8, 16],
+    )
+    parser.add_argument(
+        "--notch-depth-threshold-db", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--notch-softplus-temperature-db", type=float, default=0.5
+    )
     parser.add_argument("--ild-weight", type=float, default=0.25)
     parser.add_argument(
         "--ild-loss-mode",
@@ -204,13 +335,90 @@ def serializable_arguments(
 
 
 def training_stage(arguments: argparse.Namespace) -> str:
+    spectral_difference_training = (
+        getattr(arguments, "high_frequency_first_difference_weight", 0.0)
+        > 0.0
+        or getattr(
+            arguments, "high_frequency_second_difference_weight", 0.0
+        )
+        > 0.0
+    )
+    spectral_band_ild_training = (
+        getattr(arguments, "spectral_band_ild_weight", 0.0) > 0.0
+    )
+    notch_training = getattr(arguments, "notch_depth_weight", 0.0) > 0.0
+    if notch_training and not (
+        spectral_difference_training or spectral_band_ild_training
+    ):
+        trainable_prefix = (
+            "joint_mlp_cnn" if arguments.unfreeze_mlp else "cnn_only_frozen_mlp"
+        )
+        if arguments.dual_sampling_strict_ild:
+            return (
+                f"{trainable_prefix}_global_magnitude_horizontal_hrir_ild_"
+                "notch_aware_v34c"
+            )
+        return f"{trainable_prefix}_notch_aware_v34c"
+    if notch_training:
+        trainable_prefix = (
+            "joint_mlp_cnn" if arguments.unfreeze_mlp else "cnn_only_frozen_mlp"
+        )
+        return f"{trainable_prefix}_combined_targeted_losses_v34"
+    if spectral_difference_training and spectral_band_ild_training:
+        trainable_prefix = (
+            "joint_mlp_cnn" if arguments.unfreeze_mlp else "cnn_only_frozen_mlp"
+        )
+        return (
+            f"{trainable_prefix}_global_magnitude_horizontal_hrir_ild_"
+            "hf_spectral_differences_spectral_band_ild_v34"
+        )
+    if spectral_band_ild_training:
+        trainable_prefix = (
+            "joint_mlp_cnn" if arguments.unfreeze_mlp else "cnn_only_frozen_mlp"
+        )
+        if arguments.dual_sampling_strict_ild:
+            return (
+                f"{trainable_prefix}_global_magnitude_horizontal_hrir_ild_"
+                "spectral_band_ild_v34b"
+            )
+        return f"{trainable_prefix}_spectral_band_ild_v34b"
+    if spectral_difference_training:
+        trainable_prefix = (
+            "joint_mlp_cnn" if arguments.unfreeze_mlp else "cnn_only_frozen_mlp"
+        )
+        if arguments.dual_sampling_strict_ild:
+            return (
+                f"{trainable_prefix}_global_magnitude_horizontal_hrir_ild_"
+                "hf_spectral_differences_v34a"
+            )
+        return f"{trainable_prefix}_hf_spectral_differences_v34a"
+    if getattr(arguments, "global_context_attention", False):
+        trainable_prefix = (
+            "global_attention_only_frozen_mlp_local_cnn"
+            if getattr(arguments, "freeze_local_cnn", False)
+            else "local_global_cnn_frozen_mlp"
+        )
+        if arguments.unfreeze_mlp:
+            trainable_prefix += "_joint_mlp"
+        if arguments.dual_sampling_strict_ild:
+            return (
+                f"{trainable_prefix}_global_magnitude_"
+                "horizontal_hrir_ild_v33"
+            )
+        return f"{trainable_prefix}_v33"
+    trainable_prefix = (
+        "joint_mlp_cnn" if arguments.unfreeze_mlp else "cnn_only_frozen_mlp"
+    )
     if arguments.dual_sampling_strict_ild:
-        return "cnn_only_frozen_mlp_global_magnitude_horizontal_hrir_ild_v32"
+        version = "v321" if arguments.unfreeze_mlp else "v32"
+        return (
+            f"{trainable_prefix}_global_magnitude_horizontal_hrir_ild_{version}"
+        )
     if arguments.ild_loss_mode == "strict_hrir":
         if arguments.horizontal_only:
-            return "cnn_only_frozen_mlp_strict_horizontal_hrir_ild_v31"
-        return "cnn_only_frozen_mlp_strict_hrir_ild_v31"
-    return "cnn_only_frozen_mlp"
+            return f"{trainable_prefix}_strict_horizontal_hrir_ild_v31"
+        return f"{trainable_prefix}_strict_hrir_ild_v31"
+    return trainable_prefix
 
 
 def strict_ild_directions_per_batch(arguments: argparse.Namespace) -> int:
@@ -270,6 +478,12 @@ def initialize_wandb(
                 "frozen_mlp_parameter_count"
             ],
             "cnn_parameter_count": configuration["cnn_parameter_count"],
+            "mlp_parameter_count": configuration["mlp_parameter_count"],
+            "mlp_trainable_parameter_count": configuration[
+                "mlp_trainable_parameter_count"
+            ],
+            "cnn_learning_rate": configuration["cnn_learning_rate"],
+            "mlp_learning_rate": configuration["mlp_learning_rate"],
             "batch_sample_count": configuration["batch_sample_count"],
             "frequency_count": configuration["frequency_count"],
             "train_subject_count": configuration["train_subject_count"],
@@ -283,7 +497,11 @@ def initialize_wandb(
     )
     tags = arguments.wandb_tags
     if tags is None:
-        tags = ["cnn-only", "hutubs", "n03", "frozen-mlp"]
+        tags = ["hutubs", "n03"]
+        if arguments.unfreeze_mlp:
+            tags.extend(["joint-mlp-cnn", "unfrozen-mlp"])
+        else:
+            tags.extend(["cnn-only", "frozen-mlp"])
         if arguments.overfit_subject is not None:
             tags.append("overfit-check")
     run = wandb.init(
@@ -306,7 +524,12 @@ def initialize_wandb(
     run.define_metric("checkpoint/*", step_metric="epoch")
     if arguments.wandb_watch:
         run.watch(
-            model.cnn,
+            (
+                model
+                if arguments.unfreeze_mlp
+                or arguments.global_context_attention
+                else model.cnn
+            ),
             log="gradients",
             log_freq=max(1, arguments.steps_per_epoch // 5),
             log_graph=False,
@@ -324,6 +547,7 @@ def log_initial_validation(
     run: Optional[Any],
     metrics: EvaluationMetrics,
     learning_rate: float,
+    mlp_learning_rate: float | None,
     amp_scale: float,
 ) -> None:
     if run is None:
@@ -341,10 +565,25 @@ def log_initial_validation(
             "validation/ild_spectral_proxy_mae_db": (
                 metrics.ild_spectral_proxy_mae_db
             ),
+            "validation/high_frequency_first_difference_mae_db_per_bin": (
+                metrics.high_frequency_first_difference_mae_db_per_bin
+            ),
+            "validation/high_frequency_second_difference_mae_db_per_bin2": (
+                metrics.high_frequency_second_difference_mae_db_per_bin2
+            ),
+            "validation/spectral_band_ild_smooth_l1_db": (
+                metrics.spectral_band_ild_smooth_l1_db
+            ),
+            "validation/spectral_band_ild_mae_db": (
+                metrics.spectral_band_ild_mae_db
+            ),
+            "validation/notch_depth_mae_db": metrics.notch_depth_mae_db,
             "validation/cnn_delta_mean_absolute_db": (
                 metrics.cnn_delta_mean_absolute_db
             ),
             "optimizer/learning_rate": learning_rate,
+            "optimizer/cnn_learning_rate": learning_rate,
+            "optimizer/mlp_learning_rate": mlp_learning_rate,
             "optimizer/amp_scale": amp_scale,
             "optimizer/skipped_steps_epoch": 0,
             "optimizer/skipped_steps_total": 0,
@@ -380,6 +619,19 @@ def log_epoch_to_wandb(
             "train/ild_spectral_proxy_mae_db": (
                 metrics.train_ild_spectral_proxy_mae_db
             ),
+            "train/high_frequency_first_difference_mae_db_per_bin": (
+                metrics.train_high_frequency_first_difference_mae_db_per_bin
+            ),
+            "train/high_frequency_second_difference_mae_db_per_bin2": (
+                metrics.train_high_frequency_second_difference_mae_db_per_bin2
+            ),
+            "train/spectral_band_ild_smooth_l1_db": (
+                metrics.train_spectral_band_ild_smooth_l1_db
+            ),
+            "train/spectral_band_ild_mae_db": (
+                metrics.train_spectral_band_ild_mae_db
+            ),
+            "train/notch_depth_mae_db": metrics.train_notch_depth_mae_db,
             "train/cnn_delta_mean_absolute_db": (
                 metrics.train_cnn_delta_mean_absolute_db
             ),
@@ -394,6 +646,21 @@ def log_epoch_to_wandb(
             "validation/ild_mae_db": metrics.validation_ild_mae_db,
             "validation/ild_spectral_proxy_mae_db": (
                 metrics.validation_ild_spectral_proxy_mae_db
+            ),
+            "validation/high_frequency_first_difference_mae_db_per_bin": (
+                metrics.validation_high_frequency_first_difference_mae_db_per_bin
+            ),
+            "validation/high_frequency_second_difference_mae_db_per_bin2": (
+                metrics.validation_high_frequency_second_difference_mae_db_per_bin2
+            ),
+            "validation/spectral_band_ild_smooth_l1_db": (
+                metrics.validation_spectral_band_ild_smooth_l1_db
+            ),
+            "validation/spectral_band_ild_mae_db": (
+                metrics.validation_spectral_band_ild_mae_db
+            ),
+            "validation/notch_depth_mae_db": (
+                metrics.validation_notch_depth_mae_db
             ),
             "validation/cnn_delta_mean_absolute_db": (
                 metrics.validation_cnn_delta_mean_absolute_db
@@ -429,6 +696,8 @@ def log_epoch_to_wandb(
                 )
             ),
             "optimizer/learning_rate": metrics.learning_rate,
+            "optimizer/cnn_learning_rate": metrics.learning_rate,
+            "optimizer/mlp_learning_rate": metrics.mlp_learning_rate,
             "optimizer/amp_scale": amp_scale,
             "optimizer/skipped_steps_epoch": (
                 metrics.skipped_optimizer_steps
@@ -543,6 +812,35 @@ def calculate_model_losses(
             else 0.0
         ),
         arguments.direction_weighted_residual,
+        high_frequency_first_difference_weight=(
+            getattr(arguments, "high_frequency_first_difference_weight", 0.0)
+        ),
+        high_frequency_second_difference_weight=(
+            getattr(arguments, "high_frequency_second_difference_weight", 0.0)
+        ),
+        spectral_difference_minimum_frequency_hz=(
+            getattr(
+                arguments,
+                "spectral_difference_minimum_frequency_hz",
+                4000.0,
+            )
+        ),
+        notch_depth_weight=getattr(arguments, "notch_depth_weight", 0.0),
+        notch_minimum_frequency_hz=getattr(
+            arguments, "notch_minimum_frequency_hz", 4000.0
+        ),
+        notch_maximum_frequency_hz=getattr(
+            arguments, "notch_maximum_frequency_hz", 18000.0
+        ),
+        notch_radii_bins=tuple(
+            getattr(arguments, "notch_radii_bins", (4, 8, 16))
+        ),
+        notch_depth_threshold_db=getattr(
+            arguments, "notch_depth_threshold_db", 1.0
+        ),
+        notch_softplus_temperature_db=getattr(
+            arguments, "notch_softplus_temperature_db", 0.5
+        ),
     )
     if arguments.ild_loss_mode == "strict_hrir" and include_strict_ild:
         if not isinstance(strict_metadata, dict):
@@ -610,6 +908,77 @@ def calculate_strict_ild_loss(
     )
 
 
+def calculate_horizontal_ild_losses(
+    model: ResidualMLPCNN,
+    batch: tuple[object, ...],
+    log_erb_weights: torch.Tensor,
+    band_center_frequency_hz: torch.Tensor,
+    normalization: Normalization,
+    arguments: argparse.Namespace,
+    use_amp: bool,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Calculate strict broadband and spectral-band ILD on one batch."""
+    (
+        point_features,
+        _target_normalized,
+        target_db,
+        mca_db,
+        direction_features,
+        _frequency_hz,
+        strict_metadata,
+    ) = batch
+    if not all(
+        isinstance(value, torch.Tensor)
+        for value in (
+            point_features,
+            target_db,
+            mca_db,
+            direction_features,
+        )
+    ):
+        raise TypeError("Horizontal ILD batch tensors are incomplete")
+    if not isinstance(strict_metadata, dict):
+        raise ValueError("Strict HRIR ILD mode requires metadata")
+    with torch.amp.autocast("cuda", enabled=use_amp):
+        prediction, _, cnn_delta = model(point_features)
+    prediction_db = (
+        prediction.permute(1, 0, 2).float() * normalization.target_std
+        + normalization.target_mean
+    )
+    corrected_db = mca_db.float() + prediction_db
+    reference_db = mca_db.float() + target_db.float()
+    direction_weights = direction_features[:, 5]
+    strict_ild_mae = strict_hrir_ild_mae(
+        corrected_db,
+        direction_weights,
+        strict_metadata,
+    )
+    band_smooth_l1, band_mae = spectral_band_ild_smooth_l1_and_mae(
+        corrected_db,
+        reference_db,
+        direction_weights,
+        log_erb_weights,
+        band_center_frequency_hz,
+        getattr(
+            arguments,
+            "spectral_band_ild_minimum_center_hz",
+            200.0,
+        ),
+        getattr(
+            arguments,
+            "spectral_band_ild_maximum_center_hz",
+            18000.0,
+        ),
+        getattr(arguments, "spectral_band_ild_beta_db", 0.5),
+    )
+    total = (
+        arguments.ild_weight * strict_ild_mae
+        + getattr(arguments, "spectral_band_ild_weight", 0.0)
+        * band_smooth_l1
+    ) / normalization.target_std
+    return total, strict_ild_mae, band_smooth_l1, band_mae, cnn_delta
+
+
 def calculate_dual_sampling_losses(
     model: ResidualMLPCNN,
     global_batch: tuple[object, ...],
@@ -618,6 +987,7 @@ def calculate_dual_sampling_losses(
     normalization: Normalization,
     arguments: argparse.Namespace,
     use_amp: bool,
+    band_center_frequency_hz: torch.Tensor | None = None,
 ) -> tuple[torch.Tensor, LossMetrics, torch.Tensor]:
     """Combine global spectral losses with horizontal strict HRIR ILD.
 
@@ -634,16 +1004,45 @@ def calculate_dual_sampling_losses(
         use_amp,
         include_strict_ild=False,
     )
-    strict_loss, strict_ild_mae, _ = calculate_strict_ild_loss(
-        model,
-        horizontal_ild_batch,
-        normalization,
-        arguments,
-        use_amp,
-    )
-    total_loss = global_loss + strict_loss
+    if getattr(arguments, "spectral_band_ild_weight", 0.0) > 0.0:
+        if band_center_frequency_hz is None:
+            raise ValueError(
+                "Spectral-band ILD requires ERB-band center frequencies"
+            )
+        (
+            horizontal_loss,
+            strict_ild_mae,
+            spectral_band_ild_smooth_l1,
+            spectral_band_ild_mae,
+            _,
+        ) = calculate_horizontal_ild_losses(
+            model,
+            horizontal_ild_batch,
+            log_erb_weights,
+            band_center_frequency_hz,
+            normalization,
+            arguments,
+            use_amp,
+        )
+    else:
+        horizontal_loss, strict_ild_mae, _ = calculate_strict_ild_loss(
+            model,
+            horizontal_ild_batch,
+            normalization,
+            arguments,
+            use_amp,
+        )
+        spectral_band_ild_smooth_l1 = global_loss.new_zeros(())
+        spectral_band_ild_mae = global_loss.new_zeros(())
+    total_loss = global_loss + horizontal_loss
     metrics.total = float(total_loss.detach().item())
     metrics.ild_mae_db = float(strict_ild_mae.detach().item())
+    metrics.spectral_band_ild_smooth_l1_db = float(
+        spectral_band_ild_smooth_l1.detach().item()
+    )
+    metrics.spectral_band_ild_mae_db = float(
+        spectral_band_ild_mae.detach().item()
+    )
     return total_loss, metrics, global_delta
 
 
@@ -678,6 +1077,7 @@ def evaluate(
     device: torch.device,
     use_amp: bool,
     log_erb_weights: torch.Tensor,
+    band_center_frequency_hz: torch.Tensor,
     arguments: argparse.Namespace,
 ) -> EvaluationMetrics:
     model.eval()
@@ -736,6 +1136,7 @@ def evaluate(
                 normalization,
                 arguments,
                 use_amp,
+                band_center_frequency_hz,
             )
         add_metrics(accumulated, current)
         delta_mean_absolute_db += float(
@@ -754,6 +1155,17 @@ def evaluate(
         ild_spectral_proxy_mae_db=(
             averaged.ild_spectral_proxy_mae_db
         ),
+        high_frequency_first_difference_mae_db_per_bin=(
+            averaged.high_frequency_first_difference_mae_db_per_bin
+        ),
+        high_frequency_second_difference_mae_db_per_bin2=(
+            averaged.high_frequency_second_difference_mae_db_per_bin2
+        ),
+        spectral_band_ild_smooth_l1_db=(
+            averaged.spectral_band_ild_smooth_l1_db
+        ),
+        spectral_band_ild_mae_db=averaged.spectral_band_ild_mae_db,
+        notch_depth_mae_db=averaged.notch_depth_mae_db,
         cnn_delta_mean_absolute_db=delta_mean_absolute_db / steps,
     )
 
@@ -805,6 +1217,73 @@ def gradients_are_finite(parameters: Sequence[nn.Parameter]) -> bool:
     )
 
 
+def make_optimizer(
+    model: ResidualMLPCNN,
+    learning_rate: float,
+    weight_decay: float,
+    unfreeze_mlp: bool = False,
+    mlp_learning_rate: float | None = None,
+    global_context_only: bool = False,
+) -> tuple[torch.optim.AdamW, list[nn.Parameter]]:
+    """Configure frozen-CNN or discriminative-rate joint fine-tuning."""
+    if learning_rate <= 0.0:
+        raise ValueError("learning_rate must be positive")
+    if global_context_only:
+        if model.global_context is None or model.global_gate is None:
+            raise ValueError(
+                "global_context_only requires a global-context model"
+            )
+        for parameter in model.cnn.parameters():
+            parameter.requires_grad_(False)
+        spectral_parameters = [
+            *model.global_context.parameters(),
+            *model.global_gate.parameters(),
+        ]
+        spectral_group_name = "global_context"
+    else:
+        spectral_parameters = list(model.cnn.parameters())
+        if model.global_context is not None and model.global_gate is not None:
+            spectral_parameters.extend(model.global_context.parameters())
+            spectral_parameters.extend(model.global_gate.parameters())
+        spectral_group_name = "cnn"
+    parameter_groups: list[dict[str, object]] = [
+        {
+            "params": spectral_parameters,
+            "lr": learning_rate,
+            "name": spectral_group_name,
+        }
+    ]
+    if unfreeze_mlp:
+        if mlp_learning_rate is None or mlp_learning_rate <= 0.0:
+            raise ValueError(
+                "--unfreeze-mlp requires a positive --mlp-learning-rate"
+            )
+        model.unfreeze_mlp()
+        parameter_groups.append(
+            {
+                "params": list(model.mlp.parameters()),
+                "lr": mlp_learning_rate,
+                "name": "mlp",
+            }
+        )
+    else:
+        if mlp_learning_rate is not None:
+            raise ValueError(
+                "--mlp-learning-rate requires --unfreeze-mlp"
+            )
+        model.freeze_mlp()
+    optimizer = torch.optim.AdamW(
+        parameter_groups,
+        weight_decay=weight_decay,
+    )
+    trainable_parameters = [
+        parameter
+        for parameter in model.parameters()
+        if parameter.requires_grad
+    ]
+    return optimizer, trainable_parameters
+
+
 def main() -> None:
     arguments = parse_arguments()
     if not torch.cuda.is_available():
@@ -813,6 +1292,100 @@ def main() -> None:
         raise ValueError("epochs and steps_per_epoch must be positive")
     if arguments.validation_steps < 1:
         raise ValueError("validation_steps must be positive")
+    if arguments.high_frequency_first_difference_weight < 0.0:
+        raise ValueError(
+            "--high-frequency-first-difference-weight must be non-negative"
+        )
+    if arguments.high_frequency_second_difference_weight < 0.0:
+        raise ValueError(
+            "--high-frequency-second-difference-weight must be non-negative"
+        )
+    if arguments.spectral_difference_minimum_frequency_hz < 0.0:
+        raise ValueError(
+            "--spectral-difference-minimum-frequency-hz must be non-negative"
+        )
+    if arguments.spectral_band_ild_weight < 0.0:
+        raise ValueError("--spectral-band-ild-weight must be non-negative")
+    if arguments.spectral_band_ild_minimum_center_hz < 0.0:
+        raise ValueError(
+            "--spectral-band-ild-minimum-center-hz must be non-negative"
+        )
+    if (
+        arguments.spectral_band_ild_maximum_center_hz
+        <= arguments.spectral_band_ild_minimum_center_hz
+    ):
+        raise ValueError(
+            "--spectral-band-ild-maximum-center-hz must exceed the minimum"
+        )
+    if arguments.spectral_band_ild_beta_db <= 0.0:
+        raise ValueError("--spectral-band-ild-beta-db must be positive")
+    if (
+        arguments.spectral_band_ild_weight > 0.0
+        and not arguments.dual_sampling_strict_ild
+    ):
+        raise ValueError(
+            "--spectral-band-ild-weight requires --dual-sampling-strict-ild"
+        )
+    if arguments.notch_depth_weight < 0.0:
+        raise ValueError("--notch-depth-weight must be non-negative")
+    if arguments.notch_minimum_frequency_hz < 0.0:
+        raise ValueError(
+            "--notch-minimum-frequency-hz must be non-negative"
+        )
+    if (
+        arguments.notch_maximum_frequency_hz
+        <= arguments.notch_minimum_frequency_hz
+    ):
+        raise ValueError(
+            "--notch-maximum-frequency-hz must exceed the minimum"
+        )
+    if not arguments.notch_radii_bins or any(
+        radius < 1 for radius in arguments.notch_radii_bins
+    ):
+        raise ValueError("--notch-radii-bins must contain positive integers")
+    if len(set(arguments.notch_radii_bins)) != len(
+        arguments.notch_radii_bins
+    ):
+        raise ValueError("--notch-radii-bins must not contain duplicates")
+    if arguments.notch_depth_threshold_db < 0.0:
+        raise ValueError(
+            "--notch-depth-threshold-db must be non-negative"
+        )
+    if arguments.notch_softplus_temperature_db <= 0.0:
+        raise ValueError(
+            "--notch-softplus-temperature-db must be positive"
+        )
+    if arguments.freeze_local_cnn and not arguments.global_context_attention:
+        raise ValueError(
+            "--freeze-local-cnn requires --global-context-attention"
+        )
+    if arguments.global_attention_width < 1:
+        raise ValueError("--global-attention-width must be positive")
+    if arguments.global_attention_heads < 1:
+        raise ValueError("--global-attention-heads must be positive")
+    if arguments.global_attention_blocks < 1:
+        raise ValueError("--global-attention-blocks must be positive")
+    if arguments.global_attention_stride < 1:
+        raise ValueError("--global-attention-stride must be positive")
+    if (
+        arguments.global_attention_width
+        % arguments.global_attention_heads
+        != 0
+    ):
+        raise ValueError(
+            "--global-attention-width must be divisible by "
+            "--global-attention-heads"
+        )
+    if arguments.unfreeze_mlp:
+        if (
+            arguments.mlp_learning_rate is None
+            or arguments.mlp_learning_rate <= 0.0
+        ):
+            raise ValueError(
+                "--unfreeze-mlp requires a positive --mlp-learning-rate"
+            )
+    elif arguments.mlp_learning_rate is not None:
+        raise ValueError("--mlp-learning-rate requires --unfreeze-mlp")
     if arguments.dual_sampling_strict_ild:
         if arguments.ild_loss_mode != "strict_hrir":
             raise ValueError(
@@ -880,6 +1453,11 @@ def main() -> None:
         mlp_width=int(initial_arguments["width"]),
         mlp_block_count=int(initial_arguments["block_count"]),
         cnn_channels=arguments.cnn_channels,
+        global_context_attention=arguments.global_context_attention,
+        global_attention_width=arguments.global_attention_width,
+        global_attention_heads=arguments.global_attention_heads,
+        global_attention_blocks=arguments.global_attention_blocks,
+        global_attention_stride=arguments.global_attention_stride,
     ).to(device)
     initial_model_epoch = int(initial["epoch"])
     initial_model_stage = initial.get("training_stage", "residual_mlp")
@@ -891,16 +1469,36 @@ def main() -> None:
             map_location=device,
             weights_only=False,
         )
-        model.load_state_dict(initial_cnn["model_state"])
+        if arguments.global_context_attention:
+            incompatible = model.load_state_dict(
+                initial_cnn["model_state"], strict=False
+            )
+            allowed_prefixes = ("global_context.", "global_gate.")
+            unexpected = list(incompatible.unexpected_keys)
+            disallowed_missing = [
+                key
+                for key in incompatible.missing_keys
+                if not key.startswith(allowed_prefixes)
+            ]
+            if unexpected or disallowed_missing:
+                raise RuntimeError(
+                    "Incompatible source checkpoint for global-context "
+                    f"initialization: missing={disallowed_missing}, "
+                    f"unexpected={unexpected}"
+                )
+        else:
+            model.load_state_dict(initial_cnn["model_state"])
         initial_model_epoch = int(initial_cnn["epoch"])
         initial_model_stage = initial_cnn.get(
             "training_stage", "mlp_cnn"
         )
-    model.freeze_mlp()
-    optimizer = torch.optim.AdamW(
-        model.cnn.parameters(),
-        lr=arguments.learning_rate,
+    optimizer, trainable_parameters = make_optimizer(
+        model,
+        learning_rate=arguments.learning_rate,
         weight_decay=arguments.weight_decay,
+        unfreeze_mlp=arguments.unfreeze_mlp,
+        mlp_learning_rate=arguments.mlp_learning_rate,
+        global_context_only=arguments.freeze_local_cnn,
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer,
@@ -911,7 +1509,6 @@ def main() -> None:
         enabled=use_amp,
         init_scale=arguments.amp_initial_scale,
     )
-    cnn_parameters = list(model.cnn.parameters())
 
     with h5py.File(train_files[0], "r") as sample_handle:
         sample_frequency = np.squeeze(sample_handle["frequency_hz"][:])
@@ -922,6 +1519,9 @@ def main() -> None:
         erb_weights.shape[0],
         erb_weights.shape[1],
     )
+    band_center_frequency_hz = torch.from_numpy(
+        make_erb_center_frequencies_hz(erb_weights.shape[0])
+    ).to(device)
 
     output_dir = project_root() / "artifacts" / "training" / arguments.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -947,8 +1547,32 @@ def main() -> None:
         ),
         "total_parameter_count": total_parameter_count(model),
         "trainable_parameter_count": trainable_parameter_count(model),
-        "frozen_mlp_parameter_count": total_parameter_count(model.mlp),
+        "frozen_mlp_parameter_count": (
+            0 if arguments.unfreeze_mlp else total_parameter_count(model.mlp)
+        ),
+        "mlp_parameter_count": total_parameter_count(model.mlp),
+        "mlp_trainable_parameter_count": trainable_parameter_count(model.mlp),
         "cnn_parameter_count": total_parameter_count(model.cnn),
+        "global_context_parameter_count": (
+            0
+            if model.global_context is None or model.global_gate is None
+            else total_parameter_count(model.global_context)
+            + total_parameter_count(model.global_gate)
+        ),
+        "global_context_attention": arguments.global_context_attention,
+        "freeze_local_cnn": arguments.freeze_local_cnn,
+        "cnn_learning_rate": arguments.learning_rate,
+        "mlp_learning_rate": arguments.mlp_learning_rate,
+        "optimizer_parameter_groups": [
+            {
+                "name": group.get("name"),
+                "learning_rate": float(group["lr"]),
+                "parameter_count": sum(
+                    parameter.numel() for parameter in group["params"]
+                ),
+            }
+            for group in optimizer.param_groups
+        ],
         "batch_sample_count": train_sampler.batch_size,
         "frequency_count": train_sampler.frequency_count,
         "eligible_direction_count": int(
@@ -1024,6 +1648,7 @@ def main() -> None:
         device,
         use_amp,
         log_erb_weights,
+        band_center_frequency_hz,
         arguments,
     )
     (output_dir / "initial_validation.json").write_text(
@@ -1036,12 +1661,21 @@ def main() -> None:
         f"res={initial_validation.residual_mae_db:.3f} "
         f"erb={initial_validation.erb_mae_db:.3f} "
         f"hf={initial_validation.contralateral_high_frequency_mae_db:.3f} "
+        f"d1={initial_validation.high_frequency_first_difference_mae_db_per_bin:.3f} "
+        f"d2={initial_validation.high_frequency_second_difference_mae_db_per_bin2:.3f} "
+        f"bandild={initial_validation.spectral_band_ild_mae_db:.3f} "
+        f"notch={initial_validation.notch_depth_mae_db:.3f} "
         f"ild={initial_validation.ild_mae_db:.3f}"
     )
     log_initial_validation(
         wandb_run,
         initial_validation,
         float(optimizer.param_groups[0]["lr"]),
+        (
+            None
+            if len(optimizer.param_groups) == 1
+            else float(optimizer.param_groups[1]["lr"])
+        ),
         float(scaler.get_scale()),
     )
 
@@ -1090,15 +1724,16 @@ def main() -> None:
                     normalization,
                     arguments,
                     use_amp,
+                    band_center_frequency_hz,
                 )
             if not bool(torch.isfinite(loss).item()):
                 raise RuntimeError("Encountered a non-finite training loss")
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
-            finite_gradients = gradients_are_finite(cnn_parameters)
+            finite_gradients = gradients_are_finite(trainable_parameters)
             if finite_gradients:
                 nn.utils.clip_grad_norm_(
-                    cnn_parameters,
+                    trainable_parameters,
                     max_norm=arguments.gradient_clip,
                 )
                 scaler.step(optimizer)
@@ -1128,6 +1763,7 @@ def main() -> None:
             device,
             use_amp,
             log_erb_weights,
+            band_center_frequency_hz,
             arguments,
         )
         metrics = EpochMetrics(
@@ -1142,6 +1778,19 @@ def main() -> None:
             train_ild_spectral_proxy_mae_db=(
                 train_metrics.ild_spectral_proxy_mae_db
             ),
+            train_high_frequency_first_difference_mae_db_per_bin=(
+                train_metrics.high_frequency_first_difference_mae_db_per_bin
+            ),
+            train_high_frequency_second_difference_mae_db_per_bin2=(
+                train_metrics.high_frequency_second_difference_mae_db_per_bin2
+            ),
+            train_spectral_band_ild_smooth_l1_db=(
+                train_metrics.spectral_band_ild_smooth_l1_db
+            ),
+            train_spectral_band_ild_mae_db=(
+                train_metrics.spectral_band_ild_mae_db
+            ),
+            train_notch_depth_mae_db=train_metrics.notch_depth_mae_db,
             train_cnn_delta_mean_absolute_db=(
                 delta_mean_absolute_db / arguments.steps_per_epoch
             ),
@@ -1155,10 +1804,30 @@ def main() -> None:
             validation_ild_spectral_proxy_mae_db=(
                 validation.ild_spectral_proxy_mae_db
             ),
+            validation_high_frequency_first_difference_mae_db_per_bin=(
+                validation.high_frequency_first_difference_mae_db_per_bin
+            ),
+            validation_high_frequency_second_difference_mae_db_per_bin2=(
+                validation.high_frequency_second_difference_mae_db_per_bin2
+            ),
+            validation_spectral_band_ild_smooth_l1_db=(
+                validation.spectral_band_ild_smooth_l1_db
+            ),
+            validation_spectral_band_ild_mae_db=(
+                validation.spectral_band_ild_mae_db
+            ),
+            validation_notch_depth_mae_db=(
+                validation.notch_depth_mae_db
+            ),
             validation_cnn_delta_mean_absolute_db=(
                 validation.cnn_delta_mean_absolute_db
             ),
             learning_rate=float(optimizer.param_groups[0]["lr"]),
+            mlp_learning_rate=(
+                None
+                if len(optimizer.param_groups) == 1
+                else float(optimizer.param_groups[1]["lr"])
+            ),
             epoch_seconds=time.perf_counter() - epoch_started,
             skipped_optimizer_steps=skipped_optimizer_steps,
         )
@@ -1169,12 +1838,20 @@ def main() -> None:
             f"res={metrics.train_residual_mae_db:.3f},"
             f"erb={metrics.train_erb_mae_db:.3f},"
             f"hf={metrics.train_contralateral_high_frequency_mae_db:.3f},"
+            f"d1={metrics.train_high_frequency_first_difference_mae_db_per_bin:.3f},"
+            f"d2={metrics.train_high_frequency_second_difference_mae_db_per_bin2:.3f},"
+            f"bandild={metrics.train_spectral_band_ild_mae_db:.3f},"
+            f"notch={metrics.train_notch_depth_mae_db:.3f},"
             f"ild={metrics.train_ild_mae_db:.3f},"
             f"delta={metrics.train_cnn_delta_mean_absolute_db:.3f}) "
             f"val(total={metrics.validation_total_loss:.5f},"
             f"res={metrics.validation_residual_mae_db:.3f},"
             f"erb={metrics.validation_erb_mae_db:.3f},"
             f"hf={metrics.validation_contralateral_high_frequency_mae_db:.3f},"
+            f"d1={metrics.validation_high_frequency_first_difference_mae_db_per_bin:.3f},"
+            f"d2={metrics.validation_high_frequency_second_difference_mae_db_per_bin2:.3f},"
+            f"bandild={metrics.validation_spectral_band_ild_mae_db:.3f},"
+            f"notch={metrics.validation_notch_depth_mae_db:.3f},"
             f"ild={metrics.validation_ild_mae_db:.3f},"
             f"delta={metrics.validation_cnn_delta_mean_absolute_db:.3f}) "
             f"skipped={metrics.skipped_optimizer_steps} "
@@ -1276,6 +1953,21 @@ def main() -> None:
                 ),
                 "best_validation_contralateral_high_frequency_mae_db": (
                     best_metrics.validation_contralateral_high_frequency_mae_db
+                ),
+                "best_validation_high_frequency_first_difference_mae_db_per_bin": (
+                    best_metrics.validation_high_frequency_first_difference_mae_db_per_bin
+                ),
+                "best_validation_high_frequency_second_difference_mae_db_per_bin2": (
+                    best_metrics.validation_high_frequency_second_difference_mae_db_per_bin2
+                ),
+                "best_validation_spectral_band_ild_smooth_l1_db": (
+                    best_metrics.validation_spectral_band_ild_smooth_l1_db
+                ),
+                "best_validation_spectral_band_ild_mae_db": (
+                    best_metrics.validation_spectral_band_ild_mae_db
+                ),
+                "best_validation_notch_depth_mae_db": (
+                    best_metrics.validation_notch_depth_mae_db
                 ),
                 "best_validation_ild_mae_db": (
                     best_metrics.validation_ild_mae_db

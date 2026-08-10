@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-09",
+  "status": "completed",
+  "authorization": "User explicitly authorized one 44-subject test reconstruction with the already fixed epoch-39 checkpoint and prohibited any model-parameter change.",
+  "purpose": "One-shot test inference and strict reconstruction of the validation-selected v3.2 seed-20260809 epoch-39 checkpoint.",
+  "frozen_checkpoint": {
+    "path": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt",
+    "epoch": 39,
+    "selection_rule": "minimum fixed-validation total loss, selected before test access",
+    "validation_total_loss": 0.6611154843121767,
+    "size_bytes": 1367029,
+    "sha256_before_test": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "parameter_updates_allowed": false
+  },
+  "protocol": {
+    "split": "test",
+    "subject_count": 44,
+    "prediction_run": "sonicom_q26_test_mlp_cnn_v32_seed20260809_e40_epoch39_frozen",
+    "strict_result_root": "results/sonicom_mlp_cnn_q26_v32_seed20260809_e40_epoch39_frozen_test_strict",
+    "primary_comparison": "published locked v3.2 epoch 6",
+    "metrics": [
+      "FullSphereERB",
+      "Contralateral25ERB",
+      "ContralateralHighFrequency",
+      "HorizontalILDMAE"
+    ],
+    "checkpoint_or_model_selection_after_test": false,
+    "retraining_after_test": false,
+    "retain_and_report_result_regardless_of_outcome": true
+  },
+  "planned_commands": {
+    "prediction": "D:/miniconda3/envs/ml/python.exe -u -m mcar.evaluation.predict_sonicom_mlp_cnn_residuals data/processed/sonicom_residual_q26_v1 artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt sonicom_q26_test_mlp_cnn_v32_seed20260809_e40_epoch39_frozen --split test --allow-test --directions-per-block 32",
+    "strict_reconstruction": "matlab.exe -batch addpath('D:/cuc/CSMT/MCAR/matlab'); mcar.evaluate_sonicom_validation_reconstruction(inf, 'sonicom_mlp_cnn_q26_v32_seed20260809_e40_epoch39_frozen_test_strict', true, 'sonicom_q26_test_mlp_cnn_v32_locked_ild075', 'sonicom_q26_test_mlp_cnn_v32_seed20260809_e40_epoch39_frozen', 'MLP+CNN v3.2 seed 20260809 e40 epoch 39 frozen', 'test', 'sonicom_q26_test_v1', 'sonicom_q26_test_v2', true)",
+    "checkpoint_integrity": "Recompute SHA-256 after prediction and after MATLAB reconstruction; both hashes must match sha256_before_test."
+  },
+  "execution": {
+    "prediction_status": "completed",
+    "prediction_subject_count": 44,
+    "prediction_elapsed_seconds": 26.5731173,
+    "checkpoint_epoch_reported_by_predictor": 39,
+    "strict_reconstruction_status": "completed",
+    "strict_reconstruction_subject_count": 44,
+    "strict_reconstruction_elapsed_seconds": 1032.1,
+    "test_subject_count_read": 44,
+    "checkpoint_sha256_after_prediction": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "checkpoint_sha256_after_reconstruction": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "checkpoint_hash_unchanged": true,
+    "strict_metrics_db": {
+      "full_sphere_erb": 0.8556758393432952,
+      "contralateral_25deg_erb": 1.349975214494245,
+      "contralateral_high_frequency": 3.5904536440449064,
+      "horizontal_ild_mae": 0.6602974869117492
+    },
+    "improvement_vs_locked_v32_epoch6_percent": {
+      "full_sphere_erb": 1.3976612503509636,
+      "contralateral_25deg_erb": 1.12438401494806,
+      "contralateral_high_frequency": 0.5924983227772922,
+      "horizontal_ild_mae": 3.8867282033503812
+    },
+    "improved_subject_count_vs_locked_v32_epoch6": {
+      "full_sphere_erb": 42,
+      "contralateral_25deg_erb": 36,
+      "contralateral_high_frequency": 40,
+      "horizontal_ild_mae": 29
+    }
+  }
+}

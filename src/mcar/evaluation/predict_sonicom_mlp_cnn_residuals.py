@@ -14,6 +14,7 @@ import torch
 from mcar.data import Normalization, list_hdf5_files
 from mcar.evaluation.evaluate_mlp_cnn_v3 import (
     build_point_features,
+    infer_global_context_arguments,
     infer_model_architecture,
 )
 from mcar.models.residual_mlp_cnn import ResidualMLPCNN, total_parameter_count
@@ -169,6 +170,7 @@ def main() -> None:
         mlp_width=mlp_width,
         mlp_block_count=mlp_block_count,
         cnn_channels=cnn_channels,
+        **infer_global_context_arguments(checkpoint),
     ).to(device)
     model.load_state_dict(state_dict)
     model.eval()

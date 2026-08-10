@@ -33,6 +33,69 @@ v3.2 的三 seed 稳定性诊断也已完成：固定同一 validation sampler�
 10 epoch 相对原 6 epoch 仍有小幅 proxy 收益；由于权重未保留且 test 已消费，
 该诊断不替换论文模型。结果位于 `results/sonicom_mlp_cnn_q26_v32_seed_stability/`。
 
+按稳定性诊断中表现最好的 seed `20260809`，v3.2 又完成了一次预注册的 40 epoch
+validation-only 预算扩展。固定 validation 主目标在 epoch 39 达到最佳；44 人严格
+重建的全空间 ERB、对侧 25° ERB、对侧高频和水平面 ILD 为
+`0.872882 / 1.364204 / 3.608567 / 0.596141 dB`，相对锁定 v3.2 epoch 6 分别改善
+`1.330% / 1.372% / 0.799% / 4.620%`。test 读取数仍为 0；该结果只证明后续预算
+优化空间，不改写已完成的一次性 test 论文结论。完整结果位于
+`results/sonicom_mlp_cnn_q26_v32_seed20260809_e40_strict_validation/`。
+
+在用户明确授权且 epoch 39 checkpoint、SHA-256、四项指标和对照规则全部预先冻结后，
+该候选又执行了一次 44 人 test 追加评价；没有训练或修改参数，评价前后 checkpoint
+SHA-256 均为 `1076EBA7…FE11F10C`。全空间 ERB、对侧 25° ERB、对侧高频和水平面
+严格 ILD 为 `0.855676 / 1.349975 / 3.590454 / 0.660297 dB`，相对原 locked
+epoch 6 分别改善 `1.398% / 1.124% / 0.592% / 3.887%`。该结果作为冻结候选的
+透明追加比较保留，后续不得据此继续调参。完整结果位于
+`results/sonicom_mlp_cnn_q26_v32_seed20260809_e40_epoch39_frozen_test_strict/`。
+
+在 epoch 39 之后又完成了 validation-only 的低风险 v3.2.1 联合微调实验：解冻 MLP，
+使用 `CNN/MLP=1e-5/1e-6` 的分组学习率训练 10 epoch，最佳点为 epoch 7。相对
+v3.2 epoch 39，44 人严格 validation 的全空间 ERB、高频和水平面 ILD 分别改善
+`0.054% / 0.033% / 0.666%`，对侧 25° ERB 回退仅 `0.0034%`。MLP 参数相对 L2
+改变量仅 `0.0997%`，说明解冻稳定但总体收益很小，当前更适合作为消融而非替代模型。
+test 读取数为 0；结果位于
+`results/sonicom_mlp_cnn_q26_v321_joint_unfreeze_e10_strict_validation/`。
+
+全局频谱上下文 v3.3 消融也已完成：保留并冻结 v3.2 epoch 39 的 MLP 与局部
+dilated CNN，将 463 个频点按步长 4 降采样为 116 个 token，经两层、4 头、宽度 32
+的轻量 self-attention 后上采样，并用频率自适应门控叠加全局 delta。仅新增的
+22,356 个参数训练 10 epoch，最佳训练点为 epoch 9。相对 v3.2 epoch 39，44 人严格
+validation 的全空间 ERB、对侧 25° ERB 分别回退 `0.0317% / 0.0353%`；高频和水平面
+ILD 仅改善 `0.0051% / 0.0727%`，后两项均无统计显著性。全局分支平均只改变预测
+`0.0120 dB`，说明实现确实生效但当前冻结式训练没有带来有效增益；该版本只保留为
+负结果消融，不替代 v3.2。test 读取数为 0；结果位于
+`results/sonicom_mlp_cnn_q26_v33_global_attention_e10_strict_validation/`。
+
+高频谱差分目标 v3.4a 消融已完成：保持 v3.2 epoch 39 架构、冻结 MLP，以 4 kHz
+以上预测误差的一阶/二阶频谱差分 MAE 约束局部 CNN，训练 10 epoch，最佳点为 epoch 7。
+相对 v3.2 epoch 39，44 人严格 validation 的全空间 ERB、对侧 25° ERB、对侧高频和
+水平面 ILD 分别改善 `0.0303% / 0.0628% / 0.0026% / 0.4852%`。完整 767 个插值
+方向上的一阶/二阶差分误差降低 `1.164% / 3.821%`，且两项均为 44/44 人改善，证明
+目标函数确实改善了谱形状；但高频幅度均值几乎不变，因此该版本作为正向 loss 消融
+保留，尚不全面替代 v3.2。test 读取数为 0；结果位于
+`results/sonicom_mlp_cnn_q26_v34a_spectral_diff_e10_strict_validation/`。
+
+分频带 ILD 目标 v3.4b 消融也已完成：从同一 v3.2 epoch 39 出发，保持 MLP 冻结，
+在独立水平面采样上新增 200 Hz–18 kHz 的 ERB-band ILD SmoothL1，训练 10 epoch，
+最佳点为 epoch 7。相对 v3.2 epoch 39，44 人严格 validation 的全空间 ERB、对侧
+25° ERB、对侧高频和水平面严格 ILD 分别改善
+`0.0425% / 0.2821% / 0.0055% / 0.5141%`；其中对侧 ERB 为 40/44 人改善。
+完整水平面方向上的分频带 ILD SmoothL1/MAE 分别改善 `0.7587% / 0.7082%`，均为
+43/44 人改善，35/35 个频带的聚合误差下降。原对侧高频幅度指标仍不显著，因此 v3.4b
+是当前最强的定向 loss 消融，但尚不作为全面替代模型。test 读取数为 0；结果位于
+`results/sonicom_mlp_cnn_q26_v34b_band_ild_e10_strict_validation/`。
+
+多尺度 notch-aware 目标 v3.4c 消融已完成：在 4–18 kHz 以 4/8/16 个频点半径构造
+可微 notch-depth map，同时约束局部凹陷的位置与深度。保持 v3.2 epoch 39 架构、
+冻结 MLP，独立训练 10 epoch，最佳点为 epoch 7。相对 v3.2 epoch 39，44 人严格
+validation 的全空间 ERB、对侧 25° ERB、对侧高频和水平面严格 ILD 分别改善
+`0.0267% / 0.0946% / 0.0127% / 0.5362%`。完整 767 个插值方向的 notch-depth MAE
+改善 `0.1139%`，44/44 人以及三个尺度均改善。目标有效但收益弱于 v3.4a/v3.4b 的
+主目标改善，且高频幅度仍不显著；因此保留为正向消融，不全面替代 v3.2。test 读取数
+为 0；结果位于
+`results/sonicom_mlp_cnn_q26_v34c_notch_aware_e10_strict_validation/`。
+
 新增的 FSP-AE-Q26 横向基线已完成官方 checkpoint 逐值等价、40 epoch 正式训练、
 44 人 validation 推理和 MATLAB 严格评价。锁定 epoch 40 的全空间 ERB、对侧 25°
 ERB、对侧高频与水平面严格 ILD 为 `1.160 / 1.848 / 3.104 / 0.598 dB`；相对

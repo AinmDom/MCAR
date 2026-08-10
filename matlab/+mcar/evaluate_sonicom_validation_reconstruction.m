@@ -464,7 +464,7 @@ writetable(perSubject, fullfile(outputRoot, 'per_subject_metrics.csv'));
 writetable(metricLong, fullfile(outputRoot, 'metric_long.csv'));
 writetable(qualityRows, fullfile(outputRoot, 'quality_checks.csv'));
 writetable(aggregate, fullfile(outputRoot, 'aggregate_metrics.csv'));
-plot_metric_overview(perSubject, figuresRoot, includeV3, includeV31, ...
+mcar.plot_sonicom_metric_overview(perSubject, figuresRoot, includeV3, includeV31, ...
     comparisonLabel, splitDisplayName, figurePrefix);
 plot_aggregate_metrics(aggregate, figuresRoot, includeV3, includeV31, ...
     comparisonLabel, splitDisplayName, figurePrefix);
@@ -607,94 +607,6 @@ end
 
 function value = improvement_percent(baseline, estimate)
 value = 100 * (baseline - estimate) / baseline;
-end
-
-function plot_metric_overview(perSubject, figuresRoot, includeV3, includeV31, ...
-        comparisonLabel, splitDisplayName, figurePrefix)
-figureHandle = figure('Visible', 'off', 'Color', 'w', ...
-    'Position', [60, 60, 1800, 1200]);
-layout = tiledlayout(figureHandle, 2, 2, ...
-    'TileSpacing', 'compact', 'Padding', 'compact');
-values = [perSubject.MCAFullSphereERB_dB, ...
-    perSubject.MLPv1FullSphereERB_dB, ...
-    perSubject.MLPv2FullSphereERB_dB];
-if includeV3
-    values(:, end + 1) = perSubject.MLPCNNv3FullSphereERB_dB;
-end
-if includeV31
-    values(:, end + 1) = perSubject.MLPCNNv31FullSphereERB_dB;
-end
-plot_grouped_metric(nexttile(layout), values, ...
-    'Full-sphere ERB', 'ERB error (dB)', includeV3, includeV31, comparisonLabel);
-values = [perSubject.MCAContralateral25ERB_dB, ...
-    perSubject.MLPv1Contralateral25ERB_dB, ...
-    perSubject.MLPv2Contralateral25ERB_dB];
-if includeV3
-    values(:, end + 1) = perSubject.MLPCNNv3Contralateral25ERB_dB;
-end
-if includeV31
-    values(:, end + 1) = perSubject.MLPCNNv31Contralateral25ERB_dB;
-end
-plot_grouped_metric(nexttile(layout), values, ...
-    'Contralateral 25-degree ERB', 'ERB error (dB)', includeV3, includeV31, comparisonLabel);
-values = [perSubject.MCAContralateralHighFrequency_dB, ...
-    perSubject.MLPv1ContralateralHighFrequency_dB, ...
-    perSubject.MLPv2ContralateralHighFrequency_dB];
-if includeV3
-    values(:, end + 1) = perSubject.MLPCNNv3ContralateralHighFrequency_dB;
-end
-if includeV31
-    values(:, end + 1) = perSubject.MLPCNNv31ContralateralHighFrequency_dB;
-end
-plot_grouped_metric(nexttile(layout), values, ...
-    'Contralateral high frequency', 'Magnitude error (dB)', includeV3, includeV31, comparisonLabel);
-values = [perSubject.MCAHorizontalILDMAE_dB, ...
-    perSubject.MLPv1HorizontalILDMAE_dB, ...
-    perSubject.MLPv2HorizontalILDMAE_dB];
-if includeV3
-    values(:, end + 1) = perSubject.MLPCNNv3HorizontalILDMAE_dB;
-end
-if includeV31
-    values(:, end + 1) = perSubject.MLPCNNv31HorizontalILDMAE_dB;
-end
-plot_grouped_metric(nexttile(layout), values, ...
-    'Horizontal-plane strict ILD', 'ILD MAE (dB)', includeV3, includeV31, comparisonLabel);
-title(layout, sprintf('SONICOM %s: strict reconstruction metrics', ...
-    splitDisplayName), ...
-    'FontWeight', 'bold');
-exportgraphics(figureHandle, fullfile(figuresRoot, ...
-    [figurePrefix '_metric_overview.png']), 'Resolution', 180);
-close(figureHandle);
-end
-
-function plot_grouped_metric(axisHandle, values, titleText, yLabelText, includeV3, includeV31, comparisonLabel)
-plot(axisHandle, values(:, 1), '-', 'LineWidth', 1.0);
-hold(axisHandle, 'on');
-plot(axisHandle, values(:, 2), '-', 'LineWidth', 1.0);
-plot(axisHandle, values(:, 3), '-', 'LineWidth', 1.2);
-if includeV3
-    plot(axisHandle, values(:, 4), '-', 'LineWidth', 1.4);
-end
-if includeV31
-    plot(axisHandle, values(:, 5), '-', 'LineWidth', 1.6);
-end
-grid(axisHandle, 'on');
-if size(values, 1) == 1
-    xlim(axisHandle, [0.5, 1.5]);
-else
-    xlim(axisHandle, [1, size(values, 1)]);
-end
-xlabel(axisHandle, 'Validation subject index');
-ylabel(axisHandle, yLabelText);
-title(axisHandle, titleText);
-labels = ["MCA", "MLP v1", "MLP v2"];
-if includeV3
-    labels(end + 1) = "MLP+CNN v3";
-end
-if includeV31
-    labels(end + 1) = string(comparisonLabel);
-end
-legend(axisHandle, labels, 'Location', 'best');
 end
 
 function plot_aggregate_metrics(aggregate, figuresRoot, includeV3, includeV31, ...

@@ -1,0 +1,53 @@
+{
+  "status": "completed",
+  "training_stage": "global_attention_only_frozen_mlp_local_cnn_global_magnitude_horizontal_hrir_ild_v33",
+  "elapsed_seconds": 1717.2741875,
+  "completed_epochs": 10,
+  "best_epoch": 9,
+  "best_validation_total_loss": 0.6611415790393949,
+  "best_strict_ild_epoch": 1,
+  "best_validation_strict_ild_mae_db": 0.5896280612796545,
+  "total_skipped_optimizer_steps": 0,
+  "final_amp_scale": 4096.0,
+  "peak_cuda_allocated_mib": 76.49951171875,
+  "checkpoint_files_saved": true,
+  "wandb": {
+    "enabled": true,
+    "mode": "offline",
+    "project": "mcar-sonicom",
+    "entity": null,
+    "run_name": "sonicom_mlp_cnn_q26_v33_global_attention_e10",
+    "run_id": "q401byar",
+    "run_url": null
+  },
+  "initial_validation": {
+    "total_loss": 0.6611154843121767,
+    "residual_mae_db": 2.542327451209227,
+    "erb_mae_db": 1.0216416337837775,
+    "contralateral_high_frequency_mae_db": 3.5785751392443976,
+    "ild_mae_db": 0.5893678230543932,
+    "ild_spectral_proxy_mae_db": 0.6111641740426421,
+    "cnn_delta_mean_absolute_db": 1.1442477355690859
+  },
+  "best_epoch_metrics": {
+    "epoch": 9,
+    "train_total_loss": 0.6407447651624679,
+    "train_residual_mae_db": 2.4943055682182314,
+    "train_erb_mae_db": 1.0030604560375214,
+    "train_contralateral_high_frequency_mae_db": 3.546154974460602,
+    "train_ild_mae_db": 0.5340170787870884,
+    "train_ild_spectral_proxy_mae_db": 0.6061618004441262,
+    "train_cnn_delta_mean_absolute_db": 1.1188214004195192,
+    "validation_total_loss": 0.6611415790393949,
+    "validation_residual_mae_db": 2.5422835114101567,
+    "validation_erb_mae_db": 1.021857539191842,
+    "validation_contralateral_high_frequency_mae_db": 3.5783290093143783,
+    "validation_ild_mae_db": 0.5897519160062075,
+    "validation_ild_spectral_proxy_mae_db": 0.6111996071413159,
+    "validation_cnn_delta_mean_absolute_db": 1.144265008322426,
+    "learning_rate": 9.549150281252631e-06,
+    "mlp_learning_rate": null,
+    "epoch_seconds": 156.5880990999999,
+    "skipped_optimizer_steps": 0
+  }
+}

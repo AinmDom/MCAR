@@ -24,6 +24,10 @@ from mcar.data import (
     list_hdf5_files,
 )
 from mcar.models.residual_mlp import ResidualMLP, parameter_count
+from mcar.losses import (
+    high_frequency_spectral_difference_mae,
+    multi_scale_notch_depth_mae,
+)
 from mcar.paths import project_root
 
 
@@ -36,6 +40,11 @@ class LossMetrics:
     contralateral_high_frequency_mae_db: float = 0.0
     ild_mae_db: float = 0.0
     ild_spectral_proxy_mae_db: float = 0.0
+    high_frequency_first_difference_mae_db_per_bin: float = 0.0
+    high_frequency_second_difference_mae_db_per_bin2: float = 0.0
+    spectral_band_ild_smooth_l1_db: float = 0.0
+    spectral_band_ild_mae_db: float = 0.0
+    notch_depth_mae_db: float = 0.0
 
 
 @dataclass
@@ -184,6 +193,18 @@ def erb_rate(frequency_hz: np.ndarray) -> np.ndarray:
     return 21.4 * np.log10(1.0 + 0.004367 * frequency_hz)
 
 
+def make_erb_center_frequencies_hz(band_count: int = 41) -> np.ndarray:
+    """Return the center frequencies used by ``make_erb_weights``."""
+    center_rates = np.linspace(
+        erb_rate(np.array([50.0]))[0],
+        erb_rate(np.array([20000.0]))[0],
+        band_count,
+    )
+    return (
+        (np.power(10.0, center_rates / 21.4) - 1.0) / 0.004367
+    ).astype(np.float32)
+
+
 def make_erb_weights(frequency_hz: np.ndarray, band_count: int = 41) -> np.ndarray:
     """Create a smooth ERB-rate triangular proxy for AKerbError."""
     rates = erb_rate(np.asarray(frequency_hz, dtype=np.float64))
@@ -235,7 +256,27 @@ def calculate_losses(
     high_frequency_weight: float,
     ild_weight: float,
     direction_weighted_residual: bool = False,
+    *,
+    high_frequency_first_difference_weight: float = 0.0,
+    high_frequency_second_difference_weight: float = 0.0,
+    spectral_difference_minimum_frequency_hz: float = 4000.0,
+    notch_depth_weight: float = 0.0,
+    notch_minimum_frequency_hz: float = 4000.0,
+    notch_maximum_frequency_hz: float = 18000.0,
+    notch_radii_bins: tuple[int, ...] = (4, 8, 16),
+    notch_depth_threshold_db: float = 1.0,
+    notch_softplus_temperature_db: float = 0.5,
 ) -> tuple[torch.Tensor, LossMetrics]:
+    if high_frequency_first_difference_weight < 0.0:
+        raise ValueError(
+            "high_frequency_first_difference_weight must be non-negative"
+        )
+    if high_frequency_second_difference_weight < 0.0:
+        raise ValueError(
+            "high_frequency_second_difference_weight must be non-negative"
+        )
+    if notch_depth_weight < 0.0:
+        raise ValueError("notch_depth_weight must be non-negative")
     prediction_db = prediction_normalized.float() * target_std + target_mean
     corrected_db = mca_db.float() + prediction_db
     reference_db = mca_db.float() + target_db.float()
@@ -281,6 +322,38 @@ def calculate_losses(
         torch.sum(high_error * contra_weights.unsqueeze(-1), dim=1)
     )
 
+    if (
+        high_frequency_first_difference_weight > 0.0
+        or high_frequency_second_difference_weight > 0.0
+    ):
+        first_difference_mae, second_difference_mae = (
+            high_frequency_spectral_difference_mae(
+                corrected_db,
+                reference_db,
+                direction_weights,
+                frequency_hz,
+                spectral_difference_minimum_frequency_hz,
+            )
+        )
+    else:
+        first_difference_mae = corrected_db.new_zeros(())
+        second_difference_mae = corrected_db.new_zeros(())
+
+    if notch_depth_weight > 0.0:
+        notch_depth_mae = multi_scale_notch_depth_mae(
+            corrected_db,
+            reference_db,
+            direction_weights,
+            frequency_hz,
+            notch_minimum_frequency_hz,
+            notch_maximum_frequency_hz,
+            notch_radii_bins,
+            notch_depth_threshold_db,
+            notch_softplus_temperature_db,
+        )
+    else:
+        notch_depth_mae = corrected_db.new_zeros(())
+
     predicted_ear_energy_db = broadband_energy_db(corrected_db)
     reference_ear_energy_db = broadband_energy_db(reference_db)
     predicted_ild_db = (
@@ -299,6 +372,13 @@ def calculate_losses(
         + erb_weight * erb_mae / target_std
         + high_frequency_weight * high_frequency_mae / target_std
         + ild_weight * ild_mae / target_std
+        + high_frequency_first_difference_weight
+        * first_difference_mae
+        / target_std
+        + high_frequency_second_difference_weight
+        * second_difference_mae
+        / target_std
+        + notch_depth_weight * notch_depth_mae / target_std
     )
     metrics = LossMetrics(
         total=float(total.detach().item()),
@@ -310,6 +390,13 @@ def calculate_losses(
         ),
         ild_mae_db=float(ild_mae.detach().item()),
         ild_spectral_proxy_mae_db=float(ild_mae.detach().item()),
+        high_frequency_first_difference_mae_db_per_bin=float(
+            first_difference_mae.detach().item()
+        ),
+        high_frequency_second_difference_mae_db_per_bin2=float(
+            second_difference_mae.detach().item()
+        ),
+        notch_depth_mae_db=float(notch_depth_mae.detach().item()),
     )
     return total, metrics
 

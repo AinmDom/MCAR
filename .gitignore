@@ -72,12 +72,16 @@ wandb_state/
 .env.*
 !.env.example
 
-# Machine-local third-party dependency.
+# Machine-local third-party dependencies and cloned baseline repositories.
 /external/SUpDEq/*
+/baselines/ranf/
 
 # Regenerable training, reconstruction, and reproduction outputs.
 /artifacts/*
 !/artifacts/README.md
+
+# Disposable strict-reconstruction smoke outputs; curated full results remain tracked.
+/results/*_smoke/
 
 # Large HRTF datasets and processed residual tensors. Keep only the
 # acquisition/provenance README; every dataset payload remains local.

@@ -1,5 +1,331 @@
 # 项目实验日志
 
+## 2026-08-10：SONICOM Q26 v3.4c 多尺度 notch-aware 损失消融
+
+- 工作目标：从固定 v3.2 seed `20260809` epoch 39 独立检验 notch-aware 目标，直接
+  约束耳廓相关谱凹陷的位置与深度。只使用 262 train / 44 validation；禁止读取已消费
+  的 test，全部产物均记录 `test_subject_count_read=0`。
+- 目标定义：在 4–18 kHz，对半径 $r\in\{4,8,16\}$ 个频点定义局部凹陷原始深度
+  $d_f^{(r)}=(H_{f-r}+H_{f+r})/2-H_f$，再以
+  $\tilde d_f^{(r)}=\tau\operatorname{softplus}((d_f^{(r)}-d_0)/\tau)$ 构造可微
+  notch-depth map，其中 $d_0=1\,\mathrm{dB}$、$\tau=0.5\,\mathrm{dB}$。预测与
+  reference map 的方向面积加权 MAE 同时惩罚缺失 notch、伪 notch、位置偏移和深度偏差。
+- 校准：Q26 频率间隔 `43.0664 Hz`，三个半径约为 `172/345/689 Hz`。v3.2 epoch 39
+  的 44 人完整 validation notch-depth MAE 为 `0.504822 dB`；权重预先锁定为 `0.30`，
+  预计新增 total 贡献 `0.03057`、占新初始 total 约 `4.42%`。原
+  `ERB/HF/strict ILD=0.75/0.25/0.75` 不变，v3.4a D1/D2 与 v3.4b band-ILD 权重均为 0。
+- 实现与测试：公共 loss 新增多尺度 Softplus notch-depth map，接入 v2 公共 loss 与 v3
+  CLI、history、W&B、console、report。CPU 测试覆盖相同谱为零、缺失/伪 notch、方向
+  权重、有限非零梯度、目标增量恒等式和 v3.4c stage；v3.4a、v3.4b、dual-sampling、
+  joint optimizer、global attention 回归均通过。
+- smoke：RTX 5060 上真实 SONICOM 1-step CUDA+AMP 通过；总参数 174,627，局部 CNN
+  的 74,402 个参数可训练，optimizer skip 为 0，smoke 不保存 checkpoint。
+- 正式训练：执行
+  `D:\miniconda3\envs\ml\python.exe -u scripts\run_v34c_notch_aware_e10.py`。
+  10 epoch × 500 step、96 个固定 validation block，用时 `886.528 s`，峰值 CUDA
+  allocated memory `399.790 MiB`，optimizer skip 为 0，W&B offline ID `iohnfzkr`。
+  按预注册 v3.4c total 选择 epoch 7：total 从 `0.6913994942` 降至 `0.6909071778`，
+  抽样 validation notch-depth MAE 从 `0.500122` 降至 `0.499545 dB`。
+- checkpoint 完整性：源 SHA-256 为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`，候选为
+  `5A2A29B38D49717FBA2E2C459F7A987F18E799CA0EB58AD4F8EDAE293717C123`。MLP 的
+  100,225 个参数逐值未变；CNN 相对 L2 改变量为 `0.2802%`。
+- 推理与重建：epoch 7 对 44/44 人生成 `[2,793,463]` residual，用时 `11.750 s`。
+  MATLAB 1 人 smoke 四项均改善；44 人严格重建用时 `435.1 s`，正常退出。summary
+  为 `status=completed`、`split=val`、`subject_count=44`、`test_subject_count_read=0`。
+- 严格结果：相对 v3.2 epoch 39，全空间 ERB 从 `0.872882` 降至 `0.872650 dB`
+  （改善 `0.0267%`，24/44 人），对侧 25° ERB 从 `1.364204` 降至
+  `1.362914 dB`（改善 `0.0946%`，29/44 人），对侧高频从 `3.608567` 降至
+  `3.608108 dB`（改善 `0.0127%`，28/44 人），水平面 strict ILD 从 `0.596141`
+  降至 `0.592944 dB`（改善 `0.5362%`，30/44 人）。
+- 配对统计：四项 candidate-baseline 均值差为
+  `-0.0002327 / -0.0012899 / -0.0004595 / -0.0031964 dB`；paired t-test 为
+  `0.0300 / 0.00378 / 0.357 / 0.00531`，Wilcoxon 为
+  `0.0623 / 0.00378 / 0.138 / 0.00426`。对侧 ERB 与 strict ILD 方向可信，高频仍不显著。
+- 全方向 notch 诊断：44 人全部 767 个纯插值方向上的 notch-depth MAE 从 `0.504822`
+  降至 `0.504247 dB`（改善 `0.1139%`，44/44 人），paired t-test `4.14e-29`，
+  Wilcoxon `1.14e-13`，Cohen $d_z=-4.19$。4/8/16-bin 三个尺度分别改善
+  `0.1588% / 0.1105% / 0.1032%`，每个尺度均为 44/44 人改善。
+- 版本判断：v3.4c 是正向且高度一致的 notch 消融，但目标改善幅度小于 v3.4a 的谱差分
+  和 v3.4b 的 band-ILD；其严格 HF 数值改善是三个 loss 消融中最大，但仍不显著。
+  v3.4b 仍是对侧 ERB 最强单项，v3.4c 的 strict ILD 略强。
+- 下一步：三个独立目标都已验证为正，可测试一次等比例降权的组合消融，建议将原权重
+  同时减半为 `D1/D2/band-ILD/notch = 0.125/0.075/0.05/0.15`，把新增目标总贡献控制
+  在约 `0.045`，避免简单叠加后辅助 loss 占比过大。完整结果位于
+  `results/sonicom_mlp_cnn_q26_v34c_notch_aware_e10_strict_validation/`。
+
+## 2026-08-10：SONICOM Q26 v3.4b 分频带 ILD 损失消融
+
+- 工作目标：在固定 v3.2 seed `20260809` epoch 39 上独立检验分频带 ILD 目标，直接
+  约束左右耳在不同听觉频带内的能量平衡。只使用 262 train / 44 validation；禁止读取
+  已消费的 test，所有产物均记录 `test_subject_count_read=0`。
+- 目标设计：沿用现有 41 个 ERB proxy filters，保留中心频率位于 200 Hz–18 kHz 的
+  35 个频带。在每个水平面纯插值方向上，由 corrected/reference 双耳幅度谱分别计算
+  左减右 band-energy ILD，以 $\beta=0.5\,\mathrm{dB}$ 的 SmoothL1 作为训练项，并按
+  SONICOM solid-angle direction weight 汇总。新增权重固定为 `0.10`；原
+  `ERB/HF/strict broadband ILD=0.75/0.25/0.75` 不变，v3.4a 的 D1/D2 权重均置 0。
+- 权重校准：在 v3.2 epoch 39 的 44 人、72 个水平面纯插值方向上，分频带 ILD
+  SmoothL1/MAE 为 `1.407891 / 1.629438 dB`。新项预计贡献 `0.02842`，约占新初始
+  total 的 `4.12%`，与 v3.4a 的新增目标尺度接近。
+- 实现与测试：公共 loss 新增双耳 ERB-band ILD SmoothL1/MAE；v3 训练器在同一个
+  horizontal forward 中联合计算严格 HRIR broadband ILD 与 band ILD，并将指标接入
+  history、W&B、console 与 report。新测试覆盖零误差、解析方向加权值、有限非零梯度、
+  目标增量恒等式与零权重旧行为；未改 HDF5 或模型结构。
+- smoke：RTX 5060 上真实 SONICOM 1-step CUDA+AMP 通过；总参数 174,627，其中局部
+  CNN 的 74,402 个参数可训练，MLP 冻结；optimizer skip 为 0，不保存 smoke 权重。
+- 正式训练：执行
+  `D:\miniconda3\envs\ml\python.exe -u scripts\run_v34b_band_ild_e10.py`。
+  10 epoch × 500 step、96 个固定 validation block，用时 `820.906 s`，峰值 CUDA
+  allocated memory `410.870 MiB`，optimizer skip 为 0，W&B offline ID `u8cv7js1`。
+  按预注册 v3.4b total 选择 epoch 7：total 从 `0.6896631916` 降至 `0.6890342993`；
+  抽样 validation band SmoothL1/MAE 从 `1.414343 / 1.636103` 降至
+  `1.403707 / 1.624716 dB`。
+- checkpoint 完整性：源 SHA-256 为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`，候选为
+  `EABFAA1B303F6016F9F8F7507D510813C44C948C81D9C074EECA0A8E84AA4DAF`。MLP 的
+  100,225 个参数逐值未变；CNN 相对 L2 改变量为 `0.2989%`。
+- 推理与重建：epoch 7 对 44/44 人生成 `[2,793,463]` residual，用时 `11.223 s`。
+  MATLAB 1 人 smoke 四项均改善；44 人严格重建用时约 `726.7 s`，正常退出。summary
+  为 `status=completed`、`split=val`、`subject_count=44`、`test_subject_count_read=0`。
+- 严格结果：相对 v3.2 epoch 39，全空间 ERB 从 `0.872882` 降至 `0.872511 dB`
+  （改善 `0.0425%`，33/44 人），对侧 25° ERB 从 `1.364204` 降至
+  `1.360356 dB`（改善 `0.2821%`，40/44 人），对侧高频从 `3.608567` 降至
+  `3.608369 dB`（改善 `0.0055%`，27/44 人），水平面 strict ILD 从 `0.596141`
+  降至 `0.593076 dB`（改善 `0.5141%`，32/44 人）。
+- 配对统计：全空间 ERB / 对侧 ERB / HF / strict ILD 的 candidate-baseline 均值差为
+  `-0.0003710 / -0.0038480 / -0.0001978 / -0.0030646 dB`；paired t-test 为
+  `0.00112 / 3.76e-9 / 0.711 / 0.00452`，Wilcoxon 为
+  `0.00113 / 3.14e-10 / 0.435 / 0.00334`。前三项中的 HF 仍无显著改善。
+- 全水平面 band-ILD 诊断：35-band SmoothL1 从 `1.407891` 降至 `1.397209 dB`
+  （改善 `0.7587%`，43/44 人），MAE 从 `1.629438` 降至 `1.617899 dB`
+  （改善 `0.7082%`，43/44 人）；paired t-test 分别为 `6.45e-19 / 2.33e-19`，
+  35/35 个频带的聚合误差均下降。最大相对收益集中在约 250–500 Hz；6 kHz 附近与
+  高频频带收益较弱，这解释了原对侧 10–20 kHz 幅度指标几乎不变。
+- 版本判断：v3.4b 在目标对齐、对侧 ERB 改善幅度和被试一致性上优于 v3.4a，是当前
+  最强的定向 loss 消融；但 v3.2.1 在全空间 ERB、高频和 strict ILD 的数值改善略大，
+  且 v3.4b 的 HF 仍不显著，所以仍不宣称其全面替代 v3.2 epoch 39。
+- 下一步：从同一固定基准独立测试 notch-aware loss，避免立即把多个新目标叠加导致
+  无法归因；若 notch 实验也为正，再做 D1/D2 + band ILD + notch 的组合验证。
+  完整结果位于
+  `results/sonicom_mlp_cnn_q26_v34b_band_ild_e10_strict_validation/`。
+
+## 2026-08-10：SONICOM Q26 v3.4a 高频谱一阶/二阶差分损失消融
+
+- 工作目标：不再提高原 10–20 kHz 对侧幅度标量权重，而是直接约束谱峰谷形状。实验从
+  固定 v3.2 seed `20260809` epoch 39 出发，只使用 262 train / 44 validation；禁止
+  读取已消费的 test，所有产物均记录 `test_subject_count_read=0`。
+- 目标设计：令 $e_f=\hat r_f-r_f$，新增 4 kHz 以上的
+  $L_{D1}=\operatorname{MAE}(e_{f+1}-e_f)$ 与
+  $L_{D2}=\operatorname{MAE}(e_{f+2}-2e_{f+1}+e_f)$。Q26 为 463 点、间隔
+  `43.0664 Hz` 的等距网格，单位为 `dB/bin` 和 `dB/bin²`。选择 4 kHz 是为覆盖
+  4–10 kHz 耳廓 notch 区域；原 10–20 kHz HF loss 保持不变。
+- 权重校准：v3.2 epoch 39 的完整 validation D1/D2 为 `0.441563 / 0.277322`，train
+  代表性抽样为 `0.442725 / 0.283576`，分布吻合。预先锁定 D1/D2 权重
+  `0.25/0.15`，预计只占初始 total 的约 `4.6%`；原
+  `ERB/HF/strict ILD=0.75/0.25/0.75` 不变，避免同时修改多个因素。
+- 实现：在公共 `losses.py` 增加方向面积加权 D1/D2，在 v2 公共 loss 入口接入并保持
+  新权重为 0 时旧行为不变；v3 训练器新增 CLI、history、W&B、console 和 report 字段。
+  新增 CPU 单元测试覆盖零误差、常数/线性/二次误差、方向加权、目标增量恒等式和有限
+  backward；dual-sampling、joint optimizer、global attention 回归测试均通过。
+- smoke：RTX 5060 上真实 SONICOM 1-step CUDA+AMP 与 strict HRIR-ILD 反向传播通过，
+  174,627 个总参数中 74,402 个局部 CNN 参数可训练；optimizer skip 为 0。smoke 不
+  参与选模。
+- 正式训练：执行
+  `D:\miniconda3\envs\ml\python.exe -u scripts\run_v34a_spectral_diff_e10.py`。
+  MLP 冻结，局部 CNN 学习率 `1e-5`；10 epoch × 500 step、96 个固定 validation
+  block，用时 `812.893 s`，峰值 CUDA allocated memory `399.405 MiB`，optimizer
+  skip 为 0，W&B offline ID `e80qlsxd`。按预注册 v3.4a total 选择 epoch 7：total
+  从 `0.6915137445` 降至 `0.6904440752`，validation D1/D2 从
+  `0.437596 / 0.274691` 降至 `0.432445 / 0.264063`。
+- checkpoint 完整性：源 SHA-256 为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`，候选为
+  `0FFF110F11C5149AD34D65549F2808975F666862A8C9462381125A617A4DD8BC`。MLP 的
+  100,225 个参数逐值未变，最大绝对差为 0；CNN 相对 L2 改变量为 `0.3124%`。
+- 推理与重建：epoch 7 对 44/44 人生成 `[2,793,463]` residual，用时 `8.829 s`。
+  MATLAB 1 人 smoke 通过；44 人严格重建用时 `428.1 s`，正常退出。summary 为
+  `status=completed`、`split=val`、`subject_count=44`、`test_subject_count_read=0`。
+  推理实际执行
+  `D:\miniconda3\envs\ml\python.exe -u -m mcar.evaluation.predict_sonicom_mlp_cnn_residuals data\processed\sonicom_residual_q26_v1 artifacts\training\sonicom_mlp_cnn_q26_v34a_spectral_diff_e10\best.pt sonicom_q26_validation_mlp_cnn_v34a_spectral_diff_e10 --directions-per-block 32`；
+  严格重建实际执行 `matlab.exe -batch "addpath('D:/cuc/CSMT/MCAR/matlab'); mcar.evaluate_sonicom_validation_reconstruction(inf, 'sonicom_mlp_cnn_q26_v34a_spectral_diff_e10_strict_validation', true, 'sonicom_q26_validation_mlp_cnn_v32_seed20260809_e40', 'sonicom_q26_validation_mlp_cnn_v34a_spectral_diff_e10', 'MLP+CNN v3.4a spectral diff e10 epoch 7')"`。
+- 严格结果：相对 v3.2 epoch 39，全空间 ERB 从 `0.872882` 降到 `0.872618 dB`
+  （改善 `0.0303%`，25/44 人），对侧 25° ERB 从 `1.364204` 降到
+  `1.363347 dB`（改善 `0.0628%`，29/44 人），高频从 `3.608567` 降到
+  `3.608472 dB`（改善 `0.0026%`，25/44 人），水平面 strict ILD 从 `0.596141`
+  降到 `0.593248 dB`（改善 `0.4852%`，30/44 人）。
+- 配对统计：全空间 ERB / 对侧 ERB / HF / ILD 的 candidate-baseline 均值差为
+  `-0.0002649 / -0.0008567 / -0.0000954 / -0.0028925 dB`；paired t-test 为
+  `0.0298 / 0.0401 / 0.8979 / 0.0106`，Wilcoxon 为
+  `0.0852 / 0.0171 / 0.3756 / 0.0068`。因此对侧 ERB 和 ILD 的方向最可信，HF
+  没有可辨别改善；所有绝对效果仍很小。
+- 全方向谱形状诊断：在 44 人全部 767 个纯插值方向上，D1 从 `0.441563` 降至
+  `0.436421 dB/bin`（改善 `1.164%`），D2 从 `0.277322` 降至
+  `0.266727 dB/bin²`（改善 `3.821%`），两项均为 44/44 人改善；paired t-test
+  为 `1.85e-30 / 2.07e-29`。说明新增目标明确生效，但谱斜率/曲率改善不等于逐点
+  高频幅度 MAE 改善。
+- 结论与下一步：v3.4a 是正向目标函数消融，但综合收益小，暂不替代 v3.2 epoch 39。
+  下一项建议独立测试分频带 ILD，以直接约束双耳频谱平衡；随后再单独测试 notch-aware
+  loss。hard-direction sampling 放在最后，因为它会改变训练方向分布、归因风险最高。
+  完整结果位于
+  `results/sonicom_mlp_cnn_q26_v34a_spectral_diff_e10_strict_validation/`。
+
+## 2026-08-10：SONICOM Q26 v3.3 全局频谱 attention 与门控融合消融
+
+- 工作目标：检验现有局部 CNN 的约 97 频点感受野是否限制性能。在固定 v3.2 seed
+  `20260809` epoch 39 上新增轻量全局分支，只使用 262 train / 44 validation，禁止
+  读取已消费的 test，所有报告均为 `test_subject_count_read=0`。
+- 架构：保留原 kernel 7、dilation `1/2/4/8` CNN；新增 stride-4 卷积将 463 个频点
+  降为 116 token，经宽度 32、4 头、2 个 pre-norm self-attention block 后线性上采样。
+  局部与全局隐藏特征共同生成双耳逐频率 sigmoid gate，最终 delta 为
+  `local delta + gate × global delta`。全局输出层零初始化，保证 epoch 0 与 v3.2
+  逐值等价。新增 checkpoint 架构自动推断兼容 SONICOM 和通用重建入口。
+- 可解释消融：MLP 与局部 CNN 全部冻结，只训练 `global_context/global_gate` 的 22,356
+  个参数；总参数为 196,983。源 checkpoint SHA-256 为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`，训练前后未变。
+  新增回归测试验证旧 checkpoint 兼容、初始输出逐值相同、冻结边界与 optimizer 参数组。
+- smoke 与测试：`py_compile`、全局分支回归测试、v3.2.1 optimizer 回归和 dual-sampling
+  strict-ILD 回归均通过。RTX 5060 上 1 train step + 1 validation block 正常，严格
+  HRIR-ILD 反向传播有限，optimizer skip 为 0，smoke 不参与选模。
+- 正式训练：执行
+  `D:\miniconda3\envs\ml\python.exe -u scripts\run_v33_global_attention_e10.py`。
+  10 epoch × 500 step 用时 `1717.274 s`，峰值 CUDA allocated memory `76.500 MiB`，
+  optimizer skip 为 0，W&B offline ID `q401byar`。初始 fixed-validation total 为
+  `0.661115484`；训练 epoch 中最佳为 epoch 9 的 `0.661141579`，仍回退 `0.00395%`。
+- 推理与重建：epoch 9 对 44 人生成 `[2,793,463]` residual，用时 `28.863 s`。
+  MATLAB 1 人 smoke 通过；44 人严格重建命令首次因权限审核超时未启动且无残留进程，
+  同命令安全重试后完成，用时 `603.7 s`。summary 为 `status=completed`、`split=val`、
+  `subject_count=44`、`test_subject_count_read=0`。
+- 严格结果：相对 v3.2 epoch 39，全空间 ERB 从 `0.872882` 变为 `0.873159 dB`
+  （回退 `0.0317%`，12/44 人改善），对侧 25° ERB 从 `1.364204` 变为
+  `1.364686 dB`（回退 `0.0353%`，14/44 人改善），高频从 `3.608567` 变为
+  `3.608384 dB`（改善 `0.0051%`，25/44 人改善），水平面严格 ILD 从 `0.596141`
+  变为 `0.595707 dB`（改善 `0.0727%`，22/44 人改善）。
+- 配对统计：两项 ERB 的 candidate-baseline 均值差为 `+0.0002765 / +0.0004818 dB`，
+  paired t-test `p=2.74e-5 / 0.00228`，即绝对退化虽小但方向明确。高频和 ILD 的
+  均值差为 `-0.0001836 / -0.0004334 dB`，`p=0.139 / 0.476`，改善不显著。
+- 生效诊断：冻结 MLP/局部 CNN 的最大参数差严格为 0；44 人预测相对 v3.2 的平均绝对
+  全局 delta 为 `0.012006 dB`，95% 分位 `0.029029 dB`，最大 `0.093135 dB`，说明
+  新增分支确实生效，但当前冻结式训练得到的全局修正没有对准最终 ERB 目标。
+- 结论：v3.3 不替代 v3.2，作为负结果架构消融保留。若继续该路线，下一项应固定同一
+  架构并联合微调局部 CNN 与全局分支，以检验“冻结局部表征”是否限制全局上下文收益；
+  不建议在此证据下直接增大 attention 宽度或 channel 数。完整结果位于
+  `results/sonicom_mlp_cnn_q26_v33_global_attention_e10_strict_validation/`。
+
+## 2026-08-09：SONICOM Q26 v3.2.1 低风险解冻 MLP 10 epoch
+
+- 工作目标：按用户要求，从固定的 v3.2 seed `20260809` epoch 39 checkpoint 出发，
+  解冻 MLP 并训练 10 epoch，观察联合微调效果。实验只使用 262 train / 44 validation；
+  test 不参与训练、选模、推理或重建，全部报告记录 `test_subject_count_read=0`。
+- 实现：`train_mlp_cnn_v3.py` 新增默认关闭的 `--unfreeze-mlp` 与必须显式提供的
+  `--mlp-learning-rate`。默认 v3/v3.1/v3.2 冻结行为不变；联合模式建立 CNN/MLP 两个
+  AdamW 参数组，有限性检查和梯度裁剪覆盖全部可训练参数，cosine scheduler 同比例更新
+  两组学习率，history/W&B 分别记录两组 LR。新增回归测试验证冻结兼容、两组参数、LR
+  和 v3.2.1 stage 名称。
+- 低风险控制：正式配置为
+  `configs/experiments/sonicom_mlp_cnn_q26_v321_joint_unfreeze_e10.json`，runner 为
+  `scripts/run_v321_joint_unfreeze_e10.py`。源 checkpoint SHA-256 固定为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`，训练前后未变；
+  新输出使用独立目录。CNN LR 为 `1e-5`，MLP LR 为 `1e-6`，其余双采样、
+  `ERB/HF/strict ILD=0.75/0.25/0.75`、seed `20260809`、validation seed `20260805`、
+  每轮 500 step 和 96 个 validation block 均与起点一致。
+- smoke：1 train step + 1 validation block 在 RTX 5060 上完成，174,627 个参数全部
+  可训练，严格 HRIR ILD 联合反向传播有限，optimizer skip 为 0；smoke 不参与选模。
+- 正式训练：实际执行
+  `D:\miniconda3\envs\ml\python.exe -u scripts\run_v321_joint_unfreeze_e10.py`。10 epoch
+  用时 `1021.001 s`，峰值 CUDA allocated memory `601.926 MiB`，无 optimizer skip；
+  W&B offline run ID `qdlzionj`。最佳 epoch 7 的固定 validation total 为
+  `0.660417`，相对初始 `0.661115` 改善 `0.106%`；residual/ERB/HF/strict ILD 为
+  `2.541352 / 1.020789 / 3.578026 / 0.586724 dB`。
+- 参数变化：epoch 7 相对源 epoch 39，MLP 的 16 个浮点 tensor 全部改变，但参数整体
+  相对 L2 变化仅 `0.0997%`、最大绝对变化 `5.32e-4`；CNN 的 66 个 tensor 相对 L2
+  变化 `0.2774%`、最大绝对变化 `3.77e-3`，符合低风险微调设定。
+- validation 推理与严格重建：GPU 对 44/44 被试生成 `[2,793,463]` residual，用时
+  `12.449 s`；随后 1 人 smoke 与 44 人 MATLAB 严格重建均正常退出，完整重建用时
+  `448.2 s`。summary 为 `status=completed`、`split=val`、`subject_count=44`、
+  `test_subject_count_read=0`。
+- 严格结果：相对 v3.2 epoch 39，v3.2.1 的全空间 ERB 从 `0.872882` 降到
+  `0.872411 dB`（改善 `0.0540%`，28/44 人），对侧 25° ERB 从 `1.364204` 变为
+  `1.364251 dB`（回退 `0.0034%`，22/44 人），高频从 `3.608567` 降到
+  `3.607370 dB`（改善 `0.0332%`，31/44 人），水平面 strict ILD 从 `0.596141`
+  降到 `0.592172 dB`（改善 `0.6658%`，28/44 人）。
+- 配对统计与结论：全空间 ERB 的 paired t-test `p=0.0093`，strict ILD `p=0.0020`；
+  对侧 25°无差异（`p=0.959`），高频变化接近零且 t-test 为 `p=0.058`。因此低学习率
+  解冻 MLP 数值稳定，并为全空间 ERB/ILD 带来小幅 validation 收益，但不足以支持全面
+  替换 epoch 39；更适合作为联合微调消融。完整结果位于
+  `results/sonicom_mlp_cnn_q26_v321_joint_unfreeze_e10_strict_validation/`。
+
+## 2026-08-09：SONICOM Q26 v3.2 epoch 39 冻结 checkpoint 一次性 test 重建
+
+- 授权与边界：用户明确要求使用当前固定的 epoch 39 checkpoint 运行一次 44 人 test
+  重建，并禁止修改模型参数。在读取 test 前新增独立冻结协议
+  `configs/experiments/sonicom_mlp_cnn_q26_v32_seed20260809_e40_frozen_test.json`，锁定
+  checkpoint、四项指标、原 v3.2 epoch 6 对照和“无论结果好坏均保留”的规则；本次
+  结果不得用于继续调整 seed、epoch、损失或结构。
+- 完整性：冻结 checkpoint 为
+  `artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt`，内部 epoch 39、
+  174,627 参数、1,367,029 bytes。test 前、Python 推理后和 MATLAB 重建后的 SHA-256
+  均为 `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`；没有调用
+  训练器、优化器或权重保存逻辑，参数字节级未改动。
+- test 推理：实际执行
+  `D:\miniconda3\envs\ml\python.exe -u -m mcar.evaluation.predict_sonicom_mlp_cnn_residuals data\processed\sonicom_residual_q26_v1 artifacts\training\sonicom_mlp_cnn_q26_v32_seed20260809_e40\best.pt sonicom_q26_test_mlp_cnn_v32_seed20260809_e40_epoch39_frozen --split test --allow-test --directions-per-block 32`。
+  44/44 被试全部生成 `[2,793,463]` residual，耗时 `26.573 s`；报告为
+  `status=completed`、`split=test`、`checkpoint_epoch=39`、`test_subject_count_read=44`。
+- 严格重建：实际执行
+  `matlab.exe -batch "addpath('D:/cuc/CSMT/MCAR/matlab'); mcar.evaluate_sonicom_validation_reconstruction(inf, 'sonicom_mlp_cnn_q26_v32_seed20260809_e40_epoch39_frozen_test_strict', true, 'sonicom_q26_test_mlp_cnn_v32_locked_ild075', 'sonicom_q26_test_mlp_cnn_v32_seed20260809_e40_epoch39_frozen', 'MLP+CNN v3.2 seed 20260809 e40 epoch 39 frozen', 'test', 'sonicom_q26_test_v1', 'sonicom_q26_test_v2', true)"`。
+  44 人全部完成，MATLAB 正常退出；summary 为 `status=completed`、`split=test`、
+  `subject_count=44`、`test_subject_count_read=44`。
+- test 结果：冻结 epoch 39 的全空间 ERB、对侧 25° ERB、对侧高频和水平面严格 ILD
+  为 `0.855676 / 1.349975 / 3.590454 / 0.660297 dB`。相对原 locked epoch 6 的
+  `0.867805 / 1.365327 / 3.611854 / 0.686999 dB` 分别改善
+  `1.398% / 1.124% / 0.592% / 3.887%`；逐被试改善数为
+  `42/44 / 36/44 / 40/44 / 29/44`。相对 MCA 分别改善
+  `20.932% / 22.671% / 23.585% / 20.387%`。
+- 产物与结论：完整 CSV/JSON、直接比较表和三张 44 人图位于
+  `results/sonicom_mlp_cnn_q26_v32_seed20260809_e40_epoch39_frozen_test_strict/`。冻结
+  epoch 39 在四项 test 总体均值上均优于 locked epoch 6，且 checkpoint 确认未改动；
+  本次作为一次性追加比较完整保留，后续不再根据该 test 结果调参或选择新版本。图形
+  QA 发现原指标图横轴硬编码为 validation；已把指标绘图提取为公共
+  `plot_sonicom_metric_overview.m`，仅从现有 CSV 重画为 test 标签，没有重新读取 test
+  数据或 checkpoint，也没有改变任何指标。
+
+## 2026-08-09：SONICOM Q26 v3.2 最佳 seed 40 epoch 与严格 validation 重建
+
+- 用户要求：从三 seed、各 10 epoch 的诊断中选择表现最好的一个，重新训练 40 epoch，
+  按最佳 checkpoint 在 validation 上重建。按预声明的固定 validation total loss 最小
+  规则，seed `20260809` 的 10-epoch 最佳值 `0.670662` 低于另外两个 seed，因此在正式
+  40-epoch 运行前锁定该 seed；test 已消费，本实验全程禁止读取 test。
+- 配置与命令：配置为
+  `configs/experiments/sonicom_mlp_cnn_q26_v32_seed20260809_e40.json`，runner 为
+  `scripts/run_v32_seed20260809_e40.py`。训练实际执行
+  `D:\miniconda3\envs\ml\python.exe -u scripts\run_v32_seed20260809_e40.py`；保持
+  v3.2 双采样、冻结 MLP、`ERB/HF/strict ILD=0.75/0.25/0.75`、每轮 500 step、
+  96 个固定 validation block、training seed `20260809`、validation sampler seed
+  `20260805`、AdamW `1e-4` 和 cosine schedule。
+- 正式训练：40 epoch 全部完成，用时 `5574.459 s`，RTX 5060 峰值 CUDA allocated
+  memory `399.222 MiB`。最佳主 checkpoint 为 epoch 39，固定 validation total 为
+  `0.661115`；residual/ERB/对侧高频/strict ILD 分别为
+  `2.542327 / 1.021642 / 3.578575 / 0.589368 dB`。epoch 40 的 strict ILD 单项仅低
+  `0.000006 dB`，但 total 略高，因此仍按预注册主规则选择 epoch 39。累计 AMP
+  optimizer skip 为 `3/20000`，最终 scale `65536`，没有数值失败；W&B offline run ID
+  为 `odwrgrln`。
+- validation 预测：实际命令为
+  `D:\miniconda3\envs\ml\python.exe -u -m mcar.evaluation.predict_sonicom_mlp_cnn_residuals data\processed\sonicom_residual_q26_v1 artifacts\training\sonicom_mlp_cnn_q26_v32_seed20260809_e40\best.pt sonicom_q26_validation_mlp_cnn_v32_seed20260809_e40 --directions-per-block 32`。
+  44/44 被试全部生成 `[2,793,463]` residual，用时 `23.485 s`；报告明确记录
+  `split=val`、`checkpoint_epoch=39`、`test_subject_count_read=0`。
+- 严格重建：先运行 1 人 smoke，确认 P0001 的五方法 ERB/HF/HRIR-ILD 全部有限；随后
+  实际执行 `matlab.exe -batch "addpath('D:/cuc/CSMT/MCAR/matlab'); mcar.evaluate_sonicom_validation_reconstruction(inf, 'sonicom_mlp_cnn_q26_v32_seed20260809_e40_strict_validation', true, 'sonicom_q26_validation_mlp_cnn_v3', 'sonicom_q26_validation_mlp_cnn_v32_seed20260809_e40', 'MLP+CNN v3.2 seed 20260809 e40')"`。
+  44 人完整 MATLAB 运行用时 `476.1 s`，正常退出；summary 为 `status=completed`、
+  `subject_count=44`、`test_subject_count_read=0`。
+- 严格 validation 均值：全空间 ERB、对侧 25° ERB、对侧高频和水平面严格 ILD 为
+  `0.872882 / 1.364204 / 3.608567 / 0.596141 dB`。相对锁定 v3.2 epoch 6 分别改善
+  `1.330% / 1.372% / 0.799% / 4.620%`，逐被试改善数为
+  `42/44 / 41/44 / 40/44 / 32/44`；相对 MCA 分别改善
+  `20.338% / 22.643% / 24.017% / 28.177%`。
+- 产物与结论：完整 CSV/JSON、比较表和三张 44 人结果图位于
+  `results/sonicom_mlp_cnn_q26_v32_seed20260809_e40_strict_validation/`。40 epoch 候选在
+  validation 上四项一致优于 locked epoch 6，说明模型仍有预算优化空间；但 test 已经
+  消费，因此本实验不能替换既有论文主模型或重新评价 test，正式新主张需要新的未见
+  拆分或外部数据。
+
 ## 2026-08-09：SONICOM Q26 v3.2 三 seed、10 epoch 稳定性诊断
 
 - 用户要求：先评估训练随机性，运行三个 seed、每个 10 epoch，并且不保存每次

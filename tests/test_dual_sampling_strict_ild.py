@@ -17,6 +17,7 @@ from mcar.training.train_mlp_cnn_v3 import (
     sample_to_device,
 )
 from mcar.training.train_mlp_v2 import make_erb_weights
+from mcar.training.train_mlp_v2 import make_erb_center_frequencies_hz
 
 
 def main() -> None:
@@ -143,9 +144,40 @@ def main() -> None:
             arguments,
             use_amp=False,
         )
+        if metrics.spectral_band_ild_mae_db != 0.0:
+            raise AssertionError("Zero-weight legacy path changed")
+        band_arguments = SimpleNamespace(
+            **vars(arguments),
+            spectral_band_ild_weight=0.10,
+            spectral_band_ild_minimum_center_hz=200.0,
+            spectral_band_ild_maximum_center_hz=18000.0,
+            spectral_band_ild_beta_db=0.5,
+        )
+        band_centers = torch.from_numpy(make_erb_center_frequencies_hz())
+        band_loss, band_metrics, _ = calculate_dual_sampling_losses(
+            model,
+            global_batch,
+            horizontal_batch,
+            log_erb_weights,
+            normalization,
+            band_arguments,
+            use_amp=False,
+            band_center_frequency_hz=band_centers,
+        )
+        expected_increment = (
+            band_arguments.spectral_band_ild_weight
+            * band_metrics.spectral_band_ild_smooth_l1_db
+            / normalization.target_std
+        )
+        torch.testing.assert_close(
+            band_loss - loss,
+            torch.tensor(expected_increment),
+            atol=1e-6,
+            rtol=1e-5,
+        )
         if not bool(torch.isfinite(loss).item()) or metrics.ild_mae_db < 0.0:
             raise AssertionError("Dual-sampling loss is not finite")
-        loss.backward()
+        band_loss.backward()
         gradients = [
             parameter.grad
             for parameter in model.cnn.parameters()
@@ -163,6 +195,9 @@ def main() -> None:
                 "horizontal_directions": horizontal_sampler.eligible_direction_indices.size,
                 "total_loss": float(loss.detach()),
                 "strict_ild_mae_db": metrics.ild_mae_db,
+                "spectral_band_ild_mae_db": (
+                    band_metrics.spectral_band_ild_mae_db
+                ),
             }
         )
 

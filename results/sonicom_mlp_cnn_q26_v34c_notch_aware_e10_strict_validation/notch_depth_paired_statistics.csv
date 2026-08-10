@@ -1,0 +1,2 @@
+metric,subject_count,baseline_mean,candidate_mean,mean_candidate_minus_baseline,improvement_vs_baseline_percent,ci95_low,ci95_high,paired_t_p_value,wilcoxon_p_value,cohen_dz,candidate_better_subject_count
+MultiScaleNotchDepthMAE_dB,44,0.5048220388061295,0.5042472530475659,-0.0005747857585635119,0.11385908585190792,-0.0006164897963619494,-0.0005330817207650744,4.1411380717246897e-29,1.1368683772161603e-13,-4.190261954100111,44

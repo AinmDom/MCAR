@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "created_on": "2026-08-09",
-  "status": "locked_before_execution",
+  "status": "completed",
   "purpose": "Retrain the validation-best seed from the three-seed diagnostic for 40 epochs, select the minimum fixed-validation-total-loss checkpoint, and perform validation-only strict reconstruction.",
   "seed_selection": {
     "source": "results/sonicom_mlp_cnn_q26_v32_seed_stability/per_seed_summary.csv",
@@ -53,6 +53,36 @@
     "wandb_project": "mcar-sonicom",
     "wandb_group": "q26-v32-seed20260809-e40",
     "wandb_job_type": "validation-only-budget-extension"
+  },
+  "execution": {
+    "completed_epochs": 40,
+    "elapsed_seconds": 5574.4592006,
+    "best_epoch": 39,
+    "best_validation_total_loss": 0.6611154843121767,
+    "best_validation_residual_mae_db": 2.542327451209227,
+    "best_validation_erb_mae_db": 1.0216416337837775,
+    "best_validation_contralateral_high_frequency_mae_db": 3.5785751392443976,
+    "best_validation_strict_ild_mae_db": 0.5893678230543932,
+    "total_skipped_optimizer_steps": 3,
+    "peak_cuda_allocated_mib": 399.22216796875,
+    "wandb_run_id": "odwrgrln",
+    "wandb_run_mode": "offline",
+    "validation_prediction_subject_count": 44,
+    "validation_prediction_elapsed_seconds": 23.484916,
+    "strict_reconstruction_subject_count": 44,
+    "strict_reconstruction_elapsed_seconds": 476.1,
+    "strict_metrics_db": {
+      "full_sphere_erb": 0.8728824545096452,
+      "contralateral_25deg_erb": 1.3642041177513955,
+      "contralateral_high_frequency": 3.608567152291272,
+      "horizontal_ild_mae": 0.5961406543553209
+    },
+    "improvement_vs_locked_v32_epoch6_percent": {
+      "full_sphere_erb": 1.33042479864859,
+      "contralateral_25deg_erb": 1.37150234812991,
+      "contralateral_high_frequency": 0.799168454769885,
+      "horizontal_ild_mae": 4.61975130188494
+    }
   },
   "test_policy": "The consumed test split is forbidden. This validation-only experiment cannot replace or revise the locked paper test result.",
   "test_subject_count_read": 0

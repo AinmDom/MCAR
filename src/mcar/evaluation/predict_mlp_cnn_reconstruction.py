@@ -47,6 +47,33 @@ def infer_model_architecture(
     return mlp_width, mlp_block_count, cnn_channels
 
 
+def infer_global_context_arguments(
+    checkpoint: dict[str, object],
+) -> dict[str, int | bool]:
+    state_dict = checkpoint["model_state"]
+    if not isinstance(state_dict, dict):
+        raise TypeError("checkpoint model_state must be a dictionary")
+    enabled = any(key.startswith("global_context.") for key in state_dict)
+    saved_arguments = checkpoint.get("arguments", {})
+    if not isinstance(saved_arguments, dict):
+        saved_arguments = {}
+    return {
+        "global_context_attention": enabled,
+        "global_attention_width": int(
+            saved_arguments.get("global_attention_width", 32)
+        ),
+        "global_attention_heads": int(
+            saved_arguments.get("global_attention_heads", 4)
+        ),
+        "global_attention_blocks": int(
+            saved_arguments.get("global_attention_blocks", 2)
+        ),
+        "global_attention_stride": int(
+            saved_arguments.get("global_attention_stride", 4)
+        ),
+    }
+
+
 def build_point_features(
     mca_db: np.ndarray,
     correction_db: np.ndarray,
@@ -199,6 +226,7 @@ def main() -> None:
         mlp_width=mlp_width,
         mlp_block_count=mlp_block_count,
         cnn_channels=cnn_channels,
+        **infer_global_context_arguments(checkpoint),
     ).to(device)
     model.load_state_dict(state_dict)
     model.eval()

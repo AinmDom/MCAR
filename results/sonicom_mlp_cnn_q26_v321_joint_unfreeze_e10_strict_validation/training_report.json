@@ -1,0 +1,53 @@
+{
+  "status": "completed",
+  "training_stage": "joint_mlp_cnn_global_magnitude_horizontal_hrir_ild_v321",
+  "elapsed_seconds": 1021.0007306,
+  "completed_epochs": 10,
+  "best_epoch": 7,
+  "best_validation_total_loss": 0.6604165164753795,
+  "best_strict_ild_epoch": 7,
+  "best_validation_strict_ild_mae_db": 0.5867241490632296,
+  "total_skipped_optimizer_steps": 0,
+  "final_amp_scale": 4096.0,
+  "peak_cuda_allocated_mib": 601.92578125,
+  "checkpoint_files_saved": true,
+  "wandb": {
+    "enabled": true,
+    "mode": "offline",
+    "project": "mcar-sonicom",
+    "entity": null,
+    "run_name": "sonicom_mlp_cnn_q26_v321_joint_unfreeze_e10",
+    "run_id": "qdlzionj",
+    "run_url": null
+  },
+  "initial_validation": {
+    "total_loss": 0.6611154843121767,
+    "residual_mae_db": 2.542327451209227,
+    "erb_mae_db": 1.0216416337837775,
+    "contralateral_high_frequency_mae_db": 3.5785751392443976,
+    "ild_mae_db": 0.5893678230543932,
+    "ild_spectral_proxy_mae_db": 0.6111641740426421,
+    "cnn_delta_mean_absolute_db": 1.1442477355690859
+  },
+  "best_epoch_metrics": {
+    "epoch": 7,
+    "train_total_loss": 0.6351411738395691,
+    "train_residual_mae_db": 2.488015341281891,
+    "train_erb_mae_db": 0.9938046337366104,
+    "train_contralateral_high_frequency_mae_db": 3.537337040901184,
+    "train_ild_mae_db": 0.5157027967572212,
+    "train_ild_spectral_proxy_mae_db": 0.6262007386684417,
+    "train_cnn_delta_mean_absolute_db": 1.1159731853237318,
+    "validation_total_loss": 0.6604165164753795,
+    "validation_residual_mae_db": 2.5413523328800998,
+    "validation_erb_mae_db": 1.0207892321050167,
+    "validation_contralateral_high_frequency_mae_db": 3.578026329477628,
+    "validation_ild_mae_db": 0.5867241490632296,
+    "validation_ild_spectral_proxy_mae_db": 0.6108830735708276,
+    "validation_cnn_delta_mean_absolute_db": 1.1452566278558571,
+    "learning_rate": 3.4549150281252635e-06,
+    "mlp_learning_rate": 3.454915028125263e-07,
+    "epoch_seconds": 90.07504210000002,
+    "skipped_optimizer_steps": 0
+  }
+}

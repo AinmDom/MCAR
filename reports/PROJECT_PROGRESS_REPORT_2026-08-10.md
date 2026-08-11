@@ -1,8 +1,8 @@
 # MCAR 轻量 HRTF 残差学习项目阶段汇报
 
-> 汇报日期：2026 年 8 月 10 日  
-> 当前阶段：SONICOM Q26 主实验已完成，正在进行后续模型与损失函数消融  
-> 核心结论：MLP+CNN v3.2 已形成稳定、可复现的论文主结果；继续增加训练预算有效，但近期结构和损失改动的边际收益较小。
+> 汇报日期：2026 年 8 月 11 日<br>
+> 当前阶段：SONICOM Q26 主实验和 RANF 正式横向评价已完成，正在收敛论文结论<br>
+> 核心结论：MLP+CNN v3.2 在整体频谱、对侧局部区域和水平面 ILD 上保持优势；RANF 在对侧高频指标上更强，构成新的互补神经基线。
 
 ## 一、项目概述
 
@@ -123,6 +123,7 @@ SONICOM 正式 v3.2 使用 `ERB/HF/strict ILD = 0.75/0.25/0.75`。这一设计�
 | SUpDEq + Barycentric | SUpDEq 预处理后，利用目标方向所在球面三角形三个顶点的重心权重进行复数插值 | 否 | 三顶点权重和为 1，之后执行目标方向反均衡 |
 | MCA | SUpDEq + SH 后加入最小相位 magnitude-correction filter，并在空间混叠频率附近渐进限制校正 | 否 | 保留传统插值相位，重点修正高频幅度和 ILD |
 | MCAR v1/v2/v3/v3.2 | 在 MCA 幅度上叠加网络预测的 log-magnitude residual | 是 | 训练频带内修正幅度，MCA 相位及频带外复频谱保持不变 |
+| RANF | Retrieval-Augmented Neural Field：从 train-only HRTF 库检索相似被试，用检索频谱、ITD 和目标方向驱动神经场，并对目标被试做 rank-1 LoRA 适配 | 是 | 直接预测双耳幅度与 ITD，由 minimum-phase 幅度和预测 ITD 重建 HRIR；Q26 观测方向原样保留 |
 | FSP-AE-Q26 | 频率/声源位置条件自编码器：Q26 幅度与 ITD 经 HyperLinear encoder 聚合为个体 prototype，再由目标方向和频率条件 decoder 生成 dense 幅度与 ITD | 是 | 由预测幅度构造 minimum-phase HRIR，再施加预测 ITD |
 
 #### 传统插值基线
@@ -134,6 +135,34 @@ SONICOM 正式 v3.2 使用 `ERB/HF/strict ILD = 0.75/0.25/0.75`。这一设计�
 **Natural Neighbor** 和 **Barycentric** 保留 SUpDEq 的方向均衡，但把 SH 插值替换为局部几何插值。Natural Neighbor 根据目标点插入球面 Voronoi 图后占用的邻域面积构造权重；Barycentric 根据目标射线与球面三角网格的交点计算三个顶点权重。两者都不使用 MCA magnitude correction，因此可以分离“局部插值器”和“幅度校正”的贡献。
 
 **MCA** 在 SUpDEq + SH 的时间对齐与空间插值结果上进一步估计最小相位幅度校正滤波器。当前设置为 `mc=inf`，但启用空间混叠频率限制和 `fadeDown`，避免在低可信高频区域无约束放大。MCA 是所有 MCAR 网络共享的物理基底。
+
+#### RANF 检索增强神经场基线
+
+RANF（Retrieval-Augmented Neural Field）使用上游 v2.0.0 实现。它与 MCAR 的核心差异是：MCAR 从 MCA 物理插值结果出发学习残差，RANF 则利用训练被试 HRTF 库提供个体先验，再直接生成目标被试在任意方向的幅度和 ITD。
+
+当前 Q26 适配流程为：
+
+```text
+目标被试 26 个稀疏 HRTF
+        ↓
+在 262 名 train-only 候选中计算 Q26 ITD/LSD 距离
+        ↓
+构造 30 人检索池，正式推理使用前 10 名检索被试
+        ↓
+检索被试在目标方向的双耳幅度 + ITD
+        ↓
+频谱 Conv encoder + 方向/ITD Fourier embedding
+        ↓
+LSTM 频率上下文 + retrieval aggregation
+        ↓
+ConvTranspose spectrum decoder + ITD head
+        ↓
+目标方向双耳幅度与 ITD
+```
+
+模型隐藏宽度为 128，包含 4 个频谱卷积层、4 个 neural-field hidden blocks、2 个频谱后处理层和 2 个 ITD 后处理层。预训练阶段在 262 名 train 被试上学习共享 neural field，并用 44 名 validation 被试 early stopping；候选检索库始终只包含 train 被试，validation/test 从不作为被检索模板。
+
+在正式 test 前，预训练 checkpoint、检索规则和超参数全部冻结。随后每名 test 被试只使用自己的 26 个 Q26 观测方向执行 1000 epoch 参数高效适配：主体网络保持冻结，仅更新目标被试相关的 rank-1 Low-Rank Adaptation（LoRA）参数。推理时对 793 个方向生成幅度和 ITD，由 minimum-phase 幅度响应叠加预测 ITD 得到 HRIR；26 个已观测方向直接保留原始 HRIR，只评价其余 767 个方向。
 
 #### FSP-AE 神经横向基线
 
@@ -155,8 +184,9 @@ $$
 2. 在固定 793 方向参考网格上生成 HRTF，并排除 26 个输入方向，只评价 767 个纯插值方向；
 3. SH、SUpDEq、NN、Barycentric 和 MCA 从同一 Q26 复数 HRTF 独立重建；
 4. MCAR v1/v2/v3/v3.2 分别加载各自已锁定 checkpoint，在 MCA 上预测 463 个训练频点的 residual，随后保留 MCA 相位并补回训练频带外复频谱；
-5. 所有方法统一转换到 HRIR，并由同一个 MATLAB 函数计算四项严格指标；
-6. 先得到每名被试的误差，再报告 44 人均值、被试间标准差、中位数、逐被试胜出数和配对统计；不得把方向或频点当作独立被试扩大样本量。
+5. RANF 使用同一 Q26 观测进行 train-only 被试检索和冻结规则下的目标被试 LoRA 适配，再输出完整 SOFA；它可以访问 train 被试的 dense HRTF 库，但不能检索 validation/test 被试；
+6. 所有方法统一转换到 HRIR，并由同一个 MATLAB 函数计算四项严格指标；
+7. 先得到每名被试的误差，再报告 44 人均值、被试间标准差、中位数、逐被试胜出数和配对统计；不得把方向或频点当作独立被试扩大样本量。
 
 四项测试方法如下：
 
@@ -175,6 +205,7 @@ $$
 | SUpDEq + NN / Barycentric | 44 test | 预先在固定 Q26→793 网格上构造几何权重，再批量作用于每名被试的方向均衡复频谱 | 权重逐行和为 1；首名被试与上游原生入口逐值对照，最大复数误差分别为 `4.97e-16/4.58e-16` |
 | MCA | 44 test | 使用与 residual 数据导出完全相同的 SUpDEq、SH、最小相位校正、空间混叠限制和 `fadeDown` 配置 | correction 恒等式、方向数、频率数、相位和 HRIR 重建有限性检查 |
 | MCAR v1/v2/v3/v3.2 | 44 test | 各模型分别从锁定 checkpoint 生成 test residual，回填同一 MCA 后进入统一 MATLAB 严格评价 | test 需显式 `allow-test`；检查 checkpoint、split、样本数、MCA 相位误差和幅度回填恒等误差 |
+| RANF | 44 test | 冻结预训练模型后，以 test 被试 Q26 观测做 1000 epoch rank-1 LoRA adaptation；对 793 方向生成 SOFA，再送入同一 MATLAB 严格评价器 | 检索候选严格限于 262 train；保留原始被试编号映射；44/44 指标有限；Q26 已观测 HRIR 最大改写误差为 `0` |
 | FSP-AE-Q26 | **44 validation** | 从 Q26 幅度与 ITD 编码个体 prototype，对 793 方向预测幅度/ITD，重建 minimum-phase + predicted-ITD HRIR，再评价 767 个纯插值方向 | 与官方实现的幅度、ITD、HRIR 逐值误差均为 0；频率网格最大误差为 0；`test_subject_count_read=0` |
 
 需要强调：FSP-AE 当前采用与其他方法相同的四项指标和 767 方向口径，但其结果来自 **validation**，而传统基线与 MCAR v1–v3.2 的论文主横向表来自 **test**。因此可以讨论两种方法在 validation 上的互补性，但不能把 FSP-AE validation 数字直接并入 44 人 test 排名。
@@ -187,7 +218,7 @@ $$
 2. 完成 SONICOM Q26 稀疏网格设计、固定被试划分、MCA residual 数据导出与完整性检查；
 3. 完成 MLP v1、感知损失 MLP v2、MLP+CNN v3、严格 ILD 微调 v3.1 和双采样 v3.2；
 4. 完成 v3.2 的正式 validation、一次性论文 test、配对统计、论文表格和矢量图；
-5. 完成 FSP-AE、SUpDEq + Natural Neighbor、SUpDEq + Barycentric 等横向基线；
+5. 完成 FSP-AE、RANF、SUpDEq + Natural Neighbor、SUpDEq + Barycentric 等横向基线；
 6. 完成三随机种子稳定性、40 epoch 预算扩展及冻结 checkpoint 的追加 test 评价；
 7. 完成 v3.2.1 联合微调、v3.3 全局 attention，以及 v3.4a/b/c 三种定向损失消融；
 8. 当前训练、预测、MATLAB 严格重建、统计和图表输出均已形成可重复执行的配置化流程。
@@ -231,14 +262,18 @@ Q26 网格保持左右对称，最小方向间夹角约为 $31.92^\circ$，覆�
 | 方法 | 全空间 ERB / dB | 对侧 25° ERB / dB | 对侧高频 / dB | 水平面 ILD / dB |
 |---|---:|---:|---:|---:|
 | MCA | 1.0822 | 1.7458 | 4.6986 | 0.8294 |
+| RANF | 1.0632 | 1.5573 | **3.4697** | 0.7755 |
 | MLP v1 | 0.9648 | 1.4932 | 3.9271 | 0.7967 |
 | MLP v2 | 0.9154 | 1.4311 | 3.8951 | 0.7223 |
 | MLP+CNN v3 | 0.8721 | 1.3708 | 3.6201 | 0.7070 |
 | MLP+CNN v3.1 | 0.8999 | 1.3831 | 3.6841 | 0.6877 |
-| **MLP+CNN v3.2** | **0.8678** | **1.3653** | **3.6119** | **0.6870** |
-| v3.2 相对 MCA 改善 | **19.81%** | **21.79%** | **23.13%** | **17.17%** |
+| **MLP+CNN v3.2** | **0.8678** | **1.3653** | 3.6119 | **0.6870** |
+| RANF 相对 MCA 改善 | 1.75% | 10.79% | **26.16%** | 6.50% |
+| v3.2 相对 MCA 改善 | **19.81%** | **21.79%** | 23.13% | **17.17%** |
 
-v3.2 相对正式 v3 的四项指标分别改善约 **0.49%、0.40%、0.23% 和 2.83%**。其主要价值是：在保持三项幅度指标继续改善的同时，修复 v3 在严格 ILD 上的不足，形成当前最均衡的单模型结果。
+v3.2 相对正式 v3 的四项指标分别改善约 **0.49%、0.40%、0.23% 和 2.83%**。其主要价值是：在保持三项幅度指标继续改善的同时，修复 v3 在严格 ILD 上的不足，形成当前较均衡的单模型结果。
+
+与 RANF 相比，v3.2 的全空间 ERB、对侧 25° ERB 和水平面 ILD 分别降低 **18.38%、12.33% 和 11.41%**，逐被试胜出数为 `43/44、42/44、33/44`；但 RANF 的对侧高频误差比 v3.2 低 **4.10%**，并在 `33/44` 名被试上胜出。因此不能声称 v3.2 对 RANF 四项全面领先。
 
 ![v1-v3.2 在 44 名 test 被试上相对 MCA 的误差降低](../results/sonicom_mlp_cnn_q26_v32_paper/figure_1_test_improvement.png)
 
@@ -290,30 +325,41 @@ v3.2 相对正式 v3 的四项指标分别改善约 **0.49%、0.40%、0.23% 和 
 2. **定向损失确实改变了对应的谱结构或双耳指标。** v3.4a 的一阶/二阶谱差分在 44/44 人上改善，v3.4b 的 35/35 个 ERB 频带聚合误差下降，v3.4c 的三个 notch 尺度也均在 44/44 人上改善。
 3. **代理目标与最终主指标仍存在错位。** 尽管谱差分、band-ILD 和 notch-depth 本身显著改善，对侧高频平均幅度误差几乎不变，说明继续堆叠辅助损失的收益可能有限。
 
-## 七、与 FSP-AE 和传统插值方法的关系
+## 七、与 RANF、FSP-AE 和传统插值方法的关系
+
+### 7.1 RANF：同一 test 上的直接横向比较
+
+RANF 已完成 train-only 检索库构建、共享 neural field 预训练、冻结规则下的 test-Q26 被试级 LoRA 适配，以及原生指标和统一 MATLAB 严格指标评价。其 44 人 test 四项结果依次为 **1.063、1.557、3.470 和 0.775 dB**，相对 MCA 分别改善 **1.75%、10.79%、26.16% 和 6.50%**。
+
+![包含 RANF 的七方法 44 人 test 横向比较](../results/sonicom_ranf_q26_final_test/figures/test44_aggregate_baselines.png)
+
+RANF 的主要优势集中在对侧高频，说明训练被试检索先验与被试级 LoRA 适配能够补充稀疏目标被试的高频个体信息；MCAR v3.2 则在全空间 ERB、对侧 25° ERB 和水平面 ILD 上更稳健。这一结果支持将两者表述为“物理先验残差修正”和“检索增强直接生成”两条互补路线，而不是宣称其中一类模型四项全面占优。
+
+### 7.2 FSP-AE：同口径 validation 互补比较
 
 FSP-AE-Q26 已完成官方 checkpoint 等价检查、正式训练和 44 人 validation 严格评价。与 MCAR v3.2 相比，FSP-AE 的全空间 ERB 和对侧 ERB 分别回退约 **31.2% 和 33.6%**，但对侧高频和严格 ILD 分别改善约 **14.7% 和 4.4%**。
 
 ![FSP-AE 与 MCA、MCAR v3.2 的互补性](../results/sonicom_fsp_ae_q26_formal_validation/figures/figure_3_fsp_tradeoff.png)
 
-这表明两类方法具有明显互补性：MCAR 更擅长整体幅度与对侧区域重建，FSP-AE 更擅长高频细节与部分双耳线索。现阶段不宜声称某一方法全面优于另一方法，更合理的论文表述是“MCAR 在整体误差上占优，FSP-AE 提供高频与双耳线索的互补基线”。
+这表明两类方法具有明显互补性：MCAR 更擅长整体幅度与对侧区域重建，FSP-AE 更擅长高频细节与部分双耳线索。由于该组数字来自 validation，只能用于解释方法互补性，不能与前述 44 人 test 表直接合并排名。更合理的论文表述是“MCAR 在整体误差上占优，FSP-AE 提供高频与双耳线索的 validation 互补证据”。
 
 ## 八、目前可以形成的论文结论
 
 1. 在 SONICOM Q26 稀疏采样条件下，MCA 上的轻量残差学习能够稳定降低未见被试的 HRTF 重建误差；
 2. 局部频谱 CNN 能有效利用跨频率上下文，是相对逐点 MLP 的主要增益来源；
 3. 与最终 HRIR 能量定义一致的严格 ILD 训练目标，比简单频谱代理更能改善最终双耳指标；
-4. v3.2 的双采样训练在全空间幅度和水平面 ILD 之间取得了当前最好的单模型平衡；
+4. v3.2 的双采样训练在全空间 ERB、对侧 25° ERB 和水平面 ILD 上取得当前最好结果，而 RANF 在对侧高频上更优；
 5. 更长训练预算仍有价值，但后续结构和损失改动的边际收益已经明显收窄；
-6. 当前证据支持“物理插值基线 + 轻量数据驱动残差修正”的路线，而不支持无限增加模型复杂度。
+6. RANF 证明检索增强 neural field 与被试级 LoRA 适配对对侧高频重建有效，但其整体频谱和水平面 ILD 仍不及 MCAR v3.2；
+7. 当前证据支持“物理插值基线 + 轻量数据驱动残差修正”的路线，同时应保留检索增强直接生成作为高频互补方向，而不支持无限增加模型复杂度。
 
 ## 九、风险与尚未解决的问题
 
 ### 9.1 test 集已消费
 
-原 v3.2 epoch 6 完成了一次正式论文 test；随后 epoch 39 在独立冻结协议和明确授权下又完成了一次追加 test。两次评价均保留了 checkpoint 哈希、参数冻结和运行记录，但该 test 拆分现已完全消费，不能再用于后续结构、损失权重或 checkpoint 选择。
+原 v3.2 epoch 6 完成了一次正式论文 test；随后 epoch 39 在独立冻结协议和明确授权下又完成了一次追加 test。RANF 则在预训练 checkpoint、检索规则和超参数冻结后，只用每名 test 被试自己的 Q26 稀疏观测做被试级适配，并在其余方向评价。相关 checkpoint、适配产物哈希、test seal 释放和运行记录均已留存。
 
-因此，v3.2.1、v3.3 和 v3.4a/b/c 当前只能作为 validation 消融。若要提出新的主模型或新的无偏泛化结论，需要新的未见被试拆分或外部数据集。
+上述访问方式符合各自预先冻结的基线协议，但该 test 拆分现已完全消费，不能再用于 MCAR 或 RANF 的结构、损失权重、检索策略、适配轮数或 checkpoint 选择。因此，v3.2.1、v3.3 和 v3.4a/b/c 当前只能作为 validation 消融；若要提出新的主模型或新的无偏泛化结论，需要新的未见被试拆分或外部数据集。
 
 ### 9.2 最新收益接近评价噪声尺度
 
@@ -325,7 +371,7 @@ FSP-AE-Q26 已完成官方 checkpoint 等价检查、正式训练和 44 人 vali
 
 ### 9.4 工程版本需要收口
 
-最新 v3.2.1-v3.4c 的源码、配置、测试和结果仍处于未提交工作区。当前已直接执行并通过 6 个相关回归脚本，覆盖双采样严格 ILD、联合 optimizer、全局 attention、谱差分、分频带 ILD 和 notch-aware loss；但在正式归档前仍需完成结果清单核对、Git 提交和可复现命令复查。
+v3.2.1-v3.4c 与 RANF 的核心结果、导出脚本和实验日志已形成 Git 提交；RANF 上游实现保留在独立 worktree。正式归档前仍需核对结果清单与复现命令，并在论文或代码发布说明中明确记录 RANF 上游 commit、AGPL-3.0-or-later 许可证，以及未纳入仓库的 checkpoint/日志获取方式。
 
 ## 十、建议的下一阶段计划
 
@@ -353,17 +399,18 @@ FSP-AE-Q26 已完成官方 checkpoint 等价检查、正式训练和 44 人 vali
 - 固化配置、checkpoint 哈希、结果表和运行命令；
 - 将最新代码、测试和精选结果形成一个可回溯提交；
 - 在论文中统一区分 validation、正式 test 和追加冻结 test；
-- 根据导师意见确定是否保留组合 loss 实验，以及 FSP-AE 结果放在主文还是附录。
+- 根据导师意见确定是否保留组合 loss 实验，以及 RANF/FSP-AE 结果放在主文还是附录。
 
 ## 十一、希望与导师确认的三个问题
 
 1. 论文主结果是否继续严格保持为预注册的 v3.2 epoch 6，而将 epoch 39 作为预算扩展补充？
 2. 下一阶段应优先做一次组合损失 validation 消融，还是直接转向跨数据库外部验证？
-3. FSP-AE 的“高频/ILD 更优、整体 ERB 更差”是否作为方法互补性的重点讨论，还是仅作为横向基线放入附录？
+3. RANF 在同一 test 的对侧高频上优于 MCAR，而 FSP-AE 在 validation 上显示相似互补趋势：是否将“直接生成方法的高频优势”作为重点讨论，还是仅将二者作为横向基线放入附录？
 
 ## 十二、相关材料索引
 
 - v3.2 正式 test 与论文结果：[`SONICOM_MLP_CNN_V32_FINAL_RESULTS.md`](SONICOM_MLP_CNN_V32_FINAL_RESULTS.md)
+- RANF 正式 test 结果与图表：[`results/sonicom_ranf_q26_final_test/`](../results/sonicom_ranf_q26_final_test/)
 - FSP-AE 正式 validation：[`FSP_AE_Q26_VALIDATION_REPORT.md`](FSP_AE_Q26_VALIDATION_REPORT.md)
 - 完整实验时间线：[`docs/EXPERIMENT_LOG.md`](../docs/EXPERIMENT_LOG.md)
 - 项目入口与复现命令：[`README.md`](../README.md)

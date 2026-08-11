@@ -1,5 +1,72 @@
 # 项目实验日志
 
+## 2026-08-11：RANF Q26 横向基线正式训练、适配与原生评价
+
+- 工作目标：将上游 RANF v2.0.0（commit
+  `92956c74b0ac975169066a539fff47129fd7b6d1`）作为独立横向基线接入已经冻结的
+  MCAR SONICOM-Q26 协议。实现位于独立 worktree
+  `baselines/ranf/worktree_q26/`，训练环境为 WSL2 Ubuntu 22.04、Python 3.10、
+  PyTorch `2.7.0+cu128`，GPU 为 NVIDIA GeForce RTX 5060 8 GB。
+- 冻结数据协议：使用 350 名清洁 SONICOM FreeFieldCompMinPhase 44.1 kHz 被试以及既有
+  `262/44/44` train/validation/test 划分；稀疏输入严格采用
+  `configs/data/sonicom_sparse_grid_q26_v1.csv` 的 26 个方向。检索候选仅允许来自 train，
+  validation/test 不得成为候选。RANF 为适配上游连续编号约束建立内部编号，原始编号由
+  `~/ranf-work/mcar_q26_formal/subject_mapping.csv` 保留。
+- 正式预训练：seed `20260731`，RAdam，学习率 `1e-3`，batch size `256`，每 epoch
+  `816` 个 batch，最大 `200` epoch，early-stopping patience `20`。batch size 256 是
+  RTX 5060 上实测吞吐最优的基线实现参数，不宣称严格复现原论文的 batch 64。运行时间为
+  `2026-08-11 00:27:10` 至 `02:37:39`（`2:10:29`），在 epoch `118`
+  提前停止，共完成 epoch `0--118`，退出码为 `0`。最佳 validation loss 为
+  `15.59127`，最佳 combined metric 为 `16.30561`。W&B run ID 为 `qanlzdld`，
+  地址为 `https://wandb.ai/luyoung/MCAR-RANF/runs/qanlzdld`。
+- 预训练 checkpoint 完整性：`best.ckpt` 的 SHA-256 为
+  `7b288f6f9198664e9ce75fee418e90ec3da2f5d0b7996a4edefe7d5f8da3e367`。
+- test seal 与适配：模型和超参数冻结后，于 `2026-08-11 10:04:58` 显式释放 test
+  seal。只使用每名 test 被试的 Q26 稀疏观测执行上游 subject-specific adaptation：
+  `1000` epoch、batch size `3`，于 `13:30:33` 正常结束，用时 `3:25:35`，退出码
+  为 `0`。`adaptation.ckpt` SHA-256 为
+  `e1b17d5dc0dc550caedba5ac5f8630acc96cff8c9bf1daaeb09a6d3ad64371a3`；
+  `adaptation_loss.ckpt` SHA-256 为
+  `f8d86ce6d708ec14d4c77d9a10673ae86d770e987167a596a4aca215460b8641`。
+- 原生最终评价：第一次评价在完成 6 名被试后因 CUDA OOM 退出。根因是上游
+  `3_evaluating_neural_field.py` 在循环中保留每名被试的 autograd graph 和 GPU tensor，
+  导致显存随被试数累计；与适配 checkpoint 无关。评价入口改为
+  `torch.inference_mode()`、移除无用 GPU tensor 列表，并令重试覆盖不完整日志。
+  `14:11:46` 开始仅重跑评价，`14:13:39` 完成全部 44 名 test 被试，最终 pipeline
+  phase 为 `complete`、退出码为 `0`；ITD/ILD/LSD 三类记录均为 `44/44`。
+- RANF 原生 LAP 指标：ITD mean/max 为 `17.599497/238.338295 us`，ILD mean/max
+  为 `0.716003/0.998331 dB`，LSD mean/max 为 `3.222125/3.969062 dB`。
+  唯一超过 100 us ITD 阈值的是内部编号 `P0320`，经冻结映射后对应原始 SONICOM
+  test 被试 `P0339`，论文与逐被试表必须使用原始编号。
+- 原生产物：WSL 中实验目录为 `~/ranf-work/exp/mcar_q26_formal/`，包含
+  `final_summary.txt`、`final_pipeline_console.log`、`log/eval/eval.log`、44 份
+  `pred_*.sofa` 和对应 target SOFA。上述 ITD/ILD/LSD 是 RANF/LAP 原生口径，不能与
+  MCAR 论文表中的 FullSphere ERB、Contralateral 25-degree ERB、Contralateral HF 和
+  strict Horizontal ILD 直接混排；横向结论必须把 RANF SOFA 送入同一冻结严格评价器。
+- 统一严格评价：将 44 份 RANF SOFA 按 `subject_mapping.csv` 恢复为原始 SONICOM
+  test 编号，导出到
+  `artifacts/reconstruction/sonicom_ranf_q26_final_test/`，并接入与 SH only、
+  SUpDEq、MCA 和 MCAR 完全相同的 MATLAB 严格评价入口。1 人 smoke 通过后完成 44 人
+  正式评价，MATLAB 正常退出，用时 `584.8 s`。评价方向为排除 Q26 输入后的 767 个
+  方向；四项 RANF 指标均为 `44/44` 有限值，RANF 对 26 个观测方向的 HRIR 最大改写
+  误差为 `0`。重新计算所得既有六方法结果与原冻结横向表逐值一致，最大绝对差为 `0`。
+- 统一横向结果（mean +/- subject standard deviation，单位 dB，越低越好）：RANF 的
+  FullSphere ERB 为 `1.063 +/- 0.126`、Contralateral 25-degree ERB 为
+  `1.557 +/- 0.164`、Contralateral HF 为 `3.470 +/- 0.254`、strict Horizontal
+  ILD MAE 为 `0.775 +/- 0.189`。相对 MCA 分别改善
+  `1.752% / 10.794% / 26.156% / 6.501%`。
+- 与 MCAR v3.2 的关系：MCAR 在 FullSphere ERB、Contralateral 25-degree ERB 和
+  Horizontal ILD 上分别降低 `18.381% / 12.329% / 11.408%`，并分别在
+  `43/44`、`42/44`、`33/44` 名被试上优于 RANF；但 RANF 的 Contralateral HF
+  均值比 MCAR 低 `4.098%`，RANF 在该项上优于 MCAR 的被试数为 `33/44`。因此论文
+  不应宣称 MCAR 对 RANF 四项全面领先，应表述为 MCAR 在总体谱误差、对侧局部谱误差和
+  水平面 ILD 上占优，而 RANF 在对侧高频幅度误差上更强。
+- 正式表格位于 `results/sonicom_ranf_q26_final_test/`：
+  `per_subject_core_comparison.csv` 为 SH only、SUpDEq + SH、MCA、RANF、MCAR v3.2
+  五方法逐被试宽表，`paper_core_comparison.csv` 为五方法论文聚合表；
+  `per_subject_metrics.csv` 与 `paper_comparison.csv` 另保留 Natural Neighbor 和
+  Barycentric，构成七方法完整表。`metric_long.csv` 用于后续配对统计。
+
 ## 2026-08-10：SONICOM Q26 v3.4c 多尺度 notch-aware 损失消融
 
 - 工作目标：从固定 v3.2 seed `20260809` epoch 39 独立检验 notch-aware 目标，直接

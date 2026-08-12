@@ -1,0 +1,43 @@
+{
+  "method": "FSP-AE-Q26 adaptation",
+  "status": "completed",
+  "frozen_at": "2026-08-11",
+  "source_checkpoint": "artifacts/training/sonicom_fsp_ae_q26_formal_budget_40/best.pt",
+  "frozen_checkpoint": "artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt",
+  "sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F",
+  "size_bytes": 2937933,
+  "epoch": 40,
+  "validation_loss": 3.02674641720225,
+  "selection_split": "validation",
+  "selection_test_subject_count_read": 0,
+  "normalization": {
+    "path": "data/processed/sonicom_fsp_ae_q26_v1/normalization.json",
+    "sha256_before_test": "D25121E1954802C79593B14F4A0FC1E7BD26E57D0ADC1CA70CC5DFBF7F49FF95",
+    "sha256_after_test": "D25121E1954802C79593B14F4A0FC1E7BD26E57D0ADC1CA70CC5DFBF7F49FF95",
+    "training_subject_count": 262
+  },
+  "test_authorization": {
+    "authorized_by_user": true,
+    "date": "2026-08-11"
+  },
+  "test_inference": {
+    "split": "test",
+    "subject_count": 44,
+    "test_subject_count_read": 44,
+    "run_name": "sonicom_fsp_ae_q26_locked_final_test",
+    "elapsed_seconds": 534.5580934
+  },
+  "strict_evaluation": {
+    "output_name": "sonicom_fsp_ae_q26_locked_final_test",
+    "mcar_prediction_name": "sonicom_q26_test_mlp_cnn_v32_locked_ild075",
+    "ranf_prediction_name": "sonicom_ranf_q26_final_test",
+    "status": "completed",
+    "test_subject_count_read": 44,
+    "metrics_mean_std_db": {
+      "full_sphere_erb": [1.18449282832708, 0.349214778667377],
+      "contralateral_25_erb": [1.90887228327219, 0.7008144347919],
+      "contralateral_high_frequency": [3.16435468649166, 0.685424467474205],
+      "horizontal_ild_mae": [0.758667887461805, 1.03970065308471]
+    }
+  }
+}

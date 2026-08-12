@@ -1,5 +1,73 @@
 # 项目实验日志
 
+## 2026-08-12：MCAR v3.2 epoch 39 七方法 SONICOM-Q26 最终 test 横向比较
+
+- 工作目标：将已经确定为论文主模型的 MCAR v3.2 seed `20260809` epoch `39`
+  接入与 SH only、SUpDEq + SH、SUpDEq + Natural Neighbor、SUpDEq +
+  Barycentric、MCA 和 RANF 完全相同的冻结严格评价器，在 SONICOM-Q26 test 上重新
+  生成七方法完整横向结果。此次只执行推理结果读取、传统方法重建和统一评价，不训练、
+  不调参、不修改模型，也不根据结果改变 epoch、seed、损失、指标或基线设置。
+- 冻结协议：执行前写入
+  `configs/experiments/sonicom_seven_method_q26_epoch39_final_test.json`。数据为固定
+  `262/44/44` 划分中的 44 名 test 被试；输入严格采用 `SONICOM-Q26-v1` 的 26 个实测
+  方向，评价排除全部输入点，只统计剩余 767 个纯插值方向。主模型 checkpoint 为
+  `artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt`，内部 epoch
+  为 `39`，评价前后 SHA-256 均为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`。
+- 评价口径：七方法全部由
+  `mcar.evaluate_sonicom_interpolation_baselines` 计算同一四项 subject-level 指标并以
+  `mean +/- subject standard deviation` 汇总，单位均为 dB、越低越好。历史字段
+  `FullSphereERB` 实际只覆盖 SONICOM 实测域（仰角 `-45 deg` 至 `90 deg`），论文表改称
+  `MeasuredDomainERB`；历史字段 `ContralateralHighFrequency` 实际为对侧半球
+  `10--20 kHz` 幅度误差，论文表改称 `ContralateralHemisphereHF`。其余两项为对侧
+  中心 25 度区域 ERB 误差和 72 个水平面纯插值方向的严格 HRIR 能量 ILD MAE。
+- 执行过程：冻结 checkpoint、epoch 39 的 44 份 test prediction 和 RANF 的 44 份
+  prediction 预检完整。MATLAB MCP 同步连接在 600 s 工具上限处超时，但 MATLAB
+  计算进程没有终止，持续稳定运行并最终完整写出 CSV、JSON 和图；未使用旧表手工替换
+  MCAR 行。正式结果根目录为
+  `results/sonicom_seven_method_q26_epoch39_final_test/`。
+- 七方法完整结果（依次为测量域 ERB / 对侧 25 度 ERB / 对侧半球 HF / 水平面 ILD，
+  `mean +/- subject standard deviation`）：SH only 为
+  `2.685 +/- 0.107 / 3.835 +/- 0.448 / 9.067 +/- 0.824 / 3.551 +/- 0.664`；
+  SUpDEq + SH 为
+  `1.882 +/- 0.506 / 2.228 +/- 0.195 / 5.994 +/- 0.344 / 2.018 +/- 1.564`；
+  SUpDEq + Natural Neighbor 为
+  `1.852 +/- 0.290 / 2.241 +/- 0.212 / 5.595 +/- 0.258 / 1.637 +/- 0.469`；
+  SUpDEq + Barycentric 为
+  `1.752 +/- 0.257 / 2.182 +/- 0.193 / 5.476 +/- 0.217 / 1.615 +/- 0.442`；
+  MCA 为 `1.082 +/- 0.096 / 1.746 +/- 0.155 / 4.699 +/- 0.266 / 0.829 +/- 0.158`；
+  RANF 为 `1.063 +/- 0.126 / 1.557 +/- 0.164 / 3.470 +/- 0.254 / 0.775 +/- 0.189`；
+  MCAR v3.2 epoch 39 为
+  `0.856 +/- 0.160 / 1.350 +/- 0.179 / 3.590 +/- 0.275 / 0.660 +/- 0.250`。
+- 相对 MCA：MCAR epoch 39 的四项均值分别改善
+  `20.932% / 22.671% / 23.585% / 20.387%`，逐被试改善数为
+  `43/44 / 43/44 / 44/44 / 37/44`。100,000 次固定 seed `20260812` 的配对
+  subject bootstrap 中，MCA 减 MCAR 的均值差及 95% 区间分别为
+  `0.2265 [0.2003, 0.2476] / 0.3958 [0.3048, 0.4591] /
+  1.1082 [1.0393, 1.1641] / 0.1691 [0.0818, 0.2362] dB`。
+- 相对 RANF：MCAR epoch 39 在测量域 ERB、对侧 25 度 ERB 和水平面 ILD 上分别改善
+  `19.522% / 13.314% / 14.851%`，并分别在 `43/44 / 42/44 / 35/44` 名被试上
+  更好；三项 RANF 减 MCAR 的均值差及 95% bootstrap 区间为
+  `0.2076 [0.1768, 0.2320] / 0.2073 [0.1252, 0.2711] /
+  0.1152 [0.0467, 0.1786] dB`。对侧半球 HF 上 RANF 更好：MCAR 相对 RANF
+  回退 `3.481%`，只有 `13/44` 名被试优于 RANF，RANF 减 MCAR 的差为
+  `-0.1208 [-0.1807, -0.0661] dB`。因此论文不能宣称 MCAR 四项全面最优，应写成
+  MCAR 在总体幅度、对侧局部幅度和水平面 ILD 上占优，RANF 在对侧半球高频幅度上占优。
+- 完整性检查：`metric_long.csv` 为精确的 `44 x 7 x 4 = 1232` 行，44 名被试、
+  7 个方法和 4 个指标全部存在且无非有限值；六个非 MCAR 方法相对 2026-08-11 七方法
+  结果的最大绝对差为 `0 dB`；MCAR epoch 39 相对此前单模型冻结 test 结果的最大绝对
+  差为 `0 dB`；RANF 对 26 个 Q26 观测方向的最大 HRIR 改写误差仍为 `0`。
+- 正式产物：论文准确标签表为 `paper_comparison_paper_labels.csv`，MCA/RANF 配对
+  bootstrap 表为 `paired_comparison_mcar_epoch39.csv`，完整七方法表为
+  `paper_comparison.csv`，逐被试宽表为 `per_subject_metrics.csv`，长表为
+  `metric_long.csv`，质量检查为 `quality_checks.csv`，聚合图为
+  `figures/test44_aggregate_baselines.png`。
+- 论文规范边界：epoch 39 最初按固定 validation total-loss 规则选择，但 SONICOM test
+  已在 2026-08-09 对该 checkpoint 做过一次冻结评价；本次是同一冻结模型的七方法完整
+  横向重算，不能描述为新的、此前完全未见的 confirmatory test。此后不得继续根据
+  SONICOM test 调整或筛选模型；独立泛化主张需由冻结 epoch 39 在外部数据集上的零样本
+  评价承担。
+
 ## 2026-08-11：RANF Q26 横向基线正式训练、适配与原生评价
 
 - 工作目标：将上游 RANF v2.0.0（commit

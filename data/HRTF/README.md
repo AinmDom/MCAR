@@ -13,6 +13,7 @@ SOFA）。表中的兆二进制字节（mebibyte，MiB）按 $2^{20}$ 字节计�
 | `axd/` | [SOFA Acoustics AXD](https://sofacoustics.org/data/database/axd/) | 140 个 SOFA 文件：`p0001`–`p0040`、`p0101`–`p0200` | 394.60 MiB |
 | `hutubs/` | [SOFA Acoustics HUTUBS](https://sofacoustics.org/data/database/hutubs/) | 192 个 SOFA、58 个多边形文件格式（Polygon File Format，PLY）、2 个便携式文档格式（Portable Document Format，PDF）、1 个逗号分隔值（Comma-Separated Values，CSV）文件，共 253 个文件 | 1,375.71 MiB |
 | `sonicom_measured_ffcmp_minphase_44k1/` | [SONICOM 官方完整数据集](https://transfer.ic.ac.uk:9090/#/2022_SONICOM-HRTF-DATASET/) | 由下载器根据官方元数据冻结的 350 名干净测量被试；每人一个保留 ITD 的 44.1 kHz 自由场补偿 SOFA | 872.82 MiB |
+| `riec/` | [RIEC HRTF Dataset](https://www.riec.tohoku.ac.jp/pub/hrtf/) | 外部验证使用的 103 名真人测量 SOFA；默认排除 subject 046（SAMRAI）和 080（KEMAR） | 下载后约 0.48 GiB |
 
 AXD 和 HUTUBS 于 `2026-07-23` 从 SOFA Acoustics 的公开目录下载；
 SONICOM 正式队列于 `2026-07-30` 从其官网完整数据集下载。详细下载参数、
@@ -98,6 +99,32 @@ D:\miniconda3\envs\ml\python.exe -m mcar.data_tools.prepare_sonicom_configs
 和 12 对左右镜像方向，以最大化最小球面间隔，并用三阶实球谐设计矩阵打破并列。
 全部 793 点使用覆盖实测球冠的归一化球面面积权重；主评估在排除 26 个输入点后
 的 767 个纯插值方向上进行，同时保留全 793 点辅助指标。
+
+## 下载 RIEC 外部验证队列
+
+RIEC 的 SOFA Acoustics 目录包含 105 个 48 kHz、865 方向的双耳 HRIR 文件。
+默认下载器只选取 103 名真人，排除 subject 046（SAMRAI）和 subject 080
+（KEMAR）两个人工头：
+
+```powershell
+.venv/Scripts/python -m mcar.data_tools.download_riec --dry-run
+.venv/Scripts/python -m mcar.data_tools.download_riec --workers 6
+```
+
+少量被试 pilot：
+
+```powershell
+.venv/Scripts/python -m mcar.data_tools.download_riec --subjects 001 002
+```
+
+下载器支持断点续传、远端大小校验和逐文件 SOFA 结构验证，并在 `metadata/`
+保存官方数据页、被试表和测量说明的快照，在 `manifests/` 保存真人队列、排除清单、
+来源哈希及验证报告。RIEC 官网说明 2022-11-18 以前发布的数据在仰角 90°处的
+声源距离元数据曾误写为 1.0 m，正确值为 1.5 m；HRIR 本身不受影响。下载器会检测
+并记录该问题，但不修改原始 SOFA。
+
+当前 MCAR 不使用人体形态输入，因此不下载只覆盖 39 名被试的 STL 扫描。若后续
+研究加入形态条件，再单独冻结这 39 人的子队列和 STL 文件清单。
 
 ## 数据管理
 

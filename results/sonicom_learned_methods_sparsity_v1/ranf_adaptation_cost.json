@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "runs": [
+    {
+      "direction_count": 6,
+      "adaptation_epochs": 1000,
+      "adaptation_batch_size": 3,
+      "trainable_parameter_count": 537600,
+      "adaptation_elapsed_seconds": 3312.29,
+      "adaptation_maximum_resident_kb": 2629520,
+      "pipeline_elapsed_seconds_including_evaluation": 3423,
+      "pretrained_checkpoint_sha256": "7b288f6f9198664e9ce75fee418e90ec3da2f5d0b7996a4edefe7d5f8da3e367",
+      "adapted_checkpoint_sha256": "ccb3eaca288c948ae9e4aec47385a5390443b158de9ed38b387606a130b1ac1b",
+      "source_experiment_root": "\\\\wsl.localhost\\Ubuntu-22.04\\home\\ill3\\ranf-work\\exp\\mcar_learned_sparsity_q6"
+    },
+    {
+      "direction_count": 14,
+      "adaptation_epochs": 1000,
+      "adaptation_batch_size": 3,
+      "trainable_parameter_count": 537600,
+      "adaptation_elapsed_seconds": 7198.0,
+      "adaptation_maximum_resident_kb": 2676552,
+      "pipeline_elapsed_seconds_including_evaluation": 7315,
+      "pretrained_checkpoint_sha256": "7b288f6f9198664e9ce75fee418e90ec3da2f5d0b7996a4edefe7d5f8da3e367",
+      "adapted_checkpoint_sha256": "20bee6da76d46872aa77db2c6b9e3b31c18a4968e6b07344a478330eaf8bc626",
+      "source_experiment_root": "\\\\wsl.localhost\\Ubuntu-22.04\\home\\ill3\\ranf-work\\exp\\mcar_learned_sparsity_q14"
+    },
+    {
+      "direction_count": 26,
+      "adaptation_epochs": 1000,
+      "adaptation_batch_size": 3,
+      "trainable_parameter_count": 537600,
+      "adaptation_elapsed_seconds": 12335.0,
+      "adaptation_maximum_resident_kb": null,
+      "pipeline_elapsed_seconds_including_evaluation": null,
+      "pretrained_checkpoint_sha256": "7b288f6f9198664e9ce75fee418e90ec3da2f5d0b7996a4edefe7d5f8da3e367",
+      "adapted_checkpoint_sha256": "e1b17d5dc0dc550caedba5ac5f8630acc96cff8c9bf1daaeb09a6d3ad64371a3",
+      "source_experiment_root": "\\\\wsl.localhost\\Ubuntu-22.04\\home\\ill3\\ranf-work\\exp\\mcar_q26_formal",
+      "timing_source": "formal pipeline phase timestamps"
+    }
+  ]
+}

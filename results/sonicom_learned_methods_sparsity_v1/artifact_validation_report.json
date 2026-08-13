@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "subject_count": 44,
+  "audited_subject_levels": 132,
+  "q26_parity_absolute_difference": {
+    "q26_input_mca_db": {
+      "maximum": 0.0,
+      "count": 32309992,
+      "mean": 0.0
+    },
+    "q26_input_correction_db": {
+      "maximum": 2.7965496637979894e-14,
+      "count": 32309992,
+      "mean": 5.685802544398538e-18
+    },
+    "q26_mcar_residual_db": {
+      "maximum": 0.009676933288574219,
+      "count": 32309992,
+      "mean": 5.895572550570092e-08
+    },
+    "q26_fspae_magnitude_db": {
+      "maximum": 0.0,
+      "count": 35729408,
+      "mean": 0.0
+    },
+    "q26_fspae_itd_seconds": {
+      "maximum": 0.0,
+      "count": 34892,
+      "mean": 0.0
+    },
+    "q26_fspae_hrir": {
+      "maximum": 0.0,
+      "count": 17864704,
+      "mean": 0.0
+    }
+  },
+  "notes": {
+    "mcar": "Tiny sparse discrepancies are allowed from mixed-precision GPU convolution non-determinism.",
+    "fspae_hrir": "All Q levels use the official CPU mcar.fsp_ae_signal reconstruction; Q26 is exactly equal to the historical formal output."
+  }
+}

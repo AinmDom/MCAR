@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-13",
+  "status": "completed",
+  "completed_on": "2026-08-13",
+  "purpose": "Compare the sparsity robustness of MCAR v3.2, FSP-AE, and RANF on the common SONICOM test cohort.",
+  "reporting_scope": "The SONICOM test split has been accessed by prior frozen Q26 evaluations; this is a new preregistered sparsity analysis, not a previously untouched confirmatory split.",
+  "dataset": {
+    "name": "SONICOM FreeFieldCompMinPhase 44.1 kHz",
+    "split_file": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "test",
+    "subject_count": 44,
+    "reference_grid": "configs/data/sonicom_reference_grid_v1.csv",
+    "reference_direction_count": 793,
+    "sparse_grid_file": "configs/data/sonicom_nested_sparse_grid_q6_q14_q26_v1.csv",
+    "direction_counts": [6, 14, 26],
+    "evaluation_mask_policy": "Use one fixed target mask at every sparsity and for every method: exclude all 26 directions in SONICOM-Q26-v1, leaving 767 targets.",
+    "sampling_rate_hz": 44100,
+    "hrir_length": 256
+  },
+  "sparse_grid_selection": {
+    "policy": "Nested antipodal-pair maximin subsets selected only from the frozen SONICOM-Q26-v1 grid before evaluating any result.",
+    "q6_source_indices_zero_based": [1, 11, 271, 284, 531, 544],
+    "q14_source_indices_zero_based": [1, 11, 94, 107, 169, 271, 284, 287, 528, 531, 544, 646, 708, 721],
+    "q26_source_indices_zero_based": [1, 11, 94, 107, 141, 154, 157, 169, 271, 284, 287, 347, 356, 388, 427, 459, 468, 528, 531, 544, 646, 658, 661, 674, 708, 721],
+    "minimum_pairwise_separation_deg": {"q6": 70.0, "q14": 39.3669961588, "q26": 31.9158388418}
+  },
+  "methods": [
+    {
+      "id": "MCARv32",
+      "label": "MCAR v3.2 epoch 39",
+      "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt",
+      "checkpoint_sha256": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+      "parameter_updates_allowed": false,
+      "sparsity_policy": "Recompute the MCA prior from the current Q observations, then apply the frozen residual model."
+    },
+    {
+      "id": "FSPAE",
+      "label": "FSP-AE epoch 40",
+      "checkpoint": "artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt",
+      "checkpoint_sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F",
+      "parameter_updates_allowed": false,
+      "sparsity_policy": "Encode only the current Q observations and decode all targets with the frozen model."
+    },
+    {
+      "id": "RANF",
+      "label": "RANF Q26-pretrained",
+      "checkpoint_wsl": "~/ranf-work/exp/mcar_q26_formal/best.ckpt",
+      "checkpoint_sha256": "7B288F6F9198664E9CE75FEE418E90EC3DA2F5D0B7996A4EDEFE7D5F8DA3E367",
+      "adapter_git_commit": "dfe929b432d67e7f3506515558763859e17a1cb3",
+      "pretraining_updates_allowed": false,
+      "adaptation_updates_allowed": true,
+      "adaptation_epochs": 1000,
+      "adaptation_batch_size": 3,
+      "sparsity_policy": "For each Q, recompute retrieval distances using only current-Q observations and restart the native subject-specific PEFT adaptation from the same frozen pretrained checkpoint."
+    }
+  ],
+  "metrics": ["MeasuredDomainERB", "Contralateral25ERB", "ContralateralHemisphereHighFrequency", "HorizontalILDMAE"],
+  "primary_analysis": {
+    "contrast": "Within-subject Q6 minus Q26 error and fitted dB degradation per halving of direction count.",
+    "pairwise_comparisons": "All three method pairs, using paired differences in Q6 endpoint error and Q6-minus-Q26 degradation.",
+    "uncertainty": "10000 paired-subject bootstrap replicates with seed 20260812.",
+    "interpretation": "Lower absolute error and lower positive degradation are better; adaptation wall time and trainable parameter count are reported separately."
+  },
+  "selection_policy": "No sparse grid, subject, method, checkpoint, adaptation budget, metric, or evaluation mask may be changed in response to the result.",
+  "output_name": "sonicom_learned_methods_sparsity_v1"
+}

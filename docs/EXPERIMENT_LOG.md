@@ -1,5 +1,32 @@
 # 项目实验日志
 
+## 2026-08-14：SONICOM 八方法稀疏度横向比较（有效）
+
+> 状态：有效。该实验在此前 MCAR v3.2、FSP-AE、RANF 三种学习方法稀疏度实验的基础上，
+> 补齐五种横向基线，形成统一的八方法比较；此前三种学习方法的逐受试者结果原样复用。
+
+- 冻结设计：固定 SONICOM test 的 44 名受试者、嵌套 `Q=6/14/26` 输入方向，以及排除
+  完整 Q26 后的 767 个共同评价方向。新增方法为 SH only、SUpDEq + SH、SUpDEq +
+  Natural Neighbor、SUpDEq + Barycentric 和 MCA；四项指标及统计口径与三学习方法实验一致。
+- 完整性：五基线正式计算产生 `44 x 3 x 5 x 4 = 2640` 条有限指标，132 个受试者-稀疏度
+  质量记录的评价方向数均为 767，Natural Neighbor/Barycentric 对观测 HRTF 的最大改写误差
+  分别为 `4.58e-16/1.13e-15`。Q26 与既有正式横向结果逐项复核，最大差异为
+  `9.85e-8 dB`。合并后八方法长表为 `44 x 3 x 8 x 4 = 4224` 行；原有 1584 条学习方法
+  结果键完全一致、最大数值差为 `0 dB`。
+- 极稀疏端点：RANF 在 Q6 的四项均值均排名第一，依次为
+  `1.210/1.575/3.997/0.998 dB`。MCAR 相对各指标最强的 Q6 横向基线分别降低
+  `0.330/0.450/0.576/0.281 dB`，10,000 次配对受试者 bootstrap 均为双侧
+  `p=0.0002`。FSP-AE 仅在对侧半球高频项优于最强横向基线 `0.683 dB`，其余三项分别
+  高 `1.252/0.733/0.571 dB`。
+- 稀疏退化：RANF 的 Q6-Q26 退化依次为 `0.147/0.017/0.527/0.222 dB`，四项均小于
+  MCAR；MCAR 减 RANF 的退化差为 `0.890/0.325/1.371/0.650 dB`，95% bootstrap
+  区间均不跨 0。SH only 的若干曲线虽为负斜率，但其绝对端点误差较高，不能据此解释为
+  有效的稀疏鲁棒性。
+- 产物：冻结配置与协议分别为 `configs/experiments/sonicom_eight_method_sparsity_v1.json`
+  和 `docs/SONICOM_EIGHT_METHOD_SPARSITY_PROTOCOL.md`；五基线原始结果位于
+  `results/sonicom_five_baseline_sparsity_v1/`，八方法主表、排名、全部 224 个配对对比、
+  120 个学习方法对基线对比和主图位于 `results/sonicom_eight_method_sparsity_v1/`。
+
 ## 2026-08-13：补充 FSP-AE 的八方法 SONICOM-Q26 epoch 39 最终横向比较
 
 - 工作目标：补齐此前 MCAR v3.2 epoch 39 七方法最终横向比较遗漏的 FSP-AE，形成

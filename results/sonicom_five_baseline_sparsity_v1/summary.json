@@ -1,0 +1,1678 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "subject_count": 44,
+  "direction_counts": [
+    6,
+    14,
+    26
+  ],
+  "fixed_evaluation_direction_count": 767,
+  "methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA"
+  ],
+  "aggregate": [
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 6,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 3.2684473753980416,
+      "SD_dB": 0.15013934129970471,
+      "CI95HalfWidth_dB": 0.044363340375907855
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 6,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.6864817505989289,
+      "SD_dB": 0.23492335331441586,
+      "CI95HalfWidth_dB": 0.069415415007935619
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 6,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 6.6912531968349418,
+      "SD_dB": 0.43385676891183023,
+      "CI95HalfWidth_dB": 0.1281964829937946
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 6,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 2.2917271133246655,
+      "SD_dB": 0.45570018996861961,
+      "CI95HalfWidth_dB": 0.13465080146174518
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 6,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.6624089942258675,
+      "SD_dB": 0.32321734896587656,
+      "CI95HalfWidth_dB": 0.095504623528010452
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 6,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.4796204204168744,
+      "SD_dB": 0.267979973848428,
+      "CI95HalfWidth_dB": 0.079183022190254387
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 6,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 6.1422576912221691,
+      "SD_dB": 0.410787828937171,
+      "CI95HalfWidth_dB": 0.12138004682624624
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 6,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 2.3908175591107015,
+      "SD_dB": 0.39587586285277515,
+      "CI95HalfWidth_dB": 0.11697384242073013
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 6,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.4857576460270341,
+      "SD_dB": 0.398295593714211,
+      "CI95HalfWidth_dB": 0.117688827200167
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 6,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.685806597374766,
+      "SD_dB": 0.36268189180743859,
+      "CI95HalfWidth_dB": 0.10716565075581044
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 6,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 6.06523616221433,
+      "SD_dB": 0.40878215061007789,
+      "CI95HalfWidth_dB": 0.12078740675243776
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 6,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 2.2755284967561504,
+      "SD_dB": 0.36912502296632305,
+      "CI95HalfWidth_dB": 0.10906947435203646
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 6,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.5915382653724977,
+      "SD_dB": 0.47109294006641511,
+      "CI95HalfWidth_dB": 0.13919906846490632
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 6,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.80768294175858,
+      "SD_dB": 0.39918151864741575,
+      "CI95HalfWidth_dB": 0.11795060128961643
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 6,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 6.0724293151989457,
+      "SD_dB": 0.40623695261257814,
+      "CI95HalfWidth_dB": 0.12003534880340384
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 6,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 2.0998320660096059,
+      "SD_dB": 0.64820364358251836,
+      "CI95HalfWidth_dB": 0.19153193709403515
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 6,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.2233606902461678,
+      "SD_dB": 0.15854836856798107,
+      "CI95HalfWidth_dB": 0.04684804915179195
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 6,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.1427443999577322,
+      "SD_dB": 0.19375214811388705,
+      "CI95HalfWidth_dB": 0.05725010127879513
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 6,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 6.768999904500359,
+      "SD_dB": 0.45609740431541895,
+      "CI95HalfWidth_dB": 0.13476817080089845
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 6,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.8143475096526374,
+      "SD_dB": 0.31650594023050915,
+      "CI95HalfWidth_dB": 0.0935215289736351
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 14,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.78323042764399,
+      "SD_dB": 0.14364553762534293,
+      "CI95HalfWidth_dB": 0.042444544008172623
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 14,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 5.2514868543862221,
+      "SD_dB": 0.56822095704581133,
+      "CI95HalfWidth_dB": 0.16789856348062332
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 14,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 10.158218047540334,
+      "SD_dB": 1.0437567813800956,
+      "CI95HalfWidth_dB": 0.30841042035475008
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 14,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 4.0569493836867219,
+      "SD_dB": 0.50224311640620334,
+      "CI95HalfWidth_dB": 0.1484033573859094
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 14,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.8937353392666054,
+      "SD_dB": 0.4397210704459617,
+      "CI95HalfWidth_dB": 0.12992927336554871
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 14,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.690500644620867,
+      "SD_dB": 0.23194579450959407,
+      "CI95HalfWidth_dB": 0.068535602604310464
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 14,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 6.3204816509685422,
+      "SD_dB": 0.4694637834701304,
+      "CI95HalfWidth_dB": 0.13871768345295024
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 14,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.7967381448022659,
+      "SD_dB": 1.35515764506878,
+      "CI95HalfWidth_dB": 0.4004234956059331
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 14,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.0516443685619459,
+      "SD_dB": 0.269379491886756,
+      "CI95HalfWidth_dB": 0.079596553344441545
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 14,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.5467083138432676,
+      "SD_dB": 0.32243834280180367,
+      "CI95HalfWidth_dB": 0.095274441915965749
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 14,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.8277277073146649,
+      "SD_dB": 0.3271643417666511,
+      "CI95HalfWidth_dB": 0.09667088537228273
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 14,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.5401456392417088,
+      "SD_dB": 0.28131442905069487,
+      "CI95HalfWidth_dB": 0.083123101917156883
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 14,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.9978039689806282,
+      "SD_dB": 0.23280357695975884,
+      "CI95HalfWidth_dB": 0.068789061121416764
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 14,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.5167466883164233,
+      "SD_dB": 0.3128462702511326,
+      "CI95HalfWidth_dB": 0.092440165597766258
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 14,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.7376309735879572,
+      "SD_dB": 0.31385710602315631,
+      "CI95HalfWidth_dB": 0.092738848481481
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 14,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.4722928941530653,
+      "SD_dB": 0.27285054369770634,
+      "CI95HalfWidth_dB": 0.0806221836130879
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 14,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.3935497064455988,
+      "SD_dB": 0.12401513441782626,
+      "CI95HalfWidth_dB": 0.036644130527784667
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 14,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.5666419957217559,
+      "SD_dB": 0.28196509674002207,
+      "CI95HalfWidth_dB": 0.083315361933241586
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 14,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.2465247260050658,
+      "SD_dB": 0.35691544377464191,
+      "CI95HalfWidth_dB": 0.10546177424600024
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 14,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.0574373902002592,
+      "SD_dB": 0.23905521439132604,
+      "CI95HalfWidth_dB": 0.070636301937065174
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 26,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.6853565497073859,
+      "SD_dB": 0.10719709879556652,
+      "CI95HalfWidth_dB": 0.031674718564832893
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 26,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 3.8352984576351217,
+      "SD_dB": 0.448407865859442,
+      "CI95HalfWidth_dB": 0.13249605738343528
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 26,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 9.06689581596292,
+      "SD_dB": 0.82398323396127993,
+      "CI95HalfWidth_dB": 0.24347148692557552
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "DirectionCount": 26,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 3.5510804362315813,
+      "SD_dB": 0.66368121297142391,
+      "CI95HalfWidth_dB": 0.19610526659613481
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 26,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.8820954156077845,
+      "SD_dB": 0.50595508128233224,
+      "CI95HalfWidth_dB": 0.14950017291631992
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 26,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.22805896857328,
+      "SD_dB": 0.19467840378669729,
+      "CI95HalfWidth_dB": 0.057523792340260289
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 26,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.9936260917447441,
+      "SD_dB": 0.34390027429329828,
+      "CI95HalfWidth_dB": 0.10161603742077741
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "DirectionCount": 26,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 2.0181311827331103,
+      "SD_dB": 1.5642938524445507,
+      "CI95HalfWidth_dB": 0.46221929590998051
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 26,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.8517649005250936,
+      "SD_dB": 0.29011171821363135,
+      "CI95HalfWidth_dB": 0.085722534751630122
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 26,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.2405069378203319,
+      "SD_dB": 0.21233793258491798,
+      "CI95HalfWidth_dB": 0.062741849647370326
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 26,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.5953951778324518,
+      "SD_dB": 0.25812149800037143,
+      "CI95HalfWidth_dB": 0.076270028727988146
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "DirectionCount": 26,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.6369764025659583,
+      "SD_dB": 0.46874534164089871,
+      "CI95HalfWidth_dB": 0.13850539745825632
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 26,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.7522499002980525,
+      "SD_dB": 0.25665558616832057,
+      "CI95HalfWidth_dB": 0.075836879461424325
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 26,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.1820943164132838,
+      "SD_dB": 0.19285169711430897,
+      "CI95HalfWidth_dB": 0.05698403501101814
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 26,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.4756264603832223,
+      "SD_dB": 0.21712596291979955,
+      "CI95HalfWidth_dB": 0.0641566222022366
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "DirectionCount": 26,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.6150625035594686,
+      "SD_dB": 0.44239525325413986,
+      "CI95HalfWidth_dB": 0.13071944389060644
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 26,
+      "Metric": "MeasuredDomainERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.0821981922159161,
+      "SD_dB": 0.095947795671508032,
+      "CI95HalfWidth_dB": 0.028350761904545135
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 26,
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.7457551654408967,
+      "SD_dB": 0.15509699066645322,
+      "CI95HalfWidth_dB": 0.045828232151891017
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 26,
+      "Metric": "ContralateralHemisphereHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 4.6986486094978552,
+      "SD_dB": 0.26608732062341572,
+      "CI95HalfWidth_dB": 0.078623778899935368
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "DirectionCount": 26,
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 0.82938494132529039,
+      "SD_dB": 0.15821204158976965,
+      "CI95HalfWidth_dB": 0.046748670880362019
+    }
+  ],
+  "quality_checks": [
+    {
+      "SubjectLabel": "P0003",
+      "SubjectID": 3,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0003",
+      "SubjectID": 3,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0003",
+      "SubjectID": 3,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5511151231257827E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0007",
+      "SubjectID": 7,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0007",
+      "SubjectID": 7,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.8857805861880479E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0007",
+      "SubjectID": 7,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 8.0059320849734419E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0009",
+      "SubjectID": 9,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0009",
+      "SubjectID": 9,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0009",
+      "SubjectID": 9,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.2803698347351007E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0017",
+      "SubjectID": 17,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.4476024597418194E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0017",
+      "SubjectID": 17,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.3306690738754696E-16,
+      "BarycentricObservedHRTFMaxAbsError": 8.95090418262362E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0017",
+      "SubjectID": 17,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "BarycentricObservedHRTFMaxAbsError": 1.1322097734007351E-15,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0029",
+      "SubjectID": 29,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0029",
+      "SubjectID": 29,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5511151231257827E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0029",
+      "SubjectID": 29,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.900916318210353E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0030",
+      "SubjectID": 30,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0030",
+      "SubjectID": 30,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.3766115072321297E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0030",
+      "SubjectID": 30,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.9787339602818165E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0036",
+      "SubjectID": 36,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0036",
+      "SubjectID": 36,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0036",
+      "SubjectID": 36,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.79553433516819E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0056",
+      "SubjectID": 56,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0056",
+      "SubjectID": 56,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0056",
+      "SubjectID": 56,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.6610488670036757E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0059",
+      "SubjectID": 59,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0059",
+      "SubjectID": 59,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0059",
+      "SubjectID": 59,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.4476024597418194E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0060",
+      "SubjectID": 60,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0060",
+      "SubjectID": 60,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0060",
+      "SubjectID": 60,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.4476024597418194E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0074",
+      "SubjectID": 74,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0074",
+      "SubjectID": 74,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0074",
+      "SubjectID": 74,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.2164496600635175E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0080",
+      "SubjectID": 80,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0080",
+      "SubjectID": 80,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0080",
+      "SubjectID": 80,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.8504622934188756E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0081",
+      "SubjectID": 81,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0081",
+      "SubjectID": 81,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.3306690738754696E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0081",
+      "SubjectID": 81,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5511151231257827E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0090",
+      "SubjectID": 90,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0090",
+      "SubjectID": 90,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0090",
+      "SubjectID": 90,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.4736570491389375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0091",
+      "SubjectID": 91,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0091",
+      "SubjectID": 91,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0091",
+      "SubjectID": 91,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.5108334685767012E-16,
+      "BarycentricObservedHRTFMaxAbsError": 9.0365607197660547E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0094",
+      "SubjectID": 94,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5511151231257827E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0094",
+      "SubjectID": 94,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5459023640279645E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0094",
+      "SubjectID": 94,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.0216669371534024E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0104",
+      "SubjectID": 104,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0104",
+      "SubjectID": 104,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.3766115072321297E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0104",
+      "SubjectID": 104,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5788016545937291E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0114",
+      "SubjectID": 114,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0114",
+      "SubjectID": 114,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0114",
+      "SubjectID": 114,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.6526822989446134E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0117",
+      "SubjectID": 117,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.3306690738754696E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0117",
+      "SubjectID": 117,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.3306690738754696E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0117",
+      "SubjectID": 117,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.3306690738754696E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5511151231257827E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0118",
+      "SubjectID": 118,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0118",
+      "SubjectID": 118,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0118",
+      "SubjectID": 118,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.4736570491389375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0122",
+      "SubjectID": 122,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0122",
+      "SubjectID": 122,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.6526822989446134E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0122",
+      "SubjectID": 122,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.2063353831181828E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0129",
+      "SubjectID": 129,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0129",
+      "SubjectID": 129,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.2803698347351007E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0129",
+      "SubjectID": 129,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.3013519885455932E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0134",
+      "SubjectID": 134,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0134",
+      "SubjectID": 134,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0134",
+      "SubjectID": 134,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0147",
+      "SubjectID": 147,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0147",
+      "SubjectID": 147,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.3766115072321297E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0147",
+      "SubjectID": 147,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.7219584981527971E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0163",
+      "SubjectID": 163,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.23691153334427E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0163",
+      "SubjectID": 163,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.6610488670036757E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0163",
+      "SubjectID": 163,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "BarycentricObservedHRTFMaxAbsError": 9.0365607197660547E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0177",
+      "SubjectID": 177,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.8663501977833557E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0177",
+      "SubjectID": 177,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.8663501977833557E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0177",
+      "SubjectID": 177,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 9.4857496805350942E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0231",
+      "SubjectID": 231,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.2803698347351007E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0231",
+      "SubjectID": 231,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0231",
+      "SubjectID": 231,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 7.0216669371534024E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0234",
+      "SubjectID": 234,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2204460492503131E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.47545209131181E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0234",
+      "SubjectID": 234,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2204460492503131E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0234",
+      "SubjectID": 234,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5182803598830274E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0237",
+      "SubjectID": 237,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5511151231257827E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0237",
+      "SubjectID": 237,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.23691153334427E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0237",
+      "SubjectID": 237,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 5.5788016545937291E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0240",
+      "SubjectID": 240,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2204460492503131E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0240",
+      "SubjectID": 240,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2204460492503131E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.002966042486721E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0240",
+      "SubjectID": 240,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 6.3353279347662809E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0260",
+      "SubjectID": 260,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0260",
+      "SubjectID": 260,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0260",
+      "SubjectID": 260,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.002966042486721E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0261",
+      "SubjectID": 261,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0261",
+      "SubjectID": 261,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.335559509131367E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0261",
+      "SubjectID": 261,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5182803598830274E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0291",
+      "SubjectID": 291,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.6653345369377348E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0291",
+      "SubjectID": 291,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.6653345369377348E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0291",
+      "SubjectID": 291,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.554447978966673E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0293",
+      "SubjectID": 293,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0293",
+      "SubjectID": 293,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0293",
+      "SubjectID": 293,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.5108334685767012E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0304",
+      "SubjectID": 304,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0304",
+      "SubjectID": 304,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.7238012298709097E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0304",
+      "SubjectID": 304,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0309",
+      "SubjectID": 309,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0309",
+      "SubjectID": 309,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.554447978966673E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0309",
+      "SubjectID": 309,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2204460492503131E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.9650683064945462E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0324",
+      "SubjectID": 324,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.3306690738754696E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0324",
+      "SubjectID": 324,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.8305244335018379E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0324",
+      "SubjectID": 324,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0325",
+      "SubjectID": 325,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0325",
+      "SubjectID": 325,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.2368285245694688E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0325",
+      "SubjectID": 325,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.7428748402675471E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0327",
+      "SubjectID": 327,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.2412670766236366E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0327",
+      "SubjectID": 327,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.2887833992611187E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0327",
+      "SubjectID": 327,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.2377260456559048E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.7238012298709097E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0331",
+      "SubjectID": 331,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.002966042486721E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0331",
+      "SubjectID": 331,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0331",
+      "SubjectID": 331,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0339",
+      "SubjectID": 339,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0339",
+      "SubjectID": 339,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.1401849173675503E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0339",
+      "SubjectID": 339,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.6653345369377348E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.8473028914566782E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0349",
+      "SubjectID": 349,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.5700924586837752E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.002966042486721E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0349",
+      "SubjectID": 349,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.6653345369377348E-16,
+      "BarycentricObservedHRTFMaxAbsError": 2.5476231888929306E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0349",
+      "SubjectID": 349,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 1.6653345369377348E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.002966042486721E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0364",
+      "SubjectID": 364,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.5108334685767012E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0364",
+      "SubjectID": 364,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.002966042486721E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0364",
+      "SubjectID": 364,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.7755575615628914E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.4408920985006262E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0371",
+      "SubjectID": 371,
+      "DirectionCount": 6,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5182803598830274E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0371",
+      "SubjectID": 371,
+      "DirectionCount": 14,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 3.6506759942727966E-16,
+      "EvaluationDirectionCount": 767
+    },
+    {
+      "SubjectLabel": "P0371",
+      "SubjectID": 371,
+      "DirectionCount": 26,
+      "NaturalNeighborObservedHRTFMaxAbsError": 2.4825341532472731E-16,
+      "BarycentricObservedHRTFMaxAbsError": 4.5775667985222375E-16,
+      "EvaluationDirectionCount": 767
+    }
+  ]
+}

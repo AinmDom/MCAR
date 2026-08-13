@@ -1,0 +1,129 @@
+Metric,Quantity,Rank,Method,MethodLabel,Value_dB
+MeasuredDomainERB,Q6Endpoint,1,RANF,RANF,1.2104671658495176
+MeasuredDomainERB,Q6Endpoint,2,MCARv32,MCAR v3.2,1.8931467747424184
+MeasuredDomainERB,Q6Endpoint,3,MCA,MCA,2.2233606902461682
+MeasuredDomainERB,Q6Endpoint,4,SUpDEqNN,SUpDEq + Natural Neighbor,2.485757646027034
+MeasuredDomainERB,Q6Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,2.5915382653724977
+MeasuredDomainERB,Q6Endpoint,6,SUpDEqSH,SUpDEq + SH,2.662408994225867
+MeasuredDomainERB,Q6Endpoint,7,SHOnly,SH only,3.2684473753980425
+MeasuredDomainERB,Q6Endpoint,8,FSPAE,FSP-AE,3.474883348084933
+MeasuredDomainERB,Q14Endpoint,1,RANF,RANF,1.118534833640979
+MeasuredDomainERB,Q14Endpoint,2,MCARv32,MCAR v3.2,1.2048979218968272
+MeasuredDomainERB,Q14Endpoint,3,MCA,MCA,1.3935497064455982
+MeasuredDomainERB,Q14Endpoint,4,SUpDEqSH,SUpDEq + SH,1.8937353392666054
+MeasuredDomainERB,Q14Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,1.9978039689806293
+MeasuredDomainERB,Q14Endpoint,6,SUpDEqNN,SUpDEq + Natural Neighbor,2.0516443685619463
+MeasuredDomainERB,Q14Endpoint,7,FSPAE,FSP-AE,2.136787962826762
+MeasuredDomainERB,Q14Endpoint,8,SHOnly,SH only,2.783230427643991
+MeasuredDomainERB,Q26Endpoint,1,MCARv32,MCAR v3.2,0.8556758385847979
+MeasuredDomainERB,Q26Endpoint,2,RANF,RANF,1.0632355611137425
+MeasuredDomainERB,Q26Endpoint,3,MCA,MCA,1.0821981922159156
+MeasuredDomainERB,Q26Endpoint,4,FSPAE,FSP-AE,1.1844928281701028
+MeasuredDomainERB,Q26Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,1.7522499002980525
+MeasuredDomainERB,Q26Endpoint,6,SUpDEqNN,SUpDEq + Natural Neighbor,1.8517649005250931
+MeasuredDomainERB,Q26Endpoint,7,SUpDEqSH,SUpDEq + SH,1.8820954156077834
+MeasuredDomainERB,Q26Endpoint,8,SHOnly,SH only,2.6853565497073864
+MeasuredDomainERB,Q6MinusQ26Degradation,1,RANF,RANF,0.14723160473577532
+MeasuredDomainERB,Q6MinusQ26Degradation,2,SHOnly,SH only,0.5830908256906556
+MeasuredDomainERB,Q6MinusQ26Degradation,3,SUpDEqNN,SUpDEq + Natural Neighbor,0.6339927455019411
+MeasuredDomainERB,Q6MinusQ26Degradation,4,SUpDEqSH,SUpDEq + SH,0.7803135786180838
+MeasuredDomainERB,Q6MinusQ26Degradation,5,SUpDEqBary,SUpDEq + Barycentric,0.8392883650744444
+MeasuredDomainERB,Q6MinusQ26Degradation,6,MCARv32,MCAR v3.2,1.0374709361576202
+MeasuredDomainERB,Q6MinusQ26Degradation,7,MCA,MCA,1.1411624980302526
+MeasuredDomainERB,Q6MinusQ26Degradation,8,FSPAE,FSP-AE,2.2903905199148293
+Contralateral25ERB,Q6Endpoint,1,RANF,RANF,1.5748048193653352
+Contralateral25ERB,Q6Endpoint,2,MCARv32,MCAR v3.2,1.6926085372131416
+Contralateral25ERB,Q6Endpoint,3,MCA,MCA,2.142744399957732
+Contralateral25ERB,Q6Endpoint,4,SUpDEqSH,SUpDEq + SH,2.4796204204168744
+Contralateral25ERB,Q6Endpoint,5,SUpDEqNN,SUpDEq + Natural Neighbor,2.6858065973747656
+Contralateral25ERB,Q6Endpoint,6,SHOnly,SH only,2.686481750598929
+Contralateral25ERB,Q6Endpoint,7,SUpDEqBary,SUpDEq + Barycentric,2.80768294175858
+Contralateral25ERB,Q6Endpoint,8,FSPAE,FSP-AE,2.875623362141274
+Contralateral25ERB,Q14Endpoint,1,RANF,RANF,1.5657552176546765
+Contralateral25ERB,Q14Endpoint,2,MCARv32,MCAR v3.2,1.9666884696672404
+Contralateral25ERB,Q14Endpoint,3,SUpDEqBary,SUpDEq + Barycentric,2.5167466883164233
+Contralateral25ERB,Q14Endpoint,4,SUpDEqNN,SUpDEq + Natural Neighbor,2.5467083138432667
+Contralateral25ERB,Q14Endpoint,5,FSPAE,FSP-AE,2.566427158017161
+Contralateral25ERB,Q14Endpoint,6,MCA,MCA,2.566641995721756
+Contralateral25ERB,Q14Endpoint,7,SUpDEqSH,SUpDEq + SH,2.6905006446208675
+Contralateral25ERB,Q14Endpoint,8,SHOnly,SH only,5.251486854386222
+Contralateral25ERB,Q26Endpoint,1,MCARv32,MCAR v3.2,1.349975216207025
+Contralateral25ERB,Q26Endpoint,2,RANF,RANF,1.5573225331098355
+Contralateral25ERB,Q26Endpoint,3,MCA,MCA,1.7457551654408971
+Contralateral25ERB,Q26Endpoint,4,FSPAE,FSP-AE,1.90887228420138
+Contralateral25ERB,Q26Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,2.1820943164132847
+Contralateral25ERB,Q26Endpoint,6,SUpDEqSH,SUpDEq + SH,2.22805896857328
+Contralateral25ERB,Q26Endpoint,7,SUpDEqNN,SUpDEq + Natural Neighbor,2.240506937820331
+Contralateral25ERB,Q26Endpoint,8,SHOnly,SH only,3.8352984576351217
+Contralateral25ERB,Q6MinusQ26Degradation,1,SHOnly,SH only,-1.148816707036193
+Contralateral25ERB,Q6MinusQ26Degradation,2,RANF,RANF,0.017482286255499115
+Contralateral25ERB,Q6MinusQ26Degradation,3,SUpDEqSH,SUpDEq + SH,0.2515614518435939
+Contralateral25ERB,Q6MinusQ26Degradation,4,MCARv32,MCAR v3.2,0.3426333210061164
+Contralateral25ERB,Q6MinusQ26Degradation,5,MCA,MCA,0.3969892345168348
+Contralateral25ERB,Q6MinusQ26Degradation,6,SUpDEqNN,SUpDEq + Natural Neighbor,0.44529965955443435
+Contralateral25ERB,Q6MinusQ26Degradation,7,SUpDEqBary,SUpDEq + Barycentric,0.6255886253452956
+Contralateral25ERB,Q6MinusQ26Degradation,8,FSPAE,FSP-AE,0.9667510779398938
+ContralateralHemisphereHighFrequency,Q6Endpoint,1,RANF,RANF,3.99686239458475
+ContralateralHemisphereHighFrequency,Q6Endpoint,2,FSPAE,FSP-AE,5.382141341724199
+ContralateralHemisphereHighFrequency,Q6Endpoint,3,MCARv32,MCAR v3.2,5.488833232607977
+ContralateralHemisphereHighFrequency,Q6Endpoint,4,SUpDEqNN,SUpDEq + Natural Neighbor,6.065236162214328
+ContralateralHemisphereHighFrequency,Q6Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,6.072429315198946
+ContralateralHemisphereHighFrequency,Q6Endpoint,6,SUpDEqSH,SUpDEq + SH,6.142257691222169
+ContralateralHemisphereHighFrequency,Q6Endpoint,7,SHOnly,SH only,6.691253196834944
+ContralateralHemisphereHighFrequency,Q6Endpoint,8,MCA,MCA,6.768999904500358
+ContralateralHemisphereHighFrequency,Q14Endpoint,1,RANF,RANF,3.6699832322893546
+ContralateralHemisphereHighFrequency,Q14Endpoint,2,FSPAE,FSP-AE,4.037511793212799
+ContralateralHemisphereHighFrequency,Q14Endpoint,3,MCARv32,MCAR v3.2,4.292772446100411
+ContralateralHemisphereHighFrequency,Q14Endpoint,4,MCA,MCA,5.246524726005067
+ContralateralHemisphereHighFrequency,Q14Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,5.737630973587956
+ContralateralHemisphereHighFrequency,Q14Endpoint,6,SUpDEqNN,SUpDEq + Natural Neighbor,5.827727707314664
+ContralateralHemisphereHighFrequency,Q14Endpoint,7,SUpDEqSH,SUpDEq + SH,6.320481650968542
+ContralateralHemisphereHighFrequency,Q14Endpoint,8,SHOnly,SH only,10.158218047540334
+ContralateralHemisphereHighFrequency,Q26Endpoint,1,FSPAE,FSP-AE,3.164354686464155
+ContralateralHemisphereHighFrequency,Q26Endpoint,2,RANF,RANF,3.4696827666970296
+ContralateralHemisphereHighFrequency,Q26Endpoint,3,MCARv32,MCAR v3.2,3.590453633127409
+ContralateralHemisphereHighFrequency,Q26Endpoint,4,MCA,MCA,4.698648609497855
+ContralateralHemisphereHighFrequency,Q26Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,5.475626460383221
+ContralateralHemisphereHighFrequency,Q26Endpoint,6,SUpDEqNN,SUpDEq + Natural Neighbor,5.595395177832452
+ContralateralHemisphereHighFrequency,Q26Endpoint,7,SUpDEqSH,SUpDEq + SH,5.993626091744744
+ContralateralHemisphereHighFrequency,Q26Endpoint,8,SHOnly,SH only,9.06689581596292
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,1,SHOnly,SH only,-2.375642619127978
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,2,SUpDEqSH,SUpDEq + SH,0.14863159947742324
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,3,SUpDEqNN,SUpDEq + Natural Neighbor,0.46984098438187766
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,4,RANF,RANF,0.5271796278877215
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,5,SUpDEqBary,SUpDEq + Barycentric,0.5968028548157238
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,6,MCARv32,MCAR v3.2,1.8983795994805683
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,7,MCA,MCA,2.070351295002503
+ContralateralHemisphereHighFrequency,Q6MinusQ26Degradation,8,FSPAE,FSP-AE,2.217786655260044
+HorizontalILDMAE,Q6Endpoint,1,RANF,RANF,0.9977210024002116
+HorizontalILDMAE,Q6Endpoint,2,MCARv32,MCAR v3.2,1.532969423437087
+HorizontalILDMAE,Q6Endpoint,3,MCA,MCA,1.8143475096526371
+HorizontalILDMAE,Q6Endpoint,4,SUpDEqBary,SUpDEq + Barycentric,2.0998320660096064
+HorizontalILDMAE,Q6Endpoint,5,SUpDEqNN,SUpDEq + Natural Neighbor,2.2755284967561518
+HorizontalILDMAE,Q6Endpoint,6,SHOnly,SH only,2.2917271133246646
+HorizontalILDMAE,Q6Endpoint,7,FSPAE,FSP-AE,2.3851826993151595
+HorizontalILDMAE,Q6Endpoint,8,SUpDEqSH,SUpDEq + SH,2.390817559110701
+HorizontalILDMAE,Q14Endpoint,1,RANF,RANF,0.7907454519804077
+HorizontalILDMAE,Q14Endpoint,2,MCARv32,MCAR v3.2,0.8680731355461494
+HorizontalILDMAE,Q14Endpoint,3,MCA,MCA,1.0574373902002592
+HorizontalILDMAE,Q14Endpoint,4,SUpDEqBary,SUpDEq + Barycentric,1.4722928941530655
+HorizontalILDMAE,Q14Endpoint,5,SUpDEqNN,SUpDEq + Natural Neighbor,1.5401456392417088
+HorizontalILDMAE,Q14Endpoint,6,SUpDEqSH,SUpDEq + SH,1.7967381448022677
+HorizontalILDMAE,Q14Endpoint,7,FSPAE,FSP-AE,2.07244105246656
+HorizontalILDMAE,Q14Endpoint,8,SHOnly,SH only,4.056949383686722
+HorizontalILDMAE,Q26Endpoint,1,MCARv32,MCAR v3.2,0.6602974933740188
+HorizontalILDMAE,Q26Endpoint,2,FSPAE,FSP-AE,0.7586678868554789
+HorizontalILDMAE,Q26Endpoint,3,RANF,RANF,0.7754627752953565
+HorizontalILDMAE,Q26Endpoint,4,MCA,MCA,0.8293849413252904
+HorizontalILDMAE,Q26Endpoint,5,SUpDEqBary,SUpDEq + Barycentric,1.6150625035594692
+HorizontalILDMAE,Q26Endpoint,6,SUpDEqNN,SUpDEq + Natural Neighbor,1.6369764025659586
+HorizontalILDMAE,Q26Endpoint,7,SUpDEqSH,SUpDEq + SH,2.018131182733109
+HorizontalILDMAE,Q26Endpoint,8,SHOnly,SH only,3.5510804362315813
+HorizontalILDMAE,Q6MinusQ26Degradation,1,SHOnly,SH only,-1.2593533229069171
+HorizontalILDMAE,Q6MinusQ26Degradation,2,RANF,RANF,0.2222582271048549
+HorizontalILDMAE,Q6MinusQ26Degradation,3,SUpDEqSH,SUpDEq + SH,0.37268637637759205
+HorizontalILDMAE,Q6MinusQ26Degradation,4,SUpDEqBary,SUpDEq + Barycentric,0.4847695624501372
+HorizontalILDMAE,Q6MinusQ26Degradation,5,SUpDEqNN,SUpDEq + Natural Neighbor,0.6385520941901929
+HorizontalILDMAE,Q6MinusQ26Degradation,6,MCARv32,MCAR v3.2,0.8726719300630678
+HorizontalILDMAE,Q6MinusQ26Degradation,7,MCA,MCA,0.9849625683273466
+HorizontalILDMAE,Q6MinusQ26Degradation,8,FSPAE,FSP-AE,1.6265148124596807

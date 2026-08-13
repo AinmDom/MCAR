@@ -1,5 +1,34 @@
 # 项目实验日志
 
+## 2026-08-13：SONICOM 三种学习方法稀疏度实验（有效）
+
+> 状态：有效。该实验是当前用于比较学习型方法稀疏鲁棒性的正式实验，方法为
+> MCAR v3.2、FSP-AE 和 RANF。
+
+- 冻结协议：使用固定 SONICOM test 划分中的 44 名受试者，在嵌套的
+  `Q=6/14/26` 观测方向上比较三种方法。所有方法和稀疏度共用同一个评价掩码，
+  排除完整 Q26 输入集合，仅评价剩余 767 个方向。SONICOM test 此前已用于 Q26
+  冻结评测，因此本实验是预先固定的新稀疏度分析，不表述为未见外部验证。
+- 方法：MCAR 使用冻结的 v3.2 epoch 39 residual checkpoint，并在每个 Q 下重新计算
+  MCA 物理先验；FSP-AE 使用冻结的 epoch 40 checkpoint，仅编码当前 Q 的观测；
+  RANF 从同一个冻结的 Q26 预训练 checkpoint 出发，在每个 Q 下重新计算训练受试者
+  检索距离，并分别执行 1000 epoch、batch size 3 的逐受试者适配。
+- 完整性：完成 `44 x 3 = 132` 个受试者-稀疏度案例，三方法、四指标共
+  `44 x 3 x 3 x 4 = 1584` 行逐受试者结果。指标为测量域 ERB、对侧 25 度 ERB、
+  对侧半球 10--20 kHz 幅度误差和水平面 ILD MAE；全部案例使用 767 个评价方向。
+- 主要结果：RANF 在 Q6 的四项平均误差均最低，且四项 `Q6-Q26` 退化均最小。
+  测量域 ERB 的 `Q6-Q26` 退化分别为 RANF `0.147 dB`、MCAR `1.037 dB`、
+  FSP-AE `2.290 dB`。RANF 相对 MCAR 和 FSP-AE 的所有 Q6 端点及退化对比均由
+  10,000 次配对受试者 bootstrap 支持（seed `20260812`，双侧 `p=0.0002`）。
+  结论是 RANF 在极稀疏输入下最稳定；MCAR 在 Q26 的多数绝对指标仍更低，FSP-AE
+  对方向数减少最敏感。
+- 产物：冻结配置为
+  `configs/experiments/sonicom_learned_methods_sparsity_v1.json`，完整协议为
+  `docs/SONICOM_LEARNED_SPARSITY_PROTOCOL.md`，逐受试者表、聚合表、配对统计、
+  质量检查、RANF 适配成本和主图位于
+  `results/sonicom_learned_methods_sparsity_v1/`。有效实验代码与结果提交为
+  `4879ca2`（`完成SONICOM三种学习方法稀疏度实验`）。
+
 ## 2026-08-12：MCAR v3.2 epoch 39 七方法 SONICOM-Q26 最终 test 横向比较
 
 - 工作目标：将已经确定为论文主模型的 MCAR v3.2 seed `20260809` epoch `39`

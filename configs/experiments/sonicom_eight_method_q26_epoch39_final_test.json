@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-13",
+  "status": "completed",
+  "purpose": "Add the frozen FSP-AE result to the final MCAR v3.2 epoch-39 seven-method SONICOM-Q26 test comparison.",
+  "merge_policy": "Reuse frozen subject-level metrics only; do not retrain, rerun inference, read HRTFs, or copy aggregate rows derived against the earlier MCAR checkpoint.",
+  "dataset": {
+    "split": "test",
+    "subject_count": 44,
+    "sparse_grid": "SONICOM-Q26-v1",
+    "sparse_direction_count": 26,
+    "evaluation_direction_count": 767
+  },
+  "sources": {
+    "seven_method_epoch39": "results/sonicom_seven_method_q26_epoch39_final_test",
+    "seven_method_metric_long_sha256": "9416B94CFE3B24A83E0F40157D44FB88A4470F3F1767A256A17FC231E4168D80",
+    "fsp_ae_locked_test": "results/sonicom_fsp_ae_q26_locked_final_test",
+    "fsp_ae_metric_long_sha256": "CE5C162231F7F1D7B8FC39175BDC6DEEFCD47E3316A4251A8A21660BD8D723F6"
+  },
+  "models": {
+    "mcar": "MCAR v3.2 epoch 39",
+    "mcar_checkpoint_sha256": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "fsp_ae": "FSP-AE-Q26 adaptation epoch 40",
+    "fsp_ae_checkpoint_sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F"
+  },
+  "methods": [
+    "SH only",
+    "SUpDEq + SH",
+    "SUpDEq + Natural Neighbor",
+    "SUpDEq + Barycentric",
+    "MCA",
+    "RANF",
+    "MCAR v3.2 epoch 39",
+    "FSP-AE"
+  ],
+  "metrics": [
+    "MeasuredDomainERB",
+    "Contralateral25ERB",
+    "ContralateralHemisphereHF",
+    "HorizontalILDMAE"
+  ],
+  "bootstrap": {
+    "repetitions": 100000,
+    "seed": 20260813,
+    "unit": "paired subject"
+  },
+  "output_name": "sonicom_eight_method_q26_epoch39_final_test",
+  "command": "matlab -batch \"addpath('matlab'); mcar.merge_sonicom_eight_method_epoch39_results\"",
+  "execution": {
+    "completed_on": "2026-08-13",
+    "result_root": "results/sonicom_eight_method_q26_epoch39_final_test",
+    "merge_time_test_subject_count_read": 0,
+    "subject_count": 44,
+    "method_count": 8,
+    "metric_count": 4,
+    "metric_long_row_count": 1408,
+    "aggregate_row_count": 32,
+    "nonfinite_metric_count": 0,
+    "common_non_mcar_max_abs_difference_db": 0,
+    "fsp_ae_frequency_max_abs_error_hz": 0
+  }
+}

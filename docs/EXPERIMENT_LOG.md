@@ -1,5 +1,54 @@
 # 项目实验日志
 
+## 2026-08-13：补充 FSP-AE 的八方法 SONICOM-Q26 epoch 39 最终横向比较
+
+- 工作目标：补齐此前 MCAR v3.2 epoch 39 七方法最终横向比较遗漏的 FSP-AE，形成
+  SH only、SUpDEq + SH、SUpDEq + Natural Neighbor、SUpDEq + Barycentric、
+  MCA、RANF、MCAR v3.2 epoch 39 和 FSP-AE 的完整八方法论文结果。
+- 复用与口径：FSP-AE 已在同一 SONICOM 固定 test 划分上完成冻结推理和严格评价，故本次
+  未重新训练、推理或读取 HRTF/test 数据，而是以
+  `results/sonicom_seven_method_q26_epoch39_final_test/metric_long.csv` 为主表，仅从
+  `results/sonicom_fsp_ae_q26_locked_final_test/metric_long.csv` 提取 44 名被试的
+  FSP-AE 四项逐被试指标。两份源结果的 44 名被试及顺序一致；SH、三种 SUpDEq、MCA
+  和 RANF 共 24 个共有逐被试指标变量最大绝对差严格为 `0 dB`。旧 FSP-AE 结果目录中的
+  MCAR 使用较早 checkpoint，本次没有复用其 MCAR 行，所有相对量均针对论文主模型
+  epoch 39 重新计算。
+- 冻结模型：MCAR v3.2 epoch 39 checkpoint SHA-256 为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`；
+  FSP-AE-Q26 adaptation epoch 40 checkpoint SHA-256 为
+  `25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F`。
+  输入为固定 Q26 的 26 个实测方向，评价排除输入，仅统计 767 个纯插值方向；44 名 test
+  被试、四项指标、solid-angle/频段/HRIR-ILD 口径均与七方法表完全一致。
+- 八方法结果（测量域 ERB / 对侧 25 度 ERB / 对侧半球 10--20 kHz / 水平面 ILD，
+  `mean +/- subject standard deviation`，单位 dB、越低越好）：SH only 为
+  `2.685 +/- 0.107 / 3.835 +/- 0.448 / 9.067 +/- 0.824 / 3.551 +/- 0.664`；
+  SUpDEq + SH 为 `1.882 +/- 0.506 / 2.228 +/- 0.195 / 5.994 +/- 0.344 /
+  2.018 +/- 1.564`；SUpDEq + Natural Neighbor 为 `1.852 +/- 0.290 /
+  2.241 +/- 0.212 / 5.595 +/- 0.258 / 1.637 +/- 0.469`；SUpDEq + Barycentric 为
+  `1.752 +/- 0.257 / 2.182 +/- 0.193 / 5.476 +/- 0.217 / 1.615 +/- 0.442`；
+  MCA 为 `1.082 +/- 0.096 / 1.746 +/- 0.155 / 4.699 +/- 0.266 /
+  0.829 +/- 0.158`；RANF 为 `1.063 +/- 0.126 / 1.557 +/- 0.164 /
+  3.470 +/- 0.254 / 0.775 +/- 0.189`；MCAR v3.2 epoch 39 为
+  `0.856 +/- 0.160 / 1.350 +/- 0.179 / 3.590 +/- 0.275 / 0.660 +/- 0.250`；
+  FSP-AE 为 `1.184 +/- 0.349 / 1.909 +/- 0.701 / 3.164 +/- 0.685 /
+  0.759 +/- 1.040`。
+- 排名与配对统计：按被试均值，MCAR 在测量域 ERB、对侧 25 度 ERB和水平面 ILD 三项
+  排名第一；FSP-AE 在对侧半球高频排名第一。FSP-AE 减 MCAR 的四项均值差及 100,000
+  次固定 seed `20260813` 配对被试 bootstrap 95% 区间依次为
+  `0.3288 [0.2843,0.3979] / 0.5589 [0.4574,0.7350] /
+  -0.4261 [-0.5396,-0.2412] / 0.0984 [-0.0579,0.3704] dB`。MCAR 在前两项分别
+  44/44 人更低；FSP-AE 在高频项 43/44 人更低。水平面 ILD 的均值由 MCAR 更低，但区间
+  跨 0，且 FSP-AE 在 27/44 人更低，因此不能宣称 MCAR 在该项显著优于 FSP-AE。
+- 完整性：新长表为精确的 `44 x 8 x 4 = 1408` 行，聚合表 32 行，逐被试表和质量检查
+  各 44 行；被试-方法-指标键无重复，所有指标均为有限值，FSP-AE 频率网格最大偏差为
+  `0 Hz`。合并过程读取 test 被试或模型 prediction 的数量为 `0`。
+- 产物：冻结配置为
+  `configs/experiments/sonicom_eight_method_q26_epoch39_final_test.json`；可复现合并器为
+  `matlab/+mcar/merge_sonicom_eight_method_epoch39_results.m`；正式结果位于
+  `results/sonicom_eight_method_q26_epoch39_final_test/`，包括论文标签主表、逐被试宽/长
+  表、四指标排名、MCA/RANF/FSP-AE 相对 epoch 39 的配对 bootstrap、质量检查、JSON
+  摘要和八方法聚合图。旧七方法目录保留为审计来源，不覆盖或删除。
+
 ## 2026-08-13：SONICOM 三种学习方法稀疏度实验（有效）
 
 > 状态：有效。该实验是当前用于比较学习型方法稀疏鲁棒性的正式实验，方法为

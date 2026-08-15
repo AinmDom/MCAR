@@ -1,0 +1,49 @@
+DirectionCount,Method,MethodLabel,Metric,GroupCount,Mean_dB,Std_dB
+6,FSPAE,FSP-AE direct generation,Contralateral25ERB,12,9.152504,0.1491886
+6,FSPAE,FSP-AE direct generation,ContralateralHighFrequency,12,15.39516,0.9589241
+6,FSPAE,FSP-AE direct generation,FullSphereERB,12,13.57195,0.193986
+6,FSPAE,FSP-AE direct generation,HorizontalILDMAE,12,3.445158,0.2785051
+6,MCA,MCA,Contralateral25ERB,12,2.382032,0.1987395
+6,MCA,MCA,ContralateralHighFrequency,12,5.690109,0.4045418
+6,MCA,MCA,FullSphereERB,12,1.622956,0.09509539
+6,MCA,MCA,HorizontalILDMAE,12,1.662941,0.4304875
+6,MCARv32,MCAR v3.2 epoch 39,Contralateral25ERB,12,2.31852,0.1526221
+6,MCARv32,MCAR v3.2 epoch 39,ContralateralHighFrequency,12,5.20726,0.3522664
+6,MCARv32,MCAR v3.2 epoch 39,FullSphereERB,12,2.106075,0.081917
+6,MCARv32,MCAR v3.2 epoch 39,HorizontalILDMAE,12,1.895952,0.412111
+6,SH,Traditional SH interpolation,Contralateral25ERB,12,7.511862,0.4130159
+6,SH,Traditional SH interpolation,ContralateralHighFrequency,12,10.20493,0.7363978
+6,SH,Traditional SH interpolation,FullSphereERB,12,3.583273,0.1272094
+6,SH,Traditional SH interpolation,HorizontalILDMAE,12,8.402375,0.6871617
+14,FSPAE,FSP-AE direct generation,Contralateral25ERB,12,8.396489,0.1530424
+14,FSPAE,FSP-AE direct generation,ContralateralHighFrequency,12,12.87082,0.8836016
+14,FSPAE,FSP-AE direct generation,FullSphereERB,12,10.75309,0.1735925
+14,FSPAE,FSP-AE direct generation,HorizontalILDMAE,12,5.175668,0.6468899
+14,MCA,MCA,Contralateral25ERB,12,1.846511,0.1295327
+14,MCA,MCA,ContralateralHighFrequency,12,4.561512,0.2742896
+14,MCA,MCA,FullSphereERB,12,1.029229,0.03447091
+14,MCA,MCA,HorizontalILDMAE,12,1.175435,0.2642266
+14,MCARv32,MCAR v3.2 epoch 39,Contralateral25ERB,12,2.572315,0.1566711
+14,MCARv32,MCAR v3.2 epoch 39,ContralateralHighFrequency,12,4.759843,0.1930969
+14,MCARv32,MCAR v3.2 epoch 39,FullSphereERB,12,1.905291,0.04259038
+14,MCARv32,MCAR v3.2 epoch 39,HorizontalILDMAE,12,1.282187,0.3447369
+14,SH,Traditional SH interpolation,Contralateral25ERB,12,5.662355,0.3272065
+14,SH,Traditional SH interpolation,ContralateralHighFrequency,12,8.283048,0.4537393
+14,SH,Traditional SH interpolation,FullSphereERB,12,3.044836,0.08834892
+14,SH,Traditional SH interpolation,HorizontalILDMAE,12,6.472071,0.8327352
+26,FSPAE,FSP-AE direct generation,Contralateral25ERB,12,8.590761,0.1768895
+26,FSPAE,FSP-AE direct generation,ContralateralHighFrequency,12,11.28209,0.8257583
+26,FSPAE,FSP-AE direct generation,FullSphereERB,12,10.71464,0.1712217
+26,FSPAE,FSP-AE direct generation,HorizontalILDMAE,12,4.703716,0.895427
+26,MCA,MCA,Contralateral25ERB,12,1.860285,0.1158924
+26,MCA,MCA,ContralateralHighFrequency,12,4.056122,0.2520289
+26,MCA,MCA,FullSphereERB,12,0.80285,0.02546137
+26,MCA,MCA,HorizontalILDMAE,12,0.8942909,0.2109869
+26,MCARv32,MCAR v3.2 epoch 39,Contralateral25ERB,12,2.414218,0.09402601
+26,MCARv32,MCAR v3.2 epoch 39,ContralateralHighFrequency,12,4.615718,0.1967664
+26,MCARv32,MCAR v3.2 epoch 39,FullSphereERB,12,1.781157,0.04176126
+26,MCARv32,MCAR v3.2 epoch 39,HorizontalILDMAE,12,1.096127,0.2677212
+26,SH,Traditional SH interpolation,Contralateral25ERB,12,5.516745,0.318514
+26,SH,Traditional SH interpolation,ContralateralHighFrequency,12,7.411871,0.3923128
+26,SH,Traditional SH interpolation,FullSphereERB,12,2.306182,0.08725238
+26,SH,Traditional SH interpolation,HorizontalILDMAE,12,6.756926,0.6918277

@@ -1,0 +1,657 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "external_dataset": "HUTUBS",
+  "split": "test",
+  "subject_count": 12,
+  "direction_counts": [
+    6,
+    14,
+    26
+  ],
+  "test_subject_count_read": 12,
+  "aggregate": [
+    {
+      "DirectionCount": 6,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 9.15250397,
+      "Std_dB": 0.149188563
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 15.3951597,
+      "Std_dB": 0.958924055
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 13.5719519,
+      "Std_dB": 0.193985984
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 3.445158,
+      "Std_dB": 0.278505147
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 2.38203168,
+      "Std_dB": 0.198739499
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 5.69010878,
+      "Std_dB": 0.40454182
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 1.6229558,
+      "Std_dB": 0.0950953886
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 1.6629411,
+      "Std_dB": 0.430487543
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 2.31851983,
+      "Std_dB": 0.152622074
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 5.20725965,
+      "Std_dB": 0.352266431
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 2.10607457,
+      "Std_dB": 0.0819169953
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 1.89595222,
+      "Std_dB": 0.412111044
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 7.5118618,
+      "Std_dB": 0.413015872
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 10.2049284,
+      "Std_dB": 0.736397803
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 3.5832727,
+      "Std_dB": 0.12720938
+    },
+    {
+      "DirectionCount": 6,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 8.40237522,
+      "Std_dB": 0.687161684
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 8.39648914,
+      "Std_dB": 0.153042436
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 12.8708191,
+      "Std_dB": 0.883601606
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 10.753087,
+      "Std_dB": 0.173592478
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 5.17566776,
+      "Std_dB": 0.646889865
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 1.84651077,
+      "Std_dB": 0.12953268
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 4.56151152,
+      "Std_dB": 0.274289608
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 1.02922904,
+      "Std_dB": 0.0344709083
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 1.17543519,
+      "Std_dB": 0.264226615
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 2.57231498,
+      "Std_dB": 0.156671107
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 4.75984287,
+      "Std_dB": 0.193096906
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 1.90529108,
+      "Std_dB": 0.0425903834
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 1.28218734,
+      "Std_dB": 0.344736904
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 5.66235542,
+      "Std_dB": 0.327206522
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 8.28304768,
+      "Std_dB": 0.453739345
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 3.04483604,
+      "Std_dB": 0.0883489177
+    },
+    {
+      "DirectionCount": 14,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 6.47207069,
+      "Std_dB": 0.83273524
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 8.59076118,
+      "Std_dB": 0.176889509
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 11.2820864,
+      "Std_dB": 0.825758338
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 10.7146387,
+      "Std_dB": 0.171221703
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE direct generation",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 4.7037158,
+      "Std_dB": 0.895427048
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 1.86028516,
+      "Std_dB": 0.115892373
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 4.0561223,
+      "Std_dB": 0.252028883
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 0.80285,
+      "Std_dB": 0.025461372
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 0.894290924,
+      "Std_dB": 0.210986853
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 2.41421819,
+      "Std_dB": 0.0940260068
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 4.61571836,
+      "Std_dB": 0.196766436
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 1.78115666,
+      "Std_dB": 0.0417612605
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "MCARv32",
+      "MethodLabel": "MCAR v3.2 epoch 39",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 1.09612715,
+      "Std_dB": 0.267721176
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "Contralateral25ERB",
+      "GroupCount": 12,
+      "Mean_dB": 5.51674509,
+      "Std_dB": 0.31851396
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "ContralateralHighFrequency",
+      "GroupCount": 12,
+      "Mean_dB": 7.41187096,
+      "Std_dB": 0.392312765
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "FullSphereERB",
+      "GroupCount": 12,
+      "Mean_dB": 2.30618215,
+      "Std_dB": 0.0872523785
+    },
+    {
+      "DirectionCount": 26,
+      "Method": "SH",
+      "MethodLabel": "Traditional SH interpolation",
+      "Metric": "HorizontalILDMAE",
+      "GroupCount": 12,
+      "Mean_dB": 6.75692606,
+      "Std_dB": 0.691827714
+    }
+  ],
+  "robustness": [
+    {
+      "Method": "SH",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 1.27709007,
+      "Q6MinusQ26Std_dB": 0.0854616314,
+      "Q6MinusQ26CI95Low_dB": 1.22742414,
+      "Q6MinusQ26CI95High_dB": 1.32056046,
+      "MeanSlope_dBPerHalving": 0.59398020803928375,
+      "SlopeStd_dBPerHalving": 0.043062585541828909,
+      "SlopeCI95Low_dBPerHalving": 0.5689763675133388,
+      "SlopeCI95High_dBPerHalving": 0.6159315680464108
+    },
+    {
+      "Method": "SH",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 1.99511755,
+      "Q6MinusQ26Std_dB": 0.192137629,
+      "Q6MinusQ26CI95Low_dB": 1.88542628,
+      "Q6MinusQ26CI95High_dB": 2.09244919,
+      "MeanSlope_dBPerHalving": 0.97700697680314386,
+      "SlopeStd_dBPerHalving": 0.0954232172619136,
+      "SlopeCI95Low_dBPerHalving": 0.92164750148852659,
+      "SlopeCI95High_dBPerHalving": 1.0246521135171254
+    },
+    {
+      "Method": "SH",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 2.79305553,
+      "Q6MinusQ26Std_dB": 0.546877444,
+      "Q6MinusQ26CI95Low_dB": 2.49307346,
+      "Q6MinusQ26CI95High_dB": 3.09219217,
+      "MeanSlope_dBPerHalving": 1.3352820426225662,
+      "SlopeStd_dBPerHalving": 0.2594553942626287,
+      "SlopeCI95Low_dBPerHalving": 1.1937232092022896,
+      "SlopeCI95High_dBPerHalving": 1.4768986726800601
+    },
+    {
+      "Method": "SH",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 1.64544809,
+      "Q6MinusQ26Std_dB": 0.28849262,
+      "Q6MinusQ26CI95Low_dB": 1.50212359,
+      "Q6MinusQ26CI95High_dB": 1.80777717,
+      "MeanSlope_dBPerHalving": 0.82548018296559655,
+      "SlopeStd_dBPerHalving": 0.16149060495190393,
+      "SlopeCI95Low_dBPerHalving": 0.74250703305006027,
+      "SlopeCI95High_dBPerHalving": 0.91577712446451187
+    },
+    {
+      "Method": "MCA",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.820105851,
+      "Q6MinusQ26Std_dB": 0.0965286,
+      "Q6MinusQ26CI95Low_dB": 0.769542336,
+      "Q6MinusQ26CI95High_dB": 0.872587,
+      "MeanSlope_dBPerHalving": 0.39350134879350662,
+      "SlopeStd_dBPerHalving": 0.046994298528150132,
+      "SlopeCI95Low_dBPerHalving": 0.36883058895667392,
+      "SlopeCI95High_dBPerHalving": 0.41913604487975442
+    },
+    {
+      "Method": "MCA",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.521746576,
+      "Q6MinusQ26Std_dB": 0.214215666,
+      "Q6MinusQ26CI95Low_dB": 0.397435367,
+      "Q6MinusQ26CI95High_dB": 0.628781796,
+      "MeanSlope_dBPerHalving": 0.25802208296954632,
+      "SlopeStd_dBPerHalving": 0.10472821516912048,
+      "SlopeCI95Low_dBPerHalving": 0.19777041859924793,
+      "SlopeCI95High_dBPerHalving": 0.31072793838878476
+    },
+    {
+      "Method": "MCA",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 1.63398731,
+      "Q6MinusQ26Std_dB": 0.361701578,
+      "Q6MinusQ26CI95Low_dB": 1.429914,
+      "Q6MinusQ26CI95High_dB": 1.81959319,
+      "MeanSlope_dBPerHalving": 0.78137129048506415,
+      "SlopeStd_dBPerHalving": 0.17391882274747267,
+      "SlopeCI95Low_dBPerHalving": 0.6826997771859169,
+      "SlopeCI95High_dBPerHalving": 0.87017605205376936
+    },
+    {
+      "Method": "MCA",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.768650115,
+      "Q6MinusQ26Std_dB": 0.297624022,
+      "Q6MinusQ26CI95Low_dB": 0.610672355,
+      "Q6MinusQ26CI95High_dB": 0.928214669,
+      "MeanSlope_dBPerHalving": 0.36545575658480328,
+      "SlopeStd_dBPerHalving": 0.14688859181856193,
+      "SlopeCI95Low_dBPerHalving": 0.28812984066704911,
+      "SlopeCI95High_dBPerHalving": 0.44449531721572078
+    },
+    {
+      "Method": "MCARv32",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.324918121,
+      "Q6MinusQ26Std_dB": 0.0981483,
+      "Q6MinusQ26CI95Low_dB": 0.272025704,
+      "Q6MinusQ26CI95High_dB": 0.378329605,
+      "MeanSlope_dBPerHalving": 0.15422526436547437,
+      "SlopeStd_dBPerHalving": 0.046972523872235133,
+      "SlopeCI95Low_dBPerHalving": 0.12895527202636003,
+      "SlopeCI95High_dBPerHalving": 0.17979805916547775
+    },
+    {
+      "Method": "MCARv32",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": -0.0956985,
+      "Q6MinusQ26Std_dB": 0.168470934,
+      "Q6MinusQ26CI95Low_dB": -0.190563977,
+      "Q6MinusQ26CI95High_dB": -0.00971128512,
+      "MeanSlope_dBPerHalving": -0.054896812265117965,
+      "SlopeStd_dBPerHalving": 0.080481057555422619,
+      "SlopeCI95Low_dBPerHalving": -0.10036999608079593,
+      "SlopeCI95High_dBPerHalving": -0.013504647494604189
+    },
+    {
+      "Method": "MCARv32",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.591541171,
+      "Q6MinusQ26Std_dB": 0.338459641,
+      "Q6MinusQ26CI95Low_dB": 0.402930021,
+      "Q6MinusQ26CI95High_dB": 0.768063784,
+      "MeanSlope_dBPerHalving": 0.28476446246107417,
+      "SlopeStd_dBPerHalving": 0.16380292114398162,
+      "SlopeCI95Low_dBPerHalving": 0.19285290191570917,
+      "SlopeCI95High_dBPerHalving": 0.36976574175059795
+    },
+    {
+      "Method": "MCARv32",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.799825191,
+      "Q6MinusQ26Std_dB": 0.423162699,
+      "Q6MinusQ26CI95Low_dB": 0.571258903,
+      "Q6MinusQ26CI95High_dB": 1.02991092,
+      "MeanSlope_dBPerHalving": 0.38545991233938065,
+      "SlopeStd_dBPerHalving": 0.20737252183029911,
+      "SlopeCI95Low_dBPerHalving": 0.27487658526903641,
+      "SlopeCI95High_dBPerHalving": 0.49887274888654554
+    },
+    {
+      "Method": "FSPAE",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 2.85731316,
+      "Q6MinusQ26Std_dB": 0.0684975,
+      "Q6MinusQ26CI95Low_dB": 2.82105064,
+      "Q6MinusQ26CI95High_dB": 2.89337111,
+      "MeanSlope_dBPerHalving": 1.4075004259745281,
+      "SlopeStd_dBPerHalving": 0.033118448869804369,
+      "SlopeCI95Low_dBPerHalving": 1.3898800561825435,
+      "SlopeCI95High_dBPerHalving": 1.424878885348638
+    },
+    {
+      "Method": "FSPAE",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 0.561742067,
+      "Q6MinusQ26Std_dB": 0.0967009962,
+      "Q6MinusQ26CI95Low_dB": 0.510357,
+      "Q6MinusQ26CI95High_dB": 0.61468184,
+      "MeanSlope_dBPerHalving": 0.28653352583448094,
+      "SlopeStd_dBPerHalving": 0.04609117538455243,
+      "SlopeCI95Low_dBPerHalving": 0.26196830471356713,
+      "SlopeCI95High_dBPerHalving": 0.31182748141388095
+    },
+    {
+      "Method": "FSPAE",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": 4.1130743,
+      "Q6MinusQ26Std_dB": 0.252609342,
+      "Q6MinusQ26CI95Low_dB": 3.97615385,
+      "Q6MinusQ26CI95High_dB": 4.24864054,
+      "MeanSlope_dBPerHalving": 1.9514634509881337,
+      "SlopeStd_dBPerHalving": 0.12221729368256559,
+      "SlopeCI95Low_dBPerHalving": 1.8853916625181832,
+      "SlopeCI95High_dBPerHalving": 2.0170173197984695
+    },
+    {
+      "Method": "FSPAE",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 12,
+      "Q6MinusQ26Mean_dB": -1.25855744,
+      "Q6MinusQ26Std_dB": 0.796203911,
+      "Q6MinusQ26CI95Low_dB": -1.66427255,
+      "Q6MinusQ26CI95High_dB": -0.811792,
+      "MeanSlope_dBPerHalving": -0.643750786781311,
+      "SlopeStd_dBPerHalving": 0.37639406161132377,
+      "SlopeCI95Low_dBPerHalving": -0.83501671502987551,
+      "SlopeCI95High_dBPerHalving": -0.43147611990571022
+    }
+  ]
+}

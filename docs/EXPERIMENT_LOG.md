@@ -105,6 +105,51 @@
   `results/sonicom_learned_methods_sparsity_v1/`。有效实验代码与结果提交为
   `4879ca2`（`完成SONICOM三种学习方法稀疏度实验`）。
 
+## 2026-08-13：HUTUBS 外部数据集稀疏度实验（已废弃）
+
+> 状态：已于 2026-08-13 停止作为有效实验使用。后续稀疏度结论以
+> SONICOM 上 MCAR、FSP-AE 和 RANF 三种学习方法的统一实验为准。HUTUBS
+> 实验的协议和正式结果仅作为历史审计记录，分别归档在
+> `废弃实验/HUTUBS稀疏度实验/experiment_config.json` 和
+> `废弃实验/HUTUBS稀疏度实验/results/`；可再生成的中间产物与专用代码已清理。
+
+- 目标与冻结协议：执行前固定的协议现归档于
+  `废弃实验/HUTUBS稀疏度实验/experiment_config.json`，
+  在从未参与 SONICOM 模型训练或选择的 HUTUBS simulated HRIR test 子集上做零样本外部
+  验证。固定 12 名被试 `8/18/22/26/31/33/45/47/59/70/73/81`，固定 Lebedev
+  order `1/2/3`，即 `Q=6/14/26` 个输入方向；三组方向均为 HUTUBS order-35 原始
+  采样网格的精确子集。所有稀疏度共用一个评价掩码，排除 Q26 输入点，避免不同 Q 使用
+  不同目标点。实验结束前未按结果改变稀疏度、被试、方法、checkpoint、指标或掩码。
+- 方法：传统 SH 插值、MCA、冻结的 SONICOM MCAR v3.2 seed `20260809` epoch `39`
+  以及冻结的 SONICOM FSP-AE epoch `40` 直接生成基线。选择 FSP-AE 是为了保持全部学习
+  方法均不在 HUTUBS 上更新参数；需要逐被试适配的 RANF 不适合作为本实验的“直接生成且
+  冻结”对照。MCAR checkpoint SHA-256 仍为
+  `1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C`。
+- 完整性：完成 `12 x 3 = 36` 个被试-稀疏度案例，四方法、四指标共
+  `12 x 3 x 4 x 4 = 576` 行，全部为有限值；每个案例使用 899 个固定稠密评价方向。
+  三层 FSP-AE 输出频率与评价频率的最大偏差均为 `0 Hz`。正式结果位于
+  `废弃实验/HUTUBS稀疏度实验/results/`。
+- 主要稳健性结果（同一被试 `Q6-Q26` 误差，越小越稳健）：MCAR 的全空间 ERB、对侧
+  25 度 ERB、对侧 10--20 kHz 误差退化分别为 `0.325/-0.096/0.592 dB`，MCA 为
+  `0.820/0.522/1.634 dB`。两者配对退化差为
+  `-0.495 [-0.536,-0.453] / -0.617 [-0.678,-0.552] / -1.042
+  [-1.239,-0.850] dB`（10,000 次配对被试 bootstrap，seed `20260812`），三个谱指标
+  均明确支持 MCAR 在进一步稀疏时比 MCA 更稳健。水平 ILD 的退化差为
+  `0.031 [-0.123,0.181] dB`，不能证明 MCAR 比 MCA 更稳健。
+- 极稀疏端点 `Q=6`：MCAR 相对 SH 在四项指标均更低；相对 MCA，MCAR 在对侧 25 度
+  ERB 与对侧高频上更低，分别相差 `-0.064 [-0.112,-0.004]` 与
+  `-0.483 [-0.655,-0.292] dB`，但全空间 ERB 与水平 ILD 更高，分别相差
+  `+0.483 [0.444,0.523]` 与 `+0.233 [0.057,0.400] dB`。因此结果支持“谱细节的稀疏
+  稳健性”，不支持 MCAR 在所有指标和绝对误差上全面优于 MCA。
+- 直接生成基线：FSP-AE 在 Q6 四项绝对误差均明显高于 MCAR；其水平 ILD 曲线在输入
+  变少时反而下降，属于整体误差很高时的反常斜率，不能单独解释为有用的稀疏稳健性。
+  结论必须联合读取极稀疏端点误差与退化差，而不能只比较曲线平坦度。
+- 产物：`metric_long.csv` 为逐被试长表，`aggregate_metrics.csv` 为均值与被试标准差，
+  `robustness_statistics.csv` 为每方法退化与每减半方向数斜率，
+  `paired_robustness_contrasts.csv` 为 MCAR 对三条基线的配对端点/退化差，
+  `figures/performance_vs_sparsity.png/.pdf` 为主图，`summary.json` 与
+  `paired_robustness_summary.json` 为机器可读汇总。
+
 ## 2026-08-12：MCAR v3.2 epoch 39 七方法 SONICOM-Q26 最终 test 横向比较
 
 - 工作目标：将已经确定为论文主模型的 MCAR v3.2 seed `20260809` epoch `39`

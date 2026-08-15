@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-12",
+  "status": "deprecated",
+  "preregistered_on": "2026-08-12",
+  "completed_on": "2026-08-13",
+  "deprecated_on": "2026-08-13",
+  "archive_reason": "Superseded by the SONICOM sparsity experiment comparing MCAR v3.2, FSP-AE, and RANF; retained only for historical audit.",
+  "purpose": "Zero-shot external-dataset sparsity experiment for frozen SONICOM-trained models.",
+  "dataset": {
+    "name": "HUTUBS simulated HRIR",
+    "split_file": "configs/data/subject_split_v1.csv",
+    "split": "test",
+    "subject_ids": [8, 18, 22, 26, 31, 33, 45, 47, 59, 70, 73, 81],
+    "subject_count": 12,
+    "reference_lebedev_order": 35,
+    "evaluation_fliege_order": 29,
+    "evaluation_horizontal_direction_count": 360,
+    "evaluation_weight_policy": "Normalize absolute Fliege-Maier order-29 quadrature weights as approximate area weights; use uniform weights on the horizontal ring.",
+    "sampling_rate_hz": 44100,
+    "hrir_length": 256
+  },
+  "sparsity": {
+    "lebedev_orders": [1, 2, 3],
+    "direction_counts": [6, 14, 26],
+    "selection_policy": "Use exact HUTUBS source-grid samples; all three grids were verified as exact subsets of the order-35 source grid.",
+    "evaluation_mask_policy": "Use one fixed target mask for every sparsity: exclude target directions coincident with any order-3 input direction."
+  },
+  "methods": [
+    {"id": "SH", "label": "Traditional SH interpolation"},
+    {"id": "MCA", "label": "MCA"},
+    {"id": "MCARv32", "label": "MCAR v3.2 epoch 39"},
+    {"id": "FSPAE", "label": "FSP-AE direct generation"}
+  ],
+  "frozen_models": {
+    "mcar_v32": {
+      "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt",
+      "checkpoint_epoch": 39,
+      "checkpoint_sha256": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+      "normalization": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+      "normalization_sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A",
+      "parameter_updates_allowed": false
+    },
+    "fsp_ae": {
+      "checkpoint": "artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt",
+      "checkpoint_epoch": 40,
+      "checkpoint_sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F",
+      "parameter_updates_allowed": false
+    }
+  },
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "primary_robustness_analysis": {
+    "contrast": "Q6 minus Q26 error on the same external subjects",
+    "summary": "mean paired degradation and fitted dB degradation per halving of direction count",
+    "uncertainty": "10000 paired-subject bootstrap replicates with seed 20260812",
+    "interpretation": "Lower error and lower positive degradation indicate greater sparsity robustness."
+  },
+  "selection_policy": "No sparse level, method, model, checkpoint, metric, subject, or evaluation mask may be changed in response to the result.",
+  "execution": {
+    "subject_count_completed": 12,
+    "subject_sparsity_cases_completed": 36,
+    "metric_rows_completed": 576,
+    "all_metrics_finite": true,
+    "result_root": "废弃实验/HUTUBS稀疏度实验/results"
+  },
+  "output_name": "hutubs_external_sparsity_v1"
+}

@@ -111,3 +111,6 @@ wandb_state/
 /data/**/*.ply
 /data/**/*.wav
 /data/**/*.flac
+
+# 汇报报告
+/reports/*.docx

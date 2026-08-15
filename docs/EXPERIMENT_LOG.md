@@ -1,6 +1,6 @@
 # 项目实验日志
 
-## 2026-08-14：SONICOM 八方法稀疏度横向比较（有效）
+## 2026-08-14：SONICOM 八方法稀疏度横向比较
 
 > 状态：有效。该实验在此前 MCAR v3.2、FSP-AE、RANF 三种学习方法稀疏度实验的基础上，
 > 补齐五种横向基线，形成统一的八方法比较；此前三种学习方法的逐受试者结果原样复用。
@@ -26,6 +26,29 @@
   和 `docs/SONICOM_EIGHT_METHOD_SPARSITY_PROTOCOL.md`；五基线原始结果位于
   `results/sonicom_five_baseline_sparsity_v1/`，八方法主表、排名、全部 224 个配对对比、
   120 个学习方法对基线对比和主图位于 `results/sonicom_eight_method_sparsity_v1/`。
+
+## 2026-08-13：RIEC Q26 外部验证（已废弃）
+
+- 数据与协议：下载并校验 103 名 RIEC 人类受试者；排除 046/080 dummy heads。冻结
+  RIEC-Q26-v1（26 输入、839 插值方向、865 参考方向），按种子 20260813 划分
+  77 train / 13 validation / 13 test。频段保持 50--20000 Hz，高频保持
+  10000--20000 Hz；归一化只使用 77 名 train。SOFA 北极方向的已知 1.0 m
+  元数据问题按官方 1.5 m 处理常量修正，不改原文件。
+- 预处理：103/103 residual HDF5 完成，48 kHz、512 点 HRIR、2048 点 FFT、851 个
+  频率 bin；每个文件包含 strict-HRIR ILD 重建元数据。train-only 统计覆盖
+  113,361,710 个 residual 样本，target mean/std 为 0.282808/5.242230 dB。
+- 固定训练链：完全复用锁定 SONICOM 预算和超参数，未做 RIEC 大规模搜索。v1 最佳
+  epoch 20（validation MAE 2.976304 dB）；v2 最佳 epoch 5；关键基线 v3 最佳
+  epoch 10；主方法 v3.2 总损失最佳 epoch 5、strict-ILD 单项最佳 epoch 1。
+  所有训练 0 个 optimizer step 跳过。
+- 一次性 test：模型与评估器锁定后才显式解封 13 名 test，并只读一次。固体角加权、
+  仅 839 个插值方向的 magnitude MAE：MCA 3.569504 dB，v3 2.726095 dB，
+  v3.2 2.727559 dB；相对 MCA 分别改善 23.628% 和 23.587%。strict-HRIR ILD
+  MAE：v3 0.888739 dB，v3.2 0.903760 dB。
+- 结论：冻结的 MCAR 框架在 RIEC 上相对 MCA 有明确外部泛化收益，但 v3.2 没有超过
+  v3 关键基线（magnitude MAE 高约 0.054%，strict ILD 也略差）。test 后不改变模型、
+  checkpoint 或超参数。正式结果位于 `results/riec_q26_v3_final_test/` 和
+  `results/riec_q26_v32_final_test/`。
 
 ## 2026-08-13：补充 FSP-AE 的八方法 SONICOM-Q26 epoch 39 最终横向比较
 
@@ -76,7 +99,7 @@
   表、四指标排名、MCA/RANF/FSP-AE 相对 epoch 39 的配对 bootstrap、质量检查、JSON
   摘要和八方法聚合图。旧七方法目录保留为审计来源，不覆盖或删除。
 
-## 2026-08-13：SONICOM 三种学习方法稀疏度实验（有效）
+## 2026-08-13：SONICOM 三种学习方法稀疏度实验
 
 > 状态：有效。该实验是当前用于比较学习型方法稀疏鲁棒性的正式实验，方法为
 > MCAR v3.2、FSP-AE 和 RANF。

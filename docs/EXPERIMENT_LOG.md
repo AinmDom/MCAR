@@ -1,5 +1,63 @@
 # 项目实验日志
 
+## 2026-08-18：FiLM-SIREN Stage A1：P0002 单被试纯 SIREN 表示上限测试完成
+
+- 实验目标：启动 FiLM-SIREN 新主模型路线的 Stage A1，首先验证不带任何 subject
+  condition 的纯坐标 SIREN 是否具有足够能力表示单个 SONICOM 被试的完整 MCA residual
+  field。本阶段只验证表示能力和数值稳定性，不用于选择最终 frequency coordinate、
+  omega、depth 或 width，也不代表跨被试或未见方向泛化性能。
+- 基础结构：固定 SONICOM train 被试 `P0002`，查询坐标为
+  `[x,y,z,f_linear]`，频率 `86.1328125–19982.8125 Hz` 线性映射到 `[-1,1]`；
+  SIREN hidden width `256`、`6` 个 sine layers、first/hidden omega 均为 `30`，
+  双耳联合输出两个 normalized residual channels。模型共 `330754` 个参数；
+  optimizer 为 Adam，学习率 `1e-4`，weight decay `0`，FP32，seed `20260818`。
+  单 epoch 为 `100 steps`，每 step 随机采样 `16` 个方向并使用完整 `463` 个频点。
+- A1-v1 smoke run：首先运行 `20 epoch × 100 step`。完整 residual field 的
+  MAE/RMSE 从初始化的 `3.3205 / 5.0429 dB` 降至
+  `1.1645 / 1.8520 dB`；`>8 kHz`、`>10 kHz` MAE 分别降至
+  `1.3100 / 1.3366 dB`，first spectral-difference 降至
+  `0.4203 dB/bin`，notch-depth MAE 降至 `0.3894 dB`。训练无 NaN/Inf，
+  但最佳 checkpoint 位于最后一个 epoch，说明 20 epoch 尚不足以作为表示上限，
+  因此登记为 `RETEST`。
+- A1-v2 长预算确认：保持结构、随机种子、采样协议和优化器完全不变，从头重新训练
+  `100 epoch × 100 step`。最佳 checkpoint 位于 **epoch 98**，完整 residual
+  field MAE/RMSE 达到 **`0.936514 / 1.498697 dB`**；`>8 kHz` 和
+  `>10 kHz` MAE 分别为 **`1.041481 / 1.063229 dB`**，
+  first spectral-difference 为 **`0.382707 dB/bin`**，
+  notch-depth MAE 为 **`0.318079 dB`**。相对 20-epoch v1，
+  residual MAE/RMSE 分别进一步改善约 `19.6% / 19.1%`，高频 MAE 进一步改善
+  约 `20%`，说明延长训练预算确有必要。
+- 收敛判断：epoch 91 的 full-field RMSE 为 `1.525809 dB`，epoch 100 为
+  `1.511698 dB`，最后 10 epoch 总下降仅 `0.9248%`；同时曲线在约
+  `1.50–1.53 dB` 范围内波动，最佳点为 epoch 98 而非预算末端。因此认为当前
+  linear-frequency / omega-30 SIREN 已达到足以完成 Stage A1 的**实际优化平台**，
+  不再继续针对 P0002 单人追加 200 epoch。
+- 谱形状诊断：second spectral-difference 从初始化的 `0.255108 dB/bin²`
+  上升至 `0.270947 dB/bin²`，且相对 20-epoch v1 的 `0.2647 dB/bin²`
+  仍略有回退。说明 residual MSE 能显著改善整体幅度、高频误差和 notch depth，
+  但不会自动保证二阶局部谱形状指标同步改善。当前不因此修改 loss，而将该指标保留为
+  后续 frequency/omega 搜索和 spectral-loss 消融的 guard metric。
+- 运行与完整性：A1-v2 总训练/评价用时 `48.04 s`，CUDA 峰值显存
+  `121.95 MiB`，完整 `793×463` query 推理约 `31.28 ms`；全程无 NaN/Inf，
+  test subject 读取数为 `0`。最佳 checkpoint SHA-256 为
+  `FCFF8B909D3040E44720F59C98EEC8AD5EEE6094F92899E2EE41C00317EBEA20`。
+  运行时 Git 分支为 `codex/project-structure-refactor`，HEAD 为
+  `3c3174022fa313dda7c8058f71d6cf39d085f93f`；运行时工作区记录为 `dirty=true`，
+  因此进入下一阶段前需提交本轮 config、报告和文档，使正式 backbone 搜索从 clean
+  Git state 开始。
+- 阶段结论：**`KEEP — A1 COMPLETE`**。纯 SIREN 已证明能够稳定、高精度地拟合
+  单个 SONICOM 被试的完整 MCA residual field；继续针对 P0002 优化的科研价值有限。
+  下一阶段转入固定多名 train subjects 的 backbone 搜索，并联合粗筛
+  `frequency coordinate × first omega`，避免把单个被试的特殊频谱结构固化为最终
+  SIREN 超参数。
+- 产物：A1-v1 配置与报告位于
+  `configs/experiments/sonicom_siren_single_subject_baseline_v1.json` 和
+  `reports/film_siren_siren_a1_p0002_baseline_v1.md`；A1-v2 配置与详细报告位于
+  `configs/experiments/sonicom_siren_single_subject_baseline_v2.json` 和
+  `reports/film_siren_siren_a1_p0002_baseline_v2.md`。训练产物位于
+  `artifacts/training/sonicom_siren_a1_p0002_linear_w256_d6_o30_v1/` 与
+  `artifacts/training/sonicom_siren_a1_p0002_linear_w256_d6_o30_v2/`。
+
 ## 2026-08-17：MCAR v3.5.1 晋升为当前工程主模型及八方法横向对比
 
 - 主模型决策：用户明确决定将冻结的 **MCAR v3.5.1** 设为新的当前工程主模型，

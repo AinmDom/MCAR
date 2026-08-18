@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-17",
+  "status": "completed",
+  "split": "test",
+  "reporting_scope": "Frozen result-level comparison on the historically consumed SONICOM test split; not a new untouched confirmatory evaluation.",
+  "current_engineering_main_model": {
+    "model_version": "MCAR v3.5.1",
+    "manifest": "configs/experiments/sonicom_mlp_cnn_q26_v351.json",
+    "formula": "0.3 * previous_joint + 0.7 * v351b_continuation_epoch23"
+  },
+  "merge_protocol": {
+    "operation": "Replace the legacy MCAR v3.2 epoch 39 result rows with frozen MCAR v3.5.1 per-subject rows while preserving the other seven methods exactly.",
+    "test_subject_count_read_during_merge": 0,
+    "model_inference_during_merge": false,
+    "subject_count": 44,
+    "method_count": 8,
+    "metric_count": 4,
+    "metric_long_row_count": 1408,
+    "legacy_seven_baselines_unchanged": true,
+    "source_eight_method_metric_long_sha256": "BF1D27D161E7445D6AECC1F4656CB13407AAB0F4C3A69F29DEA2BA60471753F6",
+    "v351_per_subject_sha256": "1DD5DF1C1E1056C8C2BD99AC0541DFA8211BA05A52C39153CDDDEFC9033BB81A"
+  },
+  "methods": [
+    "MCAR v3.5.1",
+    "FSP-AE",
+    "RANF",
+    "MCA",
+    "SUpDEq + Barycentric",
+    "SUpDEq + Natural Neighbor",
+    "SUpDEq + SH",
+    "SH only"
+  ],
+  "metrics": [
+    "Full-sphere ERB",
+    "Contralateral 25deg ERB",
+    "Contralateral high-frequency",
+    "Horizontal ILD MAE"
+  ],
+  "v351_strict_test_metrics_db": {
+    "full_sphere_erb": 0.8179370487968771,
+    "contralateral_25deg_erb": 1.2744892321005215,
+    "contralateral_high_frequency": 3.5084809628530294,
+    "horizontal_ild_mae": 0.6447090916559254
+  },
+  "v351_ranks_lower_is_better": {
+    "full_sphere_erb": 1,
+    "contralateral_25deg_erb": 1,
+    "contralateral_high_frequency": 3,
+    "horizontal_ild_mae": 1
+  },
+  "outputs": {
+    "result_root": "results/sonicom_eight_method_q26_v351_main_test",
+    "aggregate_table": "results/sonicom_eight_method_q26_v351_main_test/aggregate_metrics.csv",
+    "ranking_table": "results/sonicom_eight_method_q26_v351_main_test/metric_ranking.csv",
+    "quality_checks": "results/sonicom_eight_method_q26_v351_main_test/quality_checks.csv",
+    "figure_png": "results/sonicom_eight_method_q26_v351_main_test/figures/test44_eight_method_four_metrics.png",
+    "figure_pdf": "results/sonicom_eight_method_q26_v351_main_test/figures/test44_eight_method_four_metrics.pdf"
+  }
+}

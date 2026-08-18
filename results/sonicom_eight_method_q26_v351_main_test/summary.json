@@ -1,0 +1,588 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "test",
+  "test_subject_count_read_during_merge": 0,
+  "subject_count": 44,
+  "method_count": 8,
+  "metric_count": 4,
+  "metric_long_row_count": 1408,
+  "nonfinite_metric_count": 0,
+  "legacy_seven_baselines_unchanged": true,
+  "aggregate": [
+    {
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 0.81793704879687712,
+      "Std_dB": 0.17548315377463414,
+      "Median_dB": 0.77907980132307442
+    },
+    {
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.1844928283270788,
+      "Std_dB": 0.34921477866737727,
+      "Median_dB": 1.09647298009743
+    },
+    {
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.063235561224275,
+      "Std_dB": 0.1263969562248575,
+      "Median_dB": 1.046110903773
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.0821981924889856,
+      "Std_dB": 0.095947795737121089,
+      "Median_dB": 1.0688868777763649
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.752249900810696,
+      "Std_dB": 0.25665558671727878,
+      "Median_dB": 1.7824731869479802
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.8517649012234776,
+      "Std_dB": 0.29011171883636244,
+      "Median_dB": 1.89565582871065
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.882095416466224,
+      "Std_dB": 0.50595508134806966,
+      "Median_dB": 1.85639358752495
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Metric": "FullSphereERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.685356550332239,
+      "Std_dB": 0.10719709899095117,
+      "Median_dB": 2.6996838324973349
+    },
+    {
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.2744892321005208,
+      "Std_dB": 0.14774404545815831,
+      "Median_dB": 1.23646530235915
+    },
+    {
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.9088722832721927,
+      "Std_dB": 0.70081443479190086,
+      "Median_dB": 1.8253343878721648
+    },
+    {
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.5573225323745086,
+      "Std_dB": 0.16359502653718577,
+      "Median_dB": 1.5246814496995098
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 1.7457551661165327,
+      "Std_dB": 0.15509698979862047,
+      "Median_dB": 1.75112752112776
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.1820943140533706,
+      "Std_dB": 0.19285169812512187,
+      "Median_dB": 2.1730680183492348
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.2405069357103358,
+      "Std_dB": 0.21233793322515951,
+      "Median_dB": 2.2107694838157297
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 2.2280589668315831,
+      "Std_dB": 0.19467840305484918,
+      "Median_dB": 2.21382252252058
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Metric": "Contralateral25ERB",
+      "SubjectCount": 44,
+      "Mean_dB": 3.8352984593617236,
+      "Std_dB": 0.44840786727952137,
+      "Median_dB": 3.8415670192195552
+    },
+    {
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 3.5084809628530307,
+      "Std_dB": 0.28791336352245417,
+      "Median_dB": 3.46840676309193
+    },
+    {
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 3.1643546864916625,
+      "Std_dB": 0.685424467474205,
+      "Median_dB": 3.0421972003855151
+    },
+    {
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 3.4696827665226171,
+      "Std_dB": 0.2537662677237783,
+      "Median_dB": 3.40021527932886
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 4.6986486108446277,
+      "Std_dB": 0.26608732038042965,
+      "Median_dB": 4.65930328192808
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.4756264579977687,
+      "Std_dB": 0.21712596262129183,
+      "Median_dB": 5.4507611665735354
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.5953951761422465,
+      "Std_dB": 0.25812149760528,
+      "Median_dB": 5.6168247897973949
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 5.9936260927370135,
+      "Std_dB": 0.34390027417898639,
+      "Median_dB": 5.9737502519115049
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Metric": "ContralateralHighFrequency",
+      "SubjectCount": 44,
+      "Mean_dB": 9.0668958194017346,
+      "Std_dB": 0.82398323407749263,
+      "Median_dB": 9.0960630726221954
+    },
+    {
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 0.6447090916559256,
+      "Std_dB": 0.24790743768115445,
+      "Median_dB": 0.62009842189546049
+    },
+    {
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 0.7586678874618048,
+      "Std_dB": 1.039700653084713,
+      "Median_dB": 0.563799860901495
+    },
+    {
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 0.775462771438966,
+      "Std_dB": 0.18878334402685124,
+      "Median_dB": 0.75678745379906154
+    },
+    {
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 0.82938493876088593,
+      "Std_dB": 0.1582120451977182,
+      "Median_dB": 0.816238450161938
+    },
+    {
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.6150625009694031,
+      "Std_dB": 0.44239525111677308,
+      "Median_dB": 1.570698379420135
+    },
+    {
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 1.6369763954333598,
+      "Std_dB": 0.46874533987060807,
+      "Median_dB": 1.5757019139493651
+    },
+    {
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 2.018131188110257,
+      "Std_dB": 1.5642938561149935,
+      "Median_dB": 1.7950576734110451
+    },
+    {
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Metric": "HorizontalILDMAE",
+      "SubjectCount": 44,
+      "Mean_dB": 3.551080431787133,
+      "Std_dB": 0.66368122510374461,
+      "Median_dB": 3.318471493424235
+    }
+  ],
+  "ranking": [
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 1,
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Mean_dB": 0.81793704879687712,
+      "Std_dB": 0.17548315377463414
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 2,
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Mean_dB": 1.063235561224275,
+      "Std_dB": 0.1263969562248575
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 3,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Mean_dB": 1.0821981924889856,
+      "Std_dB": 0.095947795737121089
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 4,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Mean_dB": 1.1844928283270788,
+      "Std_dB": 0.34921477866737727
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 5,
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Mean_dB": 1.752249900810696,
+      "Std_dB": 0.25665558671727878
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 6,
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Mean_dB": 1.8517649012234776,
+      "Std_dB": 0.29011171883636244
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 7,
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Mean_dB": 1.882095416466224,
+      "Std_dB": 0.50595508134806966
+    },
+    {
+      "Metric": "Full-sphere ERB",
+      "Rank": 8,
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Mean_dB": 2.685356550332239,
+      "Std_dB": 0.10719709899095117
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 1,
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Mean_dB": 1.2744892321005208,
+      "Std_dB": 0.14774404545815831
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 2,
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Mean_dB": 1.5573225323745086,
+      "Std_dB": 0.16359502653718577
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 3,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Mean_dB": 1.7457551661165327,
+      "Std_dB": 0.15509698979862047
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 4,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Mean_dB": 1.9088722832721927,
+      "Std_dB": 0.70081443479190086
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 5,
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Mean_dB": 2.1820943140533706,
+      "Std_dB": 0.19285169812512187
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 6,
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Mean_dB": 2.2280589668315831,
+      "Std_dB": 0.19467840305484918
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 7,
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Mean_dB": 2.2405069357103358,
+      "Std_dB": 0.21233793322515951
+    },
+    {
+      "Metric": "Contralateral 25° ERB",
+      "Rank": 8,
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Mean_dB": 3.8352984593617236,
+      "Std_dB": 0.44840786727952137
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 1,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Mean_dB": 3.1643546864916625,
+      "Std_dB": 0.685424467474205
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 2,
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Mean_dB": 3.4696827665226171,
+      "Std_dB": 0.2537662677237783
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 3,
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Mean_dB": 3.5084809628530307,
+      "Std_dB": 0.28791336352245417
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 4,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Mean_dB": 4.6986486108446277,
+      "Std_dB": 0.26608732038042965
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 5,
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Mean_dB": 5.4756264579977687,
+      "Std_dB": 0.21712596262129183
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 6,
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Mean_dB": 5.5953951761422465,
+      "Std_dB": 0.25812149760528
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 7,
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Mean_dB": 5.9936260927370135,
+      "Std_dB": 0.34390027417898639
+    },
+    {
+      "Metric": "Contralateral high-frequency",
+      "Rank": 8,
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Mean_dB": 9.0668958194017346,
+      "Std_dB": 0.82398323407749263
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 1,
+      "Method": "MCARv351",
+      "MethodLabel": "MCAR v3.5.1",
+      "Mean_dB": 0.6447090916559256,
+      "Std_dB": 0.24790743768115445
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 2,
+      "Method": "FSPAE",
+      "MethodLabel": "FSP-AE",
+      "Mean_dB": 0.7586678874618048,
+      "Std_dB": 1.039700653084713
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 3,
+      "Method": "RANF",
+      "MethodLabel": "RANF",
+      "Mean_dB": 0.775462771438966,
+      "Std_dB": 0.18878334402685124
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 4,
+      "Method": "MCA",
+      "MethodLabel": "MCA",
+      "Mean_dB": 0.82938493876088593,
+      "Std_dB": 0.1582120451977182
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 5,
+      "Method": "SUpDEqBary",
+      "MethodLabel": "SUpDEq + Barycentric",
+      "Mean_dB": 1.6150625009694031,
+      "Std_dB": 0.44239525111677308
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 6,
+      "Method": "SUpDEqNN",
+      "MethodLabel": "SUpDEq + Natural Neighbor",
+      "Mean_dB": 1.6369763954333598,
+      "Std_dB": 0.46874533987060807
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 7,
+      "Method": "SUpDEqSH",
+      "MethodLabel": "SUpDEq + SH",
+      "Mean_dB": 2.018131188110257,
+      "Std_dB": 1.5642938561149935
+    },
+    {
+      "Metric": "Horizontal ILD MAE",
+      "Rank": 8,
+      "Method": "SHOnly",
+      "MethodLabel": "SH only",
+      "Mean_dB": 3.551080431787133,
+      "Std_dB": 0.66368122510374461
+    }
+  ],
+  "configuration": {
+    "schema_version": "1.0",
+    "created_on": "2026-08-17 10:40:13",
+    "merge_type": "frozen result-level replacement of MCAR v3.2 e39 by v3.5.1",
+    "split": "test",
+    "test_subject_count_read_during_merge": 0,
+    "subject_count": 44,
+    "source_eight_method_metric_long_sha256": "BF1D27D161E7445D6AECC1F4656CB13407AAB0F4C3A69F29DEA2BA60471753F6",
+    "v351_per_subject_sha256": "1DD5DF1C1E1056C8C2BD99AC0541DFA8211BA05A52C39153CDDDEFC9033BB81A",
+    "legacy_seven_baselines_unchanged": true,
+    "current_main_model": "MCAR v3.5.1",
+    "methods": [
+      "MCAR v3.5.1",
+      "FSP-AE",
+      "RANF",
+      "MCA",
+      "SUpDEq + Barycentric",
+      "SUpDEq + Natural Neighbor",
+      "SUpDEq + SH",
+      "SH only"
+    ],
+    "metrics": [
+      "Full-sphere ERB",
+      "Contralateral 25° ERB",
+      "Contralateral high-frequency",
+      "Horizontal ILD MAE"
+    ]
+  }
+}

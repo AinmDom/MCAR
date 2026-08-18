@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-17",
+  "status": "completed",
+  "authorization": "The user explicitly authorized frozen v3.5.1 test evaluation and comparison with the current main model in the Codex conversation on 2026-08-17.",
+  "reporting_scope": "The SONICOM test split was already consumed by earlier frozen-model evaluations. This is an additional frozen comparison, not a newly untouched confirmatory test.",
+  "candidate": {
+    "model_version": "v3.5.1",
+    "formula": "0.3 * previous_joint + 0.7 * v351b_continuation_epoch23",
+    "selection_completed_before_test": true,
+    "parameter_updates_allowed": false,
+    "weight_updates_allowed": false,
+    "previous_joint_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10/best.pt",
+    "previous_joint_checkpoint_sha256": "1D6ED796B2C19F77380BC2CB8B233F7B5DA78A70CAE77BB7D42461A8330E9CF4",
+    "continuation_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v351b_band_ild005_e40/best.pt",
+    "continuation_checkpoint_epoch": 23,
+    "continuation_checkpoint_sha256": "3D657783E301300AC9B36C02E0C0FE1F98E82F611CE202638C84F84B036391EB"
+  },
+  "comparison_main_model_at_execution": {
+    "model_version": "v3.2 epoch 39",
+    "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt",
+    "checkpoint_epoch": 39,
+    "checkpoint_sha256": "1076EBA7EC24C25914E5569E1C14EDDB584A6649E7551194FBA38984FE11F10C",
+    "existing_test_prediction": "artifacts/reconstruction/sonicom_q26_test_mlp_cnn_v32_seed20260809_e40_epoch39_frozen"
+  },
+  "protocol": {
+    "split": "test",
+    "subject_count": 44,
+    "candidate_prediction": "artifacts/reconstruction/sonicom_q26_test_v351_previous30_b70",
+    "strict_result_root": "results/sonicom_mlp_cnn_q26_v351_vs_v32e39_frozen_test_strict",
+    "metrics": [
+      "FullSphereERB",
+      "Contralateral25ERB",
+      "ContralateralHighFrequency",
+      "HorizontalILDMAE"
+    ],
+    "retain_and_report_result_regardless_of_outcome": true,
+    "no_retraining_or_reselection_after_test": true
+  },
+  "planned_commands": {
+    "previous_prediction": "python -m mcar.evaluation.predict_sonicom_mlp_cnn_residuals data/processed/sonicom_residual_q26_v1 <previous_joint_checkpoint> sonicom_q26_test_v351_previous_joint --split test --allow-test",
+    "continuation_prediction": "python -m mcar.evaluation.predict_sonicom_mlp_cnn_residuals data/processed/sonicom_residual_q26_v1 <continuation_checkpoint> sonicom_q26_test_v351b_best_total_e23 --split test --allow-test",
+    "frozen_fusion": "python scripts/export_v351b_fusion_validation.py --split test --allow-test",
+    "strict_reconstruction": "mcar.evaluate_sonicom_validation_reconstruction(inf, <output>, true, <v32e39_prediction>, <v351_prediction>, 'MCAR v3.5.1 frozen', 'test', <v1_test>, <v2_test>, true)"
+  },
+  "execution": {
+    "previous_prediction_status": "completed",
+    "previous_prediction_subject_count": 44,
+    "continuation_prediction_status": "completed",
+    "continuation_prediction_subject_count": 44,
+    "fusion_status": "completed",
+    "fusion_prediction_subject_count": 44,
+    "strict_reconstruction_status": "completed",
+    "strict_reconstruction_subject_count": 44,
+    "checkpoint_hashes_unchanged": true,
+    "result_root": "results/sonicom_mlp_cnn_q26_v351_vs_v32e39_frozen_test_strict",
+    "strict_metrics_db": {
+      "full_sphere_erb": 0.8179370487968771,
+      "contralateral_25deg_erb": 1.2744892321005215,
+      "contralateral_high_frequency": 3.5084809628530294,
+      "horizontal_ild_mae": 0.6447090916559254
+    },
+    "relative_improvement_vs_v32_epoch39_percent": {
+      "full_sphere_erb": 4.410407400936038,
+      "contralateral_25deg_erb": 5.591656912160718,
+      "contralateral_high_frequency": 2.2830730965664086,
+      "horizontal_ild_mae": 2.3608139611028416
+    },
+    "improved_subject_count_of_44": {
+      "full_sphere_erb": 43,
+      "contralateral_25deg_erb": 42,
+      "contralateral_high_frequency": 44,
+      "horizontal_ild_mae": 26
+    },
+    "paired_t_p": {
+      "full_sphere_erb": 1.0475473923954595e-16,
+      "contralateral_25deg_erb": 2.8935339247482245e-11,
+      "contralateral_high_frequency": 2.632119836301906e-21,
+      "horizontal_ild_mae": 0.0882717170273537
+    },
+    "paired_t_holm_p": {
+      "full_sphere_erb": 3.1426421771863786e-16,
+      "contralateral_25deg_erb": 5.787067849496449e-11,
+      "contralateral_high_frequency": 1.0528479345207624e-20,
+      "horizontal_ild_mae": 0.0882717170273537
+    },
+    "model_or_weight_updates_after_test": false
+  },
+  "promotion_decision_after_execution": {
+    "authorized_on": "2026-08-17",
+    "new_current_engineering_main_model": "MCAR v3.5.1",
+    "replaces": "MCAR v3.2 epoch 39",
+    "decision_record": "configs/experiments/sonicom_mlp_cnn_q26_v351.json"
+  },
+  "test_subject_count_read_during_this_protocol": 44
+}

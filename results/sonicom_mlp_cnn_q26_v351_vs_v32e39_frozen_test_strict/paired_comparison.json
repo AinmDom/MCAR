@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "comparison": "v351_frozen_vs_v32_epoch39_frozen",
+  "split": "test",
+  "test_subject_count_read": 44,
+  "table_height": 44,
+  "table_width": 22,
+  "subject_ids_unique": true,
+  "missing_value_count": 0,
+  "all_numeric_values_finite": true,
+  "metrics": [
+    {
+      "Metric": "full_sphere_erb",
+      "V32Epoch39Mean_dB": 0.85567583934329516,
+      "V351Mean_dB": 0.81793704879687712,
+      "MeanDifference_dB": -0.037738790546418086,
+      "RelativeImprovement_percent": 4.4104074009360135,
+      "ImprovedSubjectCountOf44": 43,
+      "CI95Low_dB": -0.043510865503371673,
+      "CI95High_dB": -0.0319667155894645,
+      "PairedT_P": 1.0475473923954413E-16,
+      "CohenDz": -1.9877844810224417
+    },
+    {
+      "Metric": "contralateral_25deg_erb",
+      "V32Epoch39Mean_dB": 1.3499752144942454,
+      "V351Mean_dB": 1.2744892321005212,
+      "MeanDifference_dB": -0.075485982393724088,
+      "RelativeImprovement_percent": 5.591656912160734,
+      "ImprovedSubjectCountOf44": 42,
+      "CI95Low_dB": -0.092650800357919422,
+      "CI95High_dB": -0.058321164429528748,
+      "PairedT_P": 2.8935339247482293E-11,
+      "CohenDz": -1.3370276528571881
+    },
+    {
+      "Metric": "contralateral_high_frequency",
+      "V32Epoch39Mean_dB": 3.5904536440449064,
+      "V351Mean_dB": 3.50848096285303,
+      "MeanDifference_dB": -0.081972681191876812,
+      "RelativeImprovement_percent": 2.2830730965663841,
+      "ImprovedSubjectCountOf44": 44,
+      "CI95Low_dB": -0.091343812666301136,
+      "CI95High_dB": -0.072601549717452488,
+      "PairedT_P": 2.6321198363019065E-21,
+      "CohenDz": -2.6594411818188539
+    },
+    {
+      "Metric": "horizontal_ild_mae",
+      "V32Epoch39Mean_dB": 0.660297486911749,
+      "V351Mean_dB": 0.64470909165592549,
+      "MeanDifference_dB": -0.015588395255823661,
+      "RelativeImprovement_percent": 2.3608139611028087,
+      "ImprovedSubjectCountOf44": 26,
+      "CI95Low_dB": -0.03361225629129342,
+      "CI95High_dB": 0.0024354657796461007,
+      "PairedT_P": 0.088271717027354007,
+      "CohenDz": -0.26294617581434543
+    }
+  ],
+  "model_or_weight_updates_after_test": false
+}

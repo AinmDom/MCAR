@@ -1,5 +1,146 @@
 # 项目实验日志
 
+## 2026-08-17：MCAR v3.5.1 晋升为当前工程主模型及八方法横向对比
+
+- 主模型决策：用户明确决定将冻结的 **MCAR v3.5.1** 设为新的当前工程主模型，
+  替代 v3.2 seed-20260809 epoch 39。模型仍固定为 previous-joint `30%` + B 支
+  epoch 23 `70%` 的 residual 输出融合，不重新训练、不调整融合权重。
+- 横向对比：从已冻结的八方法逐被试结果中原样保留七个基线，仅以 v3.5.1 的冻结逐被试
+  结果替换旧 MCAR v3.2 e39 行；合并阶段不再读取 test、不运行模型推理。合并后为
+  `44 被试 × 8 方法 × 4 指标 = 1408` 行，缺失/非有限值均为 0，七个基线逐值不变。
+- 四指标结果与排名：全空间 ERB `0.817937 ± 0.175483 dB`（第 1），对侧 25° ERB
+  `1.274489 ± 0.147744 dB`（第 1），对侧高频 `3.508481 ± 0.287913 dB`（第 3），
+  水平面 ILD MAE `0.644709 ± 0.247907 dB`（第 1）。高频项低于 v3.5.1 的是
+  FSP-AE 和 RANF；其余三项 v3.5.1 均为八方法最优。
+- 产物：规范清单位于
+  `configs/experiments/sonicom_eight_method_q26_v351_main_test.json`，完整数据表、质量检查、
+  排名表与汇总位于 `results/sonicom_eight_method_q26_v351_main_test/`，2×2 横向条形图
+  同时导出 PNG 和矢量 PDF。历史预声明的 v3.2 epoch 6 论文模型记录不被静默改写；
+  validation/test 均已被项目历史使用，独立确认仍需新拆分或外部数据。
+
+## 2026-08-17：SONICOM MCAR v3.5.1 冻结测试与 v3.2 epoch 39 对比
+
+- 冻结协议：用户明确授权后，测试前锁定 v3.5.1 的 previous-joint/B-epoch23
+  checkpoint SHA-256 与 `30/70` 输出融合比例，禁止参数、checkpoint 或权重更新；
+  对照为此前定义的当前主模型 v3.2 seed-20260809 epoch 39。SONICOM test 已被历史
+  冻结评估消费，本次是追加冻结比较，不宣称为全新未见测试集确认。
+- 推理与完整性：两个 v3.5.1 分量分别完成 44/44 test residual 推理，固定融合后也是
+  44/44；每个预测均为 `2×793×463`。严格重建完成 44 人、每人 767 个纯插值方向、
+  72 个水平面方向和 41 个 ERB 频带。逐被试结果表为 `44×22`、SubjectID 唯一、
+  缺失值 0、数值全有限，三个冻结 checkpoint 的 SHA-256 前后均不变。
+- 测试结果：v3.2 e39 的四项为
+  `0.855676 / 1.349975 / 3.590454 / 0.660297 dB`；v3.5.1 为
+  `0.817937 / 1.274489 / 3.508481 / 0.644709 dB`，分别改善
+  `4.410% / 5.592% / 2.283% / 2.361%`，逐被试改善人数为 `43/42/44/26`。
+- 配对统计：前三项 paired t-test 为 `p=1.05e-16 / 2.89e-11 / 2.63e-21`，
+  Holm 校正后仍显著；对应 Wilcoxon 也显著。水平面 ILD 的 paired t-test
+  `p=0.0883`、Wilcoxon `p=0.0874`，均值更低但不显著，应解释为测试集上方向一致的
+  小幅改善而非确定性提升。
+- 结论与产物：v3.5.1 在冻结测试的三个频谱指标上稳定、显著优于当时的 v3.2 e39，
+  ILD 不回退且均值改善。本次运行结束时先登记为更强的工程主模型候选；用户随后在
+  同日明确将其晋升为当前工程主模型。论文中仍需注明该 test 已被项目历史实验消费。协议位于
+  `configs/experiments/sonicom_mlp_cnn_q26_v351_frozen_test.json`，完整重建、质量检查、
+  MATLAB/SciPy 交叉核验和逐被试统计位于
+  `results/sonicom_mlp_cnn_q26_v351_vs_v32e39_frozen_test_strict/`。
+
+## 2026-08-17：SONICOM MCAR v3.5.1：三分支低学习率续训与重新融合
+
+- 实验目标：从 v3.5 的 scratch 分量 epoch 60 分叉，比较原损失续训、弱频带 ILD
+  与更强 strict+band ILD 三种协议。三支均联合解冻全部 `174627` 个 MLP/CNN 参数，
+  使用 MLP/CNN 学习率 `3e-5/1e-5`、固定 train/validation seed 和
+  `40 epoch × 500 step`；全程只读 262 train / 44 validation，test 读取数为 0。
+- 训练结果：A/B/C 的训练目标最佳 epoch 分别为 `23/23/1`。统一换回 v3.5 原始
+  objective 后，三支综合最佳 checkpoint 的 total 分别为
+  `0.646327 / 0.646199 / 0.646672`，说明额外 band-ILD=0.05 的 B 支略优，而
+  strict-ILD 提高到 0.9 的 C 支没有带来持续收益。三支源 checkpoint 前后 SHA-256
+  均保持 `B7DE9642...2F6` 不变。
+- 融合重选：对六个 checkpoint（每支 total 最优和 strict-ILD 最优）统一筛选，
+  入围者再与固定 previous-joint 分量搜索凸组合。最佳仍为 previous `30%` + B 支
+  epoch 23 `70%`，proxy total 为 `0.640584`，相对 v3.5 的 `0.641223` 改善
+  `0.0997%`。B checkpoint SHA-256 为 `3D657783...391EB`。
+- 严格 validation：v3.5.1 的全空间 ERB、对侧 25° ERB、对侧高频和水平面 ILD 为
+  `0.830808 / 1.288953 / 3.538087 / 0.581146 dB`，相对 v3.5 分别改善
+  `0.124% / 0.235% / 0.061% / 0.033%`。前三项 paired t-test 为
+  `p=1.63e-9 / 0.0265 / 2.17e-4`，改善人数为 `39/25/29`；ILD 为 21/44 人改善且
+  不显著（`p=0.854`），应解释为基本持平。
+- 结论：该 30/70 输出融合登记为 **MCAR v3.5.1**，替代 v3.5 成为当前
+  validation-best 工作候选，但改善绝对值很小且验证集已被重复用于选择，不据此改写
+  冻结论文主模型。规范 manifest 为
+  `configs/experiments/sonicom_mlp_cnn_q26_v351.json`；proxy 和严格结果分别位于
+  `results/sonicom_mlp_cnn_q26_v351_proxy_ensembles/` 与
+  `results/sonicom_mlp_cnn_q26_v351_candidate_strict_validation/`。
+
+## 2026-08-16：SONICOM MCAR v3.5：MLP+CNN 完整 scratch 训练与 30/70 输出融合
+
+- 实验目标：检验完全不保留 v2 checkpoint 时，MLP 与 CNN 同时从零学习是否可行，
+  并将其与上一轮“保留 v2 MLP、CNN 重初始化后联合解冻”的最佳结果做输出级融合。
+  两模型由不同随机初始化得到，隐藏单元不存在参数级一一对应，因此只融合 predicted
+  residual，不平均 checkpoint 权重。全流程只用 train/validation，test 读取数为 0。
+- scratch 协议：MLP/CNN 隐藏层使用原生随机初始化，两个输出投影严格置零；全部
+  `174627` 个参数共同训练。MLP/CNN 目标学习率为 `1e-3/3e-4`，前 2 epoch 线性
+  warmup 后 cosine decay；固定 `seed=20260809`、validation sampler `20260805`，
+  使用 v3.2 双采样和 `ERB/HF/strict-ILD=0.75/0.25/0.75`，训练
+  `60 epoch × 500 step`。
+- scratch 训练：最佳 total 位于 epoch 60，为 `0.646540`；strict-ILD 单项最佳位于
+  epoch 35，为 `0.578411 dB`。训练共用时 `6745.61 s`，8/30000 个 optimizer step
+  因 AMP 非有限梯度跳过，最终 scale 为 `32768`，显存峰值 `599.47 MiB`。零输出起点
+  total 为 `0.918035`，确认训练未读取任何预训练权重。
+- scratch 严格 validation：全空间 ERB、对侧 25° ERB、对侧高频和水平面 ILD 为
+  `0.837668 / 1.302105 / 3.542947 / 0.598536 dB`。相对上一轮联合模型分别改善
+  `5.419% / 6.226% / 3.007% / 0.259%`；前三项为 42--44/44 人改善且配对统计
+  显著，ILD 差异不显著。协议同时改变了初始化、总预算和学习率，因此该差异不能单独
+  归因于 scratch 初始化。
+- 融合选择：在固定 validation sampler 的 96 batches 上，以 0.05 局部步长搜索
+  scratch 权重；最佳为上一轮联合模型 `30%` + scratch `70%`，proxy total
+  `0.641223`，优于上一轮的 `0.672247` 与 scratch 的 `0.646540`。44 人完整 residual
+  由同一权重线性组合后再进行原相位严格重建。
+- 融合严格 validation：四项为
+  `0.831843 / 1.291992 / 3.540258 / 0.581337 dB`。相对 scratch 分别改善
+  `0.695% / 0.777% / 0.076% / 2.874%`；全空间 ERB、对侧 ERB、ILD 的 paired
+  t-test 为 `p=1.52e-11 / 3.65e-4 / 1.20e-4`，高频差异不显著（`p=0.255`）。
+  相对上一轮联合模型四项分别改善 `6.077% / 6.954% / 3.081% / 3.125%`。
+- 结论与产物：30/70 输出融合正式记为 **MCAR v3.5**，是本组 validation-only 实验的最佳结果，但不追加消费
+  已使用过的 SONICOM test，也不改写论文主模型。scratch 配置与运行器为
+  `configs/experiments/sonicom_mlp_cnn_q26_v32_scratch_joint_e60.json`、
+  `scripts/run_v32_scratch_joint_e60.py`；融合配置、脚本、权重 sweep、严格结果和合并表
+  v3.5 的规范 manifest 为 `configs/experiments/sonicom_mlp_cnn_q26_v35.json`；源实验配置和脚本
+  分别位于 `configs/experiments/sonicom_mlp_cnn_q26_v32_previous_scratch_fusion_v1.json`、
+  `scripts/fuse_v32_previous_scratch_validation.py`、
+  `results/sonicom_mlp_cnn_q26_v32_previous_scratch_fusion/`、
+  `results/sonicom_mlp_cnn_q26_v32_previous_scratch_fusion_strict_validation/` 和
+  `results/sonicom_mlp_cnn_q26_v32_cnn_reinit_joint_v1/`。
+
+## 2026-08-16：SONICOM v3.2 CNN 重初始化与 MLP 低学习率联合微调
+
+- 实验目标：检验当前 v3.2 是否依赖正式 v3 CNN 初始化，并在同一重初始化起点上用
+  matched control 判断完整解冻 MLP 的独立价值。全流程仅使用 262 train / 44
+  validation，被消费的 test 未读取。
+- 阶段 1：正式 v2 MLP 保持冻结，不加载任何 CNN checkpoint；CNN 内部层采用原生
+  初始化且输出投影严格置零。固定 `seed=20260809`、validation sampler
+  `20260805`，按当前 v3.2 双采样与 `ERB/HF/strict-ILD=0.75/0.25/0.75`
+  训练 `40 epoch × 500 step`。最佳点为 epoch 36，validation total 为
+  `0.673068`，用时 `4551.36 s`，3/20000 个 AMP optimizer step 跳过。
+- 阶段 2：从阶段 1 的同一 SHA-256 `A684F414…82DAF68B9` checkpoint 分叉。
+  CNN-only 对照和 MLP+CNN 联合分支均训练 `10 epoch × 500 step`，CNN 学习率均为
+  `1e-5`；联合分支额外以 `1e-6` 解冻全部 MLP。两支最佳点均为 epoch 8，total
+  分别为 `0.672634 / 0.672247`，无 optimizer skip，源 checkpoint 前后哈希一致。
+- 严格 validation：已有 v3 CNN 初始化的 epoch 39 四项为
+  `0.872882 / 1.364204 / 3.608567 / 0.596141 dB`；CNN 重初始化为
+  `0.884641 / 1.384283 / 3.655912 / 0.602080 dB`，分别回退
+  `1.347% / 1.472% / 1.312% / 0.996%`。前三项的配对统计一致显著，说明 v3
+  CNN 初始化具有明确价值。
+- 解冻判断：联合分支四项为
+  `0.885664 / 1.388553 / 3.652797 / 0.600091 dB`。相对匹配的 CNN-only
+  `0.886132 / 1.387762 / 3.653945 / 0.601172 dB`，全空间 ERB、高频和 ILD
+  改善 `0.0528% / 0.0314% / 0.1797%`；对侧 ERB 回退 `0.0570%`，95% CI
+  跨 0。MLP 相对 L2 仅变化 `0.1179%`，表明低学习率解冻稳定且略有价值，但不能
+  弥补 CNN 重初始化差距。
+- 结论与产物：保持已有 v3 CNN 初始化路径，不以本实验替换主模型；联合微调保留为
+  正向但小幅的消融。锁定配置与运行器分别为
+  `configs/experiments/sonicom_mlp_cnn_q26_v32_cnn_reinit_joint_v1.json` 和
+  `scripts/run_v32_cnn_reinit_joint_v1.py`；精选比较、配对统计和参数诊断位于
+  `results/sonicom_mlp_cnn_q26_v32_cnn_reinit_joint_v1/`。
+
 ## 2026-08-14：SONICOM 八方法稀疏度横向比较
 
 > 状态：有效。该实验在此前 MCAR v3.2、FSP-AE、RANF 三种学习方法稀疏度实验的基础上，

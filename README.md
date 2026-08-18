@@ -12,6 +12,15 @@ residual = log|H_ref| - log|H_MCA|
 
 ## 当前结果
 
+**当前工程主模型已更新为 MCAR v3.5.1**：固定输出融合为 previous-joint `30%` +
+v3.5.1-B epoch 23 `70%`。在 44 名 test 被试上，四项严格指标为
+`0.817937 / 1.274489 / 3.508481 / 0.644709 dB`；与其余七种方法横向比较时，
+全空间 ERB、对侧 25° ERB、对侧高频和水平面 ILD MAE 分别排名
+`1 / 1 / 3 / 1`。完整八方法结果、数据表和 PNG/PDF 图位于
+`results/sonicom_eight_method_q26_v351_main_test/`。此前预声明的 v3.2 epoch 6
+论文模型及其一次性测试结论作为历史冻结记录保留；由于 validation 与 test 均已被
+项目历史实验使用，新的独立确认仍需未见拆分或外部数据。
+
 SONICOM Q26 的一次性最终 test 已在模型完全锁定并获得用户明确授权后完成。论文主模型为
 MLP+CNN v3.2（严格 ILD 权重 `0.75`、epoch 6）：44 名 test 被试上的全空间 ERB、
 对侧 25° ERB、对侧高频和水平面严格 ILD MAE 分别为
@@ -56,6 +65,26 @@ v3.2 epoch 39，44 人严格 validation 的全空间 ERB、高频和水平面 IL
 改变量仅 `0.0997%`，说明解冻稳定但总体收益很小，当前更适合作为消融而非替代模型。
 test 读取数为 0；结果位于
 `results/sonicom_mlp_cnn_q26_v321_joint_unfreeze_e10_strict_validation/`。
+
+另一次 CNN 初始化消融从正式 v2 MLP 出发，不加载 v3 CNN checkpoint，以零输出 CNN
+直接按 v3.2 目标训练 40 epoch；其四项严格 validation 相对使用 v3 CNN 初始化的
+epoch 39 分别回退 `1.347% / 1.472% / 1.312% / 0.996%`，说明继承的 CNN 表征
+具有明确价值。在该重初始化 checkpoint 上，MLP+CNN 联合微调相对匹配的 CNN-only
+对照将全空间 ERB、高频和 ILD 小幅改善 `0.0528% / 0.0314% / 0.1797%`，但不能
+弥补初始化差距。因此继续保留“v3 CNN 初始化 + MLP 冻结”为主训练路径，完整结果见
+`results/sonicom_mlp_cnn_q26_v32_cnn_reinit_joint_v1/`；test 读取数为 0。
+
+随后完成的完整 scratch 消融不加载任何 v2/CNN checkpoint，MLP 与 CNN 隐藏层随机
+初始化、两个输出头置零，以 `MLP/CNN=1e-3/3e-4` 联合训练 60 epoch。其 44 人严格
+validation 四项为 `0.837668 / 1.302105 / 3.542947 / 0.598536 dB`。再与上一轮
+CNN 重初始化联合模型做 residual 输出级融合，仅用固定 validation 选择得到
+“上一轮 30% + scratch 70%”，并正式记为 **MCAR v3.5**；四项进一步达到
+`0.831843 / 1.291992 / 3.540258 / 0.581337 dB`。相对 scratch，前三项 ERB/高频
+改善 `0.695% / 0.777% / 0.076%`，ILD 改善 `2.874%`；高频小幅差异不显著，
+其余三项配对 t-test 显著。完整权重搜索与合并结果位于
+`results/sonicom_mlp_cnn_q26_v32_previous_scratch_fusion/` 和
+`results/sonicom_mlp_cnn_q26_v32_cnn_reinit_joint_v1/`；test 读取数为 0，既有论文
+主模型和一次性 test 结论不变。
 
 全局频谱上下文 v3.3 消融也已完成：保留并冻结 v3.2 epoch 39 的 MLP 与局部
 dilated CNN，将 463 个频点按步长 4 降采样为 116 个 token，经两层、4 头、宽度 32

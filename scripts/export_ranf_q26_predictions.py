@@ -1,7 +1,7 @@
-"""Export RANF test predictions from WSL using the frozen SONICOM IDs.
+"""Export RANF predictions from WSL using the frozen SONICOM IDs.
 
 RANF requires contiguous internal listener IDs, while MCAR tables use the
-original SONICOM IDs.  This script validates the 44-subject test mapping,
+original SONICOM IDs.  This script validates a 44-subject split mapping,
 copies each predicted SOFA into the project artifact layout, and converts the
 native RANF evaluation log to an original-ID per-subject CSV.
 """
@@ -18,7 +18,7 @@ from pathlib import Path
 
 
 SUBJECT_EVALUATION = re.compile(r"(?:INFO:root:)?(P\d{4}) evaluation$")
-EXPECTED_TEST_SUBJECTS = 44
+EXPECTED_SPLIT_SUBJECTS = 44
 
 
 def sha256(path: Path) -> str:
@@ -29,15 +29,17 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def read_test_mapping(path: Path) -> list[dict[str, str]]:
+def read_split_mapping(path: Path, split: str) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8-sig") as handle:
-        rows = [row for row in csv.DictReader(handle) if row["split"] == "test"]
-    if len(rows) != EXPECTED_TEST_SUBJECTS:
-        raise ValueError(f"Expected 44 test mapping rows, found {len(rows)}")
+        rows = [row for row in csv.DictReader(handle) if row["split"] == split]
+    if len(rows) != EXPECTED_SPLIT_SUBJECTS:
+        raise ValueError(
+            f"Expected {EXPECTED_SPLIT_SUBJECTS} {split} mapping rows, found {len(rows)}"
+        )
     internal = [row["internal_subject_id"].upper() for row in rows]
     original = [row["original_subject_id"].upper() for row in rows]
     if len(set(internal)) != len(rows) or len(set(original)) != len(rows):
-        raise ValueError("RANF test mapping contains duplicate subject IDs")
+        raise ValueError(f"RANF {split} mapping contains duplicate subject IDs")
     return rows
 
 
@@ -62,9 +64,10 @@ def parse_native_metrics(path: Path) -> dict[str, dict[str, float]]:
                 result[current]["LSD_dB"] = float(line.rsplit(":", 1)[1])
     required = {"ITDDifference_us", "ILDDifference_dB", "LSD_dB"}
     incomplete = {subject: sorted(required - values.keys()) for subject, values in result.items() if required - values.keys()}
-    if len(result) != EXPECTED_TEST_SUBJECTS or incomplete:
+    if len(result) != EXPECTED_SPLIT_SUBJECTS or incomplete:
         raise ValueError(
-            f"Expected 44 complete native metric records, found {len(result)}; "
+            f"Expected {EXPECTED_SPLIT_SUBJECTS} complete native metric records, "
+            f"found {len(result)}; "
             f"incomplete={incomplete}"
         )
     return result
@@ -75,9 +78,10 @@ def main() -> None:
     parser.add_argument("--mapping", type=Path, required=True)
     parser.add_argument("--eval-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--split", choices=("val", "test"), default="test")
     args = parser.parse_args()
 
-    mapping_rows = read_test_mapping(args.mapping)
+    mapping_rows = read_split_mapping(args.mapping, args.split)
     eval_log = args.eval_root / "eval.log"
     if not eval_log.is_file():
         raise FileNotFoundError(eval_log)
@@ -131,7 +135,7 @@ def main() -> None:
     manifest = {
         "schema_version": "1.0",
         "method": "RANF",
-        "split": "test",
+        "split": args.split,
         "subject_count": len(output_rows),
         "source_eval_root": str(args.eval_root),
         "source_mapping": str(args.mapping),
@@ -147,7 +151,10 @@ def main() -> None:
     (args.output_root / "manifest.json").write_text(
         json.dumps(manifest, indent=2), encoding="utf-8"
     )
-    print(f"Exported {len(output_rows)} RANF test predictions to {args.output_root}")
+    print(
+        f"Exported {len(output_rows)} RANF {args.split} predictions "
+        f"to {args.output_root}"
+    )
 
 
 if __name__ == "__main__":

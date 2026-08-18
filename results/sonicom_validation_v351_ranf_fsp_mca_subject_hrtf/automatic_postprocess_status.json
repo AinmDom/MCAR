@@ -1,0 +1,11 @@
+{
+    "schema_version":  "1.0",
+    "updated_on":  "2026-08-17T15:41:37.5680630+08:00",
+    "status":  "completed",
+    "message":  "RANF export and MATLAB HRTF comparison completed successfully.",
+    "result_root":  "results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf",
+    "figure_png":  "results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/figures/validation44_subject_contralateral_hrtf_comparison.png",
+    "figure_pdf":  "results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/figures/validation44_subject_contralateral_hrtf_comparison.pdf",
+    "selected_direction_table":  "results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/selected_direction_per_subject.csv",
+    "test_subject_count_read":  0
+}

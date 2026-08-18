@@ -13,6 +13,11 @@ class ResidualMLP(nn.Module):
         self.blocks = nn.ModuleList(ResidualBlock(width) for _ in range(block_count))
         self.output = nn.Linear(width, 1)
 
+    def zero_initialize_output(self) -> None:
+        """Start residual learning from the exact zero-residual baseline."""
+        nn.init.zeros_(self.output.weight)
+        nn.init.zeros_(self.output.bias)
+
     def forward(self, features: torch.Tensor) -> torch.Tensor:
         hidden = self.input(features)
         for block in self.blocks:

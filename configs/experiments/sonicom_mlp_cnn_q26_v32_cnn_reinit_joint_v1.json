@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-16",
+  "status": "completed_validation_only",
+  "purpose": "Retrain the v3.2 CNN from its native zero-output initialization with the MLP frozen, then compare matched CNN-only continuation against low-learning-rate joint MLP+CNN fine-tuning.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "base_mlp_checkpoint": "artifacts/training/sonicom_mlp_q26_v2_formal_erb075_ild025/best.pt",
+  "comparison_baseline": {
+    "name": "v3.2 seed 20260809 epoch 39 with pretrained v3 CNN initialization",
+    "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_seed20260809_e40/best.pt",
+    "validation_total_loss": 0.6611154843121767,
+    "strict_validation_metrics_db": {
+      "full_sphere_erb": 0.8728824545096452,
+      "contralateral_25deg_erb": 1.3642041177513955,
+      "contralateral_high_frequency": 3.608567152291272,
+      "horizontal_ild_mae": 0.5961406543553209
+    }
+  },
+  "common_training": {
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "training_seed": 20260809,
+    "fixed_validation_sampler_seed": 20260805,
+    "dual_sampling_strict_ild": true,
+    "ild_loss_mode": "strict_hrir",
+    "interpolation_only": true,
+    "direction_weighted_residual": true,
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "strict_horizontal_hrir_ild_weight": 0.75,
+    "weight_decay": 0.00001,
+    "gradient_clip": 5.0,
+    "amp_initial_scale": 1024.0,
+    "scheduler": "cosine",
+    "automatic_mixed_precision": true,
+    "checkpoint_selection": "minimum fixed validation total loss"
+  },
+  "stage1_cnn_reinitialization": {
+    "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v32_cnn_reinit_seed20260809_e40",
+    "initial_cnn_checkpoint": null,
+    "cnn_initialization": "native random internal layers with exactly zero-initialized output projection",
+    "freeze_mlp": true,
+    "epochs": 40,
+    "cnn_learning_rate": 0.0001
+  },
+  "stage2_branches": {
+    "source_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_cnn_reinit_seed20260809_e40/best.pt",
+    "cnn_only_control": {
+      "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v32_cnn_reinit_continuation_e10",
+      "epochs": 10,
+      "unfreeze_mlp": false,
+      "cnn_learning_rate": 0.00001,
+      "mlp_learning_rate": null
+    },
+    "joint_mlp_cnn": {
+      "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10",
+      "epochs": 10,
+      "unfreeze_mlp": true,
+      "cnn_learning_rate": 0.00001,
+      "mlp_learning_rate": 0.000001
+    }
+  },
+  "tracking": {
+    "wandb_mode": "offline",
+    "wandb_project": "mcar-sonicom",
+    "wandb_group": "q26-v32-cnn-reinit-joint-v1"
+  },
+  "safety": {
+    "separate_output_directories": true,
+    "source_checkpoint_hash_recorded_before_stage2": true,
+    "source_checkpoint_hash_verified_after_each_branch": true,
+    "test_access_forbidden": true
+  },
+  "execution": {
+    "stage1_cnn_reinitialization": {
+      "completed_epochs": 40,
+      "best_epoch": 36,
+      "best_validation_total_loss": 0.673068397367994,
+      "best_checkpoint_sha256": "A684F4143D96B1C7C6ABA3D41EAE330802E3ED357CD6919FA44EEBA82DAF68B9",
+      "elapsed_seconds": 4551.3569704,
+      "optimizer_skipped_steps": 3,
+      "strict_validation_metrics_db": {
+        "full_sphere_erb": 0.8846411856612815,
+        "contralateral_25deg_erb": 1.384283465671023,
+        "contralateral_high_frequency": 3.6559123237691193,
+        "horizontal_ild_mae": 0.602080291608707
+      }
+    },
+    "stage2_cnn_only_control": {
+      "completed_epochs": 10,
+      "best_epoch": 8,
+      "best_validation_total_loss": 0.6726343796278039,
+      "best_checkpoint_sha256": "3C3B19EA74919D3FF30A1FF7A901BD79B28804629B276AA4E6D39E33B072F4FB",
+      "elapsed_seconds": 1208.9038426,
+      "optimizer_skipped_steps": 0,
+      "strict_validation_metrics_db": {
+        "full_sphere_erb": 0.8861318036405078,
+        "contralateral_25deg_erb": 1.3877621859740654,
+        "contralateral_high_frequency": 3.6539448986114773,
+        "horizontal_ild_mae": 0.601171762192473
+      }
+    },
+    "stage2_joint_mlp_cnn": {
+      "completed_epochs": 10,
+      "best_epoch": 8,
+      "best_validation_total_loss": 0.672247422238191,
+      "best_checkpoint_sha256": "1D6ED796B2C19F77380BC2CB8B233F7B5DA78A70CAE77BB7D42461A8330E9CF4",
+      "elapsed_seconds": 1259.4468763,
+      "optimizer_skipped_steps": 0,
+      "mlp_relative_l2_change_percent": 0.11794071983271753,
+      "cnn_relative_l2_change_percent": 0.2912259305380768,
+      "strict_validation_metrics_db": {
+        "full_sphere_erb": 0.8856639397432968,
+        "contralateral_25deg_erb": 1.3885530653863298,
+        "contralateral_high_frequency": 3.6527974470883207,
+        "horizontal_ild_mae": 0.6000913801665341
+      }
+    },
+    "stage1_source_checkpoint_hash_unchanged_during_stage2": true,
+    "strict_validation_subject_count": 44,
+    "test_subject_count_read": 0
+  },
+  "test_subject_count_read": 0,
+  "test_policy": "Validation-only development experiment. The consumed SONICOM test split must not be read or used for model selection."
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-16",
+  "status": "completed_validation_only",
+  "purpose": "Train the complete v3.2 MLP+CNN architecture jointly from checkpoint-free random hidden-layer initialization with exact zero-output projections.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v32_scratch_joint_seed20260809_e60",
+  "initialization": {
+    "base_mlp_checkpoint": null,
+    "initial_cnn_checkpoint": null,
+    "mlp_hidden_layers": "PyTorch native random initialization",
+    "cnn_hidden_layers": "PyTorch native random initialization",
+    "mlp_output_projection": "exact zeros",
+    "cnn_output_projection": "exact zeros",
+    "initial_function": "zero residual correction, exactly equal to MCA"
+  },
+  "model": {
+    "architecture": "joint residual MLP plus directional dilated CNN",
+    "mlp_width": 128,
+    "mlp_block_count": 3,
+    "cnn_channels": 48,
+    "total_parameter_count": 174627,
+    "trainable_parameter_count": 174627
+  },
+  "training": {
+    "epochs": 60,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "training_seed": 20260809,
+    "fixed_validation_sampler_seed": 20260805,
+    "dual_sampling_strict_ild": true,
+    "ild_loss_mode": "strict_hrir",
+    "interpolation_only": true,
+    "direction_weighted_residual": true,
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "strict_horizontal_hrir_ild_weight": 0.75,
+    "cnn_learning_rate": 0.0003,
+    "mlp_learning_rate": 0.001,
+    "warmup_epochs": 2,
+    "warmup_start_factor": 0.1,
+    "post_warmup_scheduler": "cosine",
+    "weight_decay": 0.00001,
+    "gradient_clip": 5.0,
+    "amp_initial_scale": 1024.0,
+    "automatic_mixed_precision": true,
+    "checkpoint_selection": "minimum fixed validation total loss"
+  },
+  "comparison_baseline": {
+    "name": "v3.2 seed 20260809 epoch 39 with staged MLP/v3-CNN initialization",
+    "validation_total_loss": 0.6611154843121767,
+    "strict_validation_metrics_db": {
+      "full_sphere_erb": 0.8728824545096452,
+      "contralateral_25deg_erb": 1.3642041177513955,
+      "contralateral_high_frequency": 3.608567152291272,
+      "horizontal_ild_mae": 0.5961406543553209
+    }
+  },
+  "tracking": {
+    "wandb_mode": "offline",
+    "wandb_project": "mcar-sonicom",
+    "wandb_group": "q26-v32-scratch-joint-e60",
+    "wandb_job_type": "checkpoint-free-joint-training"
+  },
+  "execution": {
+    "completed_epochs": 60,
+    "best_epoch": 60,
+    "best_validation_total_loss": 0.6465397269154588,
+    "best_strict_ild_epoch": 35,
+    "best_validation_strict_ild_mae_db": 0.578411349405845,
+    "best_checkpoint_sha256": "B7DE9642820B2E83EB8D82D5CEAD08910062439538377EF9D696A01A41D072F6",
+    "elapsed_seconds": 6745.6095890999995,
+    "optimizer_skipped_steps": 8,
+    "peak_cuda_allocated_mib": 599.47021484375,
+    "strict_validation_subject_count": 44,
+    "strict_validation_metrics_db": {
+      "full_sphere_erb": 0.837668052768262,
+      "contralateral_25deg_erb": 1.30210522432677,
+      "contralateral_high_frequency": 3.54294656040211,
+      "horizontal_ild_mae": 0.598536222437555
+    }
+  },
+  "safety": {
+    "separate_output_directory": true,
+    "pretrained_checkpoint_access_forbidden": true,
+    "test_access_forbidden": true
+  },
+  "test_subject_count_read": 0,
+  "test_policy": "Validation-only scratch-training experiment. The consumed SONICOM test split must not be read or used for model selection."
+}

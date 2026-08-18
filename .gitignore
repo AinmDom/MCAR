@@ -114,3 +114,6 @@ wandb_state/
 
 # 汇报报告
 /reports/*.docx
+# Runtime state from the automatic validation postprocessor (final status JSON is tracked).
+/results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/automatic_postprocess.lock
+/results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/automatic_postprocess.log

@@ -94,7 +94,33 @@ class EpochMetrics:
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset_root", type=Path)
-    parser.add_argument("initial_checkpoint", type=Path)
+    parser.add_argument(
+        "initial_checkpoint",
+        type=Path,
+        nargs="?",
+        help=(
+            "Pretrained MLP checkpoint. Omit only with "
+            "--random-initialize-mlp."
+        ),
+    )
+    parser.add_argument(
+        "--random-initialize-mlp",
+        action="store_true",
+        help=(
+            "Construct the MLP from explicit architecture arguments instead "
+            "of loading a checkpoint. Requires --unfreeze-mlp."
+        ),
+    )
+    parser.add_argument("--mlp-width", type=int, default=128)
+    parser.add_argument("--mlp-block-count", type=int, default=3)
+    parser.add_argument(
+        "--zero-initialize-mlp-output",
+        action="store_true",
+        help=(
+            "Set the randomly initialized MLP output projection to exact "
+            "zero so scratch training starts from the MCA residual baseline."
+        ),
+    )
     parser.add_argument(
         "--initial-cnn-checkpoint",
         type=Path,
@@ -104,6 +130,13 @@ def parse_arguments() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--run-name", default="mlp_cnn_n03_v3")
+    parser.add_argument(
+        "--training-stage-label",
+        help=(
+            "Optional explicit checkpoint/report stage label for a locked "
+            "continuation experiment."
+        ),
+    )
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--steps-per-epoch", type=int, default=500)
     parser.add_argument("--validation-steps", type=int, default=96)
@@ -170,6 +203,15 @@ def parse_arguments() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--learning-rate", type=float, default=3e-4)
+    parser.add_argument(
+        "--warmup-epochs",
+        type=int,
+        default=0,
+        help=(
+            "Linear learning-rate warmup epochs before cosine annealing. "
+            "Zero preserves the historical scheduler."
+        ),
+    )
     parser.add_argument(
         "--unfreeze-mlp",
         action="store_true",
@@ -335,6 +377,18 @@ def serializable_arguments(
 
 
 def training_stage(arguments: argparse.Namespace) -> str:
+    explicit_label = getattr(arguments, "training_stage_label", None)
+    if explicit_label:
+        return str(explicit_label)
+    if getattr(arguments, "random_initialize_mlp", False):
+        if arguments.dual_sampling_strict_ild:
+            return (
+                "scratch_joint_mlp_cnn_global_magnitude_"
+                "horizontal_hrir_ild_v32"
+            )
+        if arguments.ild_loss_mode == "strict_hrir":
+            return "scratch_joint_mlp_cnn_strict_hrir_ild_v32"
+        return "scratch_joint_mlp_cnn"
     spectral_difference_training = (
         getattr(arguments, "high_frequency_first_difference_weight", 0.0)
         > 0.0
@@ -1284,6 +1338,59 @@ def make_optimizer(
     return optimizer, trainable_parameters
 
 
+def make_scheduler(
+    optimizer: torch.optim.Optimizer,
+    epochs: int,
+    warmup_epochs: int = 0,
+) -> torch.optim.lr_scheduler.LRScheduler:
+    """Build the historical cosine schedule with optional linear warmup."""
+    if epochs < 1:
+        raise ValueError("epochs must be positive")
+    if warmup_epochs < 0 or warmup_epochs >= epochs:
+        raise ValueError("warmup_epochs must satisfy 0 <= warmup < epochs")
+    if warmup_epochs == 0:
+        return torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=epochs,
+        )
+    warmup = torch.optim.lr_scheduler.LinearLR(
+        optimizer,
+        start_factor=0.1,
+        end_factor=1.0,
+        total_iters=warmup_epochs,
+    )
+    cosine = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer,
+        T_max=epochs - warmup_epochs,
+    )
+    return torch.optim.lr_scheduler.SequentialLR(
+        optimizer,
+        schedulers=[warmup, cosine],
+        milestones=[warmup_epochs],
+    )
+
+
+def infer_mlp_architecture_from_arguments(
+    checkpoint_arguments: dict[str, object],
+) -> tuple[int, int]:
+    """Read MLP dimensions from either legacy MLP or MLP+CNN checkpoints."""
+    if "width" in checkpoint_arguments:
+        width = int(checkpoint_arguments["width"])
+    elif "mlp_width" in checkpoint_arguments:
+        width = int(checkpoint_arguments["mlp_width"])
+    else:
+        raise KeyError("Checkpoint arguments do not contain an MLP width")
+    if "block_count" in checkpoint_arguments:
+        block_count = int(checkpoint_arguments["block_count"])
+    elif "mlp_block_count" in checkpoint_arguments:
+        block_count = int(checkpoint_arguments["mlp_block_count"])
+    else:
+        raise KeyError("Checkpoint arguments do not contain an MLP block count")
+    if width < 1 or block_count < 1:
+        raise ValueError("Checkpoint MLP dimensions must be positive")
+    return width, block_count
+
+
 def main() -> None:
     arguments = parse_arguments()
     if not torch.cuda.is_available():
@@ -1292,6 +1399,35 @@ def main() -> None:
         raise ValueError("epochs and steps_per_epoch must be positive")
     if arguments.validation_steps < 1:
         raise ValueError("validation_steps must be positive")
+    if arguments.mlp_width < 1 or arguments.mlp_block_count < 1:
+        raise ValueError("MLP width and block count must be positive")
+    if arguments.warmup_epochs < 0 or arguments.warmup_epochs >= arguments.epochs:
+        raise ValueError("--warmup-epochs must satisfy 0 <= warmup < epochs")
+    if arguments.random_initialize_mlp:
+        if arguments.initial_checkpoint is not None:
+            raise ValueError(
+                "--random-initialize-mlp conflicts with initial_checkpoint"
+            )
+        if arguments.initial_cnn_checkpoint is not None:
+            raise ValueError(
+                "--random-initialize-mlp conflicts with "
+                "--initial-cnn-checkpoint"
+            )
+        if not arguments.unfreeze_mlp:
+            raise ValueError(
+                "--random-initialize-mlp requires --unfreeze-mlp"
+            )
+    else:
+        if arguments.initial_checkpoint is None:
+            raise ValueError(
+                "initial_checkpoint is required unless "
+                "--random-initialize-mlp is enabled"
+            )
+        if arguments.zero_initialize_mlp_output:
+            raise ValueError(
+                "--zero-initialize-mlp-output is only valid with "
+                "--random-initialize-mlp"
+            )
     if arguments.high_frequency_first_difference_weight < 0.0:
         raise ValueError(
             "--high-frequency-first-difference-weight must be non-negative"
@@ -1443,15 +1579,23 @@ def main() -> None:
             True,
             True,
         )
-    initial = torch.load(
-        arguments.initial_checkpoint,
-        map_location=device,
-        weights_only=False,
-    )
-    initial_arguments = initial["arguments"]
+    initial = None
+    if not arguments.random_initialize_mlp:
+        initial = torch.load(
+            arguments.initial_checkpoint,
+            map_location=device,
+            weights_only=False,
+        )
+        initial_arguments = initial["arguments"]
+        mlp_width, mlp_block_count = infer_mlp_architecture_from_arguments(
+            initial_arguments
+        )
+    else:
+        mlp_width = arguments.mlp_width
+        mlp_block_count = arguments.mlp_block_count
     model = ResidualMLPCNN(
-        mlp_width=int(initial_arguments["width"]),
-        mlp_block_count=int(initial_arguments["block_count"]),
+        mlp_width=mlp_width,
+        mlp_block_count=mlp_block_count,
         cnn_channels=arguments.cnn_channels,
         global_context_attention=arguments.global_context_attention,
         global_attention_width=arguments.global_attention_width,
@@ -1459,9 +1603,19 @@ def main() -> None:
         global_attention_blocks=arguments.global_attention_blocks,
         global_attention_stride=arguments.global_attention_stride,
     ).to(device)
-    initial_model_epoch = int(initial["epoch"])
-    initial_model_stage = initial.get("training_stage", "residual_mlp")
-    if arguments.initial_cnn_checkpoint is None:
+    if arguments.random_initialize_mlp:
+        if arguments.zero_initialize_mlp_output:
+            model.mlp.zero_initialize_output()
+        initial_model_epoch = 0
+        initial_model_stage = (
+            "random_mlp_cnn_zero_output"
+            if arguments.zero_initialize_mlp_output
+            else "random_mlp_cnn"
+        )
+    elif arguments.initial_cnn_checkpoint is None:
+        assert initial is not None
+        initial_model_epoch = int(initial["epoch"])
+        initial_model_stage = initial.get("training_stage", "residual_mlp")
         model.load_mlp_state_dict(initial["model_state"])
     else:
         initial_cnn = torch.load(
@@ -1500,9 +1654,10 @@ def main() -> None:
         mlp_learning_rate=arguments.mlp_learning_rate,
         global_context_only=arguments.freeze_local_cnn,
     )
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    scheduler = make_scheduler(
         optimizer,
-        T_max=arguments.epochs,
+        epochs=arguments.epochs,
+        warmup_epochs=arguments.warmup_epochs,
     )
     scaler = torch.amp.GradScaler(
         "cuda",
@@ -1537,7 +1692,18 @@ def main() -> None:
         "torch_version": torch.__version__,
         "cuda_version": torch.version.cuda,
         "amp": use_amp,
-        "base_mlp_checkpoint_epoch": int(initial["epoch"]),
+        "initialization_mode": (
+            (
+                "random_mlp_cnn_zero_output"
+                if arguments.zero_initialize_mlp_output
+                else "random_mlp_cnn"
+            )
+            if arguments.random_initialize_mlp
+            else "checkpoint"
+        ),
+        "base_mlp_checkpoint_epoch": (
+            None if initial is None else int(initial["epoch"])
+        ),
         "initial_model_epoch": initial_model_epoch,
         "initial_model_stage": initial_model_stage,
         "initial_cnn_checkpoint": (

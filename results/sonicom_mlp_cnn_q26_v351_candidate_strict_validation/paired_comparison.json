@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "comparison": "v351_candidate_vs_v35",
+  "validation_subject_count": 44,
+  "metrics": [
+    {
+      "metric": "full_sphere_erb",
+      "v35_mean_db": 0.8318427572364442,
+      "v351_candidate_mean_db": 0.8308081768778546,
+      "mean_difference_db": -0.001034580358589688,
+      "relative_improvement_percent": 0.12437210633734459,
+      "improved_subject_count_of_44": 39,
+      "ci95_low_db": -0.0013082917244088693,
+      "ci95_high_db": -0.0007608689927705065,
+      "paired_t_p": 1.63279492451115e-09,
+      "wilcoxon_p": 6.523350748466328e-10,
+      "cohen_dz": -1.1491710521168985
+    },
+    {
+      "metric": "contralateral_25deg_erb",
+      "v35_mean_db": 1.2919921106824033,
+      "v351_candidate_mean_db": 1.2889532413126572,
+      "mean_difference_db": -0.0030388693697461474,
+      "relative_improvement_percent": 0.23520804381235727,
+      "improved_subject_count_of_44": 25,
+      "ci95_low_db": -0.005705106175544743,
+      "ci95_high_db": -0.00037263256394755176,
+      "paired_t_p": 0.026454788982173006,
+      "wilcoxon_p": 0.0342347312559923,
+      "cohen_dz": -0.34651863307490055
+    },
+    {
+      "metric": "contralateral_high_frequency",
+      "v35_mean_db": 3.5402580678684816,
+      "v351_candidate_mean_db": 3.538086607059492,
+      "mean_difference_db": -0.002171460808988597,
+      "relative_improvement_percent": 0.06133622937542434,
+      "improved_subject_count_of_44": 29,
+      "ci95_low_db": -0.0032556193316365047,
+      "ci95_high_db": -0.0010873022863406895,
+      "paired_t_p": 0.000217192590137219,
+      "wilcoxon_p": 0.00039282595582790236,
+      "cohen_dz": -0.6089371741617817
+    },
+    {
+      "metric": "horizontal_ild_mae",
+      "v35_mean_db": 0.581336775406924,
+      "v351_candidate_mean_db": 0.5811462482733765,
+      "mean_difference_db": -0.00019052713354751995,
+      "relative_improvement_percent": 0.03277396882626893,
+      "improved_subject_count_of_44": 21,
+      "ci95_low_db": -0.002261627125059847,
+      "ci95_high_db": 0.001880572857964807,
+      "paired_t_p": 0.8536920017906086,
+      "wilcoxon_p": 0.940145439269827,
+      "cohen_dz": -0.027968491748297592
+    }
+  ],
+  "test_subject_count_read": 0
+}

@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-17",
+  "status": "completed_validation_only",
+  "purpose": "Run three matched 40-epoch low-learning-rate continuations of the v3.5 scratch component, testing the original objective, weak spectral-band ILD, and stronger broadband plus spectral-band ILD before reselecting the v3.5 ensemble weight.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "source_scratch_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_scratch_joint_seed20260809_e60/best.pt",
+  "source_scratch_checkpoint_sha256": "B7DE9642820B2E83EB8D82D5CEAD08910062439538377EF9D696A01A41D072F6",
+  "source_checkpoint_epoch": 60,
+  "common_training": {
+    "epochs": 40,
+    "steps_per_epoch": 500,
+    "validation_steps": 96,
+    "global_directions_per_batch": 32,
+    "horizontal_ild_directions_per_batch": 32,
+    "training_seed": 20260817,
+    "fixed_validation_sampler_seed": 20260805,
+    "dual_sampling_strict_ild": true,
+    "ild_loss_mode": "strict_hrir",
+    "interpolation_only": true,
+    "direction_weighted_residual": true,
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "mlp_learning_rate": 0.00003,
+    "cnn_learning_rate": 0.00001,
+    "warmup_epochs": 1,
+    "post_warmup_scheduler": "cosine",
+    "weight_decay": 0.00001,
+    "gradient_clip": 5.0,
+    "amp_initial_scale": 1024.0,
+    "automatic_mixed_precision": true,
+    "spectral_band_ild_minimum_center_hz": 200.0,
+    "spectral_band_ild_maximum_center_hz": 18000.0,
+    "spectral_band_ild_beta_db": 0.5
+  },
+  "branches": [
+    {
+      "id": "a",
+      "name": "v3.5.1a original-loss continuation",
+      "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v351a_continuation_e40",
+      "training_stage": "v351a_scratch_continuation_original_loss",
+      "strict_horizontal_hrir_ild_weight": 0.75,
+      "spectral_band_ild_weight": 0.0
+    },
+    {
+      "id": "b",
+      "name": "v3.5.1b weak band-ILD continuation",
+      "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v351b_band_ild005_e40",
+      "training_stage": "v351b_scratch_continuation_band_ild005",
+      "strict_horizontal_hrir_ild_weight": 0.75,
+      "spectral_band_ild_weight": 0.05
+    },
+    {
+      "id": "c",
+      "name": "v3.5.1c stronger strict plus band-ILD continuation",
+      "output_root": "artifacts/training/sonicom_mlp_cnn_q26_v351c_strict09_band_ild005_e40",
+      "training_stage": "v351c_scratch_continuation_strict09_band_ild005",
+      "strict_horizontal_hrir_ild_weight": 0.9,
+      "spectral_band_ild_weight": 0.05
+    }
+  ],
+  "post_training_policy": {
+    "reselect_ensemble_weight": true,
+    "previous_joint_component_unchanged": true,
+    "strict_validation_only_after_all_branches_complete": true,
+    "candidate_label": "v3.5.1",
+    "do_not_overwrite_v3.5": true
+  },
+  "results": {
+    "completed_branches": ["a", "b", "c"],
+    "branch_best_epochs": {
+      "a": 23,
+      "b": 23,
+      "c": 1
+    },
+    "branch_standardized_original_objective_total_loss": {
+      "a_best_total": 0.6463268942510089,
+      "b_best_total": 0.6461986961464087,
+      "c_best_total": 0.646672268708547
+    },
+    "selected_branch": "b",
+    "selected_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v351b_band_ild005_e40/best.pt",
+    "selected_checkpoint_epoch": 23,
+    "selected_checkpoint_sha256": "3D657783E301300AC9B36C02E0C0FE1F98E82F611CE202638C84F84B036391EB",
+    "selected_previous_weight": 0.3,
+    "selected_candidate_weight": 0.7,
+    "validation_proxy_total_loss": 0.6405837597946326,
+    "validation_proxy_relative_improvement_vs_v35_percent": 0.09974413458603149,
+    "strict_validation_metrics_db": {
+      "full_sphere_erb": 0.8308081768778546,
+      "contralateral_25deg_erb": 1.2889532413126572,
+      "contralateral_high_frequency": 3.538086607059492,
+      "horizontal_ild_mae": 0.5811462482733765
+    },
+    "strict_relative_improvement_vs_v35_percent": {
+      "full_sphere_erb": 0.12437210633734459,
+      "contralateral_25deg_erb": 0.23520804381235727,
+      "contralateral_high_frequency": 0.06133622937542434,
+      "horizontal_ild_mae": 0.03277396882626893
+    },
+    "strict_paired_t_p_vs_v35": {
+      "full_sphere_erb": 1.63279492451115e-9,
+      "contralateral_25deg_erb": 0.026454788982173006,
+      "contralateral_high_frequency": 0.000217192590137219,
+      "horizontal_ild_mae": 0.8536920017906086
+    },
+    "proxy_results_root": "results/sonicom_mlp_cnn_q26_v351_proxy_ensembles",
+    "strict_results_root": "results/sonicom_mlp_cnn_q26_v351_candidate_strict_validation"
+  },
+  "tracking": {
+    "wandb_mode": "offline",
+    "wandb_project": "mcar-sonicom",
+    "wandb_group": "q26-v351-continuation-e40x3",
+    "wandb_job_type": "v351-scratch-component-continuation"
+  },
+  "safety": {
+    "separate_output_directories": true,
+    "source_checkpoint_hash_verified_before_and_after_each_branch": true,
+    "matched_branch_training_protocol": true,
+    "test_access_forbidden": true
+  },
+  "test_subject_count_read": 0,
+  "test_policy": "All three v3.5.1 branches train and select on train/validation only. The consumed SONICOM test split must not be read."
+}

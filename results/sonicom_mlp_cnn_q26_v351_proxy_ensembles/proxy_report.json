@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "selection_split": "val",
+  "validation_subject_count": 44,
+  "validation_steps": 96,
+  "fixed_validation_sampler_seed": 20260805,
+  "objective_source": "artifacts\\training\\sonicom_mlp_cnn_q26_v32_scratch_joint_seed20260809_e60\\best.pt",
+  "previous_checkpoint": "artifacts\\training\\sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10\\best.pt",
+  "reference_v35": {
+    "candidate_weight": 0.7,
+    "total_loss": 0.6412233424683412,
+    "residual_mae_db": 2.4893045698602996,
+    "erb_mae_db": 0.9694424060483774,
+    "contralateral_high_frequency_mae_db": 3.51900606850783,
+    "ild_mae_db": 0.5762666407972574,
+    "ild_spectral_proxy_mae_db": 0.5996201056987047,
+    "high_frequency_first_difference_mae_db_per_bin": 0.0,
+    "high_frequency_second_difference_mae_db_per_bin2": 0.0,
+    "spectral_band_ild_smooth_l1_db": 0.0,
+    "spectral_band_ild_mae_db": 0.0,
+    "notch_depth_mae_db": 0.0,
+    "cnn_delta_mean_absolute_db": 1.4470110750186282
+  },
+  "finalists": [
+    "v351b_best_total",
+    "v351a_best_total",
+    "v351b_best_strict"
+  ],
+  "best": {
+    "candidate": "v351b_best_total",
+    "candidate_weight": 0.7,
+    "total_loss": 0.6405837597946326,
+    "residual_mae_db": 2.487449703117212,
+    "erb_mae_db": 0.9681156799197197,
+    "contralateral_high_frequency_mae_db": 3.5171999658147493,
+    "ild_mae_db": 0.5754833246270815,
+    "ild_spectral_proxy_mae_db": 0.5995654358218113,
+    "high_frequency_first_difference_mae_db_per_bin": 0.0,
+    "high_frequency_second_difference_mae_db_per_bin2": 0.0,
+    "spectral_band_ild_smooth_l1_db": 0.0,
+    "spectral_band_ild_mae_db": 0.0,
+    "notch_depth_mae_db": 0.0,
+    "cnn_delta_mean_absolute_db": 1.4571813254008
+  },
+  "relative_total_improvement_vs_v35_percent": 0.09974413458603149,
+  "elapsed_seconds": 513.8921531000001,
+  "test_subject_count_read": 0
+}

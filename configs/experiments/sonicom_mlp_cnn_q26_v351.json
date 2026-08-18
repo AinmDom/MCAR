@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-17",
+  "model_version": "v3.5.1",
+  "model_name": "SONICOM Q26 MCAR v3.5.1",
+  "status": "current_engineering_main_model_frozen_test_evaluated",
+  "model_type": "convex output-level residual ensemble",
+  "formula": "predicted_residual_v351 = 0.3 * previous_joint + 0.7 * v351b_continuation",
+  "components": {
+    "previous_joint": {
+      "weight": 0.3,
+      "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10/best.pt",
+      "checkpoint_sha256": "1D6ED796B2C19F77380BC2CB8B233F7B5DA78A70CAE77BB7D42461A8330E9CF4"
+    },
+    "v351b_continuation": {
+      "weight": 0.7,
+      "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v351b_band_ild005_e40/best.pt",
+      "checkpoint_epoch": 23,
+      "checkpoint_sha256": "3D657783E301300AC9B36C02E0C0FE1F98E82F611CE202638C84F84B036391EB",
+      "source_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_scratch_joint_seed20260809_e60/best.pt",
+      "training_note": "Joint MLP/CNN continuation with CNN LR 1e-5, MLP LR 3e-5, strict ILD 0.75 and spectral-band ILD 0.05."
+    }
+  },
+  "selection": {
+    "split": "val",
+    "validation_subject_count": 44,
+    "fixed_sampler_seed": 20260805,
+    "validation_steps_per_weight": 96,
+    "selected_previous_weight": 0.3,
+    "selected_candidate_weight": 0.7,
+    "validation_total_loss": 0.6405837597946326,
+    "relative_improvement_vs_v35_percent": 0.09974413458603149
+  },
+  "strict_validation_metrics_db": {
+    "full_sphere_erb": 0.8308081768778546,
+    "contralateral_25deg_erb": 1.2889532413126572,
+    "contralateral_high_frequency": 3.538086607059492,
+    "horizontal_ild_mae": 0.5811462482733765
+  },
+  "comparison_to_v35": {
+    "relative_improvement_percent": {
+      "full_sphere_erb": 0.12437210633734459,
+      "contralateral_25deg_erb": 0.23520804381235727,
+      "contralateral_high_frequency": 0.06133622937542434,
+      "horizontal_ild_mae": 0.03277396882626893
+    },
+    "improved_subject_count_of_44": {
+      "full_sphere_erb": 39,
+      "contralateral_25deg_erb": 25,
+      "contralateral_high_frequency": 29,
+      "horizontal_ild_mae": 21
+    },
+    "paired_t_p": {
+      "full_sphere_erb": 1.63279492451115e-9,
+      "contralateral_25deg_erb": 0.026454788982173006,
+      "contralateral_high_frequency": 0.000217192590137219,
+      "horizontal_ild_mae": 0.8536920017906086
+    }
+  },
+  "outputs": {
+    "validation_predictions": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70",
+    "proxy_analysis": "results/sonicom_mlp_cnn_q26_v351_proxy_ensembles",
+    "strict_validation": "results/sonicom_mlp_cnn_q26_v351_candidate_strict_validation"
+  },
+  "frozen_test": {
+    "authorization_received_on": "2026-08-17",
+    "protocol": "configs/experiments/sonicom_mlp_cnn_q26_v351_frozen_test.json",
+    "comparison_model": "v3.2 seed-20260809 epoch 39",
+    "result_root": "results/sonicom_mlp_cnn_q26_v351_vs_v32e39_frozen_test_strict",
+    "test_subject_count_read": 44,
+    "strict_metrics_db": {
+      "full_sphere_erb": 0.8179370487968771,
+      "contralateral_25deg_erb": 1.2744892321005215,
+      "contralateral_high_frequency": 3.5084809628530294,
+      "horizontal_ild_mae": 0.6447090916559254
+    },
+    "model_or_weight_updates_after_test": false,
+    "reporting_scope": "Additional frozen comparison on a test split already consumed by earlier project evaluations; not a newly untouched confirmatory test."
+  },
+  "promotion": {
+    "authorized_on": "2026-08-17",
+    "role": "current engineering main model",
+    "replaces": "MCAR v3.2 seed-20260809 epoch 39",
+    "decision_basis": "Frozen v3.5.1 improved all four test-set means versus v3.2 epoch 39 and ranked first on three of four metrics in the frozen eight-method comparison.",
+    "eight_method_result_root": "results/sonicom_eight_method_q26_v351_main_test",
+    "eight_method_ranks": {
+      "full_sphere_erb": 1,
+      "contralateral_25deg_erb": 1,
+      "contralateral_high_frequency": 3,
+      "horizontal_ild_mae": 1
+    },
+    "historical_paper_record_policy": "Keep the preregistered v3.2 epoch 6 paper-model result as a historical frozen record; do not silently rewrite its original confirmatory-test claim."
+  },
+  "source_experiment": "configs/experiments/sonicom_mlp_cnn_q26_v351_continuation_e40x3.json",
+  "test_subject_count_read": 0,
+  "promotion_policy": "The user promoted v3.5.1 to the current engineering main model on 2026-08-17. Because validation and test splits have both been consumed by project history, a new untouched split or external dataset is still required for an independent confirmatory claim."
+}

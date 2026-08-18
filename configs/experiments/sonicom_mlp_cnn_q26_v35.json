@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-17",
+  "model_version": "v3.5",
+  "model_name": "SONICOM Q26 MCAR v3.5",
+  "status": "validation_best_ensemble_candidate",
+  "model_type": "convex output-level residual ensemble",
+  "formula": "predicted_residual_v35 = 0.3 * previous_joint + 0.7 * scratch_joint",
+  "components": {
+    "previous_joint": {
+      "weight": 0.3,
+      "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10/best.pt",
+      "checkpoint_sha256": "1D6ED796B2C19F77380BC2CB8B233F7B5DA78A70CAE77BB7D42461A8330E9CF4"
+    },
+    "scratch_joint": {
+      "weight": 0.7,
+      "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_scratch_joint_seed20260809_e60/best.pt",
+      "checkpoint_sha256": "B7DE9642820B2E83EB8D82D5CEAD08910062439538377EF9D696A01A41D072F6"
+    }
+  },
+  "selection": {
+    "split": "val",
+    "validation_subject_count": 44,
+    "fixed_sampler_seed": 20260805,
+    "validation_steps_per_weight": 96,
+    "selected_previous_weight": 0.3,
+    "selected_scratch_weight": 0.7,
+    "validation_total_loss": 0.6412233424683412
+  },
+  "strict_validation_metrics_db": {
+    "full_sphere_erb": 0.831842757236444,
+    "contralateral_25deg_erb": 1.2919921106824,
+    "contralateral_high_frequency": 3.54025806786848,
+    "horizontal_ild_mae": 0.581336775406924
+  },
+  "comparison_to_v32_e39": {
+    "relative_improvement_percent": {
+      "full_sphere_erb": 4.701629304286553,
+      "contralateral_25deg_erb": 5.293343285608782,
+      "contralateral_high_frequency": 1.8929697450528735,
+      "horizontal_ild_mae": 2.483286258073808
+    },
+    "improved_subject_count_of_44": {
+      "full_sphere_erb": 44,
+      "contralateral_25deg_erb": 44,
+      "contralateral_high_frequency": 44,
+      "horizontal_ild_mae": 25
+    },
+    "paired_t_p": {
+      "full_sphere_erb": 7.824520445961359e-31,
+      "contralateral_25deg_erb": 1.427184927162765e-17,
+      "contralateral_high_frequency": 1.7385100363319988e-20,
+      "horizontal_ild_mae": 0.0908152626454931
+    }
+  },
+  "source_experiment": "configs/experiments/sonicom_mlp_cnn_q26_v32_previous_scratch_fusion_v1.json",
+  "test_subject_count_read": 0,
+  "promotion_policy": "v3.5 is the validation-best ensemble candidate. It does not replace the frozen paper main model without independent confirmation on a new holdout or external dataset."
+}

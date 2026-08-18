@@ -1,0 +1,22 @@
+{
+  "source_checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v32_cnn_reinit_seed20260809_e40/best.pt",
+  "source_checkpoint_sha256": "A684F4143D96B1C7C6ABA3D41EAE330802E3ED357CD6919FA44EEBA82DAF68B9",
+  "cnn_only_continuation": {
+    "mlp_relative_l2_change_percent": 0.0,
+    "mlp_max_absolute_change": 0.0,
+    "mlp_changed_tensors": "0/16",
+    "cnn_relative_l2_change_percent": 0.29396604412329463,
+    "cnn_max_absolute_change": 0.004823625087738037,
+    "cnn_changed_tensors": "66/66"
+  },
+  "joint_mlp_cnn": {
+    "mlp_relative_l2_change_percent": 0.11794071983271753,
+    "mlp_max_absolute_change": 0.0006842613220214844,
+    "mlp_changed_tensors": "16/16",
+    "cnn_relative_l2_change_percent": 0.2912259305380768,
+    "cnn_max_absolute_change": 0.004885852336883545,
+    "cnn_changed_tensors": "66/66"
+  },
+  "source_checkpoint_hash_unchanged_after_both_branches": true,
+  "test_subject_count_read": 0
+}

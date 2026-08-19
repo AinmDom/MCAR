@@ -1,5 +1,37 @@
 # 项目实验日志
 
+## 2026-08-20：FiLM-SIREN Stage A3：backbone 深化搜索完成，候选 D-o20-d6-w256-ho20
+
+- 实验目标：按 `experiments/film_siren/STAGE_A3_PROTOCOL.md` 在 A2 选出的
+  D-o20 上逐维搜索 depth → width → hidden-omega（3 候选 × 5 名 A2 被试，
+  预算 200 epochs），得到深化 backbone 候选供 confirmation。
+- 预算验证（A3-0）：`sonicom_siren_a3_budget_e200` 的 best epochs
+  `200/189/150/128/133`，中位数 M=150；200-epoch aggregate holdout RMSE
+  `2.9350` 相对 A2 100-epoch `2.9865` 改善 `1.726%`（≥0.5% 阈值）→ 按协议
+  冻结 **E_A3 = 200**。P0289 在 200 epoch 仍未平台（best=200），报告注明
+  "预算边缘，confirmation 建议更长预算复核"。
+- A3-1 depth：d6 `2.9350` < d4 `2.9472`(+0.42%) < d8 `3.0112`(+2.60%)；
+  触发紧咬分支（两名 <0.5%、第三名 >2%）→ d6 主线、d4 保留对照；协议补充
+  执行说明（紧咬时后续深化取第一名主线、第二名对照，控制 2× 成本）。
+- A3-2 width：w256 `2.9350` < w128 `3.0603`(+4.27%) < w512 `3.3763`(+15.04%)；
+  基线 256 最优（w128 欠容量、w512 过拟合），非紧咬 → w256 主线。
+- A3-3 hidden-omega：ho20 `2.8956` < ho30 `2.9350`(+1.36%) < ho50
+  `3.3653`(+16.22%)；非紧咬 → ho20 主线。与 first-omega 20 最优趋势一致
+  （更低 omega 更利于方向外推）。
+- 最终候选：**`D-o20-d6-w256-ho20`**（dual、first-omega 20、6 层、width
+  256、hidden-omega 20，200 epochs），aggregate holdout RMSE **`2.8956 dB`**，
+  相对 A2 粗筛（100 ep）改善 `3.045%`，相对 200-epoch 基线再改善 `1.343%`；
+  full-field RMSE `1.7160`。
+- 完整性：50 个 subject run（budget 5 + depth 15 + width 15 + ho 15）全部
+  完成，46 KEEP + 4 RETEST（4 个均为 P0289 在 200 epoch 预算末端，best=200，
+  收敛慢现象），无 NaN/Inf，`test_subjects_read` 恒为 0。
+- 产物：三阶段排名/决策
+  `results/sonicom_siren_a3_matrix/{depth,width,ho}/`；汇总报告
+  `reports/film_siren_siren_a3_matrix.md`；逐 run 记录
+  `artifacts/training/sonicom_siren_a3_*/`。
+- 下一步：confirmation（16–32 名新 train 被试复核）→ 冻结 `SIREN Backbone v1`
+  → Stage B（Q26 FiLM conditioning）。
+
 ## 2026-08-19：FiLM-SIREN Stage A2：五人 backbone matrix 联合粗筛完成，dual-o20 锁定为主配置
 
 - 实验目标：按 `experiments/film_siren/STAGE_A2_PROTOCOL.md` 预注册协议，在 5 名

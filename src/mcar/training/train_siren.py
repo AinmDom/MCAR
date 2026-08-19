@@ -475,10 +475,8 @@ def run_matrix(
     subjects_csv = (root / configuration["subjects_csv"]).resolve()
     holdout_csv = (root / configuration["holdout_csv"]).resolve()
     subject_ids = load_subject_ids(subjects_csv)
-    if len(subject_ids) != 5:
-        raise ValueError(
-            f"Stage A2 expects exactly five subjects, got {len(subject_ids)}"
-        )
+    if not subject_ids:
+        raise ValueError("Subject lock file contains no subjects")
     holdout_indices, holdout_sha256 = load_holdout(holdout_csv)
 
     dataset_root = (root / configuration["dataset_root"]).resolve()
@@ -543,11 +541,13 @@ def run_matrix(
     (output_dir / "matrix_configuration.json").write_text(
         json.dumps(matrix_configuration, indent=2) + "\n", encoding="utf-8"
     )
-    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
     per_subject_reports: list[dict[str, Any]] = []
     for subject_id in subject_ids:
         set_seed(seed)
+        # Per-subject scaler: AMP state (growth/scale) must not leak across
+        # subjects even though current runs are FP32 (GradScaler no-op).
+        scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
         label = subject_label(subject_id)
         field = load_subject_field(
             dataset_root,
@@ -594,6 +594,32 @@ def run_matrix(
         )
         subject_output_dir = output_dir / label
         subject_output_dir.mkdir(parents=True)
+        (subject_output_dir / "configuration.json").write_text(
+            json.dumps(
+                {
+                    "matrix_run": configuration["run_name"],
+                    "matrix_config_sha256": matrix_configuration["config_sha256"],
+                    "subject_id": subject_id,
+                    "subject_label": label,
+                    "frequency_mode": frequency_mode,
+                    "hidden_width": hidden_width,
+                    "sine_layer_count": sine_layer_count,
+                    "first_omega": first_omega,
+                    "hidden_omega": hidden_omega,
+                    "epochs": epochs,
+                    "steps_per_epoch": steps_per_epoch,
+                    "seed": seed,
+                    "holdout_sha256": holdout_sha256,
+                    "train_direction_count": int(
+                        np.arange(total_directions, dtype=np.int64).size
+                    ),
+                    "test_subjects_read": 0,
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         if directions_per_batch > train_indices.size:
             raise ValueError("directions_per_batch exceeds train directions")
 
@@ -718,7 +744,7 @@ def run_matrix(
                     "optimizer_state": optimizer.state_dict(),
                     "siren_configuration": model.configuration.to_dict(),
                     "experiment_configuration": configuration,
-                    "field_metrics": asdict(holdout_metrics),
+                    "holdout_metrics": asdict(holdout_metrics),
                     "output_unit": "normalized_residual",
                     "residual_db_conversion": {
                         "target_mean": normalization.target_mean,
@@ -739,7 +765,7 @@ def run_matrix(
                         "optimizer_state": optimizer.state_dict(),
                         "siren_configuration": model.configuration.to_dict(),
                         "experiment_configuration": configuration,
-                        "field_metrics": asdict(holdout_metrics),
+                        "holdout_metrics": asdict(holdout_metrics),
                         "output_unit": "normalized_residual",
                         "residual_db_conversion": {
                             "target_mean": normalization.target_mean,

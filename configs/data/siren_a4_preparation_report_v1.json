@@ -1,0 +1,211 @@
+{
+  "protocol": "STAGE_A4_CONFIRMATION_PROTOCOL.md",
+  "seed": 20260820,
+  "target_count": 32,
+  "layer_count": 8,
+  "per_layer": 4,
+  "excluded_a2_subjects": [
+    "P0010",
+    "P0076",
+    "P0085",
+    "P0289",
+    "P0346"
+  ],
+  "candidate_pool_size": 254,
+  "selected_subjects": [
+    {
+      "layer": 1,
+      "subject_id": "P0286",
+      "rms_free_field_db": -43.88702616,
+      "layer_members": 32
+    },
+    {
+      "layer": 1,
+      "subject_id": "P0287",
+      "rms_free_field_db": -43.42272463,
+      "layer_members": 32
+    },
+    {
+      "layer": 1,
+      "subject_id": "P0310",
+      "rms_free_field_db": -42.31112027,
+      "layer_members": 32
+    },
+    {
+      "layer": 1,
+      "subject_id": "P0311",
+      "rms_free_field_db": -43.11981819,
+      "layer_members": 32
+    },
+    {
+      "layer": 2,
+      "subject_id": "P0251",
+      "rms_free_field_db": -41.22202496,
+      "layer_members": 32
+    },
+    {
+      "layer": 2,
+      "subject_id": "P0252",
+      "rms_free_field_db": -41.03346411,
+      "layer_members": 32
+    },
+    {
+      "layer": 2,
+      "subject_id": "P0273",
+      "rms_free_field_db": -42.09993524,
+      "layer_members": 32
+    },
+    {
+      "layer": 2,
+      "subject_id": "P0330",
+      "rms_free_field_db": -41.30129266,
+      "layer_members": 32
+    },
+    {
+      "layer": 3,
+      "subject_id": "P0290",
+      "rms_free_field_db": -41.02262226,
+      "layer_members": 32
+    },
+    {
+      "layer": 3,
+      "subject_id": "P0292",
+      "rms_free_field_db": -40.91905282,
+      "layer_members": 32
+    },
+    {
+      "layer": 3,
+      "subject_id": "P0351",
+      "rms_free_field_db": -40.9207174,
+      "layer_members": 32
+    },
+    {
+      "layer": 3,
+      "subject_id": "P0359",
+      "rms_free_field_db": -40.38488191,
+      "layer_members": 32
+    },
+    {
+      "layer": 4,
+      "subject_id": "P0015",
+      "rms_free_field_db": -38.9877649,
+      "layer_members": 32
+    },
+    {
+      "layer": 4,
+      "subject_id": "P0051",
+      "rms_free_field_db": -38.8920237,
+      "layer_members": 32
+    },
+    {
+      "layer": 4,
+      "subject_id": "P0179",
+      "rms_free_field_db": -39.0652978,
+      "layer_members": 32
+    },
+    {
+      "layer": 4,
+      "subject_id": "P0183",
+      "rms_free_field_db": -39.24255207,
+      "layer_members": 32
+    },
+    {
+      "layer": 5,
+      "subject_id": "P0045",
+      "rms_free_field_db": -38.43613531,
+      "layer_members": 32
+    },
+    {
+      "layer": 5,
+      "subject_id": "P0054",
+      "rms_free_field_db": -38.58903684,
+      "layer_members": 32
+    },
+    {
+      "layer": 5,
+      "subject_id": "P0083",
+      "rms_free_field_db": -38.61718997,
+      "layer_members": 32
+    },
+    {
+      "layer": 5,
+      "subject_id": "P0124",
+      "rms_free_field_db": -38.39511425,
+      "layer_members": 32
+    },
+    {
+      "layer": 6,
+      "subject_id": "P0011",
+      "rms_free_field_db": -38.13057088,
+      "layer_members": 32
+    },
+    {
+      "layer": 6,
+      "subject_id": "P0077",
+      "rms_free_field_db": -38.22297141,
+      "layer_members": 32
+    },
+    {
+      "layer": 6,
+      "subject_id": "P0092",
+      "rms_free_field_db": -38.06954976,
+      "layer_members": 32
+    },
+    {
+      "layer": 6,
+      "subject_id": "P0181",
+      "rms_free_field_db": -38.23515363,
+      "layer_members": 32
+    },
+    {
+      "layer": 7,
+      "subject_id": "P0002",
+      "rms_free_field_db": -37.82805697,
+      "layer_members": 31
+    },
+    {
+      "layer": 7,
+      "subject_id": "P0132",
+      "rms_free_field_db": -37.74726105,
+      "layer_members": 31
+    },
+    {
+      "layer": 7,
+      "subject_id": "P0143",
+      "rms_free_field_db": -37.75453087,
+      "layer_members": 31
+    },
+    {
+      "layer": 7,
+      "subject_id": "P0216",
+      "rms_free_field_db": -37.67602021,
+      "layer_members": 31
+    },
+    {
+      "layer": 8,
+      "subject_id": "P0008",
+      "rms_free_field_db": -37.01962117,
+      "layer_members": 31
+    },
+    {
+      "layer": 8,
+      "subject_id": "P0025",
+      "rms_free_field_db": -37.32829089,
+      "layer_members": 31
+    },
+    {
+      "layer": 8,
+      "subject_id": "P0034",
+      "rms_free_field_db": -35.07694597,
+      "layer_members": 31
+    },
+    {
+      "layer": 8,
+      "subject_id": "P0205",
+      "rms_free_field_db": -35.90750018,
+      "layer_members": 31
+    }
+  ],
+  "subjects_csv": "D:\\cuc\\CSMT\\MCAR\\configs\\data\\siren_a4_confirmation_subjects_v1.csv",
+  "subjects_csv_sha256": "8561827BF14A3120D848D1EA7EA3764CF0E17E6FEDD4A134D34FA3A6F3476EC8"
+}

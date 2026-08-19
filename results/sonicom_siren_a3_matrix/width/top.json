@@ -1,0 +1,11 @@
+{
+  "stage": "width",
+  "rule": "STAGE_A2_PROTOCOL.md section 6 Top rule",
+  "first": "w256",
+  "second": "w128",
+  "gap_first_second_percent": 4.2698,
+  "gap_first_third_percent": 15.0365,
+  "tight_second": false,
+  "clear_third": true,
+  "rationale": "First (w256) leads by 4.270% over second (w128); promote first as the primary configuration and carry second as the comparison control."
+}

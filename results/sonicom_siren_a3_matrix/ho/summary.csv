@@ -1,0 +1,4 @@
+rank,label,run_name,hidden_width,sine_layer_count,hidden_omega,aggregate_holdout_rmse_db,aggregate_holdout_mae_db,aggregate_full_field_rmse_db,holdout_rmse_P0289_db,holdout_rmse_P0346_db,holdout_rmse_P0085_db,holdout_rmse_P0076_db,holdout_rmse_P0010_db
+1,ho20,sonicom_siren_a3_d6_w256_ho20,256,6,20.0,2.895643,1.758551,1.71595,3.154203,3.031261,2.631214,2.805539,2.855997
+2,ho30,sonicom_siren_a3_d6_w256_ho30,256,6,30.0,2.935003,1.787617,1.900398,3.199503,3.061784,2.716756,2.842401,2.854569
+3,ho50,sonicom_siren_a3_d6_w256_ho50,256,6,50.0,3.365304,2.193778,2.714856,3.57352,3.538893,3.165993,3.27381,3.274304

@@ -1,0 +1,11 @@
+{
+  "stage": "ho",
+  "rule": "STAGE_A2_PROTOCOL.md section 6 Top rule",
+  "first": "ho20",
+  "second": "ho30",
+  "gap_first_second_percent": 1.3593,
+  "gap_first_third_percent": 16.2196,
+  "tight_second": false,
+  "clear_third": true,
+  "rationale": "First (ho20) leads by 1.359% over second (ho30); promote first as the primary configuration and carry second as the comparison control."
+}

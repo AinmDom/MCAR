@@ -1,0 +1,43 @@
+{
+  "protocol": "STAGE_A2_PROTOCOL.md",
+  "seed": 20260819,
+  "stratum_field": "Avg RMS dB (Free Field)",
+  "selected_subjects": [
+    {
+      "stratum": 1,
+      "subject_id": "P0289",
+      "rms_free_field_db": -42.18421539,
+      "stratum_members": 52
+    },
+    {
+      "stratum": 2,
+      "subject_id": "P0346",
+      "rms_free_field_db": -39.94668128,
+      "stratum_members": 52
+    },
+    {
+      "stratum": 3,
+      "subject_id": "P0085",
+      "rms_free_field_db": -38.76556101,
+      "stratum_members": 52
+    },
+    {
+      "stratum": 4,
+      "subject_id": "P0076",
+      "rms_free_field_db": -38.21772874,
+      "stratum_members": 52
+    },
+    {
+      "stratum": 5,
+      "subject_id": "P0010",
+      "rms_free_field_db": -37.80218687,
+      "stratum_members": 51
+    }
+  ],
+  "holdout_count": 64,
+  "holdout_sha256": "C1EEE29A6B33217D9267E76851D7F0E0C5D98FCBE245AABD9E4FA7C68C83A057",
+  "subjects_csv": "D:\\cuc\\CSMT\\MCAR\\configs\\data\\siren_a2_subjects_v1.csv",
+  "subjects_csv_sha256": "878426631C81C7C686D9E1828B9F39DAF4F6C8F14A6833055B863C5039B3FBF0",
+  "holdout_csv": "D:\\cuc\\CSMT\\MCAR\\configs\\data\\siren_a2_holdout_v1.csv",
+  "holdout_csv_sha256": "FB87B73DFEA77E4C643CDBBC04B35E0193D0D66DF1301DF0CCB15C0ABB909C34"
+}

@@ -75,3 +75,45 @@ hidden-omega 20），预算 200 epochs，aggregate holdout RMSE **`2.8956 dB`**�
    `Avg RMS dB` 分层），用 `D-o20-d6-w256-ho20` 复核；
 2. 通过后冻结 **`SIREN Backbone v1`**；
 3. 之后进入 Stage B（Q26 condition / FiLM conditioning）。
+
+## 审查记录（2026-08-20）
+
+对 A3 全流程的独立核对（审查脚本 `scripts/_audit_a3_*.py`，审查后已删除）。
+
+**通过项**
+
+- 10 个配置（budget 1 + depth 3 + width 3 + ho 3）的
+  `mode(dual) / first_omega(20) / depth / width / hidden_omega / seed /
+  holdout_sha256 / epochs(200) / steps(100) / optimizer / AMP(off) /
+  test_subjects_read / subjects_count` 与冻结协议全部一致；
+- 预算规则算术复核：best epochs `128/133/150/189/200` → 中位数 M=150 →
+  `E_A3 = max(100, ⌈150×1.25/50⌉×50) = 200`；200-epoch 改善 `1.7258%`
+  ≥ 0.5%，不触发 100-epoch 豁免——规则执行正确；
+- 三阶段 45 个 per-subject report 与 `summary.csv` 完全一致
+  （per-subject RMSE、aggregate 均值、hidden_width/depth/omega 维度）；
+- 报告数字与 summary 一致；三阶段 Top 决策的 gap12/gap13 算术、
+  紧咬/清晰分支标志与标签全部正确（depth 紧咬、width/ho 非紧咬）；
+- artifacts 完整：50 ×（best.pt / last.pt / history.csv / training_report.json）
+  + 10 ×（matrix_summary.json / matrix_configuration.json），history 全部
+  200 epochs；
+- 排名稳健性：每候选 5 被试 std 0.16–0.18 dB、range 0.41–0.52 dB，
+  与 A2 同量级，排名不被单被试主导；
+- 50 run：46 KEEP + 4 RETEST（4 个均为 P0289 在 200 epoch 预算末端，
+  best=200），无 NaN/Inf，`test_subjects_read` 均为 0。
+
+**发现的问题（均低风险，不影响 A3 结论）**
+
+1. 报告"对照链"中的改善百分比（3.045% / 1.343%）用 4 位小数中间值计算，
+   精确复核为 3.044% / 1.341%（≤0.002 个百分点四舍五入差）；
+   数值结论不变，建议后续报告注明计算精度；
+2. 紧咬分支的"成本控制执行说明"（`d0b4f2f`）是在 depth 阶段完成后、
+   width 阶段开始前补充进协议的——虽透明记录且未影响已跑结果，
+   但严格预注册应在首次运行前写入；confirmation 阶段协议如有类似
+   补充应提前冻结；
+3. A2 审查发现的代码问题（`GradScaler` 跨 subject 复用、checkpoint
+   `field_metrics` 命名、per-subject 无 `configuration.json`）对 A3
+   同样适用（A3 复用同一 `multi_subject_siren_matrix` 入口，无新增
+   训练代码），建议在 confirmation 前一并修正。
+
+**结论**：A3 结果可信、代码与协议一致，`D-o20-d6-w256-ho20`（holdout RMSE
+2.8956 dB）作为 backbone 候选进入 confirmation。

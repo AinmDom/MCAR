@@ -1,0 +1,11 @@
+{
+  "stage": "depth",
+  "rule": "STAGE_A2_PROTOCOL.md section 6 Top rule",
+  "first": "d6",
+  "second": "d4",
+  "gap_first_second_percent": 0.4163,
+  "gap_first_third_percent": 2.5956,
+  "tight_second": true,
+  "clear_third": true,
+  "rationale": "First (d6) and second (d4) are within 0.416% (<0.5%) while the third is 2.60% away (>2%); promote both into the next stage."
+}

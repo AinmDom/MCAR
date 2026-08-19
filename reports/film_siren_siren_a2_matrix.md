@@ -70,3 +70,49 @@
   depth / width / hidden-omega（草案见
   [`STAGE_A3_PROTOCOL_DRAFT.md`](../experiments/film_siren/STAGE_A3_PROTOCOL_DRAFT.md)）；
 - 随后固定 16–32 名 confirmation 被试冻结 `SIREN Backbone v1`。
+
+## 审查记录（2026-08-19）
+
+对 A2 全流程的独立核对（审查脚本 `scripts/_audit_a2_*.py`，审查后已删除）。
+
+**通过项**
+
+- 锁定文件可复现：重跑 `prepare_siren_a2_matrix` 生成的被试、64 个 holdout
+  indices 与 SHA-256 与提交文件逐项一致；
+- 9 个配置的 `mode / first_omega / seed / holdout_sha256 / test_subjects_read
+  / subjects_count` 与冻结协议全部一致；
+- `summary.csv` 与 45 个 `training_report.json` 的 per-subject holdout RMSE
+  及 aggregate 均值完全一致（误差 < 1e-6 dB）；报告表格数字与 summary 一致；
+- Top-2 决策算术复核：gap12 = 2.9025%、gap13 = 3.3387%，与 `top2.json`
+  一致，规则分支正确（非"紧咬"分支，D-o20 为主、D-o30 为对照）；
+- artifacts 完整：45 ×（best.pt / last.pt / history.csv / training_report.json）
+  + 9 ×（matrix_summary.json / matrix_configuration.json），history 全部
+  100 epochs；45 run 全部 KEEP、无 NaN/Inf、`test_subjects_read` 均为 0；
+  参数数与 dual（331010）/ 单维（330754）预期一致；
+- 排名稳健性：每配置 5 被试 std 0.12–0.18 dB，median 与 mean 排序一致，
+  排名不被单被试主导（同被试跨配置的系统性差距大于被试内噪声）。
+
+**发现的问题（均低风险，不影响 A2 结论）**
+
+1. per-subject 目录没有 `configuration.json`：matrix 模式的信息由根目录
+   `matrix_configuration.json` + per-subject `training_report.json` 完整承载，
+   但与单 subject 模式的目录布局不一致（文档提示，非功能缺陷）；
+2. `GradScaler` 在 subject 循环外创建、5 名被试复用：当前 FP32
+   （`use_amp=False`）下为 no-op，无影响；若未来启用 AMP，应移入循环内
+   以避免跨被试状态残留；
+3. matrix checkpoint 的 `field_metrics` 字段实际保存 holdout 指标，
+   命名不精确（建议改为 `holdout_metrics`）；
+4. 每 epoch 全量重写 `history.csv`（性能微优化空间）。
+
+**实验设计提示（A3 前请知悉）**
+
+- best-epoch 选择与配置排名共用同一 64 方向 holdout（选择集语义，符合
+  Stage A 协议），且 best epoch 普遍接近预算末端（73–98/100），说明 100
+  epoch 预算下 holdout 误差未完全平台：A3 深化 D-o20 时建议评估更长预算，
+  并依赖 A3-4 confirmation 被试做更独立的确认；
+- 全 45 run 为单 seed（20260819）粗筛：配置间公平，但尚无 seed 稳健性
+  证据；Stage C 的 3-seed 规则需覆盖该结论；
+- ERB 整体最差、dual 最优的结论基于 5 被试 × 单 seed × 64 方向 holdout，
+  样本有限，confirmation 阶段需复核频率映射结论。
+
+**结论**：A2 结果可信、代码与协议一致，D-o20 作为主配置进入 Stage A3。

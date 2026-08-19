@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-19",
+  "experiment_id": "SIREN-A3-WIDTH-W128",
+  "model_version": "sonicom-siren-a3-width-w128",
+  "experiment_type": "multi_subject_siren_matrix",
+  "purpose": "Stage A3 backbone deepening cell on the frozen D-o20 context; five fixed A2 train subjects, 64-direction holdout evaluation. Frozen by STAGE_A3_PROTOCOL.md.",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "subject_split_csv": "configs/data/sonicom_subject_split_v1.csv",
+  "subjects_csv": "configs/data/siren_a2_subjects_v1.csv",
+  "holdout_csv": "configs/data/siren_a2_holdout_v1.csv",
+  "interpolation_only": false,
+  "direction_protocol": "train_on_793_minus_64_holdout_evaluate_holdout_64",
+  "frequency_mapping": {
+    "mode": "dual",
+    "formula_version": "dual_linear_erb_v1",
+    "frequency_minimum_hz": 86.1328125,
+    "frequency_maximum_hz": 19982.8125,
+    "coordinate_minimum": -1.0,
+    "coordinate_maximum": 1.0
+  },
+  "model": {
+    "hidden_width": 128,
+    "sine_layer_count": 6,
+    "first_omega": 20.0,
+    "hidden_omega": 30.0,
+    "output_dimension": 2,
+    "output_unit": "normalized_residual"
+  },
+  "objective": "normalized_residual_mse",
+  "optimizer": {
+    "name": "Adam",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0
+  },
+  "epochs": 200,
+  "steps_per_epoch": 100,
+  "directions_per_batch": 16,
+  "evaluation_directions_per_block": 32,
+  "gradient_clip": 5.0,
+  "automatic_mixed_precision": false,
+  "precision": "FP32",
+  "seed": 20260819,
+  "inference_repetitions": 5,
+  "test_policy": "Subjects resolve through configs/data/siren_a2_subjects_v1.csv and the frozen split CSV; only train HDF5 files are opened. Validation and test HDF5 files are never read.",
+  "run_name": "sonicom_siren_a3_d6_w128"
+}

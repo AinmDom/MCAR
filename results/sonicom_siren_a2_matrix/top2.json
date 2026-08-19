@@ -1,0 +1,12 @@
+{
+  "rule": "STAGE_A2_PROTOCOL.md section 6 Top-2 rule",
+  "first": "D-o20",
+  "second": "D-o30",
+  "gap_first_second_percent": 2.9025,
+  "gap_first_third_percent": 3.3387,
+  "tight_second": false,
+  "clear_third": true,
+  "rationale": "First (D-o20) leads by 2.903% over second (D-o30); promote first as the primary configuration and carry second as a comparison control.",
+  "summary_csv": "D:\\cuc\\CSMT\\MCAR\\artifacts\\siren_a2_matrix\\summary.csv",
+  "generated_from_run_count": 9
+}

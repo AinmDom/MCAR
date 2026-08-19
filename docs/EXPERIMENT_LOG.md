@@ -1,5 +1,37 @@
 # 项目实验日志
 
+## 2026-08-19：FiLM-SIREN Stage A2：五人 backbone matrix 联合粗筛完成，dual-o20 锁定为主配置
+
+- 实验目标：按 `experiments/film_siren/STAGE_A2_PROTOCOL.md` 预注册协议，在 5 名
+  固定 train 被试上对 plain SIREN backbone 做 `frequency {linear,erb,dual} ×
+  first-omega {20,30,50}` 联合粗筛（9 配置 × 5 被试 = 45 run），以固定 64 方向
+  direction-holdout 的 residual RMSE 为主指标选 Top-2。
+- 预注册与锁定：协议、搜索空间、预算（100 epochs × 100 steps）、Top-2 规则在
+  首次运行前冻结并提交（commit `8028932`）；5 名被试
+  `P0289/P0346/P0085/P0076/P0010` 按 `Avg RMS dB (Free Field)` 五层分层（seed
+  `20260819`）锁定于 `configs/data/siren_a2_subjects_v1.csv`；64 个纯插值 holdout
+  方向（solid-angle 分层、SHA-256 强制校验）锁定于
+  `configs/data/siren_a2_holdout_v1.csv`。
+- 训练入口：`mcar.training.train_siren` 新增 `multi_subject_siren_matrix` 类型
+  （每被试独立 plain SIREN，训练 729 方向、每 epoch 评估 64 方向 holdout，输出
+  history/checkpoint/training_report，含 SHA-256 与 git state）；45 run 全部
+  exit 0、全部 `KEEP`（best epoch 73–98，均早于预算末端）、无 NaN/Inf、
+  `test_subjects_read` 恒为 0。
+- 排名（aggregate holdout RMSE，dB）：**D-o20 2.9865** < D-o30 3.0732 <
+  L-o20 3.0863 < L-o30 3.2427 < D-o50 3.3364 < E-o20 3.4246 < L-o50 3.5607 <
+  E-o30 3.6512 < E-o50 3.9772。dual 映射整体最优，first-omega 20 在 dual 与
+  linear 下均一致优于 30/50，ERB 最差。
+- Top-2 决策（协议第 6 节规则）：D-o20 领先 D-o30 2.90%（≥0.5%），领先第三名
+  3.34%（>2%），因此推进 **D-o20 为主配置、D-o30 为对照**进入 Stage A3
+  （depth/width/hidden-omega 搜索草案：
+  `experiments/film_siren/STAGE_A3_PROTOCOL_DRAFT.md`）。
+- 产物：逐 run 记录在 `artifacts/training/sonicom_siren_a2_*/`；排名表
+  `results/sonicom_siren_a2_matrix/summary.csv`、决策
+  `results/sonicom_siren_a2_matrix/top2.json`、报告
+  `reports/film_siren_siren_a2_matrix.md`。
+- 说明：A2 是配置相对排序实验，holdout 为训练未见方向，误差高于 A1 的
+  P0002 全方向拟合（~1.50 dB）属预期；不解释为跨被试或方向泛化结论。
+
 ## 2026-08-18：FiLM-SIREN Stage A1：P0002 单被试纯 SIREN 表示上限测试完成
 
 - 实验目标：启动 FiLM-SIREN 新主模型路线的 Stage A1，首先验证不带任何 subject

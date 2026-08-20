@@ -96,8 +96,14 @@ def main() -> None:
     for row in rows:
         grouped[int(row["latent_dimension"])].append(row)
     top2_complete = all(len(grouped[latent]) == 3 for latent in top2)
+    budget_retest = False
     three_seed: list[dict[str, float | int]] = []
     if top2_complete:
+        budget_retest = any(
+            str(row["decision"]) == "RETEST"
+            for latent in top2
+            for row in grouped[latent]
+        )
         for latent in top2:
             values = np.asarray(
                 [float(row["weighted_mae_db"]) for row in grouped[latent]]
@@ -137,10 +143,16 @@ def main() -> None:
         "screening_tight": gaps[str(top2[1])] < 0.5,
         "extend_384_512": extend,
         "three_seed_complete": top2_complete,
+        "budget_retest_required": budget_retest,
         "three_seed_ranking": three_seed,
-        "winner": (
+        "provisional_winner": (
             int(three_seed[0]["latent_dimension"])
             if three_seed
+            else None
+        ),
+        "winner": (
+            int(three_seed[0]["latent_dimension"])
+            if three_seed and not budget_retest
             else None
         ),
         "test_subjects_read": 0,

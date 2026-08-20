@@ -26,10 +26,25 @@
     "all"
   ],
   "screening_tight": true,
-  "three_seed_complete": false,
+  "three_seed_complete": true,
   "budget_retest_required": false,
-  "seed_ranking_reversed": false,
-  "three_seed_ranking": [],
+  "seed_ranking_reversed": true,
+  "three_seed_ranking": [
+    {
+      "placement": "all",
+      "mean_weighted_mae_db": 3.0922066670352666,
+      "std_seed_mae_db": 0.006925047442476302,
+      "minimum_weighted_mae_db": 3.0865004471607222,
+      "maximum_weighted_mae_db": 3.1019527962078475
+    },
+    {
+      "placement": "hidden",
+      "mean_weighted_mae_db": 3.0940486489561336,
+      "std_seed_mae_db": 0.0021611331709086227,
+      "minimum_weighted_mae_db": 3.0915191125377928,
+      "maximum_weighted_mae_db": 3.096798957136095
+    }
+  ],
   "winner": null,
   "test_subjects_read": 0
 }

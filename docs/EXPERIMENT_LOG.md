@@ -1,5 +1,31 @@
 # 项目实验日志
 
+## 2026-08-20：FiLM-SIREN Stage A4：confirmation 通过，冻结 SIREN Backbone v1
+
+- 实验目标：按 `experiments/film_siren/STAGE_A4_CONFIRMATION_PROTOCOL.md`
+  用 32 名未参与 A2/A3 配置选择的 train 被试，验证 backbone 配置结论；
+  4 套配置（M 主候选 D-o20-d6-w256-ho20、L 历史基线 linear-o30、D A2 对照
+  D-o30、A d4 紧咬对照）× 32 被试 × 250 epochs = 128 run。
+- 预注册：协议（4 套配置/32 被试锁定/250 epochs/通过标准）在运行前冻结
+  （commit `124c267`）；32 名被试按 `Avg RMS dB` 8 层 × 4 人锁定
+  （`siren_a4_confirmation_subjects_v1.csv`，排除 A2 的 5 人、零重叠）；
+  代码修正随本阶段生效（GradScaler 移入循环、checkpoint 字段命名、
+  run_matrix 人数放宽、per-subject configuration.json）。
+- 结果（32 人 aggregate holdout RMSE）：M `2.8141`、L `3.1733`、D `2.9627`、
+  A `2.8545` dB。**预注册三项标准全部通过**：主标准 M≤L（0.359 dB，配对
+  t-test p≈0）、次标准 M≤D（0.149 dB，p≈0）、绝对合理性
+  2.4≤2.8141≤3.4；信息性 M vs A 差距 1.44%（d6≈d4 紧咬保持）。
+- 结论：A2/A3 结论在新被试上全部保持（dual 优于 linear +11.3%、first-omega
+  20 优于 30 +5.3%、紧咬保持），选择偏差未导致反转，M 绝对水平 2.81 dB
+  优于 A3 五人值 2.90。**冻结 `SIREN Backbone v1 = D-o20-d6-w256-ho20`**
+  （250 epochs）。
+- 完整性：128/128 run 全部 KEEP、无 NaN/Inf、`test_subjects_read` 恒为 0。
+- 产物：聚合与判定 `results/sonicom_siren_a4_confirmation/{summary.csv,
+  decision.json}`；报告 `reports/film_siren_siren_a4_confirmation.md`；
+  逐 run 记录 `artifacts/training/sonicom_siren_a4_c{1..4}/`。
+- 下一步：Stage B（Q26 condition 数据接口 + FiLM conditioning），
+  基于冻结的 `SIREN Backbone v1`。
+
 ## 2026-08-20：FiLM-SIREN Stage A3：backbone 深化搜索完成，候选 D-o20-d6-w256-ho20
 
 - 实验目标：按 `experiments/film_siren/STAGE_A3_PROTOCOL.md` 在 A2 选出的

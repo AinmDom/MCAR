@@ -1,0 +1,22 @@
+{
+  "criteria": "STAGE_A4_CONFIRMATION_PROTOCOL.md section 5",
+  "M_main_candidate": 2.8140996024012566,
+  "L_historical_baseline": 3.1733429357409477,
+  "D_a2_control": 2.9626550748944283,
+  "A_depth_tight_control": 2.85451190918684,
+  "checks": {
+    "main_M_le_L": true,
+    "secondary_M_le_D": true,
+    "plausibility_2_4_le_M_le_3_4": true
+  },
+  "info_gap_M_vs_A_percent": 1.4361,
+  "paired": {
+    "M_minus_L_mean_db": -0.3592,
+    "M_minus_L_p": 0.0,
+    "M_minus_D_mean_db": -0.1486,
+    "M_minus_D_p": 0.0,
+    "M_minus_A_mean_db": -0.0404,
+    "M_minus_A_p": 0.0
+  },
+  "passed": true
+}

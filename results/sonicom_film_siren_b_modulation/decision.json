@@ -30,11 +30,26 @@
     "phase"
   ],
   "screening_tight": false,
-  "three_seed_complete": false,
+  "three_seed_complete": true,
   "budget_retest_required": false,
   "seed_ranking_reversed": false,
-  "three_seed_ranking": [],
-  "winner": null,
+  "three_seed_ranking": [
+    {
+      "variant": "full",
+      "mean_weighted_mae_db": 3.091883804824874,
+      "std_seed_mae_db": 0.002856841976720711,
+      "minimum_weighted_mae_db": 3.088090674450882,
+      "maximum_weighted_mae_db": 3.0949851274954967
+    },
+    {
+      "variant": "phase",
+      "mean_weighted_mae_db": 3.108313326018942,
+      "std_seed_mae_db": 0.0008495881600609008,
+      "minimum_weighted_mae_db": 3.107196368412855,
+      "maximum_weighted_mae_db": 3.109255216274901
+    }
+  ],
+  "winner": "full",
   "skip_placement": false,
   "test_subjects_read": 0
 }

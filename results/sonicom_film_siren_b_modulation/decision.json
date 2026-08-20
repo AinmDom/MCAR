@@ -1,0 +1,40 @@
+{
+  "protocol": "experiments/film_siren/STAGE_B_FILM_PROTOCOL.md section 8",
+  "latent_dimension": 128,
+  "screening_seed": 20260821,
+  "screening_complete": true,
+  "screening_ranking": [
+    {
+      "rank": 1,
+      "variant": "full",
+      "weighted_mae_db": 3.0925756125282438
+    },
+    {
+      "rank": 2,
+      "variant": "phase",
+      "weighted_mae_db": 3.108488393369069
+    },
+    {
+      "rank": 3,
+      "variant": "amplitude",
+      "weighted_mae_db": 3.12132639551856
+    },
+    {
+      "rank": 4,
+      "variant": "concat",
+      "weighted_mae_db": 3.180236624617233
+    }
+  ],
+  "screening_top2": [
+    "full",
+    "phase"
+  ],
+  "screening_tight": false,
+  "three_seed_complete": false,
+  "budget_retest_required": false,
+  "seed_ranking_reversed": false,
+  "three_seed_ranking": [],
+  "winner": null,
+  "skip_placement": false,
+  "test_subjects_read": 0
+}

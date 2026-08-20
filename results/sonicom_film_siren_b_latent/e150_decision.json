@@ -1,0 +1,12 @@
+{
+  "protocol": "experiments/film_siren/STAGE_B_LATENT_BUDGET_AMENDMENT.md",
+  "plateau_rule": "experiments/film_siren/STAGE_B_LATENT_PLATEAU_AMENDMENT.md",
+  "cycles": 150,
+  "expected_runs": 6,
+  "completed_runs": 1,
+  "three_seed_complete": false,
+  "budget_retest_required": false,
+  "three_seed_ranking": [],
+  "winner": null,
+  "test_subjects_read": 0
+}

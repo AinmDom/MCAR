@@ -21,8 +21,9 @@
 - 不从100-cycle checkpoint续训，不改变初始化、subject order、optimizer、
   validation interval或其他参数；run name追加 `_e150`；
 - latent最终决策只使用6个150-cycle run，100-cycle结果保留为预算诊断；
-- 若任一150-cycle run仍在cycle150达到最佳，则 Stage B latent阶段整体标记
-  `RETEST` 并暂停，不再自动延长；
+- 150-cycle预算是否充分，按后续冻结的
+  `STAGE_B_LATENT_PLATEAU_AMENDMENT.md` 窗口判据判断；该判据取代原先
+  “cycle150单点最佳即RETEST”的敏感规则；
 - 本修订新增6个FiLM runs，因此 Stage B FiLM training run 上限由24提高到30；
   unique architecture上限不变；
 - test不读取，`test_subjects_read=0`。

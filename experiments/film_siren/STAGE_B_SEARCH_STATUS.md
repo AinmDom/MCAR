@@ -37,10 +37,12 @@
   `67.9%–77.7%`；hidden更稳定，但同样存在明显边界挤压。
 
 因此当前结果既不能按单seed冻结hidden，也不能忽略预注册规则按三seed均值直接
-冻结all。Stage B在此暂停；在正式修订RETEST规则前，不运行unconditional
-baseline、condition ablation或Stage C。
+冻结all。Stage B在此暂停；RETEST完成前，不运行unconditional baseline、
+condition ablation或Stage C。
 
-## 后续需要正式化的选择
+## 已冻结的 RETEST
 
-若继续，应先提交新的RETEST协议，明确额外seed数量、是否调整full调制边界/正则、
-winner判据和新增run上限，再运行任何训练。不能依据当前结果临时挑选有利方案。
+`STAGE_B_PLACEMENT_RETEST_PROTOCOL.md` 已在新增训练前冻结：hidden/all各追加
+seed20260824与20260825，不改变full调制边界、正则或100-cycle预算；最终用原有
+三个加新增两个seed的五seed等权均值一次性决胜。原screening排名反转不再递归
+触发加seed，新增run上限为4；任一新增run触发预算`RETEST`则立即暂停。

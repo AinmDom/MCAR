@@ -1,0 +1,35 @@
+{
+  "protocol": "experiments/film_siren/STAGE_B_CONDITIONING_CHECK_E150_AMENDMENT.md",
+  "seeds": [
+    20260821,
+    20260822,
+    20260823
+  ],
+  "completed_runs": 6,
+  "expected_runs": 6,
+  "comparison_complete": true,
+  "budget_retest_required": false,
+  "conditioned_mean_weighted_mae_db": 3.092958923982953,
+  "conditioned_std_seed_mae_db": 0.004506644475077997,
+  "unconditional_mean_weighted_mae_db": 3.1438852790589245,
+  "unconditional_std_seed_mae_db": 0.0013107765308004002,
+  "conditioned_relative_improvement_percent": 1.6198541153898405,
+  "paired_deltas": [
+    {
+      "seed": 20260821,
+      "conditioned_minus_unconditional_mae_db": -0.044057976350913464
+    },
+    {
+      "seed": 20260822,
+      "conditioned_minus_unconditional_mae_db": -0.05582896748426558
+    },
+    {
+      "seed": 20260823,
+      "conditioned_minus_unconditional_mae_db": -0.05289212139273447
+    }
+  ],
+  "conditioned_seed_wins": 3,
+  "conditioning_check_passed": true,
+  "stage_b_status": "CONDITIONING_CHECK_PASSED",
+  "test_subjects_read": 0
+}

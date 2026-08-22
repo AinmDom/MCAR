@@ -1,6 +1,6 @@
 # Stage B conditioning architecture 搜索状态
 
-> 状态：`PLACEMENT FROZEN / BASELINE BUDGET RETEST`
+> 状态：`CONDITIONING CHECK PASSED / ABLATION PENDING`
 > 冻结时点：placement RETEST 的新增四个100-cycle runs全部完成并由预注册
 > 五-seed分析器汇总后。
 
@@ -78,3 +78,24 @@ placement。
 
 在正式预算修订并完成公平的长预算复核前，不运行condition shuffle/train-mean
 latent消融，也不进入Stage C。
+
+## Conditioning check E150 最终结果
+
+`STAGE_B_CONDITIONING_CHECK_E150_AMENDMENT.md` 在六个长预算runs前冻结，
+conditioned winner与unconditional baseline均以相同三个seeds从scratch训练150
+cycles：
+
+| model | 三seed均值 ± std (dB) | best cycles |
+|---|---:|---|
+| conditioned latent128/full/all | 3.092959 ± 0.004507 | 45 / 75 / 65 |
+| unconditional shared SIREN | 3.143885 ± 0.001311 | 135 / 135 / 145 |
+
+- 6/6 runs完整，均在cycle150前达到best，预算判据全部`KEEP`；
+- conditioned在三个matched seeds上全部胜出，相对unconditional改善`1.620%`；
+- 所有runs均记录`test_subjects_read=0`，unconditional另记录
+  `condition_inputs_read=0`；
+- conditioning check正式通过，Stage B不再因baseline预算阻断。
+
+下一步仅对三个conditioned E150 best checkpoints做deterministic condition shuffle
+和train-mean latent推理消融，不重新训练或选模；消融完成后再决定是否冻结整个
+Stage B并进入Stage C。

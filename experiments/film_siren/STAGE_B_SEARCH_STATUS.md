@@ -1,6 +1,6 @@
 # Stage B conditioning architecture 搜索状态
 
-> 状态：`CONDITIONING CHECK PASSED / ABLATION PENDING`
+> 状态：`STAGE B FROZEN / READY FOR STAGE C`
 > 冻结时点：placement RETEST 的新增四个100-cycle runs全部完成并由预注册
 > 五-seed分析器汇总后。
 
@@ -99,3 +99,24 @@ cycles：
 下一步仅对三个conditioned E150 best checkpoints做deterministic condition shuffle
 和train-mean latent推理消融，不重新训练或选模；消融完成后再决定是否冻结整个
 Stage B并进入Stage C。
+
+## Condition 消融结果
+
+三个E150 winner checkpoints按预注册协议完成了纯推理干预：
+
+| evaluation | 三seed均值 MAE (dB) | 相对normal变化 |
+|---|---:|---:|
+| normal condition | 3.092959 | — |
+| deterministic condition shuffle | 3.157990 | +2.10% |
+| train-mean latent | 3.138841 | +1.48% |
+
+- shuffle在3/3 seeds上均变差，各seed相对劣化约`1.25%–2.80%`；
+- train-mean latent也在3/3 seeds上均变差，各seed相对劣化约
+  `0.88%–1.81%`；
+- 消融只替换冻结模型的latent，不训练、不重新选择checkpoint；
+- 评价运行记录干净Git和`test_subjects_read=0`。
+
+结论：conditioned模型不仅优于无condition的共享SIREN，而且在错误condition与
+去个体化latent下稳定退化，支持其确实使用了subject-specific Q26信息。Stage B
+架构正式冻结为`latent128 + full modulation + all placement`，可进入Stage C；
+SONICOM test仍完全未读取。

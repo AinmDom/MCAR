@@ -1,0 +1,19 @@
+{
+  "protocol": "experiments/film_siren/STAGE_B_CONDITION_ABLATION_PROTOCOL.md",
+  "seeds": [
+    20260821,
+    20260822,
+    20260823
+  ],
+  "normal_mean_weighted_mae_db": 3.092958923982953,
+  "shuffle_mean_weighted_mae_db": 3.1579902519909013,
+  "train_mean_latent_mean_weighted_mae_db": 3.138840545648417,
+  "shuffle_worse_seed_count": 3,
+  "train_mean_worse_seed_count": 3,
+  "git": {
+    "branch": "codex/project-structure-refactor",
+    "commit": "64df86d38f0494d5ac8bf111f45e26fa49e83e9c",
+    "dirty": false
+  },
+  "test_subjects_read": 0
+}

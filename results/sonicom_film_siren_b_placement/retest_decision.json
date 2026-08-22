@@ -1,0 +1,68 @@
+{
+  "protocol": "experiments/film_siren/STAGE_B_PLACEMENT_RETEST_PROTOCOL.md",
+  "latent_dimension": 128,
+  "modulation_variant": "full",
+  "placements": [
+    "hidden",
+    "all"
+  ],
+  "seeds": [
+    20260821,
+    20260822,
+    20260823,
+    20260824,
+    20260825
+  ],
+  "completed_runs": 10,
+  "expected_runs": 10,
+  "five_seed_complete": true,
+  "budget_retest_required": false,
+  "five_seed_ranking": [
+    {
+      "placement": "all",
+      "mean_weighted_mae_db": 3.0910732573993593,
+      "std_seed_mae_db": 0.005545201174982283,
+      "minimum_weighted_mae_db": 3.0865004471607222,
+      "maximum_weighted_mae_db": 3.1019527962078475
+    },
+    {
+      "placement": "hidden",
+      "mean_weighted_mae_db": 3.0936484866815688,
+      "std_seed_mae_db": 0.002327281854879445,
+      "minimum_weighted_mae_db": 3.090612186972326,
+      "maximum_weighted_mae_db": 3.096798957136095
+    }
+  ],
+  "paired_deltas": [
+    {
+      "seed": 20260821,
+      "all_minus_hidden_mae_db": 0.005153839071752486
+    },
+    {
+      "seed": 20260822,
+      "all_minus_hidden_mae_db": -0.005018665377070519
+    },
+    {
+      "seed": 20260823,
+      "all_minus_hidden_mae_db": -0.005661119457282204
+    },
+    {
+      "seed": 20260824,
+      "all_minus_hidden_mae_db": -0.0008906164211932577
+    },
+    {
+      "seed": 20260825,
+      "all_minus_hidden_mae_db": -0.006459584227252346
+    }
+  ],
+  "all_seed_wins": 4,
+  "hidden_seed_wins": 1,
+  "paired_ties": 0,
+  "mean_all_minus_hidden_mae_db": -0.0025752292822091684,
+  "paired_mean_bootstrap_95_interval_db": [
+    -0.005852014549227924,
+    0.0016222633133623709
+  ],
+  "winner": "all",
+  "test_subjects_read": 0
+}

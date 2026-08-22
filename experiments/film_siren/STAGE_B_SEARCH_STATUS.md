@@ -1,7 +1,8 @@
 # Stage B conditioning architecture 搜索状态
 
-> 状态：`RETEST / DO NOT FREEZE`  
-> 冻结时点：placement Top-2 的六个100-cycle runs全部完成并由预注册分析器汇总后。
+> 状态：`PLACEMENT FROZEN / BASELINE PENDING`
+> 冻结时点：placement RETEST 的新增四个100-cycle runs全部完成并由预注册
+> 五-seed分析器汇总后。
 
 ## 已完成决策
 
@@ -14,7 +15,7 @@
 
 以上全部正式 runs 均记录 `test_subjects_read=0`，没有读取SONICOM test。
 
-## Placement 阻断结果
+## Placement 三-seed阻断结果
 
 | placement | seed20260821 | seed20260822 | seed20260823 | 三seed均值 ± std (dB) |
 |---|---:|---:|---:|---:|
@@ -36,13 +37,27 @@
 - hidden三seeds的第5层amplitude saturation约`97.8%–99.4%`，第6层gamma约
   `67.9%–77.7%`；hidden更稳定，但同样存在明显边界挤压。
 
-因此当前结果既不能按单seed冻结hidden，也不能忽略预注册规则按三seed均值直接
-冻结all。Stage B在此暂停；RETEST完成前，不运行unconditional baseline、
-condition ablation或Stage C。
+该结果不能按单seed冻结hidden，也不能忽略预注册规则按三seed均值直接冻结all，
+因此按下节的预注册RETEST处理。
 
-## 已冻结的 RETEST
+## RETEST 最终结果
 
-`STAGE_B_PLACEMENT_RETEST_PROTOCOL.md` 已在新增训练前冻结：hidden/all各追加
-seed20260824与20260825，不改变full调制边界、正则或100-cycle预算；最终用原有
-三个加新增两个seed的五seed等权均值一次性决胜。原screening排名反转不再递归
-触发加seed，新增run上限为4；任一新增run触发预算`RETEST`则立即暂停。
+`STAGE_B_PLACEMENT_RETEST_PROTOCOL.md` 在新增训练前冻结：hidden/all各追加
+seed20260824与20260825，不改变full调制边界、正则或100-cycle预算；最终使用
+五seed等权均值一次性决胜。
+
+| placement | 五seed均值 ± std (dB) | seed胜出数 |
+|---|---:|---:|
+| all | 3.091073 ± 0.005545 | 4/5 |
+| hidden | 3.093648 ± 0.002327 | 1/5 |
+
+- 10/10个所需run完整，均为`KEEP`，`test_subjects_read=0`；
+- 配对均值 `all - hidden = -0.002575 dB`，即all约优`0.083%`；
+- 配对均值的exact bootstrap 95%区间为`[-0.005852, 0.001622] dB`，跨0，
+  因而优势很小且稳定性证据有限；该区间按冻结协议仅作诊断；
+- 按冻结的五seed均值判据，placement winner正式确定为`all`。
+
+Stage B conditioning architecture现冻结为：latent128 + full modulation + all
+placement。下一步是三seed unconditional shared-SIREN baseline；完成并确认
+conditioned winner优于baseline后，才做condition shuffle/train-mean latent消融并
+考虑进入Stage C。

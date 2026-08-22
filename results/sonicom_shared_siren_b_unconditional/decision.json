@@ -1,0 +1,37 @@
+{
+  "protocol": "experiments/film_siren/STAGE_B_UNCONDITIONAL_BASELINE_PROTOCOL.md",
+  "conditioned_architecture": "latent128_full_all",
+  "seeds": [
+    20260821,
+    20260822,
+    20260823
+  ],
+  "completed_baseline_runs": 3,
+  "expected_baseline_runs": 3,
+  "comparison_complete": true,
+  "budget_retest_required": true,
+  "conditioned_mean_weighted_mae_db": 3.0922066670352666,
+  "conditioned_std_seed_mae_db": 0.006925047442476302,
+  "unconditional_mean_weighted_mae_db": 3.147294300237453,
+  "unconditional_std_seed_mae_db": 0.003072171448585958,
+  "conditioned_relative_improvement_percent": 1.7503171914374338,
+  "paired_deltas": [
+    {
+      "seed": 20260821,
+      "conditioned_minus_unconditional_mae_db": -0.04384939192792503
+    },
+    {
+      "seed": 20260822,
+      "conditioned_minus_unconditional_mae_db": -0.058006135334404796
+    },
+    {
+      "seed": 20260823,
+      "conditioned_minus_unconditional_mae_db": -0.06340737234423122
+    }
+  ],
+  "conditioned_seed_wins": 3,
+  "conditioning_check_passed": null,
+  "stage_b_status": "PENDING",
+  "condition_inputs_read_by_baseline": 0,
+  "test_subjects_read": 0
+}

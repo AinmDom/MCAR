@@ -1,6 +1,6 @@
 # Stage B conditioning architecture 搜索状态
 
-> 状态：`PLACEMENT FROZEN / BASELINE PENDING`
+> 状态：`PLACEMENT FROZEN / BASELINE BUDGET RETEST`
 > 冻结时点：placement RETEST 的新增四个100-cycle runs全部完成并由预注册
 > 五-seed分析器汇总后。
 
@@ -58,6 +58,23 @@ seed20260824与20260825，不改变full调制边界、正则或100-cycle预算�
 - 按冻结的五seed均值判据，placement winner正式确定为`all`。
 
 Stage B conditioning architecture现冻结为：latent128 + full modulation + all
-placement。下一步是三seed unconditional shared-SIREN baseline；完成并确认
-conditioned winner优于baseline后，才做condition shuffle/train-mean latent消融并
-考虑进入Stage C。
+placement。
+
+## Unconditional baseline E100 预算阻断
+
+| seed | best cycle | weighted MAE (dB) | decision |
+|---|---:|---:|---|
+| 20260821 | 100 | 3.145802 | RETEST |
+| 20260822 | 95 | 3.144507 | KEEP |
+| 20260823 | 90 | 3.151574 | KEEP |
+
+- unconditional E100三seed均值为`3.147294 ± 0.003072 dB`；
+- matched conditioned all-placement E100均值为`3.092207 ± 0.006925 dB`，
+  三个seed均胜，表面相对改善`1.750%`；
+- 但seed20260821的best在cycle100，按预注册规则 conditioning check保持
+  `PENDING`；
+- 三个baseline seeds从cycles70–80到85–100的窗口均值仍约改善
+  `0.14%–0.20%`，不能把末点best直接视为平台噪声。
+
+在正式预算修订并完成公平的长预算复核前，不运行condition shuffle/train-mean
+latent消融，也不进入Stage C。

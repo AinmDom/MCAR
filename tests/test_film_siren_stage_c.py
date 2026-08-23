@@ -60,6 +60,34 @@ def test_stage_c_initial_config_matches_preregistered_protocol() -> None:
     assert configuration["require_clean_git"] is True
 
 
+@pytest.mark.parametrize(
+    ("suffix", "learning_rate"),
+    [("lr3e5", 3e-5), ("lr1e4", 1e-4), ("lr3e4", 3e-4)],
+)
+def test_c1_learning_rate_configs_change_only_preregistered_identity_fields(
+    suffix: str, learning_rate: float
+) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"sonicom_film_siren_c1_{suffix}_adam_seed20260821_e150.json"
+    )
+    candidate = json.loads(path.read_text(encoding="utf-8"))
+    baseline = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    assert candidate["optimizer"]["learning_rate"] == learning_rate
+    for configuration in (candidate, baseline):
+        configuration["optimizer"]["learning_rate"] = None
+        for field in (
+            "created_on",
+            "experiment_id",
+            "model_version",
+            "run_name",
+        ):
+            configuration[field] = None
+    assert candidate == baseline
+
+
 def test_stage_c_horizontal_support_is_frozen_and_test_is_forbidden() -> None:
     train = split_subject_paths(DATASET_ROOT, SPLIT_CSV, "train")
     directions, _, interpolation_mask, _ = read_common_grid(train[0][2])

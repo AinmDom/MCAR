@@ -129,6 +129,33 @@ def test_c2_adamw_configs_inherit_the_c1_winner(
         assert configuration[field] == baseline[field]
 
 
+@pytest.mark.parametrize(
+    ("suffix", "scheduler", "warmup_cycles"),
+    [("cosine", "cosine", 0), ("warmup_cosine", "warmup_cosine", 5)],
+)
+def test_c3_scheduler_configs_inherit_the_c2_winner(
+    suffix: str, scheduler: str, warmup_cycles: int
+) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"sonicom_film_siren_c3_{suffix}_seed20260821_e150.json"
+    )
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    assert configuration["search_stage"] == "c3_scheduler"
+    assert configuration["optimizer"] == {
+        "name": "AdamW",
+        "learning_rate": 1e-4,
+        "weight_decay": 1e-4,
+    }
+    assert configuration["scheduler"] == {
+        "name": scheduler,
+        "horizon_cycles": 150,
+        "warmup_cycles": warmup_cycles,
+    }
+
+
 def test_stage_c_horizontal_support_is_frozen_and_test_is_forbidden() -> None:
     train = split_subject_paths(DATASET_ROOT, SPLIT_CSV, "train")
     directions, _, interpolation_mask, _ = read_common_grid(train[0][2])

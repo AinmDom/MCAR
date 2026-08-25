@@ -88,6 +88,47 @@ def test_c1_learning_rate_configs_change_only_preregistered_identity_fields(
     assert candidate == baseline
 
 
+@pytest.mark.parametrize(
+    ("suffix", "weight_decay"),
+    [("wd1e5", 1e-5), ("wd1e4", 1e-4)],
+)
+def test_c2_adamw_configs_inherit_the_c1_winner(
+    suffix: str, weight_decay: float
+) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"sonicom_film_siren_c2_adamw_{suffix}_seed20260821_e150.json"
+    )
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    baseline = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    assert configuration["search_stage"] == "c2_optimizer_weight_decay"
+    assert configuration["optimizer"] == {
+        "name": "AdamW",
+        "learning_rate": 1e-4,
+        "weight_decay": weight_decay,
+    }
+    for field in (
+        "condition_encoder",
+        "model",
+        "scheduler",
+        "objective",
+        "cycles",
+        "steps_per_cycle",
+        "global_directions_per_step",
+        "horizontal_directions_per_step",
+        "validation_interval_cycles",
+        "validation_directions_per_block",
+        "gradient_clip",
+        "seed",
+        "require_cuda",
+        "require_clean_git",
+        "test_policy",
+    ):
+        assert configuration[field] == baseline[field]
+
+
 def test_stage_c_horizontal_support_is_frozen_and_test_is_forbidden() -> None:
     train = split_subject_paths(DATASET_ROOT, SPLIT_CSV, "train")
     directions, _, interpolation_mask, _ = read_common_grid(train[0][2])

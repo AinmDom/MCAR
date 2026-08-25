@@ -1,0 +1,53 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_TRAINING_PROTOCOL.md",
+  "search_stage": "c1_learning_rate",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "candidates": [
+    {
+      "optimizer": "Adam",
+      "learning_rate": 0.00003,
+      "weight_decay": 0.0,
+      "run_name": "sonicom_film_siren_c1_lr3e5_adam_seed20260821_e150",
+      "best_cycle": 65,
+      "best_validation_objective_total": 0.8290008035573092,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "optimizer": "Adam",
+      "learning_rate": 0.0001,
+      "weight_decay": 0.0,
+      "run_name": "sonicom_film_siren_c1_lr1e4_adam_seed20260821_e150",
+      "best_cycle": 90,
+      "best_validation_objective_total": 0.8277217799966986,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "optimizer": "Adam",
+      "learning_rate": 0.0003,
+      "weight_decay": 0.0,
+      "run_name": "sonicom_film_siren_c1_lr3e4_adam_seed20260821_e150",
+      "best_cycle": 40,
+      "best_validation_objective_total": 0.873646161772988,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    }
+  ],
+  "ranking": [
+    "Adam lr=1e-4 wd=0",
+    "Adam lr=3e-5 wd=0",
+    "Adam lr=3e-4 wd=0"
+  ],
+  "winner": {
+    "optimizer": "Adam",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0,
+    "best_validation_objective_total": 0.8277217799966986,
+    "best_cycle": 90
+  },
+  "next_stage": "C2 compares the inherited Adam winner to AdamW wd=1e-5 and AdamW wd=1e-4 at the frozen winning learning rate.",
+  "test_subjects_read": 0
+}

@@ -1,5 +1,40 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN Stage C GL-C4：objective ablation 完成 + 全局 Top-3 选定
+
+- 实验目标：固定 GL-C3 winner（AdamW `lr=1e-4` `wd=1e-4`、warmup_cosine warmup 5），
+  按 `STAGE_C_GLOBAL_LOCAL_MCA_C4_PARALLEL_AMENDMENT.md` 从 scratch 同时启动四个
+  独立 run（C0 也重跑）：C0、C0+D1/D2（权重 `0.25/0.15`、≥4kHz）、C0+multi-scale
+  notch（权重 `0.30`、4–18kHz、半径 `{4,8,16}`、thr `1dB`、softplus `0.5dB`）、
+  C0+D1/D2+notch；seed `20260821`、150 cycles。
+- GL-C4 结果（best validation Stage C total，越低越好）：**C0（重跑）**
+  **`0.7170006659897891`**（best cycle `140`，KEEP）< C0+D1/D2
+  `0.7442312213507566`（cycle `140`，KEEP）< C0+notch `0.7498216263272546`
+  （cycle `135`，KEEP）< C0+D1/D2+notch `0.7760627865791321`（cycle `140`，
+  KEEP）。四个候选 best 均早于 cycle 150，全部 `KEEP`、无 RETEST。
+- GL-C4 决策：冻结 **C0（纯 Stage C total，不加 D1/D2/notch）** 为 GL-C4 winner；
+  附加项在 best-cycle 上均未改善 objective total，按协议不调整权重或频率边界。
+- 全局 Top-3（`results/sonicom_film_siren_gl_top3/selection.json`）：13 个
+  screening run 按 unique 配置（optimizer+scheduler+objective 权重）分组排名
+  （10 unique；GL-C4 c0 与 GL-C3 winner 共享 slot、GL-C3 constant 与 GL-C2
+  winner 共享 slot、GL-C2 adam_wd0 与 GL-C1 lr1e4 共享 slot），组内取最优 run：
+  1. warmup_cosine+C0（GL-C3 winner）`0.7148047604344108`
+  2. constant+C0（GL-C2 winner）`0.7162069299004294`
+  3. cosine+C0 `0.7162436748092825`
+  均为 KEEP。Top-3 各补跑 seeds `20260822/20260823`（6 个从 scratch run，命名
+  `sonicom_film_siren_gl_top3_rank{n}_{variant}_seed{seed}_e150`），并行启动。
+- 完整性：4/4 GL-C4 run + 13/13 screening run 均 `status=completed`、history.csv
+  各 150 行、无 NaN/Inf；全部 `test_subjects_read=0`、`local_mca_inputs_read=40620`、
+  git `09d5083`（GL-C4 运行时）clean；汇总脚本 `scripts/analyze_siren_gl_c4.py`
+  与 `scripts/analyze_siren_gl_top3.py` 已提交（commit `49a4435`）。
+- 产物：`results/sonicom_film_siren_gl_c4_objective/decision.json`；
+  `results/sonicom_film_siren_gl_top3/selection.json`；六配置
+  `configs/experiments/sonicom_film_siren_gl_top3_*.json`；修订
+  `experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_TOP3_SEED_EXPANSION_AMENDMENT.md`。
+- 下一步：六个 Top-3 补 seed run 结束后，以最终配置的三 seed best cycles 确定
+  `E_final=round(median(E1,E2,E3))`，再进入固定 E_final 正式重训 + 1/3 等权
+  ensemble。
+
 ## 2026-08-27：FiLM-SIREN Stage C GL-C3：scheduler 重验证完成
 
 - 实验目标：在七维 global+local MCA 架构上，按

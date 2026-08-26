@@ -1,0 +1,3 @@
+conditioning_scope,run_name,best_cycle,weighted_mae_db,training_decision,local_mca_inputs_read,test_subjects_read
+global_zero_local,sonicom_film_siren_b_gate_global_zero_local_seed20260821_e150,60,3.088869541549717,KEEP,0,0
+global_plus_local_mca,sonicom_film_siren_b_gate_global_plus_local_mca_seed20260821_e150,70,2.714494867853539,KEEP,40620,0

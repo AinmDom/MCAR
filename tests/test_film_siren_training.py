@@ -10,6 +10,7 @@ from mcar.data import Normalization
 from mcar.paths import project_root
 from mcar.training.train_film_siren import (
     conditioned_coordinate_block,
+    load_subject_identity_cache,
     read_common_grid,
     split_subject_paths,
 )
@@ -106,6 +107,41 @@ def test_gate_local_mca_is_normalized_and_aligned_with_queries() -> None:
             None,
             gate_normalization(),
         )
+
+
+def test_local_only_subject_cache_contains_no_q26_condition() -> None:
+    paths = split_subject_paths(DATASET_ROOT, SPLIT_CSV, "train")[:2]
+    subjects = load_subject_identity_cache(paths, "train")
+    assert [subject.subject_id for subject in subjects] == [item[0] for item in paths]
+    assert all(subject.normalized_magnitude.size == 0 for subject in subjects)
+    assert all(subject.xyz.size == 0 for subject in subjects)
+    assert all(subject.mask.size == 0 for subject in subjects)
+
+
+def test_local_only_forward_bypasses_condition_encoder() -> None:
+    from mcar.models.film_siren import ConditionEncoderConfig, FilmSiren, FilmSirenConfig
+
+    model = FilmSiren(
+        FilmSirenConfig(
+            coordinate_dimension=7,
+            hidden_width=16,
+            sine_layer_count=3,
+            latent_dimension=8,
+            modulation_variant="full",
+            placement="all",
+            modulator_width=12,
+        ),
+        ConditionEncoderConfig(
+            frequency_count=31,
+            convolution_channels=4,
+            direction_embedding_dimension=12,
+            latent_dimension=8,
+        ),
+    )
+    prediction = model(torch.randn(17, 7), torch.zeros(1, 8))
+    prediction.square().mean().backward()
+    assert all(parameter.grad is None for parameter in model.condition_encoder.parameters())
+    assert any(parameter.grad is not None for parameter in model.sine_layers.parameters())
 
 
 @pytest.mark.parametrize(

@@ -67,7 +67,7 @@ def main() -> None:
     xyz = torch.from_numpy(directions[selected, 2:5]).cuda()
 
     results: dict[str, dict[str, float | int]] = {}
-    for scope in ("global_zero_local", "global_plus_local_mca"):
+    for scope in ("global_zero_local", "local_mca", "global_plus_local_mca"):
         set_seed(20260821)
         model = FilmSiren(
             FilmSirenConfig(
@@ -87,13 +87,16 @@ def main() -> None:
             xyz,
             frequency_tensor,
             scope,
-            local_mca_db if scope == "global_plus_local_mca" else None,
+            local_mca_db if scope in {"local_mca", "global_plus_local_mca"} else None,
             normalization,
         )
         optimizer.zero_grad(set_to_none=True)
-        prediction = model.forward_from_condition(
-            query, magnitude, condition_xyz, mask
-        )
+        if scope == "local_mca":
+            prediction = model(query, torch.zeros(1, 128, device=query.device))
+        else:
+            prediction = model.forward_from_condition(
+                query, magnitude, condition_xyz, mask
+            )
         loss = nn.functional.mse_loss(prediction.float(), target.float())
         loss.backward()
         gradient_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)

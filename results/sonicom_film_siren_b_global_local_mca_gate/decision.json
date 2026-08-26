@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "decision": "PASS_EXPAND",
+  "winner": "global_plus_local_mca",
+  "threshold_percent": 0.5,
+  "global_weighted_mae_db": 3.088869541549717,
+  "global_plus_local_mca_weighted_mae_db": 2.714494867853539,
+  "relative_improvement_percent": 12.120119307737108,
+  "protocol": "experiments/film_siren/STAGE_B_GLOBAL_LOCAL_MCA_GATE_PROTOCOL.md",
+  "test_subjects_read": 0
+}

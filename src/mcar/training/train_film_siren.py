@@ -40,6 +40,7 @@ from mcar.training.train_siren import frequency_coordinates
 CONDITIONING_SCOPES = {
     "global",
     "global_zero_local",
+    "local_mca",
     "global_plus_local_mca",
 }
 
@@ -170,6 +171,25 @@ def load_condition_cache(
             )
         )
     return cache
+
+
+def load_subject_identity_cache(
+    subject_paths: list[tuple[int, str, Path]],
+    split: str,
+) -> list[SubjectCondition]:
+    """Build local-only subject records without constructing Q26 conditions."""
+    return [
+        SubjectCondition(
+            subject_id=subject_id,
+            subject_label=label,
+            split=split,
+            path=path,
+            normalized_magnitude=np.empty((0,), dtype=np.float32),
+            xyz=np.empty((0, 3), dtype=np.float32),
+            mask=np.empty((0,), dtype=bool),
+        )
+        for subject_id, label, path in subject_paths
+    ]
 
 
 def read_common_grid(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -347,16 +367,24 @@ def evaluate_validation(
     validation_latents: list[torch.Tensor] = []
     selected_weights = direction_weights[interpolation_indices]
     selected_mask = np.ones(interpolation_indices.size, dtype=bool)
-    local_enabled = conditioning_scope == "global_plus_local_mca"
+    local_enabled = conditioning_scope in {"local_mca", "global_plus_local_mca"}
+    global_enabled = conditioning_scope != "local_mca"
     if conditioning_scope != "global" and normalization is None:
         raise ValueError("Gate validation requires normalization")
     for subject in subjects:
-        magnitude, condition_xyz, condition_mask = condition_tensors(subject, device)
-        latent = model.encode_condition(
-            magnitude,
-            condition_xyz,
-            condition_mask,
-        )
+        if global_enabled:
+            magnitude, condition_xyz, condition_mask = condition_tensors(subject, device)
+            latent = model.encode_condition(
+                magnitude,
+                condition_xyz,
+                condition_mask,
+            )
+        else:
+            latent = torch.zeros(
+                (1, model.configuration.latent_dimension),
+                dtype=frequency_coordinate.dtype,
+                device=device,
+            )
         validation_latents.append(latent)
         with h5py.File(subject.path, "r") as handle:
             validate_subject_identity(subject, handle)
@@ -478,22 +506,30 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
 
     train_paths = split_subject_paths(dataset_root, split_csv, "train")
     validation_paths = split_subject_paths(dataset_root, split_csv, "val")
-    train_subjects = load_condition_cache(
-        train_paths,
-        dataset_root,
-        split_csv,
-        q26_csv,
-        q26_normalization,
-        "train",
-    )
-    validation_subjects = load_condition_cache(
-        validation_paths,
-        dataset_root,
-        split_csv,
-        q26_csv,
-        q26_normalization,
-        "val",
-    )
+    conditioning_scope = str(configuration.get("conditioning_scope", "global"))
+    if conditioning_scope not in CONDITIONING_SCOPES:
+        raise ValueError(f"Unknown conditioning_scope {conditioning_scope!r}")
+    global_condition_enabled = conditioning_scope != "local_mca"
+    if global_condition_enabled:
+        train_subjects = load_condition_cache(
+            train_paths,
+            dataset_root,
+            split_csv,
+            q26_csv,
+            q26_normalization,
+            "train",
+        )
+        validation_subjects = load_condition_cache(
+            validation_paths,
+            dataset_root,
+            split_csv,
+            q26_csv,
+            q26_normalization,
+            "val",
+        )
+    else:
+        train_subjects = load_subject_identity_cache(train_paths, "train")
+        validation_subjects = load_subject_identity_cache(validation_paths, "val")
     directions, frequency, interpolation_mask, direction_weights = read_common_grid(
         train_subjects[0].path
     )
@@ -511,16 +547,13 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         **configuration["condition_encoder"]
     )
     model_configuration = FilmSirenConfig(**configuration["model"])
-    conditioning_scope = str(configuration.get("conditioning_scope", "global"))
-    if conditioning_scope not in CONDITIONING_SCOPES:
-        raise ValueError(f"Unknown conditioning_scope {conditioning_scope!r}")
     expected_coordinate_dimension = 5 if conditioning_scope == "global" else 7
     if model_configuration.coordinate_dimension != expected_coordinate_dimension:
         raise ValueError(
             f"conditioning_scope={conditioning_scope!r} requires "
             f"coordinate_dimension={expected_coordinate_dimension}"
         )
-    local_mca_enabled = conditioning_scope == "global_plus_local_mca"
+    local_mca_enabled = conditioning_scope in {"local_mca", "global_plus_local_mca"}
     model = FilmSiren(model_configuration, encoder_configuration).to(device)
     optimizer = torch.optim.Adam(
         model.parameters(),
@@ -555,6 +588,7 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "train_subject_count": len(train_subjects),
         "validation_subject_count": len(validation_subjects),
         "conditioning_scope": conditioning_scope,
+        "global_condition_input_enabled": global_condition_enabled,
         "local_mca_input_enabled": local_mca_enabled,
         "test_subjects_read": 0,
         "device": str(device),
@@ -613,14 +647,22 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                 (target - target_normalization.target_mean)
                 / target_normalization.target_std
             ).permute(1, 2, 0).reshape(-1, 2)
-            magnitude, condition_xyz, mask = condition_tensors(subject, device)
             optimizer.zero_grad(set_to_none=True)
-            prediction = model.forward_from_condition(
-                query,
-                magnitude,
-                condition_xyz,
-                mask,
-            )
+            if global_condition_enabled:
+                magnitude, condition_xyz, mask = condition_tensors(subject, device)
+                prediction = model.forward_from_condition(
+                    query,
+                    magnitude,
+                    condition_xyz,
+                    mask,
+                )
+            else:
+                latent = torch.zeros(
+                    (1, model_configuration.latent_dimension),
+                    dtype=query.dtype,
+                    device=device,
+                )
+                prediction = model(query, latent)
             loss = nn.functional.mse_loss(prediction.float(), target.float())
             if not bool(torch.isfinite(loss).item()):
                 raise FloatingPointError(f"Non-finite loss at cycle {cycle}")
@@ -752,6 +794,11 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "best_checkpoint_sha256": file_sha256(output_dir / "best.pt"),
         "last_checkpoint_sha256": file_sha256(output_dir / "last.pt"),
         "conditioning_scope": conditioning_scope,
+        "condition_inputs_read": (
+            len(train_subjects) + len(validation_subjects)
+            if global_condition_enabled
+            else 0
+        ),
         "local_mca_inputs_read": (
             cycles * len(train_subjects)
             + (cycles // validation_interval) * len(validation_subjects)

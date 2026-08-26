@@ -27,8 +27,8 @@ from mcar.training.film_siren_stage_c import (
 )
 from mcar.training.train_film_siren import (
     SubjectCondition,
+    conditioned_coordinate_block,
     condition_tensors,
-    coordinate_block,
     file_sha256,
     git_state,
     load_condition_cache,
@@ -124,10 +124,19 @@ def prediction_block(
     directions: np.ndarray,
     frequency_coordinate: torch.Tensor,
     indices: np.ndarray,
+    local_mca_db: np.ndarray | None,
+    normalization: Normalization,
+    conditioning_scope: str,
     device: torch.device,
 ) -> torch.Tensor:
     xyz = torch.from_numpy(directions[indices, 2:5]).to(device)
-    query = coordinate_block(xyz, frequency_coordinate)
+    query = conditioned_coordinate_block(
+        xyz,
+        frequency_coordinate,
+        conditioning_scope,
+        local_mca_db,
+        normalization,
+    )
     prediction = model(query, latent)
     return prediction.reshape(indices.size, frequency_coordinate.shape[0], 2).permute(
         2, 0, 1
@@ -152,6 +161,7 @@ def one_loss(
     erb_centers: torch.Tensor,
     objective: StageCLossConfiguration,
     device: torch.device,
+    conditioning_scope: str = "global",
 ) -> tuple[torch.Tensor, LossMetrics]:
     global_target, global_mca, global_features, _ = read_block(
         subject, global_indices, strict_ild=False
@@ -162,10 +172,26 @@ def one_loss(
     if strict is None:
         raise AssertionError("Strict ILD metadata was not loaded")
     global_prediction = prediction_block(
-        model, latent, directions, frequency_coordinate, global_indices, device
+        model,
+        latent,
+        directions,
+        frequency_coordinate,
+        global_indices,
+        global_mca if conditioning_scope == "global_plus_local_mca" else None,
+        normalization,
+        conditioning_scope,
+        device,
     )
     horizontal_prediction = prediction_block(
-        model, latent, directions, frequency_coordinate, horizontal_indices, device
+        model,
+        latent,
+        directions,
+        frequency_coordinate,
+        horizontal_indices,
+        horizontal_mca if conditioning_scope == "global_plus_local_mca" else None,
+        normalization,
+        conditioning_scope,
+        device,
     )
     global_target_tensor = tensor(global_target, device)
     return calculate_stage_c_losses(
@@ -204,6 +230,7 @@ def evaluate_validation(
     objective: StageCLossConfiguration,
     device: torch.device,
     directions_per_block: int,
+    conditioning_scope: str = "global",
 ) -> dict[str, Any]:
     model.eval()
     accumulated = LossMetrics()
@@ -219,6 +246,14 @@ def evaluate_validation(
         magnitude, condition_xyz, condition_mask = condition_tensors(subject, device)
         latent = model.encode_condition(magnitude, condition_xyz, condition_mask)
         latents.append(latent)
+        global_target, global_mca, global_features, _ = read_block(
+            subject, interpolation_indices, strict_ild=False
+        )
+        horizontal_target, horizontal_mca, horizontal_features, strict = read_block(
+            subject, horizontal_indices, strict_ild=True
+        )
+        if strict is None:
+            raise AssertionError("Strict ILD metadata was not loaded")
         prediction_normalized = predict_subject(
             model,
             subject,
@@ -228,15 +263,10 @@ def evaluate_validation(
             device,
             directions_per_block,
             latent,
+            conditioning_scope,
+            global_mca if conditioning_scope == "global_plus_local_mca" else None,
+            normalization,
         )
-        global_target, global_mca, global_features, _ = read_block(
-            subject, interpolation_indices, strict_ild=False
-        )
-        horizontal_target, horizontal_mca, horizontal_features, strict = read_block(
-            subject, horizontal_indices, strict_ild=True
-        )
-        if strict is None:
-            raise AssertionError("Strict ILD metadata was not loaded")
         prediction = tensor(prediction_normalized, device)
         target = tensor(global_target, device)
         _, metrics = calculate_stage_c_losses(
@@ -256,6 +286,7 @@ def evaluate_validation(
             normalization.target_mean,
             normalization.target_std,
             objective,
+            True,
         )
         add_metrics(accumulated, metrics)
         raw_metrics = solid_angle_weighted_residual_metrics(
@@ -280,6 +311,13 @@ def evaluate_validation(
                 ),
                 "strict_ild_mae_db": metrics.ild_mae_db,
                 "spectral_band_ild_mae_db": metrics.spectral_band_ild_mae_db,
+                "high_frequency_first_difference_mae_db_per_bin": (
+                    metrics.high_frequency_first_difference_mae_db_per_bin
+                ),
+                "high_frequency_second_difference_mae_db_per_bin2": (
+                    metrics.high_frequency_second_difference_mae_db_per_bin2
+                ),
+                "notch_depth_mae_db": metrics.notch_depth_mae_db,
             }
         )
     averaged = average_metrics(accumulated, len(subjects))
@@ -413,6 +451,19 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
     )
     erb_centers = torch.from_numpy(make_erb_center_frequencies_hz()).to(device)
 
+    conditioning_scope = str(configuration.get("conditioning_scope", "global"))
+    if conditioning_scope not in {"global", "global_plus_local_mca"}:
+        raise ValueError(
+            "Stage C supports conditioning_scope='global' or "
+            "'global_plus_local_mca'"
+        )
+    expected_coordinate_dimension = 5 if conditioning_scope == "global" else 7
+    if int(configuration["model"]["coordinate_dimension"]) != expected_coordinate_dimension:
+        raise ValueError(
+            f"conditioning_scope={conditioning_scope!r} requires "
+            f"coordinate_dimension={expected_coordinate_dimension}"
+        )
+
     model = FilmSiren(
         FilmSirenConfig(**configuration["model"]),
         ConditionEncoderConfig(**configuration["condition_encoder"]),
@@ -461,6 +512,9 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "validation_subject_count": len(validation_subjects),
         "global_interpolation_direction_count": int(interpolation_indices.size),
         "horizontal_interpolation_direction_count": int(horizontal_indices.size),
+        "conditioning_scope": conditioning_scope,
+        "global_condition_input_enabled": True,
+        "local_mca_input_enabled": conditioning_scope == "global_plus_local_mca",
         "test_subjects_read": 0,
         "device": str(device),
     }
@@ -515,6 +569,7 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                 erb_centers,
                 objective,
                 device,
+                conditioning_scope,
             )
             if not bool(torch.isfinite(loss).item()):
                 raise FloatingPointError(f"Non-finite loss at cycle {cycle}")
@@ -552,6 +607,7 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                 objective,
                 device,
                 int(configuration["validation_directions_per_block"]),
+                conditioning_scope,
             )
             validation_metrics = result["objective_metrics"]
             record.update(
@@ -643,6 +699,14 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "best_checkpoint_sha256": file_sha256(output_dir / "best.pt"),
         "last_checkpoint_sha256": file_sha256(output_dir / "last.pt"),
         "test_subjects_read": 0,
+        "conditioning_scope": conditioning_scope,
+        "condition_inputs_read": len(train_subjects) + len(validation_subjects),
+        "local_mca_inputs_read": (
+            cycles * len(train_subjects)
+            + (cycles // validation_interval) * len(validation_subjects)
+            if conditioning_scope == "global_plus_local_mca"
+            else 0
+        ),
         "git": state,
     }
     (output_dir / "training_report.json").write_text(

@@ -266,6 +266,7 @@ def calculate_losses(
     notch_radii_bins: tuple[int, ...] = (4, 8, 16),
     notch_depth_threshold_db: float = 1.0,
     notch_softplus_temperature_db: float = 0.5,
+    calculate_spectral_diagnostics: bool = False,
 ) -> tuple[torch.Tensor, LossMetrics]:
     if high_frequency_first_difference_weight < 0.0:
         raise ValueError(
@@ -325,6 +326,7 @@ def calculate_losses(
     if (
         high_frequency_first_difference_weight > 0.0
         or high_frequency_second_difference_weight > 0.0
+        or calculate_spectral_diagnostics
     ):
         first_difference_mae, second_difference_mae = (
             high_frequency_spectral_difference_mae(
@@ -339,7 +341,7 @@ def calculate_losses(
         first_difference_mae = corrected_db.new_zeros(())
         second_difference_mae = corrected_db.new_zeros(())
 
-    if notch_depth_weight > 0.0:
+    if notch_depth_weight > 0.0 or calculate_spectral_diagnostics:
         notch_depth_mae = multi_scale_notch_depth_mae(
             corrected_db,
             reference_db,

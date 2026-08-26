@@ -86,6 +86,7 @@ def calculate_stage_c_losses(
     target_mean: float,
     target_std: float,
     configuration: StageCLossConfiguration,
+    calculate_spectral_diagnostics: bool = False,
 ) -> tuple[torch.Tensor, LossMetrics]:
     """Combine global auditory losses with an independent horizontal ILD batch."""
     configuration.validate()
@@ -120,6 +121,7 @@ def calculate_stage_c_losses(
         notch_softplus_temperature_db=(
             configuration.notch_softplus_temperature_db
         ),
+        calculate_spectral_diagnostics=calculate_spectral_diagnostics,
     )
 
     horizontal_prediction_db = (

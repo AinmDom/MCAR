@@ -31,6 +31,12 @@ CONFIG_PATH = (
     / "experiments"
     / "sonicom_film_siren_c1_lr1e4_adam_seed20260821_e150.json"
 )
+GLOBAL_LOCAL_CONFIG_PATH = (
+    ROOT
+    / "configs"
+    / "experiments"
+    / "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150.json"
+)
 
 
 def test_stage_c_initial_config_matches_preregistered_protocol() -> None:
@@ -58,6 +64,41 @@ def test_stage_c_initial_config_matches_preregistered_protocol() -> None:
     assert objective["high_frequency_first_difference_weight"] == 0.0
     assert objective["notch_depth_weight"] == 0.0
     assert configuration["require_clean_git"] is True
+
+
+@pytest.mark.parametrize(
+    ("suffix", "learning_rate"),
+    [("lr3e5", 3e-5), ("lr1e4", 1e-4), ("lr3e4", 3e-4)],
+)
+def test_global_local_c1_restarts_the_preregistered_learning_rate_search(
+    suffix: str, learning_rate: float
+) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"sonicom_film_siren_gl_c1_{suffix}_adam_seed20260821_e150.json"
+    )
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    baseline = json.loads(GLOBAL_LOCAL_CONFIG_PATH.read_text(encoding="utf-8"))
+    assert configuration["conditioning_scope"] == "global_plus_local_mca"
+    assert configuration["model"]["coordinate_dimension"] == 7
+    assert configuration["optimizer"] == {
+        "name": "Adam",
+        "learning_rate": learning_rate,
+        "weight_decay": 0.0,
+    }
+    assert configuration["search_stage"] == (
+        "global_local_c1_learning_rate_revalidation"
+    )
+    assert configuration["protocol_amendment"].endswith(
+        "STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md"
+    )
+    for candidate in (configuration, baseline):
+        candidate["optimizer"]["learning_rate"] = None
+        for field in ("experiment_id", "model_version", "run_name"):
+            candidate[field] = None
+    assert configuration == baseline
 
 
 @pytest.mark.parametrize(

@@ -1,4 +1,4 @@
-"""One-subject real-data CUDA gradient smoke for Stage C (no validation/test)."""
+"""One-subject real-data CUDA gradient smoke for global+local Stage C."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def main() -> None:
         root
         / "configs"
         / "experiments"
-        / "sonicom_film_siren_c1_lr1e4_adam_seed20260821_e150.json"
+        / "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150.json"
     )
     configuration = json.loads(config_path.read_text(encoding="utf-8"))
     seed = int(configuration["seed"])
@@ -108,6 +108,7 @@ def main() -> None:
             erb_centers,
             objective,
             device,
+            configuration["conditioning_scope"],
         )
         loss.backward()
         gradient_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
@@ -121,6 +122,7 @@ def main() -> None:
                 "status": "passed",
                 "subject_id": subject.subject_id,
                 "optimizer_steps": 2,
+                "conditioning_scope": configuration["conditioning_scope"],
                 "losses": losses,
                 "peak_cuda_allocated_mib": torch.cuda.max_memory_allocated()
                 / (1024.0**2),

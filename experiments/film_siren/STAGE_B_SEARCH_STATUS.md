@@ -1,6 +1,6 @@
 # Stage B conditioning architecture 搜索状态
 
-> 状态：`STAGE B FROZEN / READY FOR STAGE C`
+> 状态：`STAGE B RE-FROZEN WITH LOCAL MCA / STAGE C REVALIDATION REQUIRED`
 > 冻结时点：placement RETEST 的新增四个100-cycle runs全部完成并由预注册
 > 五-seed分析器汇总后。
 
@@ -120,3 +120,29 @@ Stage B并进入Stage C。
 去个体化latent下稳定退化，支持其确实使用了subject-specific Q26信息。Stage B
 架构正式冻结为`latent128 + full modulation + all placement`，可进入Stage C；
 SONICOM test仍完全未读取。
+
+## Global / local MCA 扩展复核（2026-08-26）
+
+原 checklist 要求 global latent 稳定后比较 global、local MCA 与
+global+local。bounded gate 首先以相同七维接口、seed20260821和E150预算比较
+global零local通道与global+local，后者相对改善`12.120%`，超过预注册`0.5%`
+工程门槛，因此按扩展协议补齐三模型三seeds。
+
+| conditioning scope | 三seed均值 ± std (dB) | best cycles |
+|---|---:|---|
+| global+local MCA | 2.708064 ± 0.005515 | 70 / 75 / 60 |
+| local MCA only | 2.808525 ± 0.000926 | 130 / 125 / 135 |
+| global only（七维零local公平对照） | 3.088933 ± 0.002255 | 60 / 75 / 75 |
+
+- 9/9 runs完整且均为`KEEP`，三个matched seeds均由global+local胜出；
+- global+local相对global改善`12.33%`，相对local-only改善`3.58%`；
+- local-only相对global改善`9.08%`，说明query-level MCA提供主要增益；global
+  latent在local MCA之外仍提供稳定增量，支持两条信息通路互补；
+- local-only旁路Q26 encoder并记录`condition_inputs_read=0`；global-only记录
+  `local_mca_inputs_read=0`；所有runs均为干净Git且`test_subjects_read=0`。
+
+Stage B最终重新冻结为：七维query
+`[xyz, dual-frequency, normalized MCA-L, normalized MCA-R]`，配合
+`Q26 global latent128 + full modulation + all placement`。既有Stage C C1--C3
+结果只适用于旧global-only五维输入，不能直接作为新架构的优化器/调度器结论；
+Stage C必须以global+local架构重新验证后再继续C4。

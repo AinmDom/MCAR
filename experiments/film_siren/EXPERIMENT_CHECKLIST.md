@@ -139,7 +139,7 @@ Frequency mapping 必须保存公式、实现版本、输入范围和输出范�
 - [ ] full modulation 使用 `alpha=1+a_max*tanh(raw_alpha)`，默认 `a_max=0.5`、raw zero-init。
 - [ ] 比较后半层、除第一层外全部、全部 hidden layers 的 placement。
 - [ ] 记录 modulation saturation/mean/std/min/max。
-- [ ] global latent 稳定后比较 global、local MCA、global+local；local 信息必须为推理时可得信息。
+- [x] global latent 稳定后比较 global、local MCA、global+local；local 信息必须为推理时可得信息。
 
 ## 8. Stage C：跨 subject 正式训练
 

@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "decision": "FREEZE_WINNER",
+  "winner": "global_plus_local_mca",
+  "ranking": [
+    {
+      "conditioning_scope": "global_plus_local_mca",
+      "mean_weighted_mae_db": 2.708063782380467,
+      "std_weighted_mae_db": 0.005515046266126925,
+      "minimum_weighted_mae_db": 2.701026661736206,
+      "maximum_weighted_mae_db": 2.714494867853539
+    },
+    {
+      "conditioning_scope": "local_mca",
+      "mean_weighted_mae_db": 2.808524505387251,
+      "std_weighted_mae_db": 0.0009258419460983881,
+      "minimum_weighted_mae_db": 2.807452026311813,
+      "maximum_weighted_mae_db": 2.8097112189354374
+    },
+    {
+      "conditioning_scope": "global_zero_local",
+      "mean_weighted_mae_db": 3.0889334687744068,
+      "std_weighted_mae_db": 0.0022554137360716107,
+      "minimum_weighted_mae_db": 3.086203680829542,
+      "maximum_weighted_mae_db": 3.0917271839439606
+    }
+  ],
+  "seed_winners": {
+    "20260821": "global_plus_local_mca",
+    "20260822": "global_plus_local_mca",
+    "20260823": "global_plus_local_mca"
+  },
+  "protocol": "experiments/film_siren/STAGE_B_GLOBAL_LOCAL_MCA_EXPANSION_PROTOCOL.md",
+  "test_subjects_read": 0
+}

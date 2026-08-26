@@ -1,5 +1,33 @@
 # 项目实验日志
 
+## 2026-08-26：FiLM-SIREN Stage C GL-C1：七维 global+local learning-rate 重验证完成
+
+- 实验目标：在七维 global+local MCA 架构上（query
+  `[x,y,z,dual-f1,dual-f2,normalized MCA-L,normalized MCA-R]`、Q26 global
+  latent128、full modulation、all placement），按
+  `experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md`
+  从头重新验证 Stage C 搜索第一步：固定 Adam、wd=0、constant scheduler、C0
+  objective，比较 learning rate `{3e-5,1e-4,3e-4}`；screening seed `20260821`、
+  150 cycles。旧五维 global-only C1 只作历史对照，不进入新架构候选排序。
+- 结果（best validation Stage C total，越低越好）：`1e-4`
+  **`0.7209096320650794`**（best cycle `125`，KEEP）< `3e-5`
+  `0.7245849723165686`（cycle `145`，KEEP）< `3e-4`
+  `0.7827154099941254`（cycle `65`，KEEP）。三个候选 best 均早于 cycle 150，
+  无末点 best，全部 `KEEP`、不触发 `RETEST`。
+- 决策：冻结 **Adam / lr `1e-4` / wd `0`** 为 GL-C1 winner 进入 GL-C2
+  optimizer/weight-decay 搜索；较大的 `3e-4` 明显退化，较小的 `3e-5` 与 winner
+  接近但未胜出。
+- 完整性：3/3 run 完成且 `status=completed`，history.csv 各 150 行、无 NaN/Inf；
+  全部 `test_subjects_read=0`、`local_mca_inputs_read=40620`、
+  `condition_inputs_read=306`、`conditioning_scope=global_plus_local_mca`；
+  运行时 git `c20764e` clean（预注册提交）；FP32、无 AMP、gradient clip 5。
+- 产物：决策位于
+  `results/sonicom_film_siren_gl_c1_learning_rate/decision.json`；配置位于
+  `configs/experiments/sonicom_film_siren_gl_c1_*.json`；逐 run 产物位于
+  `artifacts/training/sonicom_film_siren_gl_c1_*/`。
+- 下一步：固定该 winner 进入 GL-C2（三配置并行修订见
+  `STAGE_C_GLOBAL_LOCAL_MCA_C2_PARALLEL_AMENDMENT.md`，结果见下一条目）。
+
 ## 2026-08-26：FiLM-SIREN Stage C GL-C2：optimizer / weight-decay 重验证完成
 
 - 实验目标：在七维 global+local MCA 架构上，按

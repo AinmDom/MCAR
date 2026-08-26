@@ -1,0 +1,298 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md",
+  "search_stage": "global_top3_selection_across_screening",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "screening_run_count": 13,
+  "unique_configuration_count": 10,
+  "full_ranking": [
+    {
+      "rank": 1,
+      "run_name": "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7148047604344108,
+      "strict_ild_mae_db": 0.6461231925270774,
+      "erb_mae_db": 0.9983304359696128,
+      "hf_mae_db": 3.78953463380987,
+      "residual_mae_db": 2.69934047947954,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 2,
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7162069299004294,
+      "strict_ild_mae_db": 0.6314314061945135,
+      "erb_mae_db": 1.0174874284050681,
+      "hf_mae_db": 3.7957694963975386,
+      "residual_mae_db": 2.705020579126416,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 3,
+      "run_name": "sonicom_film_siren_gl_c3_cosine_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7162436748092825,
+      "strict_ild_mae_db": 0.655912920832634,
+      "erb_mae_db": 0.9976233596151526,
+      "hf_mae_db": 3.7882062142545525,
+      "residual_mae_db": 2.700172523300726,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 4,
+      "run_name": "sonicom_film_siren_gl_c4_c0_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7170006659897891,
+      "strict_ild_mae_db": 0.6475020369345491,
+      "erb_mae_db": 1.0007469396699558,
+      "hf_mae_db": 3.8014220866290005,
+      "residual_mae_db": 2.7061395433413433,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 5,
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e5_seed20260821_e150",
+      "best_cycle": 110,
+      "best_validation_objective_total": 0.71834020587531,
+      "strict_ild_mae_db": 0.6143611574714835,
+      "erb_mae_db": 1.0184651680968024,
+      "hf_mae_db": 3.824314198710702,
+      "residual_mae_db": 2.720270402596245,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 6,
+      "run_name": "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150",
+      "best_cycle": 125,
+      "best_validation_objective_total": 0.7209096320650794,
+      "strict_ild_mae_db": 0.6320928118445657,
+      "erb_mae_db": 1.0183854346925563,
+      "hf_mae_db": 3.8251610560850664,
+      "residual_mae_db": 2.722533226928056,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 7,
+      "run_name": "sonicom_film_siren_gl_c3_constant_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7215440015901219,
+      "strict_ild_mae_db": 0.6418133174831216,
+      "erb_mae_db": 1.0208262719891288,
+      "hf_mae_db": 3.8118025877258996,
+      "residual_mae_db": 2.7186189944648267,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 8,
+      "run_name": "sonicom_film_siren_gl_c2_adam_wd0_seed20260821_e150",
+      "best_cycle": 150,
+      "best_validation_objective_total": 0.7222889431498267,
+      "strict_ild_mae_db": 0.6483609703454104,
+      "erb_mae_db": 1.0191134905273265,
+      "hf_mae_db": 3.8193525563586843,
+      "residual_mae_db": 2.718804516357332,
+      "decision": "RETEST",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 9,
+      "run_name": "sonicom_film_siren_gl_c1_lr3e5_adam_seed20260821_e150",
+      "best_cycle": 145,
+      "best_validation_objective_total": 0.7245849723165686,
+      "strict_ild_mae_db": 0.6483816971833055,
+      "erb_mae_db": 1.0172936225479299,
+      "hf_mae_db": 3.8307917551560835,
+      "residual_mae_db": 2.7286752240863006,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 10,
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7442312213507566,
+      "strict_ild_mae_db": 0.6511157642711293,
+      "erb_mae_db": 0.9957613443786447,
+      "hf_mae_db": 3.7550245360894636,
+      "residual_mae_db": 2.6716878555308154,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 11,
+      "run_name": "sonicom_film_siren_gl_c4_notch_seed20260821_e150",
+      "best_cycle": 135,
+      "best_validation_objective_total": 0.7498216263272546,
+      "strict_ild_mae_db": 0.6603663089600477,
+      "erb_mae_db": 0.9992421933195808,
+      "hf_mae_db": 3.7750514583154158,
+      "residual_mae_db": 2.6860408465820833,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 12,
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_notch_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7760627865791321,
+      "strict_ild_mae_db": 0.6453032486818053,
+      "erb_mae_db": 0.9968899325890974,
+      "hf_mae_db": 3.7557708566839043,
+      "residual_mae_db": 2.6642751715271906,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "rank": 13,
+      "run_name": "sonicom_film_siren_gl_c1_lr3e4_adam_seed20260821_e150",
+      "best_cycle": 65,
+      "best_validation_objective_total": 0.7827154099941254,
+      "strict_ild_mae_db": 0.6517224745316939,
+      "erb_mae_db": 1.1627045707269148,
+      "hf_mae_db": 3.997692108154297,
+      "residual_mae_db": 2.907907300428363,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    }
+  ],
+  "unique_ranking": [
+    {
+      "run_name": "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150",
+        "sonicom_film_siren_gl_c4_c0_seed20260821_e150"
+      ],
+      "member_count": 2,
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7148047604344108,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150",
+        "sonicom_film_siren_gl_c3_constant_seed20260821_e150"
+      ],
+      "member_count": 2,
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7162069299004294,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c3_cosine_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c3_cosine_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7162436748092825,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e5_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c2_adamw_wd1e5_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 110,
+      "best_validation_objective_total": 0.71834020587531,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150",
+        "sonicom_film_siren_gl_c2_adam_wd0_seed20260821_e150"
+      ],
+      "member_count": 2,
+      "best_cycle": 125,
+      "best_validation_objective_total": 0.7209096320650794,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c1_lr3e5_adam_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c1_lr3e5_adam_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 145,
+      "best_validation_objective_total": 0.7245849723165686,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c4_d1d2_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7442312213507566,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c4_notch_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c4_notch_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 135,
+      "best_validation_objective_total": 0.7498216263272546,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_notch_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c4_d1d2_notch_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7760627865791321,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c1_lr3e4_adam_seed20260821_e150",
+      "member_run_names": [
+        "sonicom_film_siren_gl_c1_lr3e4_adam_seed20260821_e150"
+      ],
+      "member_count": 1,
+      "best_cycle": 65,
+      "best_validation_objective_total": 0.7827154099941254,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    }
+  ],
+  "top3": [
+    {
+      "rank": 1,
+      "run_name": "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150"
+    },
+    {
+      "rank": 2,
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150"
+    },
+    {
+      "rank": 3,
+      "run_name": "sonicom_film_siren_gl_c3_cosine_seed20260821_e150"
+    }
+  ],
+  "top3_note": "Top-3 is selected per unique configuration (optimizer+scheduler+objective); GL-C4 c0 re-runs the GL-C3 winner configuration, so the two share one slot.",
+  "test_subjects_read": 0
+}

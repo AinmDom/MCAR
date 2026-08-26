@@ -1,0 +1,73 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md",
+  "execution_amendment": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_C4_PARALLEL_AMENDMENT.md",
+  "search_stage": "global_local_c4_objective",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "candidates": [
+    {
+      "objective_variant": "c0",
+      "run_name": "sonicom_film_siren_gl_c4_c0_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7170006659897891,
+      "best_cycle_strict_ild_mae_db": 0.6475020369345491,
+      "best_cycle_erb_mae_db": 1.0007469396699558,
+      "best_cycle_hf_mae_db": 3.8014220866290005,
+      "best_cycle_residual_mae_db": 2.7061395433413433,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "objective_variant": "d1d2",
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7442312213507566,
+      "best_cycle_strict_ild_mae_db": 0.6511157642711293,
+      "best_cycle_erb_mae_db": 0.9957613443786447,
+      "best_cycle_hf_mae_db": 3.7550245360894636,
+      "best_cycle_residual_mae_db": 2.6716878555308154,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "objective_variant": "notch",
+      "run_name": "sonicom_film_siren_gl_c4_notch_seed20260821_e150",
+      "best_cycle": 135,
+      "best_validation_objective_total": 0.7498216263272546,
+      "best_cycle_strict_ild_mae_db": 0.6603663089600477,
+      "best_cycle_erb_mae_db": 0.9992421933195808,
+      "best_cycle_hf_mae_db": 3.7750514583154158,
+      "best_cycle_residual_mae_db": 2.6860408465820833,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "objective_variant": "d1d2_notch",
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_notch_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7760627865791321,
+      "best_cycle_strict_ild_mae_db": 0.6453032486818053,
+      "best_cycle_erb_mae_db": 0.9968899325890974,
+      "best_cycle_hf_mae_db": 3.7557708566839043,
+      "best_cycle_residual_mae_db": 2.6642751715271906,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    }
+  ],
+  "ranking": [
+    "c0",
+    "d1d2",
+    "notch",
+    "d1d2_notch"
+  ],
+  "winner": {
+    "objective_variant": "c0",
+    "run_name": "sonicom_film_siren_gl_c4_c0_seed20260821_e150",
+    "best_cycle": 140,
+    "best_validation_objective_total": 0.7170006659897891,
+    "decision": "KEEP"
+  },
+  "next_stage": "GL-C4 winner feeds the global Top-3 selection across all 13 screening runs; the Top 3 each receive seeds 20260822/20260823.",
+  "test_subjects_read": 0
+}

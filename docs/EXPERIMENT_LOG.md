@@ -1,5 +1,287 @@
 # 项目实验日志
 
+## 2026-08-26：FiLM-SIREN Stage B9：global / local MCA / global+local 三模型扩展完成
+
+- 触发原因：Stage B8 bounded gate 的 `global+local MCA` 单 seed 相对
+  `global_zero_local` 改善 `12.1201%`，远超预注册的 `0.5%` 扩展门槛；因此按
+  `experiments/film_siren/STAGE_B_GLOBAL_LOCAL_MCA_EXPANSION_PROTOCOL.md`
+  暂停 Stage C C4，重新打开 Stage B 架构比较。
+- 运行前协议：协议在新增 run 前由 commit `927ea80` 冻结；比较
+  `global_zero_local`、`local_mca`、`global_plus_local_mca` 三个候选，统一使用
+  7 维 query 接口、`latent128 + full + all` 容量、seeds
+  `20260821/20260822/20260823`、150 cycles 和同一 validation MAE 判据。
+  两个合规 gate seed-20260821 run 直接复用，新增 7 个 run；任一新增 run 的
+  best cycle 等于 150 时整体转为 `RETEST`。
+- 数据边界：local MCA 只能来自 Q26-derived `mca_logmag_db`；global-only 的
+  local 通道恒为 0，local-only 不读取 condition encoder 输入；三者均禁止把
+  non-Q26 reference 或 target 作为输入，且必须记录 `test_subjects_read=0`。
+- 结果（三-seed weighted MAE）：`global_plus_local_mca`
+  **`2.708064 ± 0.005515 dB`** < `local_mca`
+  `2.808525 ± 0.000926 dB` < `global_zero_local`
+  `3.088933 ± 0.002255 dB`。global+local 在 3/3 matched seeds 上均为第一，
+  相对 global-only 改善 `12.3301%`，相对 local-only 改善 `3.5770%`；local-only
+  本身相对 global-only 改善 `9.0779%`。
+- 收敛与完整性：9/9 所需 run 全部完成并为 `KEEP`；三个候选的 best cycles
+  分别为 global `60/75/75`、local `130/125/135`、global+local
+  `70/75/60`，均早于 cycle 150，不触发 `RETEST`。全部 Git clean、finite、
+  `test_subjects_read=0`；global-only 的 `local_mca_inputs_read=0`，local-only 的
+  condition encoder 输入读取数为 0。
+- 决策：按冻结的三-seed均值判据，Stage B 架构 winner 重新冻结为
+  **`global_plus_local_mca + latent128 + full modulation + all placement`**。
+  原 global-only Stage C C1--C3 结果只保留为历史对照；后续需在新架构上重新验证
+  Stage C，不能直接恢复旧 C4 或沿用旧 C1--C3 winner。
+- 产物：协议、7 个新增配置和聚合脚本分别位于
+  `experiments/film_siren/STAGE_B_GLOBAL_LOCAL_MCA_EXPANSION_PROTOCOL.md`、
+  `configs/experiments/sonicom_film_siren_b_expansion_*.json` 与
+  `scripts/analyze_siren_b_global_local_mca_expansion.py`；9 个逐 run 报告位于
+  `artifacts/training/sonicom_film_siren_b_{gate,expansion}_*/`。本条数字由这些
+  `training_report.json` 按预注册分析器的 population mean/std 公式只读复核。
+
+## 2026-08-26：FiLM-SIREN Stage B8：global + local MCA bounded gate 通过
+
+- 阶段前协议规划：按总清单中“global latent 稳定后比较 global/local/
+  global+local”的既定路线，在任何 local-MCA 正式 run 前提交
+  `STAGE_B_GLOBAL_LOCAL_MCA_GATE_PROTOCOL.md`（commit `8b26df5`）。为控制重新
+  打开 Stage B 的成本，先只比较 `global_zero_local` 与
+  `global_plus_local_mca`；两者采用相同 7 维输入接口和同 seed 初始化，唯一差异
+  是 query 的双耳 MCA 两通道为 0 还是真实推理时可用值。
+- 冻结预算：seed `20260821`、150 cycles、normalized residual MSE、Adam
+  `lr=1e-4`、weight decay 0、每 5 cycles 完整评价 44 validation 被试；若任一
+  best cycle=150 则 `RETEST`，否则相对改善达到 `0.5%` 才允许扩展。
+- 结果：`global_zero_local` 在 cycle 60 达到 best `3.088870 dB`；
+  `global_plus_local_mca` 在 cycle 70 达到 best `2.714495 dB`。两者均为
+  `KEEP`，相对改善 **`12.1201%`**，判定 `PASS_EXPAND`。
+- 完整性：两个 run 均 finite、Git clean、配置/协议/hash 匹配；global-only
+  记录 `local_mca_inputs_read=0`，两者均记录 `test_subjects_read=0`。
+- 决策：暂停 Stage C C4，进入 Stage B9 三候选三-seed扩展；现有 Stage C
+  C1--C3 结果继续保留为 global 架构结果，不改写、不外推为 global+local 结果。
+- 产物：`results/sonicom_film_siren_b_global_local_mca_gate/{summary.csv,
+  decision.json}`；逐 run 产物位于 `artifacts/training/sonicom_film_siren_b_gate_*/`。
+
+## 2026-08-25：FiLM-SIREN Stage C4：objective ablation 配置冻结，因 Stage B8 gate 暂停
+
+- 协议来源：C4 搜索空间已在 Stage C 首个正式 run 前随
+  `STAGE_C_TRAINING_PROTOCOL.md` 冻结；固定继承 C3 winner，并比较 C0、
+  C0+D1/D2、C0+multi-scale notch、C0+D1/D2+notch，新增项权重和频率范围均
+  不随结果调整。
+- 准备结果：已生成三个新增配置
+  `sonicom_film_siren_c4_{d1d2,notch,d1d2_notch}_seed20260821_e150.json`；继承的
+  C0 即 C3 warmup+cosine winner，不重复训练。
+- 暂停原因：在任何 C4 正式 run 前，按 Stage B 原路线启动了 local MCA bounded
+  gate；协议规定 gate 决策前暂停 C4。当前没有 C4 正式 training artifact，不能
+  把“配置已生成”记为“实验已完成”。
+- 后续条件：只有 Stage B9 重新冻结 global/local/global+local 架构并明确是否需
+  重跑 Stage C 后，才能决定恢复原 C4 或在新架构上重新执行 C1--C4。
+
+## 2026-08-25：FiLM-SIREN Stage C3：scheduler 筛选完成
+
+- 实验目标：固定 C2 winner `AdamW / lr=1e-4 / wd=1e-4` 与 C0 objective，按
+  预注册协议比较 constant、cosine、5-cycle linear warmup + cosine；统一 seed
+  `20260821`、150 cycles，scheduler horizon 固定为 150。
+- 结果（best validation Stage C total）：warmup+cosine **`0.824966`**
+  （cycle 65）< cosine `0.825290`（cycle 65）< inherited constant
+  `0.826732`（cycle 65）。三个候选均在末点评价前达到 best，均为 `KEEP`。
+- 决策：冻结 **warmup+cosine（warmup 5 cycles）** 为 C3 winner，并按原协议
+  生成 C4 objective ablation 配置。该结论只适用于当时的 global-only
+  `latent128 + full + all` 架构。
+- 完整性与产物：全部 run `test_subjects_read=0`；决策位于
+  `results/sonicom_film_siren_c3_scheduler/decision.json`，新增 run 位于
+  `artifacts/training/sonicom_film_siren_c3_*/`。
+
+## 2026-08-25：FiLM-SIREN Stage C2：optimizer / weight-decay 筛选完成
+
+- 实验目标：固定 C1 winner `lr=1e-4`、constant scheduler 和 C0 objective，
+  比较 inherited Adam/wd0、AdamW/wd`1e-5`、AdamW/wd`1e-4`；统一 seed
+  `20260821`、150 cycles。
+- 结果（best validation Stage C total）：AdamW/wd`1e-4` **`0.826732`**
+  （cycle 65）< inherited Adam/wd0 `0.827722`（cycle 90）< AdamW/wd`1e-5`
+  `0.829612`（cycle 65）；三个候选均为 `KEEP`。
+- 决策：冻结 **AdamW / lr `1e-4` / weight decay `1e-4`** 进入 C3 scheduler
+  搜索；不做 optimizer × scheduler 全笛卡尔积。
+- 完整性与产物：全部 run `test_subjects_read=0`；决策位于
+  `results/sonicom_film_siren_c2_optimizer_weight_decay/decision.json`，新增 run
+  位于 `artifacts/training/sonicom_film_siren_c2_*/`。
+
+## 2026-08-25：FiLM-SIREN Stage C1：learning-rate 筛选完成
+
+- 实验目标：在冻结的 Stage B global 架构和 C0 auditory objective 上，固定
+  Adam/wd0/constant，比较 learning rate `{3e-5,1e-4,3e-4}`；三个 screening
+  run 均使用 seed `20260821`、150 cycles，按未平滑的 validation objective
+  total 单点最小值排序。
+- 结果：`1e-4` **`0.827722`**（best cycle 90）< `3e-5` `0.829001`
+  （cycle 65）< `3e-4` `0.873646`（cycle 40）；三者 best 均早于 cycle 150，
+  均为 `KEEP`。
+- 决策：冻结 **`lr=1e-4`** 进入 C2；较大的 `3e-4` 明显退化，较小的
+  `3e-5` 与 winner 接近但未胜出。
+- 完整性与产物：全部 run `test_subjects_read=0`；决策位于
+  `results/sonicom_film_siren_c1_learning_rate/decision.json`，逐 run 产物位于
+  `artifacts/training/sonicom_film_siren_c1_*/`。
+
+## 2026-08-22：FiLM-SIREN Stage C0：跨被试听觉目标训练协议预注册与实现
+
+- 阶段前协议规划：在首个 Stage C 正式 run 前提交
+  `experiments/film_siren/STAGE_C_TRAINING_PROTOCOL.md` 与训练实现（commit
+  `be80c91`）。架构固定为当时 Stage B winner `latent128 + full + all`，所有
+  Stage C 候选从 scratch 训练，不加载 Stage B checkpoint；split 固定
+  262 train / 44 validation，Q26 condition 方向不进入 767-direction query。
+- C0 objective：direction-weighted normalized residual SmoothL1 + `0.75` ERB
+  + `0.25` 对侧高频 + `0.75` strict HRIR ILD + `0.05` spectral-band ILD；global
+  与 horizontal directions 双采样，validation 使用完整 767/72 方向，不使用
+  随机 validation batch。
+- 搜索顺序与上限：C1 learning rate → C2 optimizer/decay → C3 scheduler →
+  C4 objective ablation；先用 seed `20260821` 做最多 10 个 unique configs，再给
+  全局 Top-3 补 seeds `20260822/20260823`，Stage C 搜索最多 16 个正式 runs。
+- checkpoint/最终模型规则：每 5 cycles 评价，Stage C objective total 严格变小
+  才更新 best；最终三 seed 的 best cycles 中位数定义 `E_final`，三模型从 scratch
+  固定训练至 `E_final` 并做 1/3 等权 residual ensemble，禁止搜索 ensemble 权重。
+- 工程验证：新增 Stage C loss/训练器、配置、smoke 与单元测试；所有搜索阶段禁止
+  解析或打开 SONICOM test，正式产物必须为 `test_subjects_read=0`。
+
+## 2026-08-22：FiLM-SIREN Stage B7：condition 因果消融完成，首次冻结 Stage B
+
+- 运行前协议：`STAGE_B_CONDITION_ABLATION_PROTOCOL.md` 在评价前由 commit
+  `64df86d` 冻结；只对 B6 的三个 E150 best checkpoints 做 deterministic
+  condition shuffle 与 train-mean latent 两项推理干预，不重新训练、不重新选择
+  checkpoint。
+- 结果（三-seed weighted MAE）：normal **`3.092959 dB`**；shuffle
+  `3.157990 dB`（+`2.10%`）；train-mean latent `3.138841 dB`（+`1.48%`）。
+  两项干预均在 3/3 matched seeds 上变差。
+- 结论：模型确实使用了 subject-specific Q26 condition，而不只是共享 SIREN
+  容量或被试无关偏置；Stage B 架构首次冻结为
+  **`latent128 + full modulation + all placement`**，状态改为
+  `STAGE B FROZEN / READY FOR STAGE C`。
+- 完整性与产物：评价时 Git clean、`test_subjects_read=0`；结果位于
+  `results/sonicom_film_siren_b_condition_ablation/{summary.csv,per_subject.csv,
+  decision.json}`。该冻结后来因预注册路线中的 local-MCA gate 重新打开，原结果
+  保留且不被覆盖。
+
+## 2026-08-22：FiLM-SIREN Stage B6：conditioned / unconditional 对称 E150 复核通过
+
+- 触发与协议修订：B5 的 unconditional seed-20260821 在 E100 末点达到 best，
+  因而不得直接宣布 conditioning check 通过。先提交
+  `STAGE_B_CONDITIONING_CHECK_E150_AMENDMENT.md`（commit `eeb7884`），冻结
+  conditioned winner 与 unconditional baseline 各 3 seeds、全部从 scratch 的
+  对称 150-cycle复核及平台判据。
+- 结果：conditioned `latent128/full/all` 三-seed均值
+  **`3.092959 ± 0.004507 dB`**，best cycles `45/75/65`；unconditional shared
+  SIREN 为 `3.143885 ± 0.001311 dB`，best cycles `135/135/145`。6/6 runs
+  全部在 cycle 150 前达到 best，均为 `KEEP`。
+- 判定：conditioned 在 3/3 matched seeds 上胜出，相对改善 `1.6199%`；
+  conditioning check 正式通过，解除 B5 的预算阻断，允许执行 condition 因果消融。
+- 完整性与产物：全部 `test_subjects_read=0`，unconditional 另记录
+  `condition_inputs_read=0`；结果位于
+  `results/sonicom_siren_b_conditioning_check_e150/{summary.csv,decision.json}`。
+
+## 2026-08-22：FiLM-SIREN Stage B5：unconditional shared-SIREN 对照完成，但 E100 预算阻断
+
+- 阶段前协议规划：在 baseline 正式训练前提交
+  `STAGE_B_UNCONDITIONAL_BASELINE_PROTOCOL.md`（commit `8a55699`）；对照使用
+  相同冻结 backbone、262/44 split、训练 query、seeds 和 100-cycle预算，但完全
+  不构造/读取 condition 输入。
+- 结果：unconditional 三-seed均值 `3.147294 ± 0.003072 dB`；matched
+  conditioned all-placement 为 `3.092207 ± 0.006925 dB`，三 seed 全胜，表面
+  相对改善 `1.7503%`。
+- 阻断：unconditional seed-20260821 的 best 位于 cycle 100，按预注册规则标为
+  `RETEST`；另外两个 best cycles 为 95/90。故此时
+  `conditioning_check_passed=null`、Stage B 保持 `PENDING`，不得先做 condition
+  ablation 或进入 Stage C。
+- 产物：`results/sonicom_shared_siren_b_unconditional/{summary.csv,
+  decision.json}`；全部 run `test_subjects_read=0`，baseline 的
+  `condition_inputs_read=0`。
+
+## 2026-08-22：FiLM-SIREN Stage B4：placement 五-seed RETEST 完成并冻结 all
+
+- 运行前协议：针对 B3 的 seed 排名反转，先提交
+  `STAGE_B_PLACEMENT_RETEST_PROTOCOL.md`（commit `4da1eff`）；hidden/all 各新增
+  seeds `20260824/20260825`，不改变 full modulation 边界、正则或 100-cycle
+  预算，最终只按五-seed等权均值一次性决胜。
+- 结果：all `3.091073 ± 0.005545 dB`，5 seeds 中胜 4；hidden
+  `3.093648 ± 0.002327 dB`，胜 1。配对均值 `all-hidden=-0.002575 dB`
+  （all 约优 `0.083%`），exact bootstrap 95% 区间
+  `[-0.005852,0.001622] dB` 跨 0，仅作稳定性诊断。
+- 决策：按冻结的均值判据选择 **all placement**；优势很小，日志保留“统计稳定性
+  证据有限”的解释边界，不把工程决胜规则表述成显著性结论。
+- 完整性：10/10 所需 run（含复用的 6 个 B3 run）均为 `KEEP`，无末点 best，
+  `test_subjects_read=0`；结果位于
+  `results/sonicom_film_siren_b_placement/{retest_summary.csv,retest_decision.json}`。
+
+## 2026-08-20：FiLM-SIREN Stage B3：placement 搜索完成，因 seed 排名反转进入 RETEST
+
+- 阶段前规划：B2 选出非 concat 的 full modulation 后，按 Stage B 预注册顺序
+  比较 late（4--6 层）、hidden（2--6 层）、all（1--6 层）；screening seed
+  `20260821`，Top-2 再补 seeds `20260822/20260823`。
+- 单 seed：hidden `3.096799 dB` < all `3.101953 dB` < late
+  `3.121709 dB`；hidden/all 差距小于 `0.5%`，Top-2 为 hidden/all。
+- 三 seed：all `3.092207 ± 0.006925 dB` < hidden
+  `3.094049 ± 0.002161 dB`，但 screening seed 是 hidden 胜、另两个 seeds 是
+  all 胜，且均值差仅约 `0.060%`。
+- 决策：严格执行协议“seed 排名反转则 RETEST”，输出 `winner=null`；没有按单
+  seed 冻结 hidden，也没有跳过阻断按三-seed均值直接冻结 all。六个 run 的 best
+  均早于 cycle 100，故问题是配置排序稳定性而非预算不足。
+- 诊断与产物：记录 all/hidden 多层 amplitude/gamma saturation，结果位于
+  `results/sonicom_film_siren_b_placement/{summary.csv,decision.json}`，全部
+  `test_subjects_read=0`。
+
+## 2026-08-20：FiLM-SIREN Stage B2：modulation 搜索完成并冻结 full
+
+- 阶段前规划：固定 B1 winner latent=128 和 hidden placement，比较
+  concat、amplitude、phase、full；screening seed `20260821` 选 Top-2，再补
+  seeds `20260822/20260823`。配置与分析器在正式运行前由 commit `a50c212`
+  提交。
+- 单 seed 排名：full `3.092576 dB` < phase `3.108488 dB` < amplitude
+  `3.121326 dB` < concat `3.180237 dB`；Top-2 为 full/phase，差距不 tight。
+- 三 seed：full **`3.091884 ± 0.002857 dB`**，phase
+  `3.108313 ± 0.000850 dB`；三 seed 排名无反转，所有 best cycles 早于 100。
+- 决策：冻结 **full modulation**，不触发 concat 胜出时的 placement 跳过分支，
+  继续 B3 placement 搜索。
+- 完整性与产物：8 个正式 run 全部 `KEEP`、finite、Git clean、
+  `test_subjects_read=0`；结果位于
+  `results/sonicom_film_siren_b_modulation/{summary.csv,decision.json}`。
+
+## 2026-08-20：FiLM-SIREN Stage B1：latent dimension 搜索、预算修订与 E150 冻结
+
+- 阶段前规划：按 Stage B 协议固定 phase × hidden placement，先以 seed
+  `20260821` 比较 latent `{64,128,256}`，Top-2 补 seeds
+  `20260822/20260823`；只有 256 第一且领先第二不足 1% 才扩展到 384/512。
+- E100 screening：128 `3.111088 dB` < 256 `3.112155 dB` < 64
+  `3.112587 dB`，三者差距很小；Top-2 为 128/256，未触发 384/512 分支。
+  三-seed E100 均值为 128 `3.107508 dB`、256 `3.108659 dB`，但存在末点 best，
+  因此 provisional winner 不得直接冻结。
+- 预算修订：先后提交 `STAGE_B_LATENT_BUDGET_AMENDMENT.md` 与
+  `STAGE_B_LATENT_PLATEAU_AMENDMENT.md`（commits `522f445`、`0521e2f`），
+  冻结 128/256 × 3 seeds 全部从 scratch 的 E150 对称复核，以及末点 best 的
+  前后窗口平台判据；修订发生在对应 E150 决策前，不覆盖 E100 记录。
+- E150 结果：128 **`3.103014 ± 0.003435 dB`** < 256
+  `3.105485 ± 0.001499 dB`；6/6 runs 完整。两个 cycle-150 best 分别按冻结平台
+  规则判为 `KEEP_PLATEAU`，其余为 `KEEP`，不再要求延长预算。
+- 决策：冻结 **latent dimension=128** 进入 B2；全部 run
+  `test_subjects_read=0`。结果位于
+  `results/sonicom_film_siren_b_latent/{summary.csv,decision.json,
+  e150_summary.csv,e150_decision.json}`。
+
+## 2026-08-20：FiLM-SIREN Stage B0：conditioning 搜索协议预注册与基础设施完成
+
+- 编号说明：Stage B 协议原文按 latent / modulation / placement / 对照与因果检查
+  描述顺序，没有给所有后续修订单独编号；为满足实验账本逐步检索，本日志按实际
+  执行和阻断顺序记为 B0--B9。编号只用于日志索引，不追溯改名协议文件或 run。
+- 阶段前协议规划：在任何 Stage B 正式 search run 前提交
+  `experiments/film_siren/STAGE_B_FILM_PROTOCOL.md`（commit `9ef88db`），冻结
+  Stage A4 backbone `D-o20-d6-w256-ho20`、262 train / 44 validation split、
+  767 个 interpolation query、Q26-only condition 边界、100-cycle基础预算、
+  主指标、seed顺序、Top-2规则、最大 run 数和失败处置。
+- 搜索边界：Stage B 只搜索 conditioning architecture，loss/optimizer/scheduler
+  留给 Stage C；顺序固定为 B1 latent → B2 modulation → B3 placement →
+  unconditional/因果检查，不做全笛卡尔积。Stage A checkpoint 不复用，SIREN、
+  encoder 与 modulator 全部从 scratch 联合训练。
+- 数据接口：实现 `Q26Condition`、train-only Q26 normalization、DeepSets
+  condition encoder、FiLM-SIREN、共享 residual predictor/metric 与 Stage B
+  trainer；condition 只能读取 26 个测量方向的双耳 reference magnitude、xyz、
+  mask 和 frequency，监督 target 走隔离接口。
+- 审计：direction permutation、padding/mask、all-masked、non-Q26 mutation、
+  target mutation、NaN isolation、API leakage、predictor adapter、metric 与
+  CPU/CUDA smoke 均在正式搜索前覆盖；SONICOM test 禁止解析/打开，正式 run
+  统一记录 `test_subjects_read=0`。
+
 ## 2026-08-20：FiLM-SIREN Stage A4：confirmation 通过，冻结 SIREN Backbone v1
 
 - 实验目标：按 `experiments/film_siren/STAGE_A4_CONFIRMATION_PROTOCOL.md`
@@ -96,6 +378,12 @@
   condition 的纯坐标 SIREN 是否具有足够能力表示单个 SONICOM 被试的完整 MCA residual
   field。本阶段只验证表示能力和数值稳定性，不用于选择最终 frequency coordinate、
   omega、depth 或 width，也不代表跨被试或未见方向泛化性能。
+- 协议状态说明：A1 是 representation smoke/ceiling，不是正式架构搜索；初始设置由
+  `sonicom_siren_single_subject_baseline_v1.json` 固定，但项目总清单
+  `EXPERIMENT_CHECKLIST.md` 是随 A1-v1 结果在 commit `3c31740` 中落库，故不将其
+  倒称为 A1-v1 的“运行前预注册”。A1-v2 只按 v1 的末点 best 证据把预算从 20
+  epochs 提高到 100，结构、seed、采样和 optimizer 均不变；正式搜索从 A2 的独立
+  运行前预注册协议开始。
 - 基础结构：固定 SONICOM train 被试 `P0002`，查询坐标为
   `[x,y,z,f_linear]`，频率 `86.1328125–19982.8125 Hz` 线性映射到 `[-1,1]`；
   SIREN hidden width `256`、`6` 个 sine layers、first/hidden omega 均为 `30`，

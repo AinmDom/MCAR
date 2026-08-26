@@ -138,6 +138,63 @@ def main() -> None:
         path.write_text(json.dumps(configuration, indent=2) + "\n", encoding="utf-8")
         print(path.relative_to(root))
 
+    c3_winner = json.loads(
+        (
+            config_root
+            / "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150.json"
+        ).read_text(encoding="utf-8")
+    )
+    c4_amendment = (
+        "experiments/film_siren/"
+        "STAGE_C_GLOBAL_LOCAL_MCA_C4_PARALLEL_AMENDMENT.md"
+    )
+    c4_candidates = (
+        ("c0", "SIREN-GL-C4-C0-SEED-20260821-E150", "film-siren-gl-c4-c0-seed20260821-v1"),
+        (
+            "d1d2",
+            "SIREN-GL-C4-D1D2-SEED-20260821-E150",
+            "film-siren-gl-c4-d1d2-seed20260821-v1",
+        ),
+        (
+            "notch",
+            "SIREN-GL-C4-NOTCH-SEED-20260821-E150",
+            "film-siren-gl-c4-notch-seed20260821-v1",
+        ),
+        (
+            "d1d2_notch",
+            "SIREN-GL-C4-D1D2-NOTCH-SEED-20260821-E150",
+            "film-siren-gl-c4-d1d2-notch-seed20260821-v1",
+        ),
+    )
+    for suffix, experiment_id, model_version in c4_candidates:
+        configuration = deepcopy(c3_winner)
+        configuration.update(
+            {
+                "experiment_id": experiment_id,
+                "model_version": model_version,
+                "execution_amendment": c4_amendment,
+                "search_stage": "global_local_c4_objective",
+                "run_name": (
+                    f"sonicom_film_siren_gl_c4_{suffix}_seed20260821_e150"
+                ),
+            }
+        )
+        if suffix == "d1d2" or suffix == "d1d2_notch":
+            configuration["objective"]["high_frequency_first_difference_weight"] = 0.25
+            configuration["objective"]["high_frequency_second_difference_weight"] = 0.15
+        else:
+            configuration["objective"]["high_frequency_first_difference_weight"] = 0.0
+            configuration["objective"]["high_frequency_second_difference_weight"] = 0.0
+        if suffix == "notch" or suffix == "d1d2_notch":
+            configuration["objective"]["notch_depth_weight"] = 0.30
+        else:
+            configuration["objective"]["notch_depth_weight"] = 0.0
+        path = config_root / (
+            f"sonicom_film_siren_gl_c4_{suffix}_seed20260821_e150.json"
+        )
+        path.write_text(json.dumps(configuration, indent=2) + "\n", encoding="utf-8")
+        print(path.relative_to(root))
+
 
 if __name__ == "__main__":
     main()

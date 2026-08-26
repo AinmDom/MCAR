@@ -1,0 +1,16 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_TRAINING_PROTOCOL.md",
+  "search_stage": "c3_scheduler",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "candidates": [
+    {"scheduler": "constant", "warmup_cycles": 0, "run_name": "sonicom_film_siren_c2_adamw_wd1e4_seed20260821_e150", "best_cycle": 65, "best_validation_objective_total": 0.8267324986782941, "decision": "KEEP", "test_subjects_read": 0},
+    {"scheduler": "cosine", "warmup_cycles": 0, "run_name": "sonicom_film_siren_c3_cosine_seed20260821_e150", "best_cycle": 65, "best_validation_objective_total": 0.8252899836410176, "decision": "KEEP", "test_subjects_read": 0},
+    {"scheduler": "warmup_cosine", "warmup_cycles": 5, "run_name": "sonicom_film_siren_c3_warmup_cosine_seed20260821_e150", "best_cycle": 65, "best_validation_objective_total": 0.8249662071466446, "decision": "KEEP", "test_subjects_read": 0}
+  ],
+  "ranking": ["warmup_cosine", "cosine", "constant"],
+  "winner": {"scheduler": "warmup_cosine", "warmup_cycles": 5, "optimizer": "AdamW", "learning_rate": 0.0001, "weight_decay": 0.0001, "best_validation_objective_total": 0.8249662071466446, "best_cycle": 65},
+  "next_stage": "C4 inherits the C3 winner and compares the C0 objective (inherited) with D1/D2, notch, and D1/D2-plus-notch additions frozen in the Stage C protocol.",
+  "test_subjects_read": 0
+}

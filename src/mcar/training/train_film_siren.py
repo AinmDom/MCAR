@@ -37,6 +37,13 @@ from mcar.q26_condition import (
 from mcar.training.train_siren import frequency_coordinates
 
 
+CONDITIONING_SCOPES = {
+    "global",
+    "global_zero_local",
+    "global_plus_local_mca",
+}
+
+
 @dataclass(frozen=True)
 class SubjectCondition:
     subject_id: int
@@ -204,6 +211,54 @@ def coordinate_block(
     ).reshape(-1, xyz.shape[1] + frequency_coordinate.shape[1])
 
 
+def conditioned_coordinate_block(
+    xyz: torch.Tensor,
+    frequency_coordinate: torch.Tensor,
+    conditioning_scope: str,
+    local_mca_db: np.ndarray | None,
+    normalization: Normalization,
+) -> torch.Tensor:
+    """Build the frozen five-coordinate query plus paired local-MCA channels.
+
+    The bounded gate uses the same seven-dimensional first-layer interface for
+    both candidates.  ``global_zero_local`` appends zeros without reading MCA,
+    while ``global_plus_local_mca`` appends train-statistics-normalized left and
+    right MCA values for each direction/frequency query.
+    """
+    if conditioning_scope not in CONDITIONING_SCOPES:
+        raise ValueError(f"Unknown conditioning_scope {conditioning_scope!r}")
+    base = coordinate_block(xyz, frequency_coordinate)
+    if conditioning_scope == "global":
+        if local_mca_db is not None:
+            raise ValueError("Legacy global scope does not accept local MCA")
+        return base
+    if conditioning_scope == "global_zero_local":
+        if local_mca_db is not None:
+            raise ValueError("global_zero_local must not read local MCA")
+        local = torch.zeros(
+            (base.shape[0], 2),
+            dtype=base.dtype,
+            device=base.device,
+        )
+    else:
+        if local_mca_db is None:
+            raise ValueError("global_plus_local_mca requires local MCA")
+        values = np.asarray(local_mca_db, dtype=np.float32)
+        expected = (2, xyz.shape[0], frequency_coordinate.shape[0])
+        if values.shape != expected:
+            raise ValueError(f"Expected local MCA shape {expected}, found {values.shape}")
+        if not bool(np.all(np.isfinite(values))):
+            raise ValueError("local MCA must be finite")
+        normalized = (values - normalization.mca_mean) / normalization.mca_std
+        local = (
+            torch.from_numpy(normalized)
+            .to(device=base.device, dtype=base.dtype)
+            .permute(1, 2, 0)
+            .reshape(-1, 2)
+        )
+    return torch.cat((base, local), dim=-1)
+
+
 def condition_tensors(
     subject: SubjectCondition,
     device: torch.device,
@@ -225,6 +280,9 @@ def predict_subject(
     device: torch.device,
     directions_per_block: int,
     latent: torch.Tensor | None = None,
+    conditioning_scope: str = "global",
+    local_mca_db: np.ndarray | None = None,
+    normalization: Normalization | None = None,
 ) -> np.ndarray:
     if latent is None:
         magnitude, condition_xyz, mask = condition_tensors(subject, device)
@@ -238,7 +296,23 @@ def predict_subject(
         stop = min(direction_indices.size, start + directions_per_block)
         selected = direction_indices[start:stop]
         xyz = torch.from_numpy(directions[selected, 2:5]).to(device)
-        query = coordinate_block(xyz, frequency_coordinate)
+        local_block = (
+            None
+            if local_mca_db is None
+            else local_mca_db[:, start:stop, :]
+        )
+        if conditioning_scope == "global":
+            query = coordinate_block(xyz, frequency_coordinate)
+        else:
+            if normalization is None:
+                raise ValueError("Gate prediction requires normalization")
+            query = conditioned_coordinate_block(
+                xyz,
+                frequency_coordinate,
+                conditioning_scope,
+                local_block,
+                normalization,
+            )
         normalized = model(query, latent)
         prediction[:, start:stop, :] = (
             normalized.reshape(stop - start, frequency_count, 2)
@@ -262,6 +336,8 @@ def evaluate_validation(
     target_std: float,
     device: torch.device,
     directions_per_block: int,
+    conditioning_scope: str = "global",
+    normalization: Normalization | None = None,
 ) -> ValidationResult:
     model.eval()
     rows: list[dict[str, float | int | str]] = []
@@ -271,6 +347,9 @@ def evaluate_validation(
     validation_latents: list[torch.Tensor] = []
     selected_weights = direction_weights[interpolation_indices]
     selected_mask = np.ones(interpolation_indices.size, dtype=bool)
+    local_enabled = conditioning_scope == "global_plus_local_mca"
+    if conditioning_scope != "global" and normalization is None:
+        raise ValueError("Gate validation requires normalization")
     for subject in subjects:
         magnitude, condition_xyz, condition_mask = condition_tensors(subject, device)
         latent = model.encode_condition(
@@ -279,6 +358,20 @@ def evaluate_validation(
             condition_mask,
         )
         validation_latents.append(latent)
+        with h5py.File(subject.path, "r") as handle:
+            validate_subject_identity(subject, handle)
+            target_db = np.asarray(
+                handle["target_residual_db"][:, interpolation_indices, :],
+                dtype=np.float32,
+            )
+            local_mca_db = (
+                np.asarray(
+                    handle["mca_logmag_db"][:, interpolation_indices, :],
+                    dtype=np.float32,
+                )
+                if local_enabled
+                else None
+            )
         normalized_prediction = predict_subject(
             model,
             subject,
@@ -288,14 +381,11 @@ def evaluate_validation(
             device,
             directions_per_block,
             latent,
+            conditioning_scope,
+            local_mca_db,
+            normalization,
         )
         prediction_db = normalized_prediction * target_std + target_mean
-        with h5py.File(subject.path, "r") as handle:
-            validate_subject_identity(subject, handle)
-            target_db = np.asarray(
-                handle["target_residual_db"][:, interpolation_indices, :],
-                dtype=np.float32,
-            )
         metrics = solid_angle_weighted_residual_metrics(
             prediction_db,
             target_db,
@@ -421,6 +511,16 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         **configuration["condition_encoder"]
     )
     model_configuration = FilmSirenConfig(**configuration["model"])
+    conditioning_scope = str(configuration.get("conditioning_scope", "global"))
+    if conditioning_scope not in CONDITIONING_SCOPES:
+        raise ValueError(f"Unknown conditioning_scope {conditioning_scope!r}")
+    expected_coordinate_dimension = 5 if conditioning_scope == "global" else 7
+    if model_configuration.coordinate_dimension != expected_coordinate_dimension:
+        raise ValueError(
+            f"conditioning_scope={conditioning_scope!r} requires "
+            f"coordinate_dimension={expected_coordinate_dimension}"
+        )
+    local_mca_enabled = conditioning_scope == "global_plus_local_mca"
     model = FilmSiren(model_configuration, encoder_configuration).to(device)
     optimizer = torch.optim.Adam(
         model.parameters(),
@@ -454,6 +554,8 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "validation_subject_ids": [item.subject_id for item in validation_subjects],
         "train_subject_count": len(train_subjects),
         "validation_subject_count": len(validation_subjects),
+        "conditioning_scope": conditioning_scope,
+        "local_mca_input_enabled": local_mca_enabled,
         "test_subjects_read": 0,
         "device": str(device),
     }
@@ -490,8 +592,22 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                     handle["target_residual_db"][:, selected, :],
                     dtype=np.float32,
                 )
+                local_mca_db = (
+                    np.asarray(
+                        handle["mca_logmag_db"][:, selected, :],
+                        dtype=np.float32,
+                    )
+                    if local_mca_enabled
+                    else None
+                )
             xyz = torch.from_numpy(directions[selected, 2:5]).to(device)
-            query = coordinate_block(xyz, frequency_coordinate)
+            query = conditioned_coordinate_block(
+                xyz,
+                frequency_coordinate,
+                conditioning_scope,
+                local_mca_db,
+                target_normalization,
+            )
             target = torch.from_numpy(target_db).to(device)
             target = (
                 (target - target_normalization.target_mean)
@@ -540,6 +656,8 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                 target_normalization.target_std,
                 device,
                 validation_block,
+                conditioning_scope,
+                target_normalization,
             )
             record["validation_weighted_mae_db"] = result.aggregate_mae_db
             record["validation_weighted_rmse_db"] = result.aggregate_rmse_db
@@ -633,6 +751,13 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         ),
         "best_checkpoint_sha256": file_sha256(output_dir / "best.pt"),
         "last_checkpoint_sha256": file_sha256(output_dir / "last.pt"),
+        "conditioning_scope": conditioning_scope,
+        "local_mca_inputs_read": (
+            cycles * len(train_subjects)
+            + (cycles // validation_interval) * len(validation_subjects)
+            if local_mca_enabled
+            else 0
+        ),
         "test_subjects_read": 0,
         "git": state,
     }

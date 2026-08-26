@@ -1,5 +1,34 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN Stage C GL-C3：scheduler 重验证完成
+
+- 实验目标：在七维 global+local MCA 架构上，按
+  `STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md` 与
+  `STAGE_C_GLOBAL_LOCAL_MCA_C3_PARALLEL_AMENDMENT.md`，固定 GL-C2 winner
+  `AdamW / lr=1e-4 / wd=1e-4`、C0 objective，从 scratch 同时启动三个独立 run：
+  constant（重跑）、cosine、5-cycle linear warmup + cosine（warmup 5）；seed
+  `20260821`、150 cycles、scheduler horizon 150。
+- 结果（best validation Stage C total，越低越好）：warmup+cosine
+  **`0.7148047604344108`**（best cycle `140`，KEEP）< cosine
+  `0.7162436748092825`（cycle `140`，KEEP）< constant（重跑）
+  `0.7215440015901219`（cycle `140`，KEEP）。三个候选 best 均早于 cycle 150，
+  无末点 best，全部 `KEEP`、不触发 `RETEST`。与 GL-C2 winner 同配置的 constant
+  重跑（`0.721544`）比 GL-C2 AdamW/wd`1e-4` run（`0.716207`）略差，但与 GL-C1
+  winner 同配置的 Adam/wd0 类似存在 run 间波动；三新 run 同 seed 同架构下排名稳定。
+- 决策：冻结 **warmup+cosine（warmup 5 cycles）+ AdamW / lr `1e-4` / wd `1e-4`**
+  为 GL-C3 winner 进入 GL-C4 objective 搜索；不做 scheduler × objective 全笛卡尔积。
+- 完整性：3/3 run 完成且 `status=completed`；history.csv 各 150 行、无 NaN/Inf；
+  全部 `test_subjects_read=0`、`local_mca_inputs_read=40620`、
+  `condition_inputs_read=306`、`conditioning_scope=global_plus_local_mca`；
+  运行时 git `5c8a025` clean；FP32、无 AMP、gradient clip 5。
+- 产物：决策位于
+  `results/sonicom_film_siren_gl_c3_scheduler/decision.json`；配置位于
+  `configs/experiments/sonicom_film_siren_gl_c3_*.json`；逐 run 产物位于
+  `artifacts/training/sonicom_film_siren_gl_c3_*/`。
+- 下一步：固定该 winner 进入 GL-C4 objective ablation（C0 继承、新增
+  D1/D2、notch、D1/D2+notch，权重与频率边界见
+  `STAGE_C_TRAINING_PROTOCOL.md` 第 5.4 条）。
+
 ## 2026-08-26：FiLM-SIREN Stage C GL-C1：七维 global+local learning-rate 重验证完成
 
 - 实验目标：在七维 global+local MCA 架构上（query

@@ -1,0 +1,49 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md",
+  "execution_amendment": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_C3_PARALLEL_AMENDMENT.md",
+  "search_stage": "global_local_c3_scheduler",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "candidates": [
+    {
+      "scheduler": "constant",
+      "warmup_cycles": 0,
+      "run_name": "sonicom_film_siren_gl_c3_constant_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7215440015901219,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "scheduler": "cosine",
+      "warmup_cycles": 0,
+      "run_name": "sonicom_film_siren_gl_c3_cosine_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7162436748092825,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "scheduler": "warmup_cosine",
+      "warmup_cycles": 5,
+      "run_name": "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7148047604344108,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    }
+  ],
+  "ranking": ["warmup_cosine", "cosine", "constant"],
+  "winner": {
+    "scheduler": "warmup_cosine",
+    "warmup_cycles": 5,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "best_validation_objective_total": 0.7148047604344108,
+    "best_cycle": 140
+  },
+  "next_stage": "GL-C4 inherits the GL-C3 winner (AdamW lr=1e-4 wd=1e-4, warmup_cosine scheduler) and compares the C0 objective (inherited) with D1/D2, notch, and D1/D2-plus-notch additions frozen in the Stage C protocol.",
+  "test_subjects_read": 0
+}

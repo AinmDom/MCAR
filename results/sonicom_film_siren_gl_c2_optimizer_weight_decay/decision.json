@@ -1,0 +1,53 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md",
+  "search_stage": "global_local_c2_optimizer_weight_decay",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "candidates": [
+    {
+      "optimizer": "Adam",
+      "learning_rate": 0.0001,
+      "weight_decay": 0.0,
+      "run_name": "sonicom_film_siren_gl_c2_adam_wd0_seed20260821_e150",
+      "best_cycle": 150,
+      "best_validation_objective_total": 0.7222889431498267,
+      "decision": "RETEST",
+      "test_subjects_read": 0
+    },
+    {
+      "optimizer": "AdamW",
+      "learning_rate": 0.0001,
+      "weight_decay": 0.00001,
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e5_seed20260821_e150",
+      "best_cycle": 110,
+      "best_validation_objective_total": 0.71834020587531,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    },
+    {
+      "optimizer": "AdamW",
+      "learning_rate": 0.0001,
+      "weight_decay": 0.0001,
+      "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150",
+      "best_cycle": 140,
+      "best_validation_objective_total": 0.7162069299004294,
+      "decision": "KEEP",
+      "test_subjects_read": 0
+    }
+  ],
+  "ranking": [
+    "AdamW lr=1e-4 wd=1e-4",
+    "AdamW lr=1e-4 wd=1e-5",
+    "Adam lr=1e-4 wd=0"
+  ],
+  "winner": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001,
+    "best_validation_objective_total": 0.7162069299004294,
+    "best_cycle": 140
+  },
+  "next_stage": "GL-C3 inherits AdamW lr=1e-4 wd=1e-4 and compares constant (re-run per user decision), cosine, and five-cycle warmup plus cosine schedules per STAGE_C_GLOBAL_LOCAL_MCA_C3_PARALLEL_AMENDMENT.md.",
+  "test_subjects_read": 0
+}

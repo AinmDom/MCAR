@@ -1,5 +1,32 @@
 # 项目实验日志
 
+## 2026-08-26：FiLM-SIREN Stage C GL-C2：optimizer / weight-decay 重验证完成
+
+- 实验目标：在七维 global+local MCA 架构上，按
+  `STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md` 与
+  `STAGE_C_GLOBAL_LOCAL_MCA_C2_PARALLEL_AMENDMENT.md`，固定 GL-C1 winner
+  `lr=1e-4`、constant scheduler、C0 objective，从 scratch 同时启动三个独立 run
+  （不复用 GL-C1 artifact）：Adam/wd0、AdamW/wd`1e-5`、AdamW/wd`1e-4`，seed
+  `20260821`、150 cycles。
+- 结果（best validation Stage C total，越低越好）：AdamW/wd`1e-4`
+  **`0.7162069299004294`**（best cycle `140`，KEEP）< AdamW/wd`1e-5`
+  `0.71834020587531`（cycle `110`，KEEP）< Adam/wd0 `0.7222889431498267`
+  （best cycle **`150`**，**RETEST**）。Adam/wd0 与 GL-C1 winner 为同配置同 seed
+  重跑，但 best 不同（GL-C1 为 `0.7209096320650794` @ cycle 125），且末点 best
+  触发 RETEST，按协议不得作为收敛证据；其数值仍参与排名且不影响 winner 判定。
+- 决策：冻结 **AdamW / lr `1e-4` / weight decay `1e-4`** 为 GL-C2 winner 进入
+  GL-C3 scheduler 搜索；不做 optimizer × scheduler 全笛卡尔积。
+- 完整性：3/3 run 完成且 `status=completed`；history.csv 各 150 行、无 NaN/Inf；
+  全部 `test_subjects_read=0`、`local_mca_inputs_read=40620`、git
+  `f9e1250` clean；配置/协议/hash 匹配（三个 `training_report.json` 的
+  `config_path`/`config_sha256` 与 `configs/experiments/*.json` 一致）。
+- 产物：决策位于
+  `results/sonicom_film_siren_gl_c2_optimizer_weight_decay/decision.json`；逐 run
+  产物位于 `artifacts/training/sonicom_film_siren_gl_c2_*/`。
+- 下一步：按已预注册的 `STAGE_C_GLOBAL_LOCAL_MCA_C3_PARALLEL_AMENDMENT.md`
+  生成 GL-C3 三配置（constant/cosine/warmup_cosine 全部从 scratch 重跑，基底
+  = GL-C2 winner AdamW/wd`1e-4`），并行启动并登记 PID。
+
 ## 2026-08-26：FiLM-SIREN Stage B9：global / local MCA / global+local 三模型扩展完成
 
 - 触发原因：Stage B8 bounded gate 的 `global+local MCA` 单 seed 相对

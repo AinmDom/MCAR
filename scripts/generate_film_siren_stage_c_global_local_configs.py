@@ -94,6 +94,50 @@ def main() -> None:
         path.write_text(json.dumps(configuration, indent=2) + "\n", encoding="utf-8")
         print(path.relative_to(root))
 
+    c2_winner = json.loads(
+        (
+            config_root
+            / "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150.json"
+        ).read_text(encoding="utf-8")
+    )
+    c3_amendment = (
+        "experiments/film_siren/"
+        "STAGE_C_GLOBAL_LOCAL_MCA_C3_PARALLEL_AMENDMENT.md"
+    )
+    c3_candidates = (
+        ("constant", {"name": "constant", "horizon_cycles": 150, "warmup_cycles": 0}),
+        ("cosine", {"name": "cosine", "horizon_cycles": 150, "warmup_cycles": 0}),
+        (
+            "warmup_cosine",
+            {
+                "name": "warmup_cosine",
+                "horizon_cycles": 150,
+                "warmup_cycles": 5,
+            },
+        ),
+    )
+    for suffix, scheduler in c3_candidates:
+        configuration = deepcopy(c2_winner)
+        configuration.update(
+            {
+                "experiment_id": (
+                    f"SIREN-GL-C3-{suffix.upper()}-SEED-20260821-E150"
+                ),
+                "model_version": f"film-siren-gl-c3-{suffix}-seed20260821-v1",
+                "execution_amendment": c3_amendment,
+                "search_stage": "global_local_c3_scheduler",
+                "run_name": (
+                    f"sonicom_film_siren_gl_c3_{suffix}_seed20260821_e150"
+                ),
+            }
+        )
+        configuration["scheduler"] = scheduler
+        path = config_root / (
+            f"sonicom_film_siren_gl_c3_{suffix}_seed20260821_e150.json"
+        )
+        path.write_text(json.dumps(configuration, indent=2) + "\n", encoding="utf-8")
+        print(path.relative_to(root))
+
 
 if __name__ == "__main__":
     main()

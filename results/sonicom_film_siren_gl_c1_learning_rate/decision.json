@@ -1,0 +1,36 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md",
+  "search_stage": "global_local_c1_learning_rate_revalidation",
+  "seed": 20260821,
+  "cycles": 150,
+  "selection_metric": "mean_stage_c_objective_total",
+  "ranking": [
+    {
+      "learning_rate": 0.0001,
+      "best_cycle": 125,
+      "best_validation_objective_total": 0.7209096320650794,
+      "run_name": "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150"
+    },
+    {
+      "learning_rate": 0.00003,
+      "best_cycle": 145,
+      "best_validation_objective_total": 0.7245849723165686,
+      "run_name": "sonicom_film_siren_gl_c1_lr3e5_adam_seed20260821_e150"
+    },
+    {
+      "learning_rate": 0.0003,
+      "best_cycle": 65,
+      "best_validation_objective_total": 0.7827154099941254,
+      "run_name": "sonicom_film_siren_gl_c1_lr3e4_adam_seed20260821_e150"
+    }
+  ],
+  "winner": {
+    "optimizer": "Adam",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0,
+    "best_cycle": 125,
+    "best_validation_objective_total": 0.7209096320650794
+  },
+  "decision": "KEEP",
+  "test_subjects_read": 0
+}

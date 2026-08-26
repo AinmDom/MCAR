@@ -102,6 +102,40 @@ def test_global_local_c1_restarts_the_preregistered_learning_rate_search(
 
 
 @pytest.mark.parametrize(
+    ("suffix", "optimizer", "weight_decay"),
+    [
+        ("adam_wd0", "Adam", 0.0),
+        ("adamw_wd1e5", "AdamW", 1e-5),
+        ("adamw_wd1e4", "AdamW", 1e-4),
+    ],
+)
+def test_global_local_c2_runs_three_fresh_matched_candidates(
+    suffix: str, optimizer: str, weight_decay: float
+) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"sonicom_film_siren_gl_c2_{suffix}_seed20260821_e150.json"
+    )
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    assert configuration["conditioning_scope"] == "global_plus_local_mca"
+    assert configuration["model"]["coordinate_dimension"] == 7
+    assert configuration["search_stage"] == (
+        "global_local_c2_optimizer_weight_decay"
+    )
+    assert configuration["optimizer"] == {
+        "name": optimizer,
+        "learning_rate": 1e-4,
+        "weight_decay": weight_decay,
+    }
+    assert configuration["scheduler"]["name"] == "constant"
+    assert configuration["execution_amendment"].endswith(
+        "STAGE_C_GLOBAL_LOCAL_MCA_C2_PARALLEL_AMENDMENT.md"
+    )
+
+
+@pytest.mark.parametrize(
     ("suffix", "learning_rate"),
     [("lr3e5", 3e-5), ("lr1e4", 1e-4), ("lr3e4", 3e-4)],
 )

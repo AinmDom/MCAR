@@ -4,6 +4,10 @@
 Time-Aligned Interpolation，MCA）的 HRTF 插值结果上，用轻量神经网络降低剩余幅度误差。
 MCA 是传统基线，项目主体是残差数据构造、模型训练和严格 HRTF 重建评估。
 
+Codex 与 DeepSeek 切换协作时，先阅读
+[`docs/AI_HANDOFF.md`](docs/AI_HANDOFF.md)；该页记录当前持棒方、最新实验状态、
+证据和下一步，协作约定见 [`AGENTS.md`](AGENTS.md)。
+
 首版学习目标为：
 
 ```text

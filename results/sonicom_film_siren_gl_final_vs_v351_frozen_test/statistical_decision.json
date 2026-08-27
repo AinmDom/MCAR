@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "analysis_scope": "Frozen SONICOM engineering test; not an independent paper confirmation",
+  "subject_count": 44,
+  "bootstrap": {
+    "paired_resampling_unit": "subject row",
+    "replicates": 10000,
+    "seed": 20260818,
+    "interval": "two-sided percentile 95% CI"
+  },
+  "metrics": {
+    "full_sphere_erb": {
+      "definition": "FiLM-SIREN minus MCAR v3.5.1; negative is better",
+      "baseline_mean_db": 0.8179370487968771,
+      "candidate_mean_db": 0.8355821306114706,
+      "paired_mean_difference_db": 0.017645081814593403,
+      "paired_percentile_95_ci_db": [
+        -0.01147642414780341,
+        0.07060930613949087
+      ],
+      "candidate_wins": 30,
+      "margin_db": 0.0,
+      "gate": "superiority",
+      "passed": false
+    },
+    "contralateral_25_erb": {
+      "definition": "FiLM-SIREN minus MCAR v3.5.1; negative is better",
+      "baseline_mean_db": 1.2744892321005215,
+      "candidate_mean_db": 1.2135525652687749,
+      "paired_mean_difference_db": -0.06093666683174658,
+      "paired_percentile_95_ci_db": [
+        -0.09254066080423129,
+        -0.03636937636157839
+      ],
+      "candidate_wins": 39,
+      "margin_db": 0.02,
+      "gate": "non_inferiority",
+      "passed": true
+    },
+    "contralateral_high_frequency": {
+      "definition": "FiLM-SIREN minus MCAR v3.5.1; negative is better",
+      "baseline_mean_db": 3.5084809628530294,
+      "candidate_mean_db": 3.683294867107304,
+      "paired_mean_difference_db": 0.17481390425427343,
+      "paired_percentile_95_ci_db": [
+        0.1423438822598124,
+        0.20824836432767746
+      ],
+      "candidate_wins": 3,
+      "margin_db": 0.05,
+      "gate": "non_inferiority",
+      "passed": false
+    },
+    "strict_horizontal_ild": {
+      "definition": "FiLM-SIREN minus MCAR v3.5.1; negative is better",
+      "baseline_mean_db": 0.6447090916559254,
+      "candidate_mean_db": 0.7417994296287659,
+      "paired_mean_difference_db": 0.0970903379728404,
+      "paired_percentile_95_ci_db": [
+        0.014165527351709391,
+        0.23405523689892418
+      ],
+      "candidate_wins": 18,
+      "margin_db": 0.02,
+      "gate": "non_inferiority",
+      "passed": false
+    }
+  },
+  "gates": {
+    "primary_superiority_upper_ci_below_zero": false,
+    "primary_full_erb_wins_at_least_26_of_44": true,
+    "secondary_non_inferiority": false,
+    "overall_engineering_promotion": false
+  },
+  "decision": "DO_NOT_PROMOTE"
+}

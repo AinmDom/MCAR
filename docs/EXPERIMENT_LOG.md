@@ -1,5 +1,44 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN frozen SONICOM engineering test 完成，DO NOT PROMOTE
+
+- 授权与身份：用户于`2026-08-27T12:53:26+08:00`明确授权按冻结manifest执行一次
+  SONICOM engineering test；授权记录commit `de2e3bd`。候选身份为manifest
+  `5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407`，三个
+  cosine+C0 E140成员只使用cycle140 `last.pt`，1/3 residual-dB等权ensemble。
+- 预测完整性：唯一一次test预测44/44完成，所有输出shape `[2,793,463]`且finite，
+  elapsed `31.0566976 s`；registry原子状态为`completed`、
+  `test_subject_count_read=44`并以commit `988ec1a`锁定。无失败、重试、删seed或调权。
+- 严格评价完整性：MATLAB正式评价44/44 unique subjects、所有数值finite；每人固定767
+  interpolation-only directions和72 horizontal interpolation directions；reference ILD
+  metadata max error=`9.53052371244212e-07 dB`。首次沙箱内MATLAB启动因环境级
+  `File system inconsistency`立即失败且未生成结果；随后同一冻结命令在正常环境完成，
+  不构成数据/模型重试。
+- test均值（FiLM-SIREN vs MCAR v3.5.1，dB，越低越好）：Full ERB
+  `0.8355821306114706` vs `0.8179370487968771`；Contra25 ERB
+  `1.2135525652687749` vs `1.2744892321005215`；HF
+  `3.683294867107304` vs `3.5084809628530294`；strict horizontal ILD
+  `0.7417994296287659` vs `0.6447090916559254`。
+- 预注册paired bootstrap（44 subject rows、10000次、seed`20260818`、双侧percentile
+  95% CI；difference=FiLM-SIREN−v3.5.1）：Full ERB difference
+  `+0.017645081814593403`，CI `[-0.01147642414780341, +0.07060930613949087]`，
+  wins `30/44`；**primary superiority失败**（upper不小于0），但26/44工程多数gate通过。
+  Contra ERB difference `-0.06093666683174658`，CI
+  `[-0.09254066080423129, -0.03636937636157839]`，wins `39/44`，0.02 dB NI gate通过。
+  HF difference `+0.17481390425427343`，CI
+  `[+0.1423438822598124, +0.20824836432767746]`，wins `3/44`，0.05 dB NI gate失败。
+  strict ILD difference `+0.0970903379728404`，CI
+  `[+0.014165527351709391, +0.23405523689892418]`，wins `18/44`，0.02 dB NI gate失败。
+- 决策：冻结为 **`DO_NOT_PROMOTE`**。候选只在Contra ERB通过预注册gate；primary
+  superiority、HF NI与strict ILD NI均失败。因此继续保留**MCAR v3.5.1为当前工程主模型**。
+  本结果是已被项目历史消费的SONICOM engineering test，不是独立论文确认；不得以此
+  结果重训、重新选择seed或修改ensemble权重。FiLM-SIREN仍作为已冻结研究候选和
+  ablation/continuous-query研究对象保留。
+- 证据：`results/sonicom_film_siren_gl_final_vs_v351_frozen_test/`中的
+  `per_subject_metrics.csv`、`quality_checks.csv`、`aggregate_metrics.csv`、
+  `summary.json`与`statistical_decision.json`；预测产物位于`artifacts/reconstruction/
+  sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test/`。
+
 ## 2026-08-27：FiLM-SIREN 最终 ensemble manifest 与测试注册表冻结
 
 - 冻结对象：三个正式 cosine+C0、cycle140 `last.pt` 以固定 `1/3` 权重在 residual-dB

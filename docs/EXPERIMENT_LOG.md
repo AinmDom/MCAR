@@ -1,5 +1,38 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN C4 修正候选三种子完成，冻结 E_final=130
+
+- 运行结果：D1/D2+notch 的三个开发种子 `20260821/20260822/20260823` 均完成
+  150 cycles，增强 objective 各自选择的 best cycle 为 `140/130/120`，对应 raw
+  objective total 为 `0.7760627865791321 / 0.7751666510646994 /
+  0.7733549123460596`。没有 best 落在 cycle 150，因此不触发 RETEST；按预注册的
+  `round(median(best_cycles))` 冻结正式训练周期 **`E_final=130`**。
+- 共同量尺结果：三个 best checkpoint 的 standardized C0 为
+  `0.7075952639451233 / 0.7072001765231013 / 0.7055228087475707`，三种子均值
+  **`0.7067727497385984`**。同点均值 residual MAE=`2.6629008361787507 dB`、
+  ERB MAE=`0.9987630993127823 dB`、contralateral HF MAE=
+  `3.754646817843119 dB`、strict ILD MAE=`0.63998863688021 dB`。
+- 历史开发对照：相对原 FiLM-SIREN cosine+C0 三种子均值，standardized C0、
+  residual、HF、strict ILD 分别降低约 `1.12% / 1.24% / 0.85% / 1.44%`；ERB
+  增加约 `0.04%`。这只支持推进正式 validation 比较，不是对 MCAR v3.5.1、RANF
+  或 FSP-AE 的最终结论。
+- 完整性：三 run 均 `status=completed`、`decision=KEEP`；每个 history 150 行、
+  validation ledger 30 个条目且末项 cycle 150；`best.pt`/`last.pt` 的实算 SHA-256
+  均与 report 一致；新增两 run 的 stderr 均为0 bytes；所有聚合数值 finite，
+  `test_subjects_read=0`。训练来源为 clean commit
+  `9acc82c21895ffec6b87e8832d7f288f4fc8e20b`。
+- 冻结后续：下一步从 scratch 训练三个 seed `20260821/20260822/20260823` 的固定
+  130-cycle 正式成员，scheduler horizon 保持150，权威 checkpoint 只能是 cycle130
+  `last.pt`；随后在44名 validation 被试上做1/3 residual-dB等权 ensemble，并只与
+  MCAR v3.5.1、RANF、FSP-AE进行同口径横向比较，不纳入v1/v2或原C0。不得读取test；
+  任何新test步骤仍需单独预注册和用户明确授权。
+- 证据：`results/sonicom_film_siren_gl_c4_corrected_expansion/selection.json`；
+  `experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_C4_COMMON_SCORE_CORRECTION.md`；
+  三个训练目录位于`artifacts/training/
+  sonicom_film_siren_gl_c4_{d1d2_notch_seed20260821_e150,
+  corrected_d1d2_notch_seed20260822_e150,
+  corrected_d1d2_notch_seed20260823_e150}/`。
+
 ## 2026-08-27：FiLM-SIREN C4 共同评分修订与 D1/D2+notch 扩展冻结
 
 - 修订原因：原 C4 将 C0 与含 D1/D2/notch 附加非负项的候选按各自 raw total

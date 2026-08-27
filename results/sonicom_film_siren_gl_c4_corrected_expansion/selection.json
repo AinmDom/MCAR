@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "protocol_correction": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_C4_COMMON_SCORE_CORRECTION.md",
+  "candidate": "warmup_cosine_d1d2_notch",
+  "within_candidate_checkpoint_metric": "augmented_d1d2_notch_objective_total",
+  "cross_objective_diagnostic_metric": "standardized_c0",
+  "target_std_train_only": 4.954314859581426,
+  "runs": [
+    {
+      "run_name": "sonicom_film_siren_gl_c4_d1d2_notch_seed20260821_e150",
+      "seed": 20260821,
+      "best_cycle": 140,
+      "augmented_objective_total": 0.7760627865791321,
+      "standardized_c0": 0.7075952639451233,
+      "residual_mae_db": 2.6642750664190813,
+      "erb_mae_db": 0.9968899325890974,
+      "contralateral_high_frequency_mae_db": 3.7557708566839043,
+      "strict_ild_mae_db": 0.6453032486818053,
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c4_corrected_d1d2_notch_seed20260822_e150",
+      "seed": 20260822,
+      "best_cycle": 130,
+      "augmented_objective_total": 0.7751666510646994,
+      "standardized_c0": 0.7072001765231013,
+      "residual_mae_db": 2.6605815399776804,
+      "erb_mae_db": 0.999172870408405,
+      "contralateral_high_frequency_mae_db": 3.7535552003166894,
+      "strict_ild_mae_db": 0.6453756574879993,
+      "test_subjects_read": 0
+    },
+    {
+      "run_name": "sonicom_film_siren_gl_c4_corrected_d1d2_notch_seed20260823_e150",
+      "seed": 20260823,
+      "best_cycle": 120,
+      "augmented_objective_total": 0.7733549123460596,
+      "standardized_c0": 0.7055228087475707,
+      "residual_mae_db": 2.6638459021394905,
+      "erb_mae_db": 1.0002264949408444,
+      "contralateral_high_frequency_mae_db": 3.754614396528764,
+      "strict_ild_mae_db": 0.6292870044708252,
+      "test_subjects_read": 0
+    }
+  ],
+  "three_seed_mean": {
+    "augmented_objective_total": 0.7748614499966303,
+    "standardized_c0": 0.7067727497385984,
+    "residual_mae_db": 2.6629008361787507,
+    "erb_mae_db": 0.9987630993127823,
+    "contralateral_high_frequency_mae_db": 3.754646817843119,
+    "strict_ild_mae_db": 0.63998863688021
+  },
+  "best_cycles": [
+    140,
+    130,
+    120
+  ],
+  "e_final": 130,
+  "formal_seeds": [
+    20260821,
+    20260822,
+    20260823
+  ],
+  "scheduler_horizon_cycles": 150,
+  "formal_checkpoint_policy": "fixed_stop_cycle_last",
+  "ensemble": {
+    "type": "residual_db_mean",
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ]
+  },
+  "test_subjects_read": 0
+}

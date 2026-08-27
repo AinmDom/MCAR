@@ -263,8 +263,10 @@ for subjectIndex = 1:subjectCount
     assert(any(horizontalMask), 'Horizontal validation mask is empty for %s.', subjectLabel);
 
     selectedDbCell = {filmSelectedDb, mcarSelectedDb, ranfSelectedDb, fspSelectedDb};
-    hrirLeftCell = {filmHrirLeft, mcarHrirLeft, ranfHrir(:, :, 1).', fspHrirLeft};
-    hrirRightCell = {filmHrirRight, mcarHrirRight, ranfHrir(:, :, 2).', fspHrirRight};
+    hrirLeftCell = {filmHrirLeft, mcarHrirLeft, ...
+        squeeze(ranfHrir(:, 1, :)).', fspHrirLeft};
+    hrirRightCell = {filmHrirRight, mcarHrirRight, ...
+        squeeze(ranfHrir(:, 2, :)).', fspHrirRight};
     metricValues = zeros(numel(methodIds), numel(metricIds));
     for methodIndex = 1:numel(methodIds)
         [erbErrorsLeft, erbFrequencyHz] = AKerbError( ...

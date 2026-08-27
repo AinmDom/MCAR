@@ -21,23 +21,31 @@
   interpolation + 72 horizontal directions、41 ERB bands、reference ILD metadata
   max error ~1e-6 dB）。聚合均值（dB，越低越好）：
   - Full ERB：FILM `0.8275426680633419` / MCAR v3.5.1 `0.8308081768778546` /
-    RANF `6.536851589972281` / FSP-AE `1.1603106749036973`；
-  - Contra25 ERB：`1.2307760839028756` / `1.2889532413126572` / `9.121520215265402` /
+    RANF `1.0746120926761717` / FSP-AE `1.1603106749036973`；
+  - Contra25 ERB：`1.2307760839028756` / `1.2889532413126572` / `1.627498745890078` /
     `1.8479172775430348`；
   - Contra HF：`3.7027516824075195` / `3.538086607059492` / `3.4680092137126852` /
     `3.103809369743327`；
   - Horizontal ILD：`0.63059843905319` / `0.5811462482733765` /
-    `11.254576847577862` / `0.5977082576411121`。
+    `0.7901671231596392` / `0.5977082576411121`。
+  - 更正记录：初版评价器对 RANF 的 HRIR 提取存在 bug（`ranfHrir(:, :, 1)` 只取
+    单时间样本而非整段 HRIR），导致 RANF 的 ERB/ILD 虚高（6.54/9.12/11.25）；
+    修复为 `squeeze(ranfHrir(:, 1, :)).'` 后重跑，RANF 恢复合理量级并与历史
+    learned-sparsity 研究（ERB 1.06、ILD 0.78）一致。FILM/MCAR/FSP-AE 数值不受
+    影响，本条目全部数值为修复后重跑的正式值。
 - paired bootstrap（44 subject rows、10000次、seed20260819、双侧percentile 95%
   CI，diff=FILM−baseline，负为优）：Full ERB vs MCAR `-0.0032655`（CI
   `[-0.0140183,+0.0079552]`、wins29/44）、vs FSP-AE `-0.3327680`（CI
-  `[-0.3628319,-0.3038376]`、wins44/44）、vs RANF `-5.7093089`（CI 负、wins44/44）；
+  `[-0.3628319,-0.3038376]`、wins44/44）、vs RANF `-0.2470694`（CI
+  `[-0.2654305,-0.2280328]`、wins44/44）；
   Contra25 ERB vs MCAR `-0.0581772`（CI `[-0.0789625,-0.0379363]`、wins36/44）、
-  vs FSP-AE `-0.6171412`（wins44/44）、vs RANF `-7.8907441`（wins44/44）；
+  vs FSP-AE `-0.6171412`（wins44/44）、vs RANF `-0.3967227`（CI
+  `[-0.4536546,-0.3382808]`、wins43/44）；
   Contra HF vs MCAR `+0.1646651`（CI 正、wins3/44）、vs FSP-AE `+0.5989423`
-  （wins0/44）、vs RANF `+0.2347425`（wins4/44）；Horizontal ILD vs MCAR
+  （wins0/44）、vs RANF `+0.2347425`（CI 正、wins4/44）；Horizontal ILD vs MCAR
   `+0.0494522`（CI `[+0.0123300,+0.0878907]`、wins13/44）、vs FSP-AE `+0.0328902`
-  （CI 跨0、wins18/44）、vs RANF `-10.6239784`（wins44/44）。
+  （CI 跨0、wins18/44）、vs RANF `-0.1595687`（CI
+  `[-0.2133469,-0.1046279]`、wins36/44）。
 - 结论口径：这是44 validation 上的开发/工程比较，不是独立论文确认；FILM 在
   Full ERB 上略优/持平 MCAR 且显著优于 FSP-AE/RANF，在 Contra25 ERB 上显著优于
   三者，但在 Contra HF 和 Horizontal ILD 上仍劣于 MCAR v3.5.1 与 FSP-AE（RANF

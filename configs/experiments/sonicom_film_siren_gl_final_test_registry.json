@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
   "created_at_utc": "2026-08-27T04:47:13.056685+00:00",
-  "updated_at_utc": "2026-08-27T04:47:13.056685+00:00",
+  "updated_at_utc": "2026-08-27T04:55:27.783874+00:00",
   "task_id": "sonicom-film-siren-gl-final-vs-v351-frozen-engineering-test-v1",
-  "state": "not_started",
-  "manifest": "configs/experiments/sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_manifest.json",
+  "state": "completed",
+  "manifest": "D:\\cuc\\CSMT\\MCAR\\configs\\experiments\\sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_manifest.json",
   "manifest_identity_sha256": "5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407",
   "model_identity": {
     "config_sha256": [
@@ -22,10 +22,12 @@
     "status": "authorized",
     "received_at_local": "2026-08-27T12:53:26+08:00",
     "authorized_by": "user",
-    "exact_text": "我授权按冻结 manifest 执行一次 SONICOM engineering test",
+    "exact_text": "\u6211\u6388\u6743\u6309\u51bb\u7ed3 manifest \u6267\u884c\u4e00\u6b21 SONICOM engineering test",
     "scope": "One frozen 44-subject SONICOM engineering test execution for manifest identity 5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407, including ensemble prediction, strict reconstruction evaluation, and pre-registered bootstrap analysis; no retraining, reselection, or ensemble-weight changes."
   },
   "retry_count": 0,
-  "test_subject_count_read": 0,
-  "recovery_policy": "Only a proven incomplete failure with unchanged manifest identity may be resumed"
+  "test_subject_count_read": 44,
+  "recovery_policy": "Only a proven incomplete failure with unchanged manifest identity may be resumed",
+  "run_name": "sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test",
+  "inference_report": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test\\inference_report.json"
 }

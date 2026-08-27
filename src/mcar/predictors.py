@@ -9,6 +9,7 @@ import h5py
 import numpy as np
 import torch
 
+from mcar.data import Normalization
 from mcar.models.film_siren import (
     ConditionEncoderConfig,
     FilmSiren,
@@ -17,6 +18,7 @@ from mcar.models.film_siren import (
 from mcar.models.siren import Siren, SirenConfig
 from mcar.q26_condition import Q26MagnitudeNormalization, build_q26_condition
 from mcar.training.train_siren import frequency_coordinates
+from mcar.training.train_film_siren import conditioned_coordinate_block
 
 
 @runtime_checkable
@@ -144,10 +146,18 @@ class FilmSirenPredictor:
         conversion = payload["residual_db_conversion"]
         self.target_mean = float(conversion["target_mean"])
         self.target_std = float(conversion["target_std"])
-        mapping = payload["experiment_configuration"]["frequency_mapping"]
+        experiment = payload["experiment_configuration"]
+        mapping = experiment["frequency_mapping"]
         self.frequency_mode = str(mapping["mode"])
         self.frequency_minimum_hz = float(mapping["frequency_minimum_hz"])
         self.frequency_maximum_hz = float(mapping["frequency_maximum_hz"])
+        self.conditioning_scope = str(experiment.get("conditioning_scope", "global"))
+        if self.conditioning_scope not in {"global", "global_plus_local_mca"}:
+            raise ValueError(
+                "Frozen FilmSirenPredictor supports global or global_plus_local_mca"
+            )
+        normalization_path = Path(conversion["normalization_path"])
+        self.normalization = Normalization.from_json(normalization_path)
         self.split_csv = split_csv
         self.q26_csv = q26_csv
         self.condition_normalization = Q26MagnitudeNormalization.from_json(
@@ -181,6 +191,15 @@ class FilmSirenPredictor:
         )
 
         directions, frequency = _read_query_grid(source_h5)
+        local_mca_db: np.ndarray | None = None
+        if self.conditioning_scope == "global_plus_local_mca":
+            with h5py.File(source_h5, "r") as handle:
+                local_mca_db = np.asarray(handle["mca_logmag_db"][:], dtype=np.float32)
+            expected = (2, directions.shape[0], frequency.size)
+            if local_mca_db.shape != expected:
+                raise ValueError(
+                    f"Expected local MCA shape {expected}, found {local_mca_db.shape}"
+                )
         coordinate = frequency_coordinates(
             frequency,
             self.frequency_mode,
@@ -195,7 +214,17 @@ class FilmSirenPredictor:
         for start in range(0, directions.shape[0], self.directions_per_block):
             stop = min(directions.shape[0], start + self.directions_per_block)
             xyz = torch.from_numpy(directions[start:stop, 2:5]).to(self.device)
-            query = _coordinate_block(xyz, frequency_tensor)
+            if self.conditioning_scope == "global":
+                query = _coordinate_block(xyz, frequency_tensor)
+            else:
+                assert local_mca_db is not None
+                query = conditioned_coordinate_block(
+                    xyz,
+                    frequency_tensor,
+                    self.conditioning_scope,
+                    local_mca_db[:, start:stop, :],
+                    self.normalization,
+                )
             normalized_prediction = self.model(query, latent)
             residual = (
                 normalized_prediction.float() * self.target_std + self.target_mean

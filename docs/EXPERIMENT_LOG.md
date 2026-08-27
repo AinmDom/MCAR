@@ -1,5 +1,34 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN Stage C 三个正式 E140 模型训练完成
+
+- 实验目标：按已冻结的 cosine+C0 最终配置，以 seeds
+  `20260821/20260822/20260823` 从 scratch 并行训练三个固定周期 ensemble member；
+  `stop_cycle=140`，cosine scheduler horizon=150，不 early stop、不用 validation
+  选择 checkpoint，唯一权威 checkpoint 为各自 cycle140 `last.pt`。
+- 结果：3/3 run 全部 `status=completed`、`decision=FIXED_CYCLE_COMPLETE`，每个
+  `36680` optimizer steps（140×262）。cycle140 validation Stage C total 分别为
+  seed21 `0.71618937226859`、seed22 `0.715140467340296`、seed23
+  `0.7132705422964963`；这些数值只作固定末点诊断，不用于删 seed、调权或重新选周期。
+  三个成员全部按1/3权重进入最终 residual-dB ensemble。
+- 权威 checkpoint SHA-256：seed21
+  `52C1F432F8CFA24DE9AA4BB86941F29E15122FB24072C359CC84D3AD937876B3`；seed22
+  `063B894A3608C3D9E2384C9151E8A3A1AAE3E15E77569E4E942AE20418BCF7CC`；seed23
+  `06C7C4CCF62B9AB77D08324036CFD12888FC5EC4E4E28864D348A301B7C815DB`。
+  三个报告的 authoritative hash 均与磁盘 `last.pt` 独立重算结果一致；`best.pt`
+  仅为诊断产物。
+- 完整性：三个原进程均已自然退出；history.csv 各140行、末行cycle140、0个
+  NaN/Inf；validation ledger各28个评价点、末点cycle140；stderr均0 bytes；全部
+  `test_subjects_read=0`、`local_mca_inputs_read=37912`、
+  `condition_inputs_read=306`；运行时 commit
+  `00100edb14fcd72ef7c046c8ffd6e2dac29f1af4`且Git clean。单模型峰值CUDA
+  allocated均为 `411.9921875 MiB`。
+- 产物：三个 run 位于 `artifacts/training/
+  sonicom_film_siren_gl_final_cosine_c0_seed*_e140/`；训练冻结协议为
+  `experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_FINAL_TRAINING_FREEZE.md`。
+- 下一步：冻结包含三个 config/checkpoint hash及数据/evaluator身份的 ensemble
+  manifest和独立test registry并提交；两者完成前不得访问SONICOM test。
+
 ## 2026-08-27：FiLM-SIREN Stage C Top-3 三-seed 汇总与最终配置冻结
 
 - 实验目标：完成全局 Top-3 的 seeds `20260822/20260823` 扩展后，按预注册规则将

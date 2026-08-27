@@ -1,0 +1,216 @@
+{
+  "protocol": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_FINAL_TRAINING_FREEZE.md",
+  "selection_metric": "three_seed_mean_best_validation_objective_total",
+  "tie_break_order": [
+    "strict_ild",
+    "erb",
+    "hf",
+    "residual_mae"
+  ],
+  "ranking": [
+    {
+      "configuration": "cosine_c0",
+      "run_names": [
+        "sonicom_film_siren_gl_c3_cosine_seed20260821_e150",
+        "sonicom_film_siren_gl_top3_rank3_gl_c3_cosine_seed20260822_e150",
+        "sonicom_film_siren_gl_top3_rank3_gl_c3_cosine_seed20260823_e150"
+      ],
+      "seeds": [
+        20260821,
+        20260822,
+        20260823
+      ],
+      "best_cycles": [
+        140,
+        130,
+        140
+      ],
+      "mean_validation_objective_total": 0.7147615646774118,
+      "mean_strict_ild_mae_db": 0.6493296560012932,
+      "mean_erb_mae_db": 0.9983897967772051,
+      "mean_hf_mae_db": 3.7868633234139644,
+      "mean_residual_mae_db": 2.6962707512306445,
+      "individual_runs": [
+        {
+          "run_name": "sonicom_film_siren_gl_c3_cosine_seed20260821_e150",
+          "seed": 20260821,
+          "best_cycle": 140,
+          "best_validation_objective_total": 0.7162436748092825,
+          "strict_ild_mae_db": 0.655912920832634,
+          "erb_mae_db": 0.9976233596151526,
+          "hf_mae_db": 3.7882062142545525,
+          "residual_mae_db": 2.7001724134791982,
+          "test_subjects_read": 0
+        },
+        {
+          "run_name": "sonicom_film_siren_gl_top3_rank3_gl_c3_cosine_seed20260822_e150",
+          "seed": 20260822,
+          "best_cycle": 130,
+          "best_validation_objective_total": 0.7145319106903943,
+          "strict_ild_mae_db": 0.646147841756994,
+          "erb_mae_db": 1.0014343695207075,
+          "hf_mae_db": 3.7864832769740713,
+          "residual_mae_db": 2.6953125433488325,
+          "test_subjects_read": 0
+        },
+        {
+          "run_name": "sonicom_film_siren_gl_top3_rank3_gl_c3_cosine_seed20260823_e150",
+          "seed": 20260823,
+          "best_cycle": 140,
+          "best_validation_objective_total": 0.7135091085325588,
+          "strict_ild_mae_db": 0.6459282054142519,
+          "erb_mae_db": 0.996111661195755,
+          "hf_mae_db": 3.7859004790132698,
+          "residual_mae_db": 2.693327296863903,
+          "test_subjects_read": 0
+        }
+      ],
+      "test_subjects_read": 0,
+      "rank": 1
+    },
+    {
+      "configuration": "warmup_cosine_c0",
+      "run_names": [
+        "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150",
+        "sonicom_film_siren_gl_top3_rank1_gl_c3_warmup_cosine_seed20260822_e150",
+        "sonicom_film_siren_gl_top3_rank1_gl_c3_warmup_cosine_seed20260823_e150"
+      ],
+      "seeds": [
+        20260821,
+        20260822,
+        20260823
+      ],
+      "best_cycles": [
+        140,
+        120,
+        135
+      ],
+      "mean_validation_objective_total": 0.7148944180120121,
+      "mean_strict_ild_mae_db": 0.646591253804438,
+      "mean_erb_mae_db": 0.9996607037204684,
+      "mean_hf_mae_db": 3.7903972647406836,
+      "mean_residual_mae_db": 2.6974842060695994,
+      "individual_runs": [
+        {
+          "run_name": "sonicom_film_siren_gl_c3_warmup_cosine_seed20260821_e150",
+          "seed": 20260821,
+          "best_cycle": 140,
+          "best_validation_objective_total": 0.7148047604344108,
+          "strict_ild_mae_db": 0.6461231925270774,
+          "erb_mae_db": 0.9983304359696128,
+          "hf_mae_db": 3.78953463380987,
+          "residual_mae_db": 2.699340370568362,
+          "test_subjects_read": 0
+        },
+        {
+          "run_name": "sonicom_film_siren_gl_top3_rank1_gl_c3_warmup_cosine_seed20260822_e150",
+          "seed": 20260822,
+          "best_cycle": 120,
+          "best_validation_objective_total": 0.7157314690676603,
+          "strict_ild_mae_db": 0.6466831273653291,
+          "erb_mae_db": 1.001560234210708,
+          "hf_mae_db": 3.7948963967236606,
+          "residual_mae_db": 2.69767780195583,
+          "test_subjects_read": 0
+        },
+        {
+          "run_name": "sonicom_film_siren_gl_top3_rank1_gl_c3_warmup_cosine_seed20260823_e150",
+          "seed": 20260823,
+          "best_cycle": 135,
+          "best_validation_objective_total": 0.7141470245339654,
+          "strict_ild_mae_db": 0.6469674415209077,
+          "erb_mae_db": 0.9990914409810846,
+          "hf_mae_db": 3.786760763688521,
+          "residual_mae_db": 2.695434445684606,
+          "test_subjects_read": 0
+        }
+      ],
+      "test_subjects_read": 0,
+      "rank": 2
+    },
+    {
+      "configuration": "constant_c0",
+      "run_names": [
+        "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150",
+        "sonicom_film_siren_gl_top3_rank2_gl_c2_adamw_wd1e4_seed20260822_e150",
+        "sonicom_film_siren_gl_top3_rank2_gl_c2_adamw_wd1e4_seed20260823_e150"
+      ],
+      "seeds": [
+        20260821,
+        20260822,
+        20260823
+      ],
+      "best_cycles": [
+        140,
+        145,
+        120
+      ],
+      "mean_validation_objective_total": 0.7172623832117427,
+      "mean_strict_ild_mae_db": 0.6265945290074204,
+      "mean_erb_mae_db": 1.0200354298858931,
+      "mean_hf_mae_db": 3.8084202589410725,
+      "mean_residual_mae_db": 2.710887768051841,
+      "individual_runs": [
+        {
+          "run_name": "sonicom_film_siren_gl_c2_adamw_wd1e4_seed20260821_e150",
+          "seed": 20260821,
+          "best_cycle": 140,
+          "best_validation_objective_total": 0.7162069299004294,
+          "strict_ild_mae_db": 0.6314314061945135,
+          "erb_mae_db": 1.0174874284050681,
+          "hf_mae_db": 3.7957694963975386,
+          "residual_mae_db": 2.705020476471294,
+          "test_subjects_read": 0
+        },
+        {
+          "run_name": "sonicom_film_siren_gl_top3_rank2_gl_c2_adamw_wd1e4_seed20260822_e150",
+          "seed": 20260822,
+          "best_cycle": 145,
+          "best_validation_objective_total": 0.7173739319497888,
+          "strict_ild_mae_db": 0.6206577305089344,
+          "erb_mae_db": 1.029112775217403,
+          "hf_mae_db": 3.8091985529119317,
+          "residual_mae_db": 2.7155522487380286,
+          "test_subjects_read": 0
+        },
+        {
+          "run_name": "sonicom_film_siren_gl_top3_rank2_gl_c2_adamw_wd1e4_seed20260823_e150",
+          "seed": 20260823,
+          "best_cycle": 120,
+          "best_validation_objective_total": 0.71820628778501,
+          "strict_ild_mae_db": 0.6276944503188133,
+          "erb_mae_db": 1.0135060860352083,
+          "hf_mae_db": 3.820292727513747,
+          "residual_mae_db": 2.7120905789462,
+          "test_subjects_read": 0
+        }
+      ],
+      "test_subjects_read": 0,
+      "rank": 3
+    }
+  ],
+  "winner": "cosine_c0",
+  "winner_source_config": "configs/experiments/sonicom_film_siren_gl_c3_cosine_seed20260821_e150.json",
+  "winner_best_cycles": [
+    140,
+    130,
+    140
+  ],
+  "e_final": 140,
+  "formal_seeds": [
+    20260821,
+    20260822,
+    20260823
+  ],
+  "scheduler_horizon_cycles": 150,
+  "checkpoint_policy": "fixed_stop_cycle_last",
+  "ensemble": {
+    "type": "residual_db_mean",
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ]
+  },
+  "test_subjects_read": 0
+}

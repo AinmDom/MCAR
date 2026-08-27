@@ -54,6 +54,20 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def resolve_checkpoint_policy(configuration: Mapping[str, Any]) -> str:
+    """Validate and return the checkpoint policy for search or formal runs."""
+    formal_fixed_cycle = bool(configuration.get("formal_fixed_cycle", False))
+    default = "fixed_stop_cycle_last" if formal_fixed_cycle else "validation_best"
+    policy = str(configuration.get("checkpoint_policy", default))
+    expected = "fixed_stop_cycle_last" if formal_fixed_cycle else "validation_best"
+    if policy != expected:
+        raise ValueError(
+            f"formal_fixed_cycle={formal_fixed_cycle} requires "
+            f"checkpoint_policy={expected!r}, got {policy!r}"
+        )
+    return policy
+
+
 def loss_configuration(raw: Mapping[str, Any]) -> StageCLossConfiguration:
     values = dict(raw)
     if "notch_radii_bins" in values:
@@ -471,6 +485,8 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
     optimizer = make_optimizer(model, configuration["optimizer"])
     objective = loss_configuration(configuration["objective"])
     cycles = int(configuration["cycles"])
+    checkpoint_policy = resolve_checkpoint_policy(configuration)
+    formal_fixed_cycle = bool(configuration.get("formal_fixed_cycle", False))
     validation_interval = int(configuration["validation_interval_cycles"])
     global_count = int(configuration["global_directions_per_step"])
     horizontal_count = int(configuration["horizontal_directions_per_step"])
@@ -679,7 +695,14 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         target_normalization_path,
     )
     torch.save(payload, output_dir / "last.pt")
-    decision = "RETEST" if best_cycle == cycles else "KEEP"
+    decision = (
+        "FIXED_CYCLE_COMPLETE"
+        if formal_fixed_cycle
+        else ("RETEST" if best_cycle == cycles else "KEEP")
+    )
+    authoritative_checkpoint = (
+        "last.pt" if checkpoint_policy == "fixed_stop_cycle_last" else "best.pt"
+    )
     report = {
         "status": "completed",
         "run_name": configuration["run_name"],
@@ -689,6 +712,9 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "best_cycle": best_cycle,
         "best_validation_objective_total": best_total,
         "decision": decision,
+        "formal_fixed_cycle": formal_fixed_cycle,
+        "checkpoint_policy": checkpoint_policy,
+        "authoritative_checkpoint": authoritative_checkpoint,
         "scheduler_horizon_cycles": scheduler_horizon,
         "elapsed_seconds": time.perf_counter() - started,
         "peak_cuda_allocated_mib": (
@@ -698,6 +724,9 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         ),
         "best_checkpoint_sha256": file_sha256(output_dir / "best.pt"),
         "last_checkpoint_sha256": file_sha256(output_dir / "last.pt"),
+        "authoritative_checkpoint_sha256": file_sha256(
+            output_dir / authoritative_checkpoint
+        ),
         "test_subjects_read": 0,
         "conditioning_scope": conditioning_scope,
         "condition_inputs_read": len(train_subjects) + len(validation_subjects),

@@ -15,6 +15,7 @@ from mcar.training.train_film_siren import read_common_grid, split_subject_paths
 from mcar.training.train_film_siren_stage_c import (
     horizontal_interpolation_indices,
     learning_rate_for_cycle,
+    resolve_checkpoint_policy,
 )
 from mcar.training.train_mlp_v2 import (
     make_erb_center_frequencies_hz,
@@ -37,6 +38,7 @@ GLOBAL_LOCAL_CONFIG_PATH = (
     / "experiments"
     / "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150.json"
 )
+FINAL_CONFIG_PREFIX = "sonicom_film_siren_gl_final_cosine_c0_seed"
 
 
 def test_stage_c_initial_config_matches_preregistered_protocol() -> None:
@@ -252,6 +254,55 @@ def test_scheduler_trajectory_keeps_horizon_separate_from_stop_cycle() -> None:
     )
     assert learning_rate_for_cycle(base, "warmup_cosine", 5, 150, 5) == base
     assert learning_rate_for_cycle(base, "warmup_cosine", 150, 150, 5) < 1e-7
+
+
+def test_formal_checkpoint_policy_rejects_validation_selection() -> None:
+    assert resolve_checkpoint_policy({}) == "validation_best"
+    assert (
+        resolve_checkpoint_policy(
+            {
+                "formal_fixed_cycle": True,
+                "checkpoint_policy": "fixed_stop_cycle_last",
+            }
+        )
+        == "fixed_stop_cycle_last"
+    )
+    with pytest.raises(ValueError, match="fixed_stop_cycle_last"):
+        resolve_checkpoint_policy(
+            {"formal_fixed_cycle": True, "checkpoint_policy": "validation_best"}
+        )
+
+
+@pytest.mark.parametrize("seed", [20260821, 20260822, 20260823])
+def test_final_e140_configs_are_matched_fixed_cycle_members(seed: int) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"{FINAL_CONFIG_PREFIX}{seed}_e140.json"
+    )
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    assert configuration["seed"] == seed
+    assert configuration["cycles"] == 140
+    assert configuration["formal_fixed_cycle"] is True
+    assert configuration["checkpoint_policy"] == "fixed_stop_cycle_last"
+    assert configuration["optimizer"] == {
+        "name": "AdamW",
+        "learning_rate": 1e-4,
+        "weight_decay": 1e-4,
+    }
+    assert configuration["scheduler"] == {
+        "name": "cosine",
+        "horizon_cycles": 150,
+        "warmup_cycles": 0,
+    }
+    assert configuration["conditioning_scope"] == "global_plus_local_mca"
+    assert configuration["model"]["coordinate_dimension"] == 7
+    assert configuration["objective"]["high_frequency_first_difference_weight"] == 0
+    assert configuration["objective"]["high_frequency_second_difference_weight"] == 0
+    assert configuration["objective"]["notch_depth_weight"] == 0
+    assert configuration["ensemble"]["member_count"] == 3
+    assert configuration["ensemble"]["weight"] == pytest.approx(1 / 3)
 
 
 def test_stage_c_dual_sampling_loss_has_finite_gradient_and_exact_increment() -> None:

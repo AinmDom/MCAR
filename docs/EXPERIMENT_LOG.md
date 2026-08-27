@@ -1,5 +1,36 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN Stage C Top-3 三-seed 汇总与最终配置冻结
+
+- 实验目标：完成全局 Top-3 的 seeds `20260822/20260823` 扩展后，按预注册规则将
+  每个候选的 screening seed `20260821` 与两个扩展 seed 的 best validation Stage C
+  total 作三-seed等权平均，选出最终配置；再以最终配置三 seed 的 best cycles 中位数
+  冻结 `E_final`。
+- 三-seed结果（mean Stage C total，越低越好）：**cosine+C0**
+  **`0.7147615646774118`**（单 seed `0.7162436748092825`@140、
+  `0.7145319106903943`@130、`0.7135091085325588`@140）< warmup_cosine+C0
+  `0.7148944180120121`（`0.7148047604344108`@140、`0.7157314690676603`@120、
+  `0.7141470245339654`@135）< constant+C0 `0.7172623832117427`
+  （`0.7162069299004294`@140、`0.7173739319497888`@145、
+  `0.71820628778501`@120）。主指标不相等，因此不进入 tie-break。
+- 决策：冻结最终配置为 **AdamW `lr=1e-4`, `wd=1e-4` + cosine scheduler + C0
+  objective**。最终配置 best cycles 为 `140/130/140`，故按
+  `round(median(E1,E2,E3))` 冻结 **`E_final=140`**。此前实时交接中建议的
+  warmup_cosine / 135 是沿用 screening rank 1、未按三-seed规则重排，现已作废；
+  本次修正严格执行既有预注册规则，不需要 amendment。
+- 正式重训边界：seeds `20260821/20260822/20260823` 三模型全部从 scratch；固定训练
+  140 cycles，每 cycle 262 steps；不 early stop、不选择 validation best checkpoint；
+  cosine scheduler horizon 保持150并在 cycle 140截断；最终只使用每个 run 的末点
+  checkpoint，三模型 residual 作1/3等权平均，不搜索权重、不删除 seed。
+- 完整性：用于汇总的9个 run 全部 `status=completed`、KEEP；history.csv 各150行且
+  无 NaN/Inf；全部 `test_subjects_read=0`；运行时 Git clean。证据为
+  `results/sonicom_film_siren_gl_top3/selection.json`、三个 screening run 与六个
+  `artifacts/training/sonicom_film_siren_gl_top3_*/{training_report.json,
+  validation_ledger.json,history.csv}`。
+- 下一步：生成三份正式 E140 配置并在 clean Git commit 上启动；完成后核验末点
+  checkpoint hashes，冻结1/3 ensemble manifest 与独立 test registry，之后才可请求
+  SONICOM engineering test 访问。
+
 ## 2026-08-27：FiLM-SIREN Stage C GL-C4：objective ablation 完成 + 全局 Top-3 选定
 
 - 实验目标：固定 GL-C3 winner（AdamW `lr=1e-4` `wd=1e-4`、warmup_cosine warmup 5），

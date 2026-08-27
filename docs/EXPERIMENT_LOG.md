@@ -1,5 +1,28 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN C4 共同评分修订与 D1/D2+notch 扩展冻结
+
+- 修订原因：原 C4 将 C0 与含 D1/D2/notch 附加非负项的候选按各自 raw total
+  直接混排，量尺不一致。该问题不改写原始 decision，也不推翻已完成的 frozen test；
+  现将其透明登记为开发集 protocol correction。
+- 统一复核：以 train-only target std `4.954314859581426` 重算共同 C0，seed
+  `20260821` 的 D1/D2+notch、D1/D2、notch、C0 最佳值分别为
+  `0.7075494388355034 / 0.7093399539540178 / 0.7144781864630014 /
+  0.7170006462537132`。D1/D2+notch 同时降低基础 residual、ERB、HF 和 strict ILD，
+  因此用户授权把该候选推进到最终 validation 横向比较。
+- 前瞻协议：保留已有 seed `20260821`，新增 seeds `20260822/20260823` 的同配置
+  150-cycle 从 scratch run；三 seed 用相同增强 objective 选 best cycle并冻结
+  `E_final=round(median)`。随后从 scratch 训练三个固定周期成员，只以末点 `last.pt`
+  做1/3等权 residual ensemble。
+- 边界：本轮只使用262 train和44 validation；最终横向表固定为新D1/D2+notch
+  ensemble、MCAR v3.5.1、RANF和FSP-AE，不纳入旧v1/v2，原C0只作历史开发证据。
+  `test_subjects_read=0`；任何新test访问都需要另行冻结manifest/registry并重新取得
+  明确授权。
+- 证据：`experiments/film_siren/
+  STAGE_C_GLOBAL_LOCAL_MCA_C4_COMMON_SCORE_CORRECTION.md`；
+  `scripts/generate_siren_gl_c4_corrected_expansion_configs.py`；
+  `scripts/analyze_siren_gl_c4_corrected_expansion.py`。
+
 ## 2026-08-27：FiLM-SIREN 验证集 44 被试 HRTF 重建对比图
 
 - 任务与边界：按用户要求，在冻结 SONICOM validation split 的 44 名被试上绘制逐被试

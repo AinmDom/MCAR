@@ -175,6 +175,14 @@ def main() -> None:
                 "sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test --split test --allow-test "
                 "--registry configs/experiments/sonicom_film_siren_gl_final_test_registry.json"
             ),
+            "strict_reconstruction": (
+                "mcar.evaluate_sonicom_validation_reconstruction(inf, "
+                "'sonicom_film_siren_gl_final_vs_v351_frozen_test', true, "
+                "'sonicom_q26_test_v351_previous30_b70', "
+                "'sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test', "
+                "'FiLM-SIREN GL cosine C0 E140 1/3 ensemble', 'test', "
+                "'sonicom_q26_test_v1', 'sonicom_q26_test_v2', true)"
+            ),
             "statistical_analysis": (
                 "python scripts/analyze_siren_gl_frozen_test.py <per_subject_metrics.csv> "
                 "results/sonicom_film_siren_gl_final_vs_v351_frozen_test/statistical_decision.json"

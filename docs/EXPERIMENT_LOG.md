@@ -1,5 +1,54 @@
 # 项目实验日志
 
+## 2026-08-28：FiLM-SIREN D1/D2+notch 正式 E130 三成员完成，四方法 validation 严格比较
+
+- 正式训练：三个 seed `20260821/20260822/20260823` 从 scratch 固定130 cycles
+  全部自然结束，均 `status=completed`、`decision=FIXED_CYCLE_COMPLETE`、130
+  cycles/34060 steps；history 各130行且0坏值、ledger各26项且末项cycle130；
+  `best.pt`/`last.pt` 实算 SHA-256 均与 report 一致（authoritative 均为
+  cycle130 `last.pt`）；stderr 无错误；运行时 git `5356f59` clean；
+  `test_subjects_read=0`、`local_mca_inputs_read=35204`。三成员 best cycle
+  （仅诊断）为 `120/125/115`，best total `0.7795758/0.7748292/0.7757417`。
+- 冻结 manifest：`configs/experiments/
+  sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_manifest.json`，identity
+  `1CE74CF0AEC21D29FDE22B952FBB038EDBA8600938037855028ECE84B06936BE`，三成员
+  config/checkpoint SHA-256 逐项锁定，权重严格1/3。validation 44被试 ensemble
+  推理44/44完成，全部 shape `[2,793,463]` 且 finite，elapsed `25.2042783 s`，
+  `test_subject_count_read=0`。
+- 四方法严格评价（专用入口 `matlab/+mcar/
+  evaluate_film_siren_d1d2_notch_four_method_validation.m`，不含v1/v2、禁止test）：
+  44/44 unique subjects、704 metric rows、quality checks一致（每人767
+  interpolation + 72 horizontal directions、41 ERB bands、reference ILD metadata
+  max error ~1e-6 dB）。聚合均值（dB，越低越好）：
+  - Full ERB：FILM `0.8275426680633419` / MCAR v3.5.1 `0.8308081768778546` /
+    RANF `6.536851589972281` / FSP-AE `1.1603106749036973`；
+  - Contra25 ERB：`1.2307760839028756` / `1.2889532413126572` / `9.121520215265402` /
+    `1.8479172775430348`；
+  - Contra HF：`3.7027516824075195` / `3.538086607059492` / `3.4680092137126852` /
+    `3.103809369743327`；
+  - Horizontal ILD：`0.63059843905319` / `0.5811462482733765` /
+    `11.254576847577862` / `0.5977082576411121`。
+- paired bootstrap（44 subject rows、10000次、seed20260819、双侧percentile 95%
+  CI，diff=FILM−baseline，负为优）：Full ERB vs MCAR `-0.0032655`（CI
+  `[-0.0140183,+0.0079552]`、wins29/44）、vs FSP-AE `-0.3327680`（CI
+  `[-0.3628319,-0.3038376]`、wins44/44）、vs RANF `-5.7093089`（CI 负、wins44/44）；
+  Contra25 ERB vs MCAR `-0.0581772`（CI `[-0.0789625,-0.0379363]`、wins36/44）、
+  vs FSP-AE `-0.6171412`（wins44/44）、vs RANF `-7.8907441`（wins44/44）；
+  Contra HF vs MCAR `+0.1646651`（CI 正、wins3/44）、vs FSP-AE `+0.5989423`
+  （wins0/44）、vs RANF `+0.2347425`（wins4/44）；Horizontal ILD vs MCAR
+  `+0.0494522`（CI `[+0.0123300,+0.0878907]`、wins13/44）、vs FSP-AE `+0.0328902`
+  （CI 跨0、wins18/44）、vs RANF `-10.6239784`（wins44/44）。
+- 结论口径：这是44 validation 上的开发/工程比较，不是独立论文确认；FILM 在
+  Full ERB 上略优/持平 MCAR 且显著优于 FSP-AE/RANF，在 Contra25 ERB 上显著优于
+  三者，但在 Contra HF 和 Horizontal ILD 上仍劣于 MCAR v3.5.1 与 FSP-AE（RANF
+  除外）。`test_subjects_read=0`；已消费的 test 未用于任何选择或调参。
+- 证据：`results/sonicom_film_siren_gl_final_d1d2_notch_vs_ranf_fsp_v351_validation/`
+  （per_subject_metrics/metric_long/aggregate_metrics/quality_checks/summary/
+  four_method_decision/figures）；manifest identity 见上；训练目录 `artifacts/
+  training/sonicom_film_siren_gl_final_d1d2_notch_seed{20260821,20260822,
+  20260823}_e130/`；validation预测 `artifacts/reconstruction/
+  sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation/`。
+
 ## 2026-08-27：FiLM-SIREN D1/D2+notch 正式 E130 三成员训练启动
 
 - 配置冻结：按 C4 共同评分修订与三 seed 开发扩展，`E_final=130`（best cycles

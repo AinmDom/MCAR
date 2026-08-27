@@ -1,0 +1,208 @@
+{
+  "schema_version": "1.0",
+  "analysis_scope": "Validation-only four-method comparison; no test subjects read",
+  "subject_count": 44,
+  "methods": [
+    "FILM",
+    "MCAR",
+    "RANF",
+    "FSPAE"
+  ],
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "bootstrap": {
+    "paired_resampling_unit": "subject row",
+    "replicates": 10000,
+    "seed": 20260819,
+    "interval": "two-sided percentile 95% CI"
+  },
+  "aggregate": {
+    "FullSphereERB": {
+      "FILM": 0.8275426680633419,
+      "MCAR": 0.8308081768778546,
+      "RANF": 6.536851589972281,
+      "FSPAE": 1.1603106749036973
+    },
+    "Contralateral25ERB": {
+      "FILM": 1.2307760839028756,
+      "MCAR": 1.2889532413126572,
+      "RANF": 9.121520215265402,
+      "FSPAE": 1.8479172775430348
+    },
+    "ContralateralHighFrequency": {
+      "FILM": 3.7027516824075195,
+      "MCAR": 3.538086607059492,
+      "RANF": 3.4680092137126852,
+      "FSPAE": 3.103809369743327
+    },
+    "HorizontalILDMAE": {
+      "FILM": 0.63059843905319,
+      "MCAR": 0.5811462482733765,
+      "RANF": 11.254576847577862,
+      "FSPAE": 0.5977082576411121
+    }
+  },
+  "pairwise_film_vs_baseline": {
+    "FullSphereERB__FILM_minus_MCAR": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus MCAR; negative is better",
+      "film_mean_db": 0.8275426680633419,
+      "mcar_mean_db": 0.8308081768778546,
+      "paired_mean_difference_db": -0.0032655088145125436,
+      "paired_percentile_95_ci_db": [
+        -0.014018319414807705,
+        0.007955164777867847
+      ],
+      "film_wins": 29,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "FullSphereERB__FILM_minus_RANF": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus RANF; negative is better",
+      "film_mean_db": 0.8275426680633419,
+      "ranf_mean_db": 6.536851589972281,
+      "paired_mean_difference_db": -5.709308921908939,
+      "paired_percentile_95_ci_db": [
+        -5.850231306979586,
+        -5.562466593687187
+      ],
+      "film_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "FullSphereERB__FILM_minus_FSPAE": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus FSPAE; negative is better",
+      "film_mean_db": 0.8275426680633419,
+      "fspae_mean_db": 1.1603106749036973,
+      "paired_mean_difference_db": -0.33276800684035535,
+      "paired_percentile_95_ci_db": [
+        -0.36283192140835757,
+        -0.3038376056683847
+      ],
+      "film_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "Contralateral25ERB__FILM_minus_MCAR": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus MCAR; negative is better",
+      "film_mean_db": 1.2307760839028756,
+      "mcar_mean_db": 1.2889532413126572,
+      "paired_mean_difference_db": -0.0581771574097818,
+      "paired_percentile_95_ci_db": [
+        -0.07896253783087838,
+        -0.03793625060840025
+      ],
+      "film_wins": 36,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "Contralateral25ERB__FILM_minus_RANF": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus RANF; negative is better",
+      "film_mean_db": 1.2307760839028756,
+      "ranf_mean_db": 9.121520215265402,
+      "paired_mean_difference_db": -7.890744131362525,
+      "paired_percentile_95_ci_db": [
+        -8.162828160767987,
+        -7.6186464209151135
+      ],
+      "film_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "Contralateral25ERB__FILM_minus_FSPAE": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus FSPAE; negative is better",
+      "film_mean_db": 1.2307760839028756,
+      "fspae_mean_db": 1.8479172775430348,
+      "paired_mean_difference_db": -0.6171411936401593,
+      "paired_percentile_95_ci_db": [
+        -0.6531549297821136,
+        -0.5803008038702369
+      ],
+      "film_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "ContralateralHighFrequency__FILM_minus_MCAR": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus MCAR; negative is better",
+      "film_mean_db": 3.7027516824075195,
+      "mcar_mean_db": 3.538086607059492,
+      "paired_mean_difference_db": 0.1646650753480272,
+      "paired_percentile_95_ci_db": [
+        0.12894899588627687,
+        0.20133135565625698
+      ],
+      "film_wins": 3,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "ContralateralHighFrequency__FILM_minus_RANF": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus RANF; negative is better",
+      "film_mean_db": 3.7027516824075195,
+      "ranf_mean_db": 3.4680092137126852,
+      "paired_mean_difference_db": 0.23474246869483456,
+      "paired_percentile_95_ci_db": [
+        0.1846009432253246,
+        0.2840718256171888
+      ],
+      "film_wins": 4,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "ContralateralHighFrequency__FILM_minus_FSPAE": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus FSPAE; negative is better",
+      "film_mean_db": 3.7027516824075195,
+      "fspae_mean_db": 3.103809369743327,
+      "paired_mean_difference_db": 0.5989423126641932,
+      "paired_percentile_95_ci_db": [
+        0.548015359962554,
+        0.6511451480499596
+      ],
+      "film_wins": 0,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "HorizontalILDMAE__FILM_minus_MCAR": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus MCAR; negative is better",
+      "film_mean_db": 0.63059843905319,
+      "mcar_mean_db": 0.5811462482733765,
+      "paired_mean_difference_db": 0.04945219077981364,
+      "paired_percentile_95_ci_db": [
+        0.01232995234469959,
+        0.08789071753626924
+      ],
+      "film_wins": 13,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "HorizontalILDMAE__FILM_minus_RANF": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus RANF; negative is better",
+      "film_mean_db": 0.63059843905319,
+      "ranf_mean_db": 11.254576847577862,
+      "paired_mean_difference_db": -10.623978408524671,
+      "paired_percentile_95_ci_db": [
+        -10.88348085457133,
+        -10.356511768099917
+      ],
+      "film_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "HorizontalILDMAE__FILM_minus_FSPAE": {
+      "definition": "FILM D1/D2+notch E130 ensemble minus FSPAE; negative is better",
+      "film_mean_db": 0.63059843905319,
+      "fspae_mean_db": 0.5977082576411121,
+      "paired_mean_difference_db": 0.03289018141207791,
+      "paired_percentile_95_ci_db": [
+        -0.011082082755489827,
+        0.07671330695969221
+      ],
+      "film_wins": 18,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    }
+  },
+  "test_subject_count_read": 0
+}

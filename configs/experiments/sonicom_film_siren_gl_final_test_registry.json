@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-08-27T04:47:13.056685+00:00",
+  "updated_at_utc": "2026-08-27T04:47:13.056685+00:00",
+  "task_id": "sonicom-film-siren-gl-final-vs-v351-frozen-engineering-test-v1",
+  "state": "not_started",
+  "manifest": "configs/experiments/sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_manifest.json",
+  "manifest_identity_sha256": "5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407",
+  "model_identity": {
+    "config_sha256": [
+      "E79EDC4BC8FF224554C562091B98D6101CA843DDA9768280CF7E115957D9CFC8",
+      "68315B0C7438C1C3774FEFAAFA8B55A255A38256DF70D113A4C1246A52A4397E",
+      "4BB4F652EA19AC1639FB38A6A1420569C226A872341E7348C75B470C3A88A4A8"
+    ],
+    "checkpoint_sha256": [
+      "52C1F432F8CFA24DE9AA4BB86941F29E15122FB24072C359CC84D3AD937876B3",
+      "063B894A3608C3D9E2384C9151E8A3A1AAE3E15E77569E4E942AE20418BCF7CC",
+      "06C7C4CCF62B9AB77D08324036CFD12888FC5EC4E4E28864D348A301B7C815DB"
+    ]
+  },
+  "authorization": null,
+  "retry_count": 0,
+  "test_subject_count_read": 0,
+  "recovery_policy": "Only a proven incomplete failure with unchanged manifest identity may be resumed"
+}

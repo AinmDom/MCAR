@@ -1,5 +1,37 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN 最终 ensemble manifest 与测试注册表冻结
+
+- 冻结对象：三个正式 cosine+C0、cycle140 `last.pt` 以固定 `1/3` 权重在 residual-dB
+  空间求均值；manifest 身份 SHA-256 为
+  `5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407`。三个成员的
+  config/checkpoint hashes、seed、`E_final=140`、scheduler horizon=150，以及
+  split/Q26/normalization/frequency mapping/interpolation policy/evaluator资源均已逐项锁定。
+- 测试边界：独立 registry 状态为 `not_started`、authorization=`null`、
+  `test_subject_count_read=0`。测试预测入口要求 manifest 校验成功，并且同时提供
+  `--split test --allow-test --registry ...`；hash不匹配会在构造任何test HDF5路径前
+  失败，registry以manifest身份和三组config/checkpoint hashes识别模型，并以原子替换
+  写入 `started/completed/failed`。
+- 统计判据：冻结 paired difference=`FiLM-SIREN - MCAR v3.5.1`；主终点为
+  interpolation-only、solid-angle-weighted Full-sphere ERB；44名被试配对bootstrap
+  10000次、seed `20260818`、双侧percentile 95% CI，主终点要求upper `<0`；三个次要
+  NI margin依次为Contra ERB `0.02 dB`、HF `0.05 dB`、strict ILD `0.02 dB`且各自
+  upper小于margin；另要求Full ERB至少`26/44`被试胜出，仅解释为工程多数gate。
+- 实现验证：七维global+local预测器、manifest/resource guard、requested-split-only路径
+  构造及registry原子状态测试共25项通过；最终manifest逐项hash复核通过。以1名validation
+  被试P0001做三成员真实推理冒烟测试，输出shape `[2,793,463]`且全部finite，用时
+  `0.7117471 s`，`test_subject_count_read=0`。统计脚本另在既有44行历史冻结比较CSV上
+  完成10000次bootstrap冒烟测试。pytest仅有无法创建cache的非功能性权限warning。
+- 证据：`configs/experiments/
+  sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_manifest.json`；
+  `configs/experiments/sonicom_film_siren_gl_final_test_registry.json`；
+  `src/mcar/evaluation/predict_film_siren_ensemble.py`；
+  `scripts/analyze_siren_gl_frozen_test.py`；evaluator/tooling commit
+  `4d17da4f7ecff283c51d525852e05d1583bf3a50`。
+- 下一步：提交manifest/registry与本条日志，确认Git clean；随后只向用户请求一次明确的
+  frozen SONICOM engineering test授权。未获授权前不得运行test预测、MATLAB test评价
+  或正式统计分析，也不得根据test结果重训、重选seed或调ensemble权重。
+
 ## 2026-08-27：FiLM-SIREN Stage C 三个正式 E140 模型训练完成
 
 - 实验目标：按已冻结的 cosine+C0 最终配置，以 seeds

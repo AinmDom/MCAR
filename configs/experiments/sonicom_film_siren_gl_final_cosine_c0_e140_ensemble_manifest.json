@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_at_utc": "2026-08-27T04:47:13.056685+00:00",
+  "model_version": "film-siren-gl-cosine-c0-e140-ensemble-v1",
+  "model_family": "FiLM-SIREN residual ensemble",
+  "selection": "cosine+C0 by three-seed validation mean",
+  "e_final": 140,
+  "scheduler_horizon_cycles": 150,
+  "ensemble": {
+    "type": "residual_db_mean",
+    "member_count": 3,
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "checkpoint_policy": "cycle-140 last.pt only"
+  },
+  "members": [
+    {
+      "member_index": 1,
+      "seed": 20260821,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_film_siren_gl_final_cosine_c0_seed20260821_e140.json",
+      "config_sha256": "E79EDC4BC8FF224554C562091B98D6101CA843DDA9768280CF7E115957D9CFC8",
+      "checkpoint": "artifacts/training/sonicom_film_siren_gl_final_cosine_c0_seed20260821_e140/last.pt",
+      "checkpoint_sha256": "52C1F432F8CFA24DE9AA4BB86941F29E15122FB24072C359CC84D3AD937876B3",
+      "training_report": "artifacts/training/sonicom_film_siren_gl_final_cosine_c0_seed20260821_e140/training_report.json",
+      "training_git_commit": "00100edb14fcd72ef7c046c8ffd6e2dac29f1af4",
+      "training_git_dirty": false
+    },
+    {
+      "member_index": 2,
+      "seed": 20260822,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_film_siren_gl_final_cosine_c0_seed20260822_e140.json",
+      "config_sha256": "68315B0C7438C1C3774FEFAAFA8B55A255A38256DF70D113A4C1246A52A4397E",
+      "checkpoint": "artifacts/training/sonicom_film_siren_gl_final_cosine_c0_seed20260822_e140/last.pt",
+      "checkpoint_sha256": "063B894A3608C3D9E2384C9151E8A3A1AAE3E15E77569E4E942AE20418BCF7CC",
+      "training_report": "artifacts/training/sonicom_film_siren_gl_final_cosine_c0_seed20260822_e140/training_report.json",
+      "training_git_commit": "00100edb14fcd72ef7c046c8ffd6e2dac29f1af4",
+      "training_git_dirty": false
+    },
+    {
+      "member_index": 3,
+      "seed": 20260823,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_film_siren_gl_final_cosine_c0_seed20260823_e140.json",
+      "config_sha256": "4BB4F652EA19AC1639FB38A6A1420569C226A872341E7348C75B470C3A88A4A8",
+      "checkpoint": "artifacts/training/sonicom_film_siren_gl_final_cosine_c0_seed20260823_e140/last.pt",
+      "checkpoint_sha256": "06C7C4CCF62B9AB77D08324036CFD12888FC5EC4E4E28864D348A301B7C815DB",
+      "training_report": "artifacts/training/sonicom_film_siren_gl_final_cosine_c0_seed20260823_e140/training_report.json",
+      "training_git_commit": "00100edb14fcd72ef7c046c8ffd6e2dac29f1af4",
+      "training_git_dirty": false
+    }
+  ],
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "q26_normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "schema": {
+      "subject_counts": {
+        "train": 262,
+        "val": 44,
+        "test": 44
+      },
+      "subject_file": "subjects/<subject_id>/q26.h5",
+      "tensor_layout": "ear,direction,frequency",
+      "ear_count": 2,
+      "direction_count": 793,
+      "frequency_count": 463,
+      "q26_direction_count": 26,
+      "interpolation_direction_count": 767,
+      "independent_horizontal_interpolation_count": 72
+    },
+    "frequency_mapping": {
+      "mode": "dual",
+      "formula_version": "dual_linear_erb_v1",
+      "minimum_hz": 86.1328125,
+      "maximum_hz": 19982.8125,
+      "coordinate_range": [
+        -1.0,
+        1.0
+      ]
+    },
+    "interpolation_mask_policy": "strict interpolation_only; sparse Q26 directions excluded",
+    "resources": [
+      {
+        "path": "configs/data/sonicom_subject_split_v1.csv",
+        "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132",
+        "purpose": "262/44/44 frozen split"
+      },
+      {
+        "path": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+        "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287",
+        "purpose": "Q26 sparse grid"
+      },
+      {
+        "path": "configs/data/siren_b_q26_normalization_v1.json",
+        "sha256": "E247EFF81CC6FD4E62C123149FFD42F0DA7A429DF4485A48C1A98943D88C3EB8",
+        "purpose": "train-only Q26 normalization"
+      },
+      {
+        "path": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+        "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A",
+        "purpose": "train-only residual normalization"
+      }
+    ]
+  },
+  "evaluator": {
+    "git_commit": "4d17da4f7ecff283c51d525852e05d1583bf3a50",
+    "git_dirty_at_generation": false,
+    "resources": [
+      {
+        "path": "src/mcar/evaluation/predict_film_siren_ensemble.py",
+        "sha256": "F766360A3DB675C9C067063C2B2DC73AAB8F3BD2AEE346AE113D926673708165",
+        "purpose": "hash-guarded ensemble predictor"
+      },
+      {
+        "path": "src/mcar/predictors.py",
+        "sha256": "808D116447649CA0605821C3B681AE41986FEA5FCC6235349EF06034477E5CC4",
+        "purpose": "seven-dimensional member predictor"
+      },
+      {
+        "path": "src/mcar/frozen_test.py",
+        "sha256": "566283C2FFCBD5E7249EB26C481ADF92B4D1E6FAF09EF9268A3C252326FB1120",
+        "purpose": "manifest and atomic registry guards"
+      },
+      {
+        "path": "matlab/+mcar/evaluate_sonicom_validation_reconstruction.m",
+        "sha256": "F52F8F7FD6C2CE470B3170B77A2050764B21BEFE9BA2E1C11E1C00080942FABD",
+        "purpose": "strict reconstruction evaluator"
+      },
+      {
+        "path": "scripts/analyze_siren_gl_frozen_test.py",
+        "sha256": "33D5FA00EA57B697012A63F86B0C98B8A61D60FE2AFEA13CBB68C5D71C505CBB",
+        "purpose": "pre-registered paired bootstrap gates"
+      },
+      {
+        "path": "configs/experiments/sonicom_mlp_cnn_q26_v351.json",
+        "sha256": "E35124D7BA521EC0E9DCA6FB3E5A902481654F67D79800715006EB523C32933D",
+        "purpose": "frozen MCAR v3.5.1 baseline definition"
+      },
+      {
+        "path": "experiments/film_siren/EXPERIMENT_CHECKLIST.md",
+        "sha256": "005633A8953844861C000E57017A232922269BEA8D365B1BB3571AE1379F4FFA",
+        "purpose": "pre-registered engineering test policy"
+      },
+      {
+        "path": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_FINAL_TRAINING_FREEZE.md",
+        "sha256": "B7C8D3C2F31F5E160A9C5C5704999C1A6BB1333DDDAE46A55EA5092242E2C3AC",
+        "purpose": "final training freeze"
+      },
+      {
+        "path": "results/sonicom_film_siren_gl_top3/final_selection.json",
+        "sha256": "D827ECD5CD9133FF79A4A324194F0CF8853E3E6A46B91E15DD4730BDEC7B2DF9",
+        "purpose": "three-seed final selection"
+      }
+    ]
+  },
+  "comparison": {
+    "baseline_model_version": "v3.5.1",
+    "baseline_manifest": "configs/experiments/sonicom_mlp_cnn_q26_v351.json",
+    "baseline_manifest_sha256": "E35124D7BA521EC0E9DCA6FB3E5A902481654F67D79800715006EB523C32933D",
+    "baseline_formula": "predicted_residual_v351 = 0.3 * previous_joint + 0.7 * v351b_continuation",
+    "scope": "historically consumed frozen SONICOM engineering test; not independent confirmation"
+  },
+  "statistics": {
+    "paired_difference": "FiLM-SIREN minus MCAR v3.5.1; negative is better",
+    "primary_endpoint": "interpolation-only solid-angle-weighted Full-sphere ERB",
+    "bootstrap": {
+      "subject_rows": 44,
+      "replicates": 10000,
+      "seed": 20260818,
+      "interval": "two-sided percentile 95% CI"
+    },
+    "primary_gate": "upper CI < 0 dB",
+    "secondary_non_inferiority_margins_db": {
+      "contralateral_25_erb": 0.02,
+      "contralateral_high_frequency": 0.05,
+      "strict_horizontal_ild": 0.02
+    },
+    "secondary_gate": "every upper CI < its pre-registered margin",
+    "distribution_gate": "Full ERB candidate wins >=26/44; engineering majority only, not sign-test significance"
+  },
+  "planned_commands": {
+    "prediction": "python -m mcar.evaluation.predict_film_siren_ensemble configs/experiments/sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_manifest.json sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test --split test --allow-test --registry configs/experiments/sonicom_film_siren_gl_final_test_registry.json",
+    "strict_reconstruction": "mcar.evaluate_sonicom_validation_reconstruction(inf, 'sonicom_film_siren_gl_final_vs_v351_frozen_test', true, 'sonicom_q26_test_v351_previous30_b70', 'sonicom_film_siren_gl_final_cosine_c0_e140_ensemble_test', 'FiLM-SIREN GL cosine C0 E140 1/3 ensemble', 'test', 'sonicom_q26_test_v1', 'sonicom_q26_test_v2', true)",
+    "statistical_analysis": "python scripts/analyze_siren_gl_frozen_test.py <per_subject_metrics.csv> results/sonicom_film_siren_gl_final_vs_v351_frozen_test/statistical_decision.json"
+  },
+  "identity_sha256": "5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407"
+}

@@ -1,5 +1,30 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN 验证集 44 被试 HRTF 重建对比图
+
+- 任务与边界：按用户要求，在冻结 SONICOM validation split 的 44 名被试上绘制逐被试
+  HRTF 重建曲线；比较 FiLM-SIREN GL cosine+C0 E140 三成员 1/3 ensemble、RANF、
+  FSP-AE 和 MCAR v3.5.1，并以 reference 为锚点。全过程只读 validation，
+  `test_subjects_read=0`，不改变已冻结的 engineering test 决策。
+- 预测来源：RANF、FSP-AE、MCAR v3.5.1 三套既有 validation 预测均为 44/44，subject
+  集合与冻结 val split 差异为 0。FiLM-SIREN 以冻结 manifest
+  `5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407`重新生成
+  validation 预测，44/44 输出均为 `[2,793,463]` 且 finite，用时 `23.9362304 s`。
+- 绘图口径：每名被试选择左耳最接近 `(270°,0°)` 的纯插值方向，使用相同方向顺序与
+  strict-ILD 频率 bin，在 `100 Hz--20 kHz` 绘制 reference 与四种重建的 dB 频响；
+  44 名被试采用固定 `8×6` tiled layout、统一 `[-60,25] dB` 纵轴并导出 PNG/PDF。
+- 可视方向摘要：该单方向、未加权频点 MAE 仅用于辅助阅读图形，不能代替全空间严格
+  指标或用于模型晋升。44 人均值依次为 FSP-AE `3.66570582309139 dB`、FiLM-SIREN
+  `3.97510342990629 dB`、RANF `4.06820359685896 dB`、MCAR v3.5.1
+  `4.11332155808857 dB`；对应被试标准差为 `0.638492343815334 / 0.798592747169056 /
+  0.87755140456774 / 0.927696757383611 dB`。
+- 完整性与产物：逐被试表 44 行且 SubjectLabel 唯一，所有数值 finite；图像已人工检查，
+  图例、颜色、标题和 44 面板布局可读。沙箱内 MATLAB 首次因环境级
+  `File system inconsistency`未启动；正常本机环境以同一命令完成。实现位于
+  `matlab/+mcar/plot_film_siren_ranf_fsp_v351_validation_subject_hrtf.m`；正式图、
+  quality checks、逐被试与聚合 CSV 位于
+  `results/sonicom_validation_film_siren_ranf_fsp_v351_subject_hrtf/`。
+
 ## 2026-08-27：FiLM-SIREN frozen SONICOM engineering test 完成，DO NOT PROMOTE
 
 - 授权与身份：用户于`2026-08-27T12:53:26+08:00`明确授权按冻结manifest执行一次

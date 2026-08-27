@@ -187,6 +187,8 @@ for subjectIndex = 1:subjectCount
     ranfHrir = double(ranfSofa.Data.IR);
     assert(isequal(size(ranfHrir), [793, 2, 256]), ...
         'Unexpected RANF HRIR shape for %s.', subjectLabel);
+    assert(abs(double(ranfSofa.Data.SamplingRate) - samplingRateHz) < 1e-9, ...
+        'RANF SOFA sampling-rate mismatch for %s.', subjectLabel);
     ranfPosition = double(ranfSofa.SourcePosition);
     azimuthDeg = directionFeatures(1, :).';
     elevationDeg = directionFeatures(2, :).';

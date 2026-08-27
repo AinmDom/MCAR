@@ -305,6 +305,43 @@ def test_final_e140_configs_are_matched_fixed_cycle_members(seed: int) -> None:
     assert configuration["ensemble"]["weight"] == pytest.approx(1 / 3)
 
 
+@pytest.mark.parametrize("seed", [20260821, 20260822, 20260823])
+def test_final_e130_configs_are_matched_fixed_cycle_members(seed: int) -> None:
+    path = (
+        ROOT
+        / "configs"
+        / "experiments"
+        / f"sonicom_film_siren_gl_final_d1d2_notch_seed{seed}_e130.json"
+    )
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    assert configuration["seed"] == seed
+    assert configuration["cycles"] == 130
+    assert configuration["formal_fixed_cycle"] is True
+    assert configuration["checkpoint_policy"] == "fixed_stop_cycle_last"
+    assert configuration["search_stage"] == "formal_fixed_cycle_ensemble_member"
+    assert configuration["optimizer"] == {
+        "name": "AdamW",
+        "learning_rate": 1e-4,
+        "weight_decay": 1e-4,
+    }
+    assert configuration["scheduler"] == {
+        "name": "warmup_cosine",
+        "horizon_cycles": 150,
+        "warmup_cycles": 5,
+    }
+    assert configuration["conditioning_scope"] == "global_plus_local_mca"
+    assert configuration["model"]["coordinate_dimension"] == 7
+    assert configuration["objective"]["high_frequency_first_difference_weight"] == 0.25
+    assert configuration["objective"]["high_frequency_second_difference_weight"] == 0.15
+    assert configuration["objective"]["notch_depth_weight"] == 0.3
+    assert (
+        configuration["final_selection"]
+        == "results/sonicom_film_siren_gl_c4_corrected_expansion/selection.json"
+    )
+    assert configuration["ensemble"]["member_count"] == 3
+    assert configuration["ensemble"]["weight"] == pytest.approx(1 / 3)
+
+
 def test_stage_c_dual_sampling_loss_has_finite_gradient_and_exact_increment() -> None:
     torch.manual_seed(7)
     global_directions = 5

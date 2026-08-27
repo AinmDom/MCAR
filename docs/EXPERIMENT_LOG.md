@@ -1,5 +1,25 @@
 # 项目实验日志
 
+## 2026-08-27：FiLM-SIREN D1/D2+notch 正式 E130 三成员训练启动
+
+- 配置冻结：按 C4 共同评分修订与三 seed 开发扩展，`E_final=130`（best cycles
+  `140/130/120`，`round(median)`）。正式配置 = AdamW `lr=1e-4/wd=1e-4` +
+  warmup-cosine（warmup5、horizon150）+ D1/D2/notch objective 权重
+  `0.25/0.15/0.30` + 七维 global+local MCA FiLM-SIREN，`formal_fixed_cycle=true`、
+  `checkpoint_policy=fixed_stop_cycle_last`。
+- 三个正式成员：seeds `20260821/20260822/20260823`，均从 scratch、固定130 cycles、
+  每cycle 262 steps、scheduler horizon150截断、独立输出目录/provenance；唯一权威
+  checkpoint为各自cycle130 `last.pt`；三成员将以1/3 residual-dB等权组成ensemble。
+- 边界：只解析262 train+44 validation，`test_subjects_read=0`；最终横向表固定为
+  新D1/D2+notch ensemble、MCAR v3.5.1、RANF、FSP-AE四方法，不含v1/v2或原C0。
+- 证据：`experiments/film_siren/
+  STAGE_C_GLOBAL_LOCAL_MCA_C4_CORRECTED_FORMAL_TRAINING_FREEZE.md`；
+  `scripts/generate_siren_gl_c4_formal_configs.py`；三份 `configs/experiments/
+  sonicom_film_siren_gl_final_d1d2_notch_seed{20260821,20260822,20260823}_e130.json`；
+  来源选择 `results/sonicom_film_siren_gl_c4_corrected_expansion/selection.json`。
+- 启动核验：三份配置字段/hash 独立核验通过；相关测试49项通过（仅pytest cache
+  权限warning）；训练 PID/输出目录见交接页；finite与预算完成性待训练结束后核验。
+
 ## 2026-08-27：FiLM-SIREN C4 修正候选三种子完成，冻结 E_final=130
 
 - 运行结果：D1/D2+notch 的三个开发种子 `20260821/20260822/20260823` 均完成

@@ -18,7 +18,13 @@
       "06C7C4CCF62B9AB77D08324036CFD12888FC5EC4E4E28864D348A301B7C815DB"
     ]
   },
-  "authorization": null,
+  "authorization": {
+    "status": "authorized",
+    "received_at_local": "2026-08-27T12:53:26+08:00",
+    "authorized_by": "user",
+    "exact_text": "我授权按冻结 manifest 执行一次 SONICOM engineering test",
+    "scope": "One frozen 44-subject SONICOM engineering test execution for manifest identity 5B5A4444D342500BFC3C35F0701A26132C26886AEA073D4BA30FD8E2C6F5A407, including ensemble prediction, strict reconstruction evaluation, and pre-registered bootstrap analysis; no retraining, reselection, or ensemble-weight changes."
+  },
   "retry_count": 0,
   "test_subject_count_read": 0,
   "recovery_policy": "Only a proven incomplete failure with unchanged manifest identity may be resumed"

@@ -19,6 +19,13 @@
   来源选择 `results/sonicom_film_siren_gl_c4_corrected_expansion/selection.json`。
 - 启动核验：三份配置字段/hash 独立核验通过；相关测试49项通过（仅pytest cache
   权限warning）；训练 PID/输出目录见交接页；finite与预算完成性待训练结束后核验。
+- 评价工具（结果前冻结）：`matlab/+mcar/
+  evaluate_film_siren_d1d2_notch_four_method_validation.m` 为专用四方法严格评价
+  入口，只比较新ensemble、MCAR v3.5.1、RANF、FSP-AE，不构造v1/v2、不允许test
+  split；`scripts/generate_siren_gl_c4_validation_manifest.py` 生成无test授权
+  的 validation manifest；`scripts/analyze_siren_gl_c4_four_method_validation.py`
+  做预注册 paired bootstrap（10000次、seed20260819）。三者已提交 commit `750088e`。
+  三套基线（v351/RANF/FSP-AE）validation 预测均为44/44且与冻结val split完全一致。
 
 ## 2026-08-27：FiLM-SIREN C4 修正候选三种子完成，冻结 E_final=130
 

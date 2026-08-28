@@ -52,6 +52,17 @@ The final residual is `base + cnn_delta`. D1 trains only the CNN.
 This is a one-seed development screen, not a formal paper result and not a basis
 for test access.
 
+## Frozen D1 strict-validation analysis
+
+Before running the strict reconstruction comparison, the four method IDs are
+fixed as `HYBRID` (D1 best), `PARENT` (its seed-20260821 cycle-130 parent),
+`FILMENS` (the corrected E130 three-member FiLM ensemble), and `MCAR` (v3.5.1).
+The evaluator and all four metric definitions are inherited from the corrected
+C4 four-method validation evaluation. For every metric it reports the paired
+subject difference `HYBRID - baseline`, so negative values favor D1, together
+with the mean difference, a 95% percentile interval from 10,000 paired bootstrap
+replicates (seed `20260828`), and hybrid win/tie/loss counts over 44 subjects.
+
 ## Decision sequence
 
 After D1 completes, first verify completion, finite history/ledger, checkpoint
@@ -75,4 +86,3 @@ hybrid members before any new manuscript-level comparison.
 - Do not fine-tune the FiLM-SIREN backbone in D1.
 - Do not change the seven-channel interface or CNN architecture after seeing D1
   validation results; such a change requires a new named, pre-registered stage.
-

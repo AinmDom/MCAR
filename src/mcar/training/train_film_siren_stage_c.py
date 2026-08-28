@@ -9,7 +9,7 @@ import math
 import time
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Union
 
 import h5py
 import numpy as np
@@ -18,6 +18,10 @@ import torch
 from mcar.data import Normalization
 from mcar.evaluation.residual_metrics import solid_angle_weighted_residual_metrics
 from mcar.models.film_siren import ConditionEncoderConfig, FilmSiren, FilmSirenConfig
+from mcar.models.film_siren_spectral_cnn import (
+    FilmSirenSpectralCNN,
+    SpectralRefinerConfig,
+)
 from mcar.paths import project_root
 from mcar.q26_condition import Q26MagnitudeNormalization
 from mcar.training.film_siren_stage_c import (
@@ -46,6 +50,9 @@ from mcar.training.train_mlp_v2 import (
     make_erb_weights,
 )
 from mcar.training.train_siren import frequency_coordinates
+
+
+StageCModel = Union[FilmSiren, FilmSirenSpectralCNN]
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -132,8 +139,20 @@ def read_block(
     return target, mca, direction_features, metadata
 
 
+def read_correction_block(
+    subject: SubjectCondition,
+    indices: np.ndarray,
+) -> np.ndarray:
+    with h5py.File(subject.path, "r") as handle:
+        validate_subject_identity(subject, handle)
+        return np.asarray(
+            handle["correction_logmag_db"][:, indices, :],
+            dtype=np.float32,
+        )
+
+
 def prediction_block(
-    model: FilmSiren,
+    model: StageCModel,
     latent: torch.Tensor,
     directions: np.ndarray,
     frequency_coordinate: torch.Tensor,
@@ -142,6 +161,8 @@ def prediction_block(
     normalization: Normalization,
     conditioning_scope: str,
     device: torch.device,
+    local_correction_db: np.ndarray | None = None,
+    normalized_log_frequency: torch.Tensor | None = None,
 ) -> torch.Tensor:
     xyz = torch.from_numpy(directions[indices, 2:5]).to(device)
     query = conditioned_coordinate_block(
@@ -151,6 +172,33 @@ def prediction_block(
         local_mca_db,
         normalization,
     )
+    if isinstance(model, FilmSirenSpectralCNN):
+        if local_mca_db is None or local_correction_db is None:
+            raise ValueError("The spectral refiner requires local MCA and correction")
+        if normalized_log_frequency is None:
+            raise ValueError("The spectral refiner requires normalized log-frequency")
+        normalized_mca = (
+            torch.from_numpy(
+                (local_mca_db - normalization.mca_mean) / normalization.mca_std
+            )
+            .to(device=device, dtype=query.dtype)
+        )
+        normalized_correction = (
+            torch.from_numpy(
+                (local_correction_db - normalization.correction_mean)
+                / normalization.correction_std
+            )
+            .to(device=device, dtype=query.dtype)
+        )
+        prediction, _, _ = model.forward_grid(
+            query,
+            latent,
+            normalized_mca,
+            normalized_correction,
+            normalized_log_frequency,
+            xyz,
+        )
+        return prediction
     prediction = model(query, latent)
     return prediction.reshape(indices.size, frequency_coordinate.shape[0], 2).permute(
         2, 0, 1
@@ -162,7 +210,7 @@ def tensor(value: np.ndarray, device: torch.device) -> torch.Tensor:
 
 
 def one_loss(
-    model: FilmSiren,
+    model: StageCModel,
     latent: torch.Tensor,
     subject: SubjectCondition,
     directions: np.ndarray,
@@ -176,6 +224,7 @@ def one_loss(
     objective: StageCLossConfiguration,
     device: torch.device,
     conditioning_scope: str = "global",
+    normalized_log_frequency: torch.Tensor | None = None,
 ) -> tuple[torch.Tensor, LossMetrics]:
     global_target, global_mca, global_features, _ = read_block(
         subject, global_indices, strict_ild=False
@@ -185,6 +234,16 @@ def one_loss(
     )
     if strict is None:
         raise AssertionError("Strict ILD metadata was not loaded")
+    global_correction = (
+        read_correction_block(subject, global_indices)
+        if isinstance(model, FilmSirenSpectralCNN)
+        else None
+    )
+    horizontal_correction = (
+        read_correction_block(subject, horizontal_indices)
+        if isinstance(model, FilmSirenSpectralCNN)
+        else None
+    )
     global_prediction = prediction_block(
         model,
         latent,
@@ -195,6 +254,8 @@ def one_loss(
         normalization,
         conditioning_scope,
         device,
+        global_correction,
+        normalized_log_frequency,
     )
     horizontal_prediction = prediction_block(
         model,
@@ -206,6 +267,8 @@ def one_loss(
         normalization,
         conditioning_scope,
         device,
+        horizontal_correction,
+        normalized_log_frequency,
     )
     global_target_tensor = tensor(global_target, device)
     return calculate_stage_c_losses(
@@ -229,8 +292,48 @@ def one_loss(
 
 
 @torch.no_grad()
+def predict_hybrid_subject(
+    model: FilmSirenSpectralCNN,
+    latent: torch.Tensor,
+    directions: np.ndarray,
+    frequency_coordinate: torch.Tensor,
+    direction_indices: np.ndarray,
+    local_mca_db: np.ndarray,
+    local_correction_db: np.ndarray,
+    normalized_log_frequency: torch.Tensor,
+    normalization: Normalization,
+    conditioning_scope: str,
+    device: torch.device,
+    directions_per_block: int,
+) -> np.ndarray:
+    frequency_count = int(frequency_coordinate.shape[0])
+    prediction = np.empty(
+        (2, direction_indices.size, frequency_count),
+        dtype=np.float32,
+    )
+    for start in range(0, direction_indices.size, directions_per_block):
+        stop = min(direction_indices.size, start + directions_per_block)
+        selected = direction_indices[start:stop]
+        block = prediction_block(
+            model,
+            latent,
+            directions,
+            frequency_coordinate,
+            selected,
+            local_mca_db[:, start:stop, :],
+            normalization,
+            conditioning_scope,
+            device,
+            local_correction_db[:, start:stop, :],
+            normalized_log_frequency,
+        )
+        prediction[:, start:stop, :] = block.float().cpu().numpy()
+    return prediction
+
+
+@torch.no_grad()
 def evaluate_validation(
-    model: FilmSiren,
+    model: StageCModel,
     subjects: list[SubjectCondition],
     directions: np.ndarray,
     frequency_coordinate: torch.Tensor,
@@ -245,6 +348,7 @@ def evaluate_validation(
     device: torch.device,
     directions_per_block: int,
     conditioning_scope: str = "global",
+    normalized_log_frequency: torch.Tensor | None = None,
 ) -> dict[str, Any]:
     model.eval()
     accumulated = LossMetrics()
@@ -268,19 +372,38 @@ def evaluate_validation(
         )
         if strict is None:
             raise AssertionError("Strict ILD metadata was not loaded")
-        prediction_normalized = predict_subject(
-            model,
-            subject,
-            directions,
-            frequency_coordinate,
-            interpolation_indices,
-            device,
-            directions_per_block,
-            latent,
-            conditioning_scope,
-            global_mca if conditioning_scope == "global_plus_local_mca" else None,
-            normalization,
-        )
+        if isinstance(model, FilmSirenSpectralCNN):
+            if normalized_log_frequency is None:
+                raise ValueError("The spectral refiner requires normalized log-frequency")
+            global_correction = read_correction_block(subject, interpolation_indices)
+            prediction_normalized = predict_hybrid_subject(
+                model,
+                latent,
+                directions,
+                frequency_coordinate,
+                interpolation_indices,
+                global_mca,
+                global_correction,
+                normalized_log_frequency,
+                normalization,
+                conditioning_scope,
+                device,
+                directions_per_block,
+            )
+        else:
+            prediction_normalized = predict_subject(
+                model,
+                subject,
+                directions,
+                frequency_coordinate,
+                interpolation_indices,
+                device,
+                directions_per_block,
+                latent,
+                conditioning_scope,
+                global_mca if conditioning_scope == "global_plus_local_mca" else None,
+                normalization,
+            )
         prediction = tensor(prediction_normalized, device)
         target = tensor(global_target, device)
         _, metrics = calculate_stage_c_losses(
@@ -367,22 +490,25 @@ def learning_rate_for_cycle(
 
 
 def make_optimizer(
-    model: FilmSiren, configuration: Mapping[str, Any]
+    model: StageCModel, configuration: Mapping[str, Any]
 ) -> torch.optim.Optimizer:
     name = str(configuration["name"])
     kwargs = {
         "lr": float(configuration["learning_rate"]),
         "weight_decay": float(configuration["weight_decay"]),
     }
+    parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    if not parameters:
+        raise ValueError("The model has no trainable parameters")
     if name == "Adam":
-        return torch.optim.Adam(model.parameters(), **kwargs)
+        return torch.optim.Adam(parameters, **kwargs)
     if name == "AdamW":
-        return torch.optim.AdamW(model.parameters(), **kwargs)
+        return torch.optim.AdamW(parameters, **kwargs)
     raise ValueError(f"Unsupported optimizer {name!r}")
 
 
 def stage_c_checkpoint_payload(
-    model: FilmSiren,
+    model: StageCModel,
     optimizer: torch.optim.Optimizer,
     configuration: dict[str, Any],
     cycle: int,
@@ -390,7 +516,7 @@ def stage_c_checkpoint_payload(
     normalization: Normalization,
     normalization_path: Path,
 ) -> dict[str, Any]:
-    return {
+    payload = {
         "cycle": cycle,
         "model_state": model.state_dict(),
         "optimizer_state": optimizer.state_dict(),
@@ -398,7 +524,11 @@ def stage_c_checkpoint_payload(
         "condition_encoder_configuration": asdict(model.encoder_configuration),
         "experiment_configuration": configuration,
         "validation_metrics": metrics,
-        "training_stage": "film_siren_stage_c",
+        "training_stage": (
+            "film_siren_spectral_cnn_stage_d"
+            if isinstance(model, FilmSirenSpectralCNN)
+            else "film_siren_stage_c"
+        ),
         "selection_metric": "mean_stage_c_objective_total",
         "output_unit": "normalized_residual",
         "residual_db_conversion": {
@@ -408,6 +538,12 @@ def stage_c_checkpoint_payload(
             "normalization_sha256": file_sha256(normalization_path),
         },
     }
+    if isinstance(model, FilmSirenSpectralCNN):
+        payload["spectral_refiner_configuration"] = (
+            model.refiner_configuration_dict()
+        )
+        payload["film_siren_frozen"] = model.film_siren_frozen
+    return payload
 
 
 def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
@@ -459,6 +595,12 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         )
     ).to(device)
     frequency_hz = torch.from_numpy(frequency).to(device)
+    normalized_log_frequency = torch.from_numpy(
+        (
+            (np.log10(frequency) - normalization.log_frequency_mean)
+            / normalization.log_frequency_std
+        ).astype(np.float32)
+    ).to(device)
     erb_weights = torch.from_numpy(make_erb_weights(frequency)).to(device)
     log_erb_weights = torch.log(torch.clamp(erb_weights, min=1e-12)).view(
         1, 1, erb_weights.shape[0], erb_weights.shape[1]
@@ -478,10 +620,59 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
             f"coordinate_dimension={expected_coordinate_dimension}"
         )
 
-    model = FilmSiren(
+    film_siren = FilmSiren(
         FilmSirenConfig(**configuration["model"]),
         ConditionEncoderConfig(**configuration["condition_encoder"]),
-    ).to(device)
+    )
+    refiner_raw = configuration.get("spectral_refiner")
+    initial_film_checkpoint: dict[str, Any] | None = None
+    if refiner_raw is None:
+        model: StageCModel = film_siren.to(device)
+    else:
+        if conditioning_scope != "global_plus_local_mca":
+            raise ValueError(
+                "The spectral refiner requires conditioning_scope="
+                "'global_plus_local_mca'"
+            )
+        refiner_values = dict(refiner_raw)
+        if "dilation_schedule" in refiner_values:
+            refiner_values["dilation_schedule"] = tuple(
+                int(value) for value in refiner_values["dilation_schedule"]
+            )
+        checkpoint_path = (root / configuration["initial_film_checkpoint"]).resolve()
+        expected_checkpoint_sha256 = str(
+            configuration["initial_film_checkpoint_sha256"]
+        ).upper()
+        actual_checkpoint_sha256 = file_sha256(checkpoint_path).upper()
+        if actual_checkpoint_sha256 != expected_checkpoint_sha256:
+            raise ValueError("Initial FiLM-SIREN checkpoint SHA-256 does not match")
+        checkpoint = torch.load(
+            checkpoint_path,
+            map_location=device,
+            weights_only=False,
+        )
+        if checkpoint["film_siren_configuration"] != configuration["model"]:
+            raise ValueError("Initial checkpoint FiLM-SIREN configuration mismatch")
+        if (
+            checkpoint["condition_encoder_configuration"]
+            != configuration["condition_encoder"]
+        ):
+            raise ValueError("Initial checkpoint condition-encoder mismatch")
+        film_siren.load_state_dict(checkpoint["model_state"])
+        freeze_film_siren = bool(configuration.get("freeze_film_siren", True))
+        if not freeze_film_siren:
+            raise ValueError("Stage D1 is frozen-backbone CNN-only training")
+        model = FilmSirenSpectralCNN(
+            film_siren,
+            SpectralRefinerConfig(**refiner_values),
+            freeze_film_siren=True,
+        ).to(device)
+        initial_film_checkpoint = {
+            "path": str(checkpoint_path),
+            "sha256": actual_checkpoint_sha256,
+            "cycle": int(checkpoint["cycle"]),
+            "training_stage": str(checkpoint.get("training_stage", "unknown")),
+        }
     optimizer = make_optimizer(model, configuration["optimizer"])
     objective = loss_configuration(configuration["objective"])
     cycles = int(configuration["cycles"])
@@ -531,6 +722,25 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "conditioning_scope": conditioning_scope,
         "global_condition_input_enabled": True,
         "local_mca_input_enabled": conditioning_scope == "global_plus_local_mca",
+        "model_family": (
+            "FilmSirenSpectralCNN"
+            if isinstance(model, FilmSirenSpectralCNN)
+            else "FilmSiren"
+        ),
+        "film_siren_frozen": (
+            model.film_siren_frozen
+            if isinstance(model, FilmSirenSpectralCNN)
+            else False
+        ),
+        "initial_film_checkpoint": initial_film_checkpoint,
+        "trainable_parameter_count": sum(
+            parameter.numel()
+            for parameter in model.parameters()
+            if parameter.requires_grad
+        ),
+        "total_parameter_count": sum(
+            parameter.numel() for parameter in model.parameters()
+        ),
         "test_subjects_read": 0,
         "device": str(device),
     }
@@ -586,6 +796,7 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                 objective,
                 device,
                 conditioning_scope,
+                normalized_log_frequency,
             )
             if not bool(torch.isfinite(loss).item()):
                 raise FloatingPointError(f"Non-finite loss at cycle {cycle}")
@@ -624,6 +835,7 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
                 device,
                 int(configuration["validation_directions_per_block"]),
                 conditioning_scope,
+                normalized_log_frequency,
             )
             validation_metrics = result["objective_metrics"]
             record.update(
@@ -729,6 +941,11 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         ),
         "test_subjects_read": 0,
         "conditioning_scope": conditioning_scope,
+        "model_family": provenance["model_family"],
+        "film_siren_frozen": provenance["film_siren_frozen"],
+        "initial_film_checkpoint": initial_film_checkpoint,
+        "trainable_parameter_count": provenance["trainable_parameter_count"],
+        "total_parameter_count": provenance["total_parameter_count"],
         "condition_inputs_read": len(train_subjects) + len(validation_subjects),
         "local_mca_inputs_read": (
             cycles * len(train_subjects)
@@ -749,8 +966,11 @@ def main() -> None:
     root = project_root()
     config_path = arguments.config.resolve()
     configuration = json.loads(config_path.read_text(encoding="utf-8"))
-    if configuration.get("experiment_type") != "joint_film_siren_stage_c":
-        raise ValueError("Configuration is not a Stage C FiLM-SIREN run")
+    if configuration.get("experiment_type") not in {
+        "joint_film_siren_stage_c",
+        "film_siren_spectral_cnn_stage_d",
+    }:
+        raise ValueError("Configuration is not a Stage C/Stage D FiLM-SIREN run")
     run(configuration, root, config_path)
 
 

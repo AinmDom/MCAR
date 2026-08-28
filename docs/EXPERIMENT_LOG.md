@@ -1,5 +1,32 @@
 # 项目实验日志
 
+## 2026-08-28：Stage D FiLM-SIREN + zero-init MCAR spectral CNN 预注册并完成冒烟
+
+- 研究问题：沿用 corrected C4 的 train+validation 口径，以正式 E130 FiLM-SIREN
+  为连续个体化基线，增加 MCAR 的双耳局部频谱 CNN，尝试在保留 Full/Contra ERB
+  优势的同时修复 Contra HF 与 horizontal ILD。该路线是新开发候选，不改写已冻结
+  的 FiLM/MCAR 结论，也不授予任何新 test 访问。
+- D1 架构：载入 seed `20260821` 的权威 cycle130 `last.pt`（SHA-256
+  `E37676D843D608B4DDD7B311EBA8B28A933183A03E7BAA49E1CF20E35F8B4129`）并冻结
+  全部 FiLM-SIREN/Q26 encoder 参数；接入原 MCAR `BinauralSpectralCNN`（width48、
+  kernel7、dilations 1/2/4/8、direction width64）。七通道固定为左右耳各自的
+  normalized MCA/correction/FiLM base residual 加 normalized log-frequency；双耳
+  输出层零初始化，最终为 `base + delta`。
+- D1 预算：单 seed `20260821`、40 cycles、每cycle 262 train subjects；AdamW
+  `lr=1e-4/wd=1e-4`，2-cycle warmup + cosine horizon40；每5 cycles在44 validation
+  被试记录共同 D1/D2+notch objective并按最小值选择best。FiLM backbone禁止解冻；
+  D1只作one-seed开发筛选，若通过再补seeds 20260822/23并冻结共同正式周期。
+- 实现与验证：新增混合模型、Stage-C训练入口兼容分支、validation-only预测适配器和
+  冒烟脚本。零初始化逐点等价性以`rtol=0, atol=0`通过；真实train被试P0002、2个
+  global+2个horizontal方向、完整463频点的一步前反向冒烟通过，loss
+  `0.5122836232185364`、spectral output gradient norm `3.927502393722534`，
+  FiLM主体无梯度。相关pytest `57 passed`，compileall和`git diff --check`通过；仅有
+  pytest cache目录权限warning。
+- 边界与证据：`test_subjects_read=0`；协议见 `experiments/film_siren/
+  STAGE_D_FILM_SIREN_SPECTRAL_CNN_PROTOCOL.md`，配置见 `configs/experiments/
+  sonicom_film_siren_spectral_cnn_d1_seed20260821_e40.json`（SHA-256
+  `E77B5A34A08D07DEF4B3B436FB5A05282DBFC54DEACE256692A2E711C55F4155`）。
+
 ## 2026-08-28：FiLM-SIREN D1/D2+notch 正式 E130 三成员完成，四方法 validation 严格比较
 
 - 正式训练：三个 seed `20260821/20260822/20260823` 从 scratch 固定130 cycles

@@ -35,6 +35,11 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("metric_long_csv", type=Path)
     parser.add_argument("output_json", type=Path)
+    parser.add_argument("--candidate-method", default="FILM")
+    parser.add_argument(
+        "--candidate-label",
+        default="FILM D1/D2+notch E130 ensemble",
+    )
     return parser.parse_args()
 
 
@@ -53,6 +58,8 @@ def paired_percentile_interval(
 
 def main() -> None:
     arguments = parse_arguments()
+    candidate_method = arguments.candidate_method
+    methods = (candidate_method, *BASELINES)
     with arguments.metric_long_csv.open(
         "r", encoding="utf-8-sig", newline=""
     ) as handle:
@@ -69,7 +76,7 @@ def main() -> None:
         if key not in values:
             values[key] = {}
         values[key][row["SubjectLabel"]] = float(row["Value_dB"])
-    for method in METHODS:
+    for method in methods:
         for metric in METRICS:
             if (method, metric) not in values:
                 raise ValueError(f"Missing rows for {method}/{metric}")
@@ -82,12 +89,12 @@ def main() -> None:
     for metric in METRICS:
         aggregate[metric] = {
             method: float(np.mean([values[(method, metric)][label] for label in subject_labels]))
-            for method in METHODS
+            for method in methods
         }
     for metric in METRICS:
         for baseline in BASELINES:
             candidate_values = np.asarray(
-                [values[("FILM", metric)][label] for label in subject_labels],
+                [values[(candidate_method, metric)][label] for label in subject_labels],
                 dtype=np.float64,
             )
             baseline_values = np.asarray(
@@ -100,16 +107,16 @@ def main() -> None:
                 raise FloatingPointError(f"Non-finite values in {metric}/{baseline}")
             differences = candidate_values - baseline_values
             lower, upper = paired_percentile_interval(differences, rng)
-            pairwise[f"{metric}__FILM_minus_{baseline}"] = {
+            pairwise[f"{metric}__{candidate_method}_minus_{baseline}"] = {
                 "definition": (
-                    "FILM D1/D2+notch E130 ensemble minus "
+                    f"{arguments.candidate_label} minus "
                     f"{baseline}; negative is better"
                 ),
-                "film_mean_db": float(candidate_values.mean()),
+                "candidate_mean_db": float(candidate_values.mean()),
                 f"{baseline.lower()}_mean_db": float(baseline_values.mean()),
                 "paired_mean_difference_db": float(differences.mean()),
                 "paired_percentile_95_ci_db": [lower, upper],
-                "film_wins": int(np.sum(candidate_values < baseline_values)),
+                "candidate_wins": int(np.sum(candidate_values < baseline_values)),
                 "bootstrap_replicates": BOOTSTRAP_REPLICATES,
                 "seed": BOOTSTRAP_SEED,
             }
@@ -120,7 +127,9 @@ def main() -> None:
             "Validation-only four-method comparison; no test subjects read"
         ),
         "subject_count": EXPECTED_SUBJECTS,
-        "methods": list(METHODS),
+        "methods": list(methods),
+        "candidate_method": candidate_method,
+        "candidate_label": arguments.candidate_label,
         "metrics": list(METRICS),
         "bootstrap": {
             "paired_resampling_unit": "subject row",
@@ -129,7 +138,7 @@ def main() -> None:
             "interval": "two-sided percentile 95% CI",
         },
         "aggregate": aggregate,
-        "pairwise_film_vs_baseline": pairwise,
+        "pairwise_candidate_vs_baseline": pairwise,
         "test_subject_count_read": 0,
     }
     arguments.output_json.parent.mkdir(parents=True, exist_ok=True)

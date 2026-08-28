@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "decision": "FREEZE_FORMAL_E25",
+  "seeds": [20260821, 20260822, 20260823],
+  "best_cycles": [25, 25, 20],
+  "best_validation_objective_total": [
+    0.7088460515845906,
+    0.7071173556826331,
+    0.7063871716911142
+  ],
+  "mean_best_validation_objective_total": 0.7074501929861126,
+  "sample_std_best_validation_objective_total": 0.0012627779240928431,
+  "endpoint_limited_seed_count": 0,
+  "formal_cycle_rule": "median of the three best cycles on the existing five-cycle validation grid",
+  "formal_cycle": 25,
+  "formal_scheduler_horizon_cycles": 40,
+  "formal_checkpoint_policy": "fixed_stop_cycle_last",
+  "integrity": {
+    "history_rows_per_run": 40,
+    "validation_ledger_rows_per_run": 8,
+    "validation_ledger_cycles": [5, 10, 15, 20, 25, 30, 35, 40],
+    "checkpoint_tensor_count_per_file": 202,
+    "all_checkpoint_tensors_finite": true,
+    "all_reported_hashes_verified": true,
+    "all_stderr_bytes": 0
+  },
+  "test_subjects_read": 0,
+  "next_action": "Run three from-scratch fixed-cycle E25 members and ensemble only their cycle-25 last.pt checkpoints."
+}

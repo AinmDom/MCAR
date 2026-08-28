@@ -1,5 +1,20 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E matched-seed E40完成，冻结formal E25
+
+- seeds `20260821/22/23`的best cycles=`25/25/20`，best validation objective=
+  `0.7088460516/0.7071173557/0.7063871717`，均值±sample std=
+  `0.7074501930±0.0012627779`。0/3在cycle40达到best，因此不是endpoint-limited；
+  按预注册中位数规则冻结`E_final=25`。
+- 三run均40 cycles/10480 steps、history各40行、ledger各8项`5:5:40`；best/last
+  checkpoint实算哈希与report匹配，每份202 tensors全部finite，stderr均0；
+  `test_subjects_read=0`。E200保持未启动。
+- 已冻结三份from-scratch fixed-E25 formal配置：gate重新零初始化，same-seed FiLM
+  E130与MCAR v3.5.1组件不变；scheduler horizon保留40以复现搜索run前25 cycles的
+  学习率序列；权威checkpoint固定为cycle25 `last.pt`。完成后仅允许1/3等权ensemble。
+  证据：`results/sonicom_bounded_mcar_film_correction_matched_e40/selection.json`；
+  `experiments/film_siren/STAGE_E_BOUNDED_CORRECTION_FORMAL_E25_FREEZE.md`。
+
 ## 2026-08-29：Stage E D1严格validation通过，推进matched seeds E40
 
 - best cycle25在44 validation subjects完成全`[2,793,463]` residual预测并通过

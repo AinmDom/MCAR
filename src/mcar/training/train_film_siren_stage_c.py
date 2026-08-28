@@ -1084,8 +1084,9 @@ def main() -> None:
     if configuration.get("experiment_type") not in {
         "joint_film_siren_stage_c",
         "film_siren_spectral_cnn_stage_d",
+        "bounded_mcar_film_correction_stage_e",
     }:
-        raise ValueError("Configuration is not a Stage C/Stage D FiLM-SIREN run")
+        raise ValueError("Configuration is not a supported FiLM-SIREN run")
     run(configuration, root, config_path)
 
 

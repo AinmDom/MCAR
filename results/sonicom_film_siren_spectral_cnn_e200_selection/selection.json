@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "decision": "FREEZE_E190",
+  "best_cycles": [190, 190, 170],
+  "best_objective_totals": [
+    0.7246045510877263,
+    0.7207740897482092,
+    0.7215893431143328
+  ],
+  "endpoint_cycle": 200,
+  "endpoint_selected_count": 0,
+  "formal_cycle": 190,
+  "formal_cycle_rule": "median of three best cycles",
+  "cycle_190_mean_metrics": {
+    "objective_total": 0.722358788956295,
+    "residual_mae_db": 2.47966014255177,
+    "erb_mae_db": 0.962147936224937,
+    "contralateral_high_frequency_mae_db": 3.54623398275086,
+    "strict_ild_mae_db": 0.648820926971508
+  },
+  "test_subjects_read": 0
+}

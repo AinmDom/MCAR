@@ -1,5 +1,29 @@
 # 项目实验日志
 
+## 2026-08-28：Stage D E200 三seed完成，冻结正式周期 E190
+
+- E200 best-cycle搜索：seeds `20260821/20260822/20260823` 均从scratch完成200
+  cycles/52400 steps，best cycles=`190/190/170`，best增强objective=
+  `0.7246045510877263/0.7207740897482092/0.7215893431143328`；无seed在cycle200
+  取best，满足预注册的非末点条件，故冻结`E_final=median=190`。
+- 共同cycle190口径：三seed objective均值`0.722358788956295±0.0019989651472323`；
+  residual MAE=`2.47966014255177±0.00318725296403402 dB`、ERB MAE=
+  `0.962147936224937±0.00223736177458845 dB`、Contra HF=
+  `3.54623398275086±0.00416603582010714 dB`、strict ILD=
+  `0.648820926971508±0.00825336034189354 dB`。这些仅用于冻结预算，不是最终横向结论。
+- 完整性：三run均`completed/KEEP`；history各200行且所有numeric finite，ledger各40项
+  `5:5:200`；best/last checkpoint实算SHA-256均与report匹配，checkpoint cycle字段
+  分别为best `190/190/170`与last `200/200/200`，每份102 tensors全部finite；stderr
+  均0 bytes；运行commit `ce14764` clean；每run `test_subjects_read=0`。
+- 正式冻结：三成员仍以same-seed corrected E130 FiLM parent为冻结base，zero-init CNN
+  从scratch训练；固定190 cycles，warmup-cosine horizon保持200、warmup2；
+  `formal_fixed_cycle=true`、唯一权威checkpoint为cycle190 `last.pt`。完成后以1/3等权
+  residual ensemble在44 validation上与corrected FiLM ensemble和MCAR v3.5.1比较；
+  不授权test。
+- 证据：`results/sonicom_film_siren_spectral_cnn_e200_selection/selection.json`；
+  `experiments/film_siren/STAGE_D_FILM_SIREN_SPECTRAL_CNN_FORMAL_E190_FREEZE.md`；
+  E200训练目录`artifacts/training/sonicom_film_siren_spectral_cnn_d2_seed*_e200/`。
+
 ## 2026-08-28：Stage D 三 seed E40 完成，按用户决定直接执行 E200 best-cycle 搜索
 
 - 三个matched seeds `20260821/20260822/20260823` 均完成40 cycles/10480 steps，

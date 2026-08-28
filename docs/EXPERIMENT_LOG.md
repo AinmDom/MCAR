@@ -15,7 +15,11 @@
   禁止test，任何推理/训练记录必须为`test_subjects_read=0`。
 - 真实checkpoint CUDA smoke已通过：载入FiLM E130与MCAR两个成员后，cycle-zero
   identity error=`0.0`、maximum gate=`0.0`、仅`514`个参数可训练、反向梯度finite；
-  相关pytest `21 passed`。证据：`experiments/film_siren/
+  相关pytest最终为`22 passed`（含完整Stage-E prediction block回归）。首次启动因
+  Stage-E类型未加入入口白名单而在数据加载前退出；修复后第二次启动完成runtime
+  provenance、但因适配层漏取grid维度在首个loss前退出。两次均为0 optimizer step、
+  未产生checkpoint，并保留stderr与失败配置目录；对应缺口已各加回归覆盖。证据：
+  `experiments/film_siren/
   STAGE_E_BOUNDED_MCAR_FILM_CORRECTION_PROTOCOL.md`；`configs/experiments/
   sonicom_bounded_mcar_film_correction_d1_seed20260821_e40.json`。
 

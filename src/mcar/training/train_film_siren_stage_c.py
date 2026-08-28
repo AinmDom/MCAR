@@ -207,6 +207,7 @@ def prediction_block(
             )
             .to(device=device, dtype=query.dtype)
         )
+        _, direction_count, frequency_count = normalized_mca.shape
         if isinstance(model, BoundedMcarFilmCorrection):
             expanded_xyz = xyz[:, None, :].expand(-1, frequency_count, -1)
             expanded_frequency = normalized_log_frequency[None, :, None].expand(

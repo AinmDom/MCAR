@@ -1,5 +1,32 @@
 # 项目实验日志
 
+## 2026-08-28：Stage D E190 ensemble 严格 validation 完成，升为论文主候选
+
+- 固定identity `A3CFAC9C...BDCCFE`的三成员cycle190 ensemble完成44/44
+  validation预测，每被试shape `[2,793,463]`且finite，
+  `test_subject_count_read=0`。随后按结果前冻结的四方法、四指标口径和
+  10000次paired bootstrap（seed `20260828`）完成严格评价。
+- 指标均值（HYBRID / FILMENS / MCAR，dB，越低越好）：Full ERB
+  **`0.8044203111 / 0.8275426681 / 0.8308081769`**；Contra25 ERB
+  **`1.2145930843 / 1.2307760839 / 1.2889532413`**；Contra HF
+  **`3.5019939596 / 3.7027516824 / 3.5380866071`**；horizontal ILD
+  **`0.6298114075 / 0.6305984391 / 0.5811462483`**。
+- HYBRID相对FILMENS：Full/Contra25/HF差值为`-0.0231223570 /
+  -0.0161829996 / -0.2007577228 dB`，95% CI均完全低于0，wins=`44/43/44`；
+  ILD差`-0.0007870316 dB`，CI `[-0.0029768697, 0.0014431890]`，统计持平。
+- HYBRID相对MCAR：Full/Contra25/HF差值为`-0.0263878658 /
+  -0.0743601571 / -0.0360926475 dB`，95% CI分别`[-0.0363633634,-0.0155767976] /
+  [-0.0946435229,-0.0542189783] / [-0.0683660626,-0.0041390024]`，三项均显著
+  改善；ILD差`+0.0486651592 dB`，CI `[0.0115071882,0.0868538356]`，MCAR显著更好。
+- 决策：`PROMOTE_PAPER_PRIMARY_CANDIDATE`。该ensemble在三个主要spectral指标上同时
+  显著超过FILMENS与MCAR，并与FILMENS的ILD持平；但不宣称全指标支配MCAR，
+  论文应明确报告ILD trade-off。截稿前建议以此为主结果，FILMENS和MCAR
+  分别作为消融/强基线，不再用本次validation结果调整权重。
+- 完整性：`metric_long.csv` 704行，`quality_checks.csv` 44行，aggregate
+  16行，bootstrap 12行；44 unique subjects、4 methods、4 metrics，全部numeric
+  finite。证据：`results/sonicom_film_siren_spectral_cnn_final_e190_validation/`；
+  `artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/`。
+
 ## 2026-08-28：Stage D 正式 E190 三成员完成，冻结 validation ensemble
 
 - 三个正式 run（seeds `20260821/20260822/20260823`）均从 scratch 完成固定

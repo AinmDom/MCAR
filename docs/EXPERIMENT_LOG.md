@@ -1,5 +1,20 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E bounded correction E40完成，E200无预算依据
+
+- seed `20260821` 完成40 cycles / 10480 optimizer steps，best cycle=`25`，
+  best validation objective total=`0.7088460515845906`，预注册决策=`KEEP`。
+  cycle `20/25/30/35/40`分别为`0.7089483006434008 / 0.7088460515845906 /
+  0.7088552428917452 / 0.7088877585801211 / 0.7088913091204383`；25之后没有
+  再改善，因此E40足够，禁止无依据扩展到E200。
+- 完整性：history 40行、ledger 8项且cycles=`5:5:40`、best/last checkpoint
+  SHA-256分别`0AE57906...8D1290 / DD0D9F1F...BDCA3`并与report一致；两份checkpoint
+  各202 tensors全部finite，活动stderr 0 bytes，`test_subjects_read=0`。
+- 结果前冻结下一步：用best cycle25生成44 validation完整预测，并比较bounded
+  candidate、Hybrid E190、corrected FiLM E130 ensemble、MCAR v3.5.1的既有四项严格
+  指标与10000次paired bootstrap。只有通过结构推进门槛才增加matched seeds。
+  证据：`results/sonicom_bounded_mcar_film_correction_d1_e40/selection.json`。
+
 ## 2026-08-29：Stage E 冻结 MCAR + 有界 FiLM-SIREN correction 预注册
 
 - 预注册第二条融合路线：MCAR v3.5.1的两个组成模型与corrected FiLM-SIREN E130

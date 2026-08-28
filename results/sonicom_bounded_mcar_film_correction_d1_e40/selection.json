@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "decision": "KEEP_E40_NO_E200_STRICT_VALIDATION_NEXT",
+  "run_name": "sonicom_bounded_mcar_film_correction_d1_seed20260821_e40",
+  "seed": 20260821,
+  "cycles_completed": 40,
+  "optimizer_steps_completed": 10480,
+  "best_cycle": 25,
+  "best_validation_objective_total": 0.7088460515845906,
+  "validation_objective_total": {
+    "cycle_20": 0.7089483006434008,
+    "cycle_25": 0.7088460515845906,
+    "cycle_30": 0.7088552428917452,
+    "cycle_35": 0.7088877585801211,
+    "cycle_40": 0.7088913091204383
+  },
+  "budget_assessment": "E40 is sufficient because the best validation point is cycle 25 and cycles 30 through 40 do not improve it. E200 is not justified.",
+  "authoritative_checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_d1_seed20260821_e40/best.pt",
+  "authoritative_checkpoint_sha256": "0AE5790671F3C45583B46B2F3146C1C7D2EA7208F314B45F4940AD91D58D1290",
+  "last_checkpoint_sha256": "DD0D9F1F1984D1AEE357E81B0005525D125588841B61C4AC79425074CB6BDCA3",
+  "history_row_count": 40,
+  "validation_ledger_count": 8,
+  "checkpoint_tensor_count": 202,
+  "checkpoint_tensors_all_finite": true,
+  "stderr_bytes": 0,
+  "test_subjects_read": 0,
+  "next_action": "Run frozen 44-subject strict validation against Hybrid E190, FiLM E130 ensemble, and MCAR v3.5.1 before deciding whether to add matched seeds."
+}

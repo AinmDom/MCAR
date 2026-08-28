@@ -47,6 +47,13 @@ larger than `0.02 dB`; final paper promotion still requires matched seeds and a
 fixed-cycle ensemble.  Dominance over both MCAR and Hybrid is reported only if
 all four corresponding mean differences are negative.
 
+The frozen prediction roots for that comparison are the Stage-E best-cycle-25
+validation export, `sonicom_q26_validation_v351_previous30_b70`,
+`sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation`, and
+`sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation`.  The existing
+strict evaluator is parameterized before Stage-E predictions are generated; its
+metric definitions, reconstruction, bootstrap count, and seed remain unchanged.
+
 ## Data boundary
 
 Only the 262 train and 44 validation rows may be resolved.  Test paths must not

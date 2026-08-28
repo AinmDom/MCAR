@@ -1,5 +1,6 @@
 function evaluate_film_siren_spectral_cnn_d1_validation( ...
-        subjectLimit, outputName, hybridPredictionName, hybridLabel)
+        subjectLimit, outputName, hybridPredictionName, hybridLabel, ...
+        comparisonPredictionName, comparisonLabel)
 %EVALUATE_FILM_SIREN_SPECTRAL_CNN_D1_VALIDATION Strict residual-method screen.
 % Compares D1 hybrid, its single-member parent, corrected FiLM ensemble, and
 % MCAR v3.5.1 on validation only. Differences are HYBRID minus baseline.
@@ -15,10 +16,19 @@ end
 if nargin < 4 || isempty(hybridLabel)
     hybridLabel = 'FiLM-SIREN + spectral CNN D1 E40';
 end
+if nargin < 5 || isempty(comparisonPredictionName)
+    comparisonPredictionName = ...
+        'sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130_validation';
+end
+if nargin < 6 || isempty(comparisonLabel)
+    comparisonLabel = 'FiLM-SIREN seed 20260821 E130';
+end
 validateattributes(subjectLimit, {'numeric'}, {'scalar', 'positive'});
 validateattributes(outputName, {'char', 'string'}, {'scalartext'});
 validateattributes(hybridPredictionName, {'char', 'string'}, {'scalartext'});
 validateattributes(hybridLabel, {'char', 'string'}, {'scalartext'});
+validateattributes(comparisonPredictionName, {'char', 'string'}, {'scalartext'});
+validateattributes(comparisonLabel, {'char', 'string'}, {'scalartext'});
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -29,11 +39,11 @@ splitFile = fullfile(projectRoot, 'configs', 'data', 'sonicom_subject_split_v1.c
 supdeqDir = fullfile(projectRoot, 'external', 'SUpDEq');
 methodIds = ["HYBRID", "PARENT", "FILMENS", "MCAR"];
 methodLabels = [string(hybridLabel), ...
-    "FiLM-SIREN seed 20260821 E130", ...
+    string(comparisonLabel), ...
     "FiLM-SIREN corrected E130 ensemble", "MCAR v3.5.1"];
 predictionNames = [ ...
     string(hybridPredictionName), ...
-    "sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130_validation", ...
+    string(comparisonPredictionName), ...
     "sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation", ...
     "sonicom_q26_validation_v351_previous30_b70"];
 metricIds = ["FullSphereERB", "Contralateral25ERB", ...

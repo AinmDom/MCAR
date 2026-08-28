@@ -19,7 +19,18 @@ from mcar.models.film_siren_spectral_cnn import (
     FilmSirenSpectralCNN,
     SpectralRefinerConfig,
 )
+from mcar.models.bounded_mcar_film_correction import (
+    BoundedCorrectionConfig,
+    BoundedMcarFilmCorrection,
+)
+from mcar.models.residual_mlp_cnn import ResidualMLPCNN
 from mcar.models.siren import Siren, SirenConfig
+from mcar.evaluation.evaluate_mlp_cnn_v3 import (
+    build_point_features,
+    infer_global_context_arguments,
+    infer_model_architecture,
+)
+from mcar.paths import project_root
 from mcar.q26_condition import Q26MagnitudeNormalization, build_q26_condition
 from mcar.training.train_siren import frequency_coordinates
 from mcar.training.train_film_siren import conditioned_coordinate_block
@@ -372,6 +383,147 @@ class FilmSirenSpectralCNNPredictor:
                 normalized_correction,
                 normalized_log_frequency,
                 xyz,
+            )
+            prediction[:, start:stop, :] = (
+                normalized.float() * self.target_std + self.target_mean
+            ).cpu().numpy()
+        return prediction
+
+
+class BoundedMcarFilmCorrectionPredictor:
+    """Adapter for the frozen-MCAR bounded FiLM correction checkpoint."""
+
+    def __init__(
+        self,
+        checkpoint: Path,
+        split_csv: Path,
+        q26_csv: Path,
+        q26_normalization: Path,
+        *,
+        device: torch.device | None = None,
+        directions_per_block: int = 64,
+        allow_test: bool = False,
+    ) -> None:
+        self.device = device or torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )
+        payload = torch.load(checkpoint, map_location=self.device, weights_only=False)
+        if payload.get("training_stage") != "bounded_mcar_film_correction_stage_e":
+            raise ValueError("Checkpoint is not a Stage-E bounded correction model")
+        experiment = payload["experiment_configuration"]
+        film = FilmSiren(
+            FilmSirenConfig(**payload["film_siren_configuration"]),
+            ConditionEncoderConfig(**payload["condition_encoder_configuration"]),
+        )
+        correction_values = dict(experiment["bounded_mcar_film_correction"])
+        components = correction_values.pop("components")
+        mcar_models: list[ResidualMLPCNN] = []
+        root = project_root()
+        for component in components:
+            component_payload = torch.load(
+                root / component["checkpoint"],
+                map_location=self.device,
+                weights_only=False,
+            )
+            state = component_payload["model_state"]
+            width, blocks, channels = infer_model_architecture(state)
+            mcar = ResidualMLPCNN(
+                mlp_width=width,
+                mlp_block_count=blocks,
+                cnn_channels=channels,
+                **infer_global_context_arguments(component_payload),
+            )
+            mcar.load_state_dict(state)
+            mcar_models.append(mcar)
+        self.model = BoundedMcarFilmCorrection(
+            film,
+            mcar_models[0],
+            mcar_models[1],
+            BoundedCorrectionConfig(**correction_values),
+        ).to(self.device)
+        self.model.load_state_dict(payload["model_state"])
+        self.model.eval()
+        conversion = payload["residual_db_conversion"]
+        self.target_mean = float(conversion["target_mean"])
+        self.target_std = float(conversion["target_std"])
+        self.normalization = Normalization.from_json(Path(conversion["normalization_path"]))
+        mapping = experiment["frequency_mapping"]
+        self.frequency_mode = str(mapping["mode"])
+        self.frequency_minimum_hz = float(mapping["frequency_minimum_hz"])
+        self.frequency_maximum_hz = float(mapping["frequency_maximum_hz"])
+        self.conditioning_scope = str(experiment["conditioning_scope"])
+        if self.conditioning_scope != "global_plus_local_mca":
+            raise ValueError("Stage-E predictor requires global_plus_local_mca")
+        self.split_csv = split_csv
+        self.q26_csv = q26_csv
+        self.condition_normalization = Q26MagnitudeNormalization.from_json(
+            q26_normalization
+        )
+        self.directions_per_block = int(directions_per_block)
+        if self.directions_per_block < 1:
+            raise ValueError("directions_per_block must be positive")
+        self.allow_test = bool(allow_test)
+
+    @torch.no_grad()
+    def predict_residual_db(self, source_h5: Path) -> np.ndarray:
+        with h5py.File(source_h5, "r") as handle:
+            subject_id = int(np.asarray(handle.attrs["subject_id"]).item())
+            local_mca_db = np.asarray(handle["mca_logmag_db"][:], dtype=np.float32)
+            correction_db = np.asarray(
+                handle["correction_logmag_db"][:], dtype=np.float32
+            )
+        dataset_root = source_h5.resolve().parents[2]
+        condition = build_q26_condition(
+            dataset_root,
+            self.split_csv,
+            subject_id,
+            self.q26_csv,
+            allow_test=self.allow_test,
+        )
+        normalized_condition = self.condition_normalization.normalize(
+            condition.binaural_magnitude_db
+        )
+        latent = self.model.encode_condition(
+            torch.from_numpy(normalized_condition).unsqueeze(0).to(self.device),
+            torch.from_numpy(condition.xyz).unsqueeze(0).to(self.device),
+            torch.from_numpy(condition.mask).unsqueeze(0).to(self.device),
+        )
+        directions, frequency = _read_query_grid(source_h5)
+        expected = (2, directions.shape[0], frequency.size)
+        if local_mca_db.shape != expected or correction_db.shape != expected:
+            raise ValueError("Stage-E local spectral inputs have incompatible shape")
+        frequency_coordinate = torch.from_numpy(
+            frequency_coordinates(
+                frequency,
+                self.frequency_mode,
+                self.frequency_minimum_hz,
+                self.frequency_maximum_hz,
+            )
+        ).to(self.device)
+        prediction = np.empty(expected, dtype=np.float32)
+        for start in range(0, directions.shape[0], self.directions_per_block):
+            stop = min(directions.shape[0], start + self.directions_per_block)
+            xyz = torch.from_numpy(directions[start:stop, 2:5]).to(self.device)
+            query = conditioned_coordinate_block(
+                xyz,
+                frequency_coordinate,
+                self.conditioning_scope,
+                local_mca_db[:, start:stop, :],
+                self.normalization,
+            )
+            point_features = torch.from_numpy(
+                build_point_features(
+                    local_mca_db[:, start:stop, :],
+                    correction_db[:, start:stop, :],
+                    directions[start:stop, :],
+                    frequency,
+                    self.normalization,
+                )
+            ).to(self.device)
+            normalized, _, _, _ = self.model.forward_grid(
+                query,
+                latent,
+                point_features,
             )
             prediction[:, start:stop, :] = (
                 normalized.float() * self.target_std + self.target_mean

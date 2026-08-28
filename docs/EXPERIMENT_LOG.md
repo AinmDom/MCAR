@@ -1,5 +1,24 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E 冻结 MCAR + 有界 FiLM-SIREN correction 预注册
+
+- 预注册第二条融合路线：MCAR v3.5.1的两个组成模型与corrected FiLM-SIREN E130
+  全部冻结，仅训练一个由FiLM最终隐特征驱动的逐query双耳门控头。公式为
+  `r = r_mcar + 0.5*tanh(g_theta)*(r_film-r_mcar)`，其中
+  `r_mcar=0.3*previous_joint+0.7*v351b`。门控输出层权重/偏置严格零初始化，
+  因而优化前逐点精确等于MCAR；signed mixing fraction严格限制在`[-0.5,0.5]`。
+- 首轮固定为seed `20260821`、E40 structure screen；AdamW `lr=1e-3, wd=0`、
+  2-cycle warmup+cosine，沿用D1/D2+notch完整objective、262 train/44 validation、
+  每5 cycles完整validation。若best cycle=40则标记`RETEST`，不得直接晋升。
+- 结果前冻结的结构推进门槛：严格validation相对MCAR至少2/4指标改善，且任何均值
+  退化不超过`0.02 dB`；是否同时支配MCAR与Hybrid仅在四项差值全部为负时报告。
+  禁止test，任何推理/训练记录必须为`test_subjects_read=0`。
+- 真实checkpoint CUDA smoke已通过：载入FiLM E130与MCAR两个成员后，cycle-zero
+  identity error=`0.0`、maximum gate=`0.0`、仅`514`个参数可训练、反向梯度finite；
+  相关pytest `21 passed`。证据：`experiments/film_siren/
+  STAGE_E_BOUNDED_MCAR_FILM_CORRECTION_PROTOCOL.md`；`configs/experiments/
+  sonicom_bounded_mcar_film_correction_d1_seed20260821_e40.json`。
+
 ## 2026-08-28：Hybrid E190 vs MCAR/RANF/FSP-AE 严格 validation 完成
 
 - 在结果前冻结commit `79fefd8`后，对44个validation subjects重新运行同一

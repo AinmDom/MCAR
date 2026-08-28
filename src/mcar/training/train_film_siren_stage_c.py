@@ -18,9 +18,18 @@ import torch
 from mcar.data import Normalization
 from mcar.evaluation.residual_metrics import solid_angle_weighted_residual_metrics
 from mcar.models.film_siren import ConditionEncoderConfig, FilmSiren, FilmSirenConfig
+from mcar.models.bounded_mcar_film_correction import (
+    BoundedCorrectionConfig,
+    BoundedMcarFilmCorrection,
+)
 from mcar.models.film_siren_spectral_cnn import (
     FilmSirenSpectralCNN,
     SpectralRefinerConfig,
+)
+from mcar.models.residual_mlp_cnn import ResidualMLPCNN
+from mcar.evaluation.evaluate_mlp_cnn_v3 import (
+    infer_global_context_arguments,
+    infer_model_architecture,
 )
 from mcar.paths import project_root
 from mcar.q26_condition import Q26MagnitudeNormalization
@@ -52,7 +61,15 @@ from mcar.training.train_mlp_v2 import (
 from mcar.training.train_siren import frequency_coordinates
 
 
-StageCModel = Union[FilmSiren, FilmSirenSpectralCNN]
+StageCModel = Union[
+    FilmSiren,
+    FilmSirenSpectralCNN,
+    BoundedMcarFilmCorrection,
+]
+
+
+def requires_spectral_inputs(model: StageCModel) -> bool:
+    return isinstance(model, (FilmSirenSpectralCNN, BoundedMcarFilmCorrection))
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -172,7 +189,7 @@ def prediction_block(
         local_mca_db,
         normalization,
     )
-    if isinstance(model, FilmSirenSpectralCNN):
+    if requires_spectral_inputs(model):
         if local_mca_db is None or local_correction_db is None:
             raise ValueError("The spectral refiner requires local MCA and correction")
         if normalized_log_frequency is None:
@@ -190,14 +207,46 @@ def prediction_block(
             )
             .to(device=device, dtype=query.dtype)
         )
-        prediction, _, _ = model.forward_grid(
-            query,
-            latent,
-            normalized_mca,
-            normalized_correction,
-            normalized_log_frequency,
-            xyz,
-        )
+        if isinstance(model, BoundedMcarFilmCorrection):
+            expanded_xyz = xyz[:, None, :].expand(-1, frequency_count, -1)
+            expanded_frequency = normalized_log_frequency[None, :, None].expand(
+                direction_count, -1, -1
+            )
+            ear_blocks = []
+            for ear_index in range(2):
+                ear_flag = torch.full(
+                    (direction_count, frequency_count, 1),
+                    -1.0 if ear_index == 0 else 1.0,
+                    device=device,
+                    dtype=query.dtype,
+                )
+                ear_blocks.append(
+                    torch.cat(
+                        (
+                            normalized_mca[ear_index, :, :, None],
+                            normalized_correction[ear_index, :, :, None],
+                            expanded_xyz,
+                            expanded_frequency,
+                            ear_flag,
+                        ),
+                        dim=-1,
+                    )
+                )
+            point_features = torch.stack(ear_blocks, dim=1)
+            prediction, _, _, _ = model.forward_grid(
+                query,
+                latent,
+                point_features,
+            )
+        else:
+            prediction, _, _ = model.forward_grid(
+                query,
+                latent,
+                normalized_mca,
+                normalized_correction,
+                normalized_log_frequency,
+                xyz,
+            )
         return prediction
     prediction = model(query, latent)
     return prediction.reshape(indices.size, frequency_coordinate.shape[0], 2).permute(
@@ -236,12 +285,12 @@ def one_loss(
         raise AssertionError("Strict ILD metadata was not loaded")
     global_correction = (
         read_correction_block(subject, global_indices)
-        if isinstance(model, FilmSirenSpectralCNN)
+        if requires_spectral_inputs(model)
         else None
     )
     horizontal_correction = (
         read_correction_block(subject, horizontal_indices)
-        if isinstance(model, FilmSirenSpectralCNN)
+        if requires_spectral_inputs(model)
         else None
     )
     global_prediction = prediction_block(
@@ -372,7 +421,7 @@ def evaluate_validation(
         )
         if strict is None:
             raise AssertionError("Strict ILD metadata was not loaded")
-        if isinstance(model, FilmSirenSpectralCNN):
+        if requires_spectral_inputs(model):
             if normalized_log_frequency is None:
                 raise ValueError("The spectral refiner requires normalized log-frequency")
             global_correction = read_correction_block(subject, interpolation_indices)
@@ -525,9 +574,13 @@ def stage_c_checkpoint_payload(
         "experiment_configuration": configuration,
         "validation_metrics": metrics,
         "training_stage": (
-            "film_siren_spectral_cnn_stage_d"
-            if isinstance(model, FilmSirenSpectralCNN)
-            else "film_siren_stage_c"
+            "bounded_mcar_film_correction_stage_e"
+            if isinstance(model, BoundedMcarFilmCorrection)
+            else (
+                "film_siren_spectral_cnn_stage_d"
+                if isinstance(model, FilmSirenSpectralCNN)
+                else "film_siren_stage_c"
+            )
         ),
         "selection_metric": "mean_stage_c_objective_total",
         "output_unit": "normalized_residual",
@@ -543,7 +596,39 @@ def stage_c_checkpoint_payload(
             model.refiner_configuration_dict()
         )
         payload["film_siren_frozen"] = model.film_siren_frozen
+    if isinstance(model, BoundedMcarFilmCorrection):
+        payload["bounded_correction_configuration"] = (
+            model.correction_configuration_dict()
+        )
+        payload["backbones_frozen"] = True
     return payload
+
+
+def load_frozen_mcar(
+    path: Path,
+    expected_sha256: str,
+    device: torch.device,
+) -> tuple[ResidualMLPCNN, dict[str, Any]]:
+    actual_sha256 = file_sha256(path).upper()
+    if actual_sha256 != expected_sha256.upper():
+        raise ValueError(f"MCAR checkpoint SHA-256 mismatch: {path}")
+    checkpoint = torch.load(path, map_location=device, weights_only=False)
+    state_dict = checkpoint["model_state"]
+    mlp_width, mlp_block_count, cnn_channels = infer_model_architecture(state_dict)
+    model = ResidualMLPCNN(
+        mlp_width=mlp_width,
+        mlp_block_count=mlp_block_count,
+        cnn_channels=cnn_channels,
+        **infer_global_context_arguments(checkpoint),
+    ).to(device)
+    model.load_state_dict(state_dict)
+    model.eval()
+    return model, {
+        "path": str(path),
+        "sha256": actual_sha256,
+        "epoch": int(checkpoint.get("epoch", checkpoint.get("cycle", -1))),
+        "training_stage": str(checkpoint.get("training_stage", "unknown")),
+    }
 
 
 def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
@@ -625,19 +710,18 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         ConditionEncoderConfig(**configuration["condition_encoder"]),
     )
     refiner_raw = configuration.get("spectral_refiner")
+    bounded_raw = configuration.get("bounded_mcar_film_correction")
+    if refiner_raw is not None and bounded_raw is not None:
+        raise ValueError("spectral_refiner and bounded correction are mutually exclusive")
     initial_film_checkpoint: dict[str, Any] | None = None
-    if refiner_raw is None:
+    frozen_mcar_components: list[dict[str, Any]] = []
+    if refiner_raw is None and bounded_raw is None:
         model: StageCModel = film_siren.to(device)
     else:
         if conditioning_scope != "global_plus_local_mca":
             raise ValueError(
                 "The spectral refiner requires conditioning_scope="
                 "'global_plus_local_mca'"
-            )
-        refiner_values = dict(refiner_raw)
-        if "dilation_schedule" in refiner_values:
-            refiner_values["dilation_schedule"] = tuple(
-                int(value) for value in refiner_values["dilation_schedule"]
             )
         checkpoint_path = (root / configuration["initial_film_checkpoint"]).resolve()
         expected_checkpoint_sha256 = str(
@@ -659,20 +743,46 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         ):
             raise ValueError("Initial checkpoint condition-encoder mismatch")
         film_siren.load_state_dict(checkpoint["model_state"])
-        freeze_film_siren = bool(configuration.get("freeze_film_siren", True))
-        if not freeze_film_siren:
-            raise ValueError("Stage D1 is frozen-backbone CNN-only training")
-        model = FilmSirenSpectralCNN(
-            film_siren,
-            SpectralRefinerConfig(**refiner_values),
-            freeze_film_siren=True,
-        ).to(device)
         initial_film_checkpoint = {
             "path": str(checkpoint_path),
             "sha256": actual_checkpoint_sha256,
             "cycle": int(checkpoint["cycle"]),
             "training_stage": str(checkpoint.get("training_stage", "unknown")),
         }
+        if refiner_raw is not None:
+            refiner_values = dict(refiner_raw)
+            if "dilation_schedule" in refiner_values:
+                refiner_values["dilation_schedule"] = tuple(
+                    int(value) for value in refiner_values["dilation_schedule"]
+                )
+            freeze_film_siren = bool(configuration.get("freeze_film_siren", True))
+            if not freeze_film_siren:
+                raise ValueError("Stage D1 is frozen-backbone CNN-only training")
+            model = FilmSirenSpectralCNN(
+                film_siren,
+                SpectralRefinerConfig(**refiner_values),
+                freeze_film_siren=True,
+            ).to(device)
+        else:
+            bounded_values = dict(bounded_raw)
+            components = bounded_values.pop("components")
+            if len(components) != 2:
+                raise ValueError("Bounded correction requires exactly two MCAR components")
+            loaded = []
+            for component in components:
+                frozen, metadata = load_frozen_mcar(
+                    (root / component["checkpoint"]).resolve(),
+                    str(component["checkpoint_sha256"]),
+                    device,
+                )
+                loaded.append(frozen)
+                frozen_mcar_components.append(metadata)
+            model = BoundedMcarFilmCorrection(
+                film_siren,
+                loaded[0],
+                loaded[1],
+                BoundedCorrectionConfig(**bounded_values),
+            ).to(device)
     optimizer = make_optimizer(model, configuration["optimizer"])
     objective = loss_configuration(configuration["objective"])
     cycles = int(configuration["cycles"])
@@ -723,16 +833,21 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
         "global_condition_input_enabled": True,
         "local_mca_input_enabled": conditioning_scope == "global_plus_local_mca",
         "model_family": (
-            "FilmSirenSpectralCNN"
-            if isinstance(model, FilmSirenSpectralCNN)
-            else "FilmSiren"
+            "BoundedMcarFilmCorrection"
+            if isinstance(model, BoundedMcarFilmCorrection)
+            else (
+                "FilmSirenSpectralCNN"
+                if isinstance(model, FilmSirenSpectralCNN)
+                else "FilmSiren"
+            )
         ),
         "film_siren_frozen": (
             model.film_siren_frozen
             if isinstance(model, FilmSirenSpectralCNN)
-            else False
+            else isinstance(model, BoundedMcarFilmCorrection)
         ),
         "initial_film_checkpoint": initial_film_checkpoint,
+        "frozen_mcar_components": frozen_mcar_components,
         "trainable_parameter_count": sum(
             parameter.numel()
             for parameter in model.parameters()

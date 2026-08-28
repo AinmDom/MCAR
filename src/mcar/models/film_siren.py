@@ -305,7 +305,10 @@ class FilmSiren(nn.Module):
             "layers": layers,
         }
 
-    def forward(self, coordinates: torch.Tensor, latent: torch.Tensor) -> torch.Tensor:
+    def forward_features(
+        self, coordinates: torch.Tensor, latent: torch.Tensor
+    ) -> torch.Tensor:
+        """Return the final modulated sine features before output projection."""
         squeeze_batch = coordinates.ndim == 2
         if squeeze_batch:
             coordinates = coordinates.unsqueeze(0)
@@ -360,8 +363,11 @@ class FilmSiren(nn.Module):
                         )
                         activation = amplitude[:, None, :] * activation
                     hidden = activation
-        output = self.output(hidden)
-        return output.squeeze(0) if squeeze_batch else output
+        return hidden.squeeze(0) if squeeze_batch else hidden
+
+    def forward(self, coordinates: torch.Tensor, latent: torch.Tensor) -> torch.Tensor:
+        hidden = self.forward_features(coordinates, latent)
+        return self.output(hidden)
 
     def forward_from_condition(
         self,

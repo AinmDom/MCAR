@@ -15,6 +15,13 @@ BASE_PATH = (
     / "sonicom_film_siren_spectral_cnn_d1_seed20260821_e40.json"
 )
 MEMBERS = {
+    20260821: {
+        "checkpoint": (
+            "artifacts/training/"
+            "sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130/last.pt"
+        ),
+        "sha256": "E37676D843D608B4DDD7B311EBA8B28A933183A03E7BAA49E1CF20E35F8B4129",
+    },
     20260822: {
         "checkpoint": (
             "artifacts/training/"
@@ -35,6 +42,8 @@ MEMBERS = {
 def main() -> None:
     base = json.loads(BASE_PATH.read_text(encoding="utf-8"))
     for seed, member in MEMBERS.items():
+        if seed == 20260821:
+            continue
         configuration = copy.deepcopy(base)
         configuration["experiment_id"] = (
             f"FILM-SIREN-SPECTRAL-CNN-D1-SEED{seed}-E40"
@@ -50,6 +59,31 @@ def main() -> None:
             / "configs"
             / "experiments"
             / f"sonicom_film_siren_spectral_cnn_d1_seed{seed}_e40.json"
+        )
+        output_path.write_text(
+            json.dumps(configuration, indent=2) + "\n", encoding="utf-8"
+        )
+        print(output_path.relative_to(ROOT))
+
+    for seed, member in MEMBERS.items():
+        configuration = copy.deepcopy(base)
+        configuration["experiment_id"] = (
+            f"FILM-SIREN-SPECTRAL-CNN-D2-SEED{seed}-E200"
+        )
+        configuration["search_stage"] = "d2_e200_best_cycle_search"
+        configuration["initial_film_checkpoint"] = member["checkpoint"]
+        configuration["initial_film_checkpoint_sha256"] = member["sha256"]
+        configuration["cycles"] = 200
+        configuration["scheduler"]["horizon_cycles"] = 200
+        configuration["seed"] = seed
+        configuration["run_name"] = (
+            f"sonicom_film_siren_spectral_cnn_d2_seed{seed}_e200"
+        )
+        output_path = (
+            ROOT
+            / "configs"
+            / "experiments"
+            / f"sonicom_film_siren_spectral_cnn_d2_seed{seed}_e200.json"
         )
         output_path.write_text(
             json.dumps(configuration, indent=2) + "\n", encoding="utf-8"

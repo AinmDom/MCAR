@@ -1,5 +1,30 @@
 # 项目实验日志
 
+## 2026-08-28：Stage D 三 seed E40 完成，按用户决定直接执行 E200 best-cycle 搜索
+
+- 三个matched seeds `20260821/20260822/20260823` 均完成40 cycles/10480 steps，
+  best cycle均为`40`，共同增强objective分别为`0.7409078153696927 /
+  0.736345036463304 / 0.7387022132223303`，均值`0.7386516883517757`、样本标准差
+  `0.00228180902116173`。三者cycle35→40仅继续下降`0.0000614619 /
+  0.0000224737 / 0.0000581132`，接近平台但按既有末点规则全部为`RETEST`。
+- 相对各自same-seed corrected E130 FiLM parent，三seed平均objective、residual、ERB、
+  Contra HF、strict ILD差值（hybrid−parent）分别为`-0.0386363096 /
+  -0.1314350294 / -0.0198127713 / -0.1594190074 / -0.0011006029 dB`。结构改善
+  在三个seed上方向一致；但E40只能作为结构证据，不能冻结正式周期。
+- 完整性：三run均`completed/RETEST`、history各40行、ledger各8项且cycles固定
+  `5:5:40`；best/last实算SHA-256与report匹配，三run的best/last model state均逐tensor
+  exact equal，102个tensor全部finite；新增两run stderr均0 bytes；运行来源commit
+  `c31171d` clean；每run `test_subjects_read=0`。
+- 决策：`EXTEND_E200`。用户明确要求跳过增量E80，直接寻找E200范围内best点。D2从
+  scratch重跑相同三seed与same-seed parent，只将训练预算和warmup-cosine horizon从
+  40改为200；其余架构、输入、objective、优化器和数据边界全部不变。若任何seed仍在
+  cycle200取best，则标记`ENDPOINT_LIMITED`并停止为本论文递归
+  延长；否则以三个best cycle中位数冻结共同正式周期。
+- 证据：`results/sonicom_film_siren_spectral_cnn_matched_seed_e40/selection.json`；
+  `experiments/film_siren/
+  STAGE_D_FILM_SIREN_SPECTRAL_CNN_D2_E200_BEST_CYCLE_SEARCH.md`；三个E40训练目录位于
+  `artifacts/training/sonicom_film_siren_spectral_cnn_d1_seed*_e40/`。全过程未访问test。
+
 ## 2026-08-28：Stage D D1 E40 严格 validation 完成，结构通过但候选未冻结
 
 - 训练完整性：seed `20260821` 的 frozen-FiLM + zero-init MCAR spectral CNN 完成

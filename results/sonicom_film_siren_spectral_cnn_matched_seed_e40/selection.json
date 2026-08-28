@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "decision": "EXTEND_E200",
+  "reason": "All three matched seeds selected the E40 endpoint, so the pre-registered RETEST rule prevents freezing a formal cycle.",
+  "seeds": [
+    {
+      "seed": 20260821,
+      "best_cycle": 40,
+      "best_total": 0.7409078153696927,
+      "cycle35_to_40_difference": -0.0000614618713205006,
+      "parent_total_difference": -0.039574475450949165
+    },
+    {
+      "seed": 20260822,
+      "best_cycle": 40,
+      "best_total": 0.736345036463304,
+      "cycle35_to_40_difference": -0.0000224736603824383,
+      "parent_total_difference": -0.038627787069840935
+    },
+    {
+      "seed": 20260823,
+      "best_cycle": 40,
+      "best_total": 0.7387022132223303,
+      "cycle35_to_40_difference": -0.0000581131740049479,
+      "parent_total_difference": -0.03770666637203901
+    }
+  ],
+  "mean_best_total": 0.7386516883517757,
+  "sample_standard_deviation_best_total": 0.00228180902116173,
+  "mean_parent_total_difference": -0.03863630963094304,
+  "mean_parent_residual_difference_db": -0.13143502943443523,
+  "mean_parent_erb_difference_db": -0.01981277131673061,
+  "mean_parent_hf_difference_db": -0.15941900737357854,
+  "mean_parent_ild_difference_db": -0.0011006029266300195,
+  "test_subjects_read": 0
+}

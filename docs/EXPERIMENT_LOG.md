@@ -1,5 +1,24 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E D1严格validation通过，推进matched seeds E40
+
+- best cycle25在44 validation subjects完成全`[2,793,463]` residual预测并通过
+  strict HRIR重建评价。Candidate / Hybrid E190 / FiLM E130 ensemble / MCAR v3.5.1
+  的Full ERB=`0.8046509057/0.8044203111/0.8275426681/0.8308081769`，Contra25=
+  `1.2230433965/1.2145930843/1.2307760839/1.2889532413`，HF=
+  `3.5261775230/3.5019939596/3.7027516824/3.5380866071`，ILD=
+  `0.5752025319/0.6298114075/0.6305984391/0.5811462483 dB`。
+- Candidate相对MCAR四项均值差=`-0.0261572711/-0.0659098448/-0.0119090841/
+  -0.0059437163 dB`；Full/Contra25 bootstrap 95% CI完全低于0，HF/ILD CI跨0。
+  相对Hybrid为`+0.0002305947/+0.0084503123/+0.0241835634/-0.0546088756 dB`：
+  Full持平、Contra25持平、HF显著较差、ILD显著更好。因此它是更均衡的Pareto候选，
+  不是对Hybrid的全指标支配。
+- 预注册结构门槛通过：相对MCAR改善4/4且无均值退化。E200仍因best cycle25而拒绝；
+  下一步冻结seeds `20260822/23`同构E40并行稳定性扩展。完整性：prediction44/44
+  finite；metric/quality分别704/44行、4方法×4指标；10000 bootstrap；
+  `test_subject_count_read=0`。证据：`results/
+  sonicom_bounded_mcar_film_correction_d1_e40_validation/`。
+
 ## 2026-08-29：Stage E bounded correction E40完成，E200无预算依据
 
 - seed `20260821` 完成40 cycles / 10480 optimizer steps，best cycle=`25`，

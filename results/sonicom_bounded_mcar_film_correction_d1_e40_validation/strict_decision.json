@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "decision": "ADVANCE_MATCHED_SEEDS_E40_NO_E200",
+  "candidate": "Bounded MCAR + FiLM correction D1 E40 best cycle 25",
+  "subject_count": 44,
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20260828,
+  "metrics_db": {
+    "candidate": {
+      "full_sphere_erb": 0.8046509057297254,
+      "contralateral_25deg_erb": 1.2230433965254024,
+      "contralateral_high_frequency": 3.5261775230093533,
+      "horizontal_ild_mae": 0.57520253193546
+    },
+    "hybrid_e190": {
+      "full_sphere_erb": 0.8044203110730916,
+      "contralateral_25deg_erb": 1.2145930842574635,
+      "contralateral_high_frequency": 3.5019939595643703,
+      "horizontal_ild_mae": 0.6298114074925347
+    },
+    "film_e130_ensemble": {
+      "full_sphere_erb": 0.827542668063342,
+      "contralateral_25deg_erb": 1.2307760839028754,
+      "contralateral_high_frequency": 3.702751682407521,
+      "horizontal_ild_mae": 0.63059843905319
+    },
+    "mcar_v351": {
+      "full_sphere_erb": 0.8308081768778544,
+      "contralateral_25deg_erb": 1.2889532413126574,
+      "contralateral_high_frequency": 3.538086607059492,
+      "horizontal_ild_mae": 0.5811462482733766
+    }
+  },
+  "candidate_minus_mcar_db": {
+    "full_sphere_erb": -0.026157271148128866,
+    "contralateral_25deg_erb": -0.0659098447872549,
+    "contralateral_high_frequency": -0.011909084050139452,
+    "horizontal_ild_mae": -0.005943716337916547
+  },
+  "candidate_minus_hybrid_e190_db": {
+    "full_sphere_erb": 0.0002305946566338237,
+    "contralateral_25deg_erb": 0.008450312267939327,
+    "contralateral_high_frequency": 0.02418356344498297,
+    "horizontal_ild_mae": -0.05460887555707478
+  },
+  "structure_gate": {
+    "improved_mcar_metric_count": 4,
+    "maximum_regression_vs_mcar_db": 0.0,
+    "passed": true
+  },
+  "budget_decision": "D1 best cycle was 25 and later checkpoints did not improve; E200 is not justified.",
+  "next_action": "Run matched seeds 20260822 and 20260823 with the identical E40 protocol in parallel.",
+  "test_subject_count_read": 0
+}

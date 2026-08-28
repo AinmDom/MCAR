@@ -1,4 +1,5 @@
-function evaluate_film_siren_spectral_cnn_d1_validation(subjectLimit, outputName)
+function evaluate_film_siren_spectral_cnn_d1_validation( ...
+        subjectLimit, outputName, hybridPredictionName, hybridLabel)
 %EVALUATE_FILM_SIREN_SPECTRAL_CNN_D1_VALIDATION Strict residual-method screen.
 % Compares D1 hybrid, its single-member parent, corrected FiLM ensemble, and
 % MCAR v3.5.1 on validation only. Differences are HYBRID minus baseline.
@@ -7,8 +8,17 @@ if nargin < 1 || isempty(subjectLimit), subjectLimit = inf; end
 if nargin < 2 || isempty(outputName)
     outputName = 'sonicom_film_siren_spectral_cnn_d1_e40_validation';
 end
+if nargin < 3 || isempty(hybridPredictionName)
+    hybridPredictionName = ...
+        'sonicom_film_siren_spectral_cnn_d1_seed20260821_e40_best_validation';
+end
+if nargin < 4 || isempty(hybridLabel)
+    hybridLabel = 'FiLM-SIREN + spectral CNN D1 E40';
+end
 validateattributes(subjectLimit, {'numeric'}, {'scalar', 'positive'});
 validateattributes(outputName, {'char', 'string'}, {'scalartext'});
+validateattributes(hybridPredictionName, {'char', 'string'}, {'scalartext'});
+validateattributes(hybridLabel, {'char', 'string'}, {'scalartext'});
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -18,11 +28,11 @@ sofaRoot = fullfile(projectRoot, 'data', 'HRTF', ...
 splitFile = fullfile(projectRoot, 'configs', 'data', 'sonicom_subject_split_v1.csv');
 supdeqDir = fullfile(projectRoot, 'external', 'SUpDEq');
 methodIds = ["HYBRID", "PARENT", "FILMENS", "MCAR"];
-methodLabels = ["FiLM-SIREN + spectral CNN D1 E40", ...
+methodLabels = [string(hybridLabel), ...
     "FiLM-SIREN seed 20260821 E130", ...
     "FiLM-SIREN corrected E130 ensemble", "MCAR v3.5.1"];
 predictionNames = [ ...
-    "sonicom_film_siren_spectral_cnn_d1_seed20260821_e40_best_validation", ...
+    string(hybridPredictionName), ...
     "sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130_validation", ...
     "sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation", ...
     "sonicom_q26_validation_v351_previous30_b70"];

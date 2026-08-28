@@ -1,5 +1,29 @@
 # 项目实验日志
 
+## 2026-08-28：Stage D 正式 E190 三成员完成，冻结 validation ensemble
+
+- 三个正式 run（seeds `20260821/20260822/20260823`）均从 scratch 完成固定
+  `190 cycles / 49780 optimizer steps`，report 均为 `FIXED_CYCLE_COMPLETE`。唯一
+  权威 checkpoint 为 cycle190 `last.pt`，SHA-256 分别为
+  `0596FD3B...F4A6DC / C89CCF90...FEC789 / 465B24AD...B34BDE`。
+- 训练完整性：history 各190行、ledger 各38项且 cycles精确为`5:5:190`；
+  best cycles=`190/190/170`，best objective=`0.7246045510877263 /
+  0.7207740897482092 / 0.7215893431143328`；best/last实算哈希与report匹配，
+  每份checkpoint的102个tensors全部finite，stderr均0 bytes。运行commit
+  `5548fbbf79e99872c0e5ae5c63dd1e65a89a141d` clean，每run
+  `test_subjects_read=0`。
+- 已冻结三成员`1/3`等权residual-dB ensemble manifest，identity
+  `A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE`；生成器
+  重跑后文件SHA-256仍为`49109D146962D9049A03E5C0C98900FC0DF5AFE7F228D758C5E78D9CE4D50D03`。
+  比较口径为44 validation subjects、HYBRID/PARENT/FILMENS/MCAR、四个严格
+  指标与10000次paired bootstrap（seed `20260828`）；不授权test。
+- 工具核验：Python syntax通过，相关pytest `4 passed`；MATLAB `checkcode`无问题；
+  `git diff --check`仅有Windows换行提示。下一步在工具与manifest提交后生成
+  44/44 validation预测并执行冻结评价。
+- 证据：`artifacts/training/sonicom_film_siren_spectral_cnn_final_seed*_e190/`；
+  `configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json`；
+  `experiments/film_siren/STAGE_D_FILM_SIREN_SPECTRAL_CNN_FORMAL_E190_FREEZE.md`。
+
 ## 2026-08-28：Stage D E200 三seed完成，冻结正式周期 E190
 
 - E200 best-cycle搜索：seeds `20260821/20260822/20260823` 均从scratch完成200

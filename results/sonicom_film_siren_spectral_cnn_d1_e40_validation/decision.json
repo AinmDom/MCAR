@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "decision": "ADVANCE_MATCHED_SEED_SCREEN",
+  "not_a_final_model": true,
+  "budget_decision": "RETEST",
+  "reason": "The D1 hybrid improves its matched FiLM parent on Full ERB, contralateral-25 ERB, and contralateral HF, including 44/44 HF wins, but does not dominate the FiLM ensemble or MCAR v3.5.1.",
+  "next_seeds": [20260822, 20260823],
+  "next_budget_cycles": 40,
+  "test_subject_count_read": 0
+}

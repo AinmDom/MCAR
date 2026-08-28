@@ -78,6 +78,13 @@ in another reported metric. If advanced, run matched seeds `20260822/20260823`,
 freeze a common cycle from development best cycles, and train three fixed-cycle
 hybrid members before any new manuscript-level comparison.
 
+D1 met the structural advancement gate on 2026-08-28: against its matched parent,
+Full ERB, contralateral-25 ERB, and contralateral HF all improved, with HF improving
+for 44/44 validation subjects; ILD was statistically unchanged. The extension is
+therefore frozen to the identical E40 configuration for seeds `20260822/20260823`,
+each initialized from the same-seed corrected E130 FiLM member. This advances only
+the architecture screen; D1 remains `RETEST` because its best cycle was 40.
+
 ## Hard boundaries
 
 - Do not construct or read SONICOM test paths.

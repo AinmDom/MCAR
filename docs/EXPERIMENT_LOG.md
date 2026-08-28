@@ -1,5 +1,41 @@
 # 项目实验日志
 
+## 2026-08-28：Stage D D1 E40 严格 validation 完成，结构通过但候选未冻结
+
+- 训练完整性：seed `20260821` 的 frozen-FiLM + zero-init MCAR spectral CNN 完成
+  40 cycles/10480 steps，best cycle=`40`、共同增强 objective=
+  `0.7409078153696927`，history 40行、validation ledger 8项、best/last hashes匹配且
+  model state逐tensor相同、全部finite、stderr 0。因best在预算末点，预算判据仍为
+  `RETEST`，不能把E40称为已收敛或正式候选。
+- 看结果前冻结的比较：D1 `best.pt`、其seed20260821 E130 parent、corrected E130
+  三成员FiLM ensemble、MCAR v3.5.1；44 validation subjects；严格Full ERB、Contra25
+  ERB、Contra HF、horizontal ILD；差值为HYBRID−baseline，10000次paired bootstrap，
+  seed `20260828`。两套新增预测均44/44、shape `[2,793,463]`、全部finite。
+- 四指标均值（dB，越低越好；HYBRID / PARENT / FILMENS / MCAR）：Full ERB
+  `0.8418443025 / 0.8553604685 / 0.8275426681 / 0.8308081769`；Contra25 ERB
+  `1.2546339378 / 1.2599857587 / 1.2307760839 / 1.2889532413`；Contra HF
+  `3.5987376194 / 3.7635604766 / 3.7027516824 / 3.5380866071`；horizontal ILD
+  `0.6589462748 / 0.6579809652 / 0.6305984391 / 0.5811462483`。
+- 关键配对证据：相对PARENT，HYBRID的Full ERB差`-0.0135162`（95% CI
+  `[-0.0154699,-0.0115756]`，44/44胜）、Contra25差`-0.0053518`（CI
+  `[-0.0077130,-0.0029622]`，32/44胜）、HF差`-0.1648229`（CI
+  `[-0.1779204,-0.1515857]`，44/44胜），ILD差`+0.0009653`（CI跨0）。相对
+  FILMENS，HF改善`-0.1040141`（CI `[-0.1174916,-0.0905233]`，44/44胜），但
+  Full/Contra25/ILD分别退化`+0.0143016/+0.0238579/+0.0283478 dB`且CI均不跨0。
+  相对MCAR，Contra25改善`-0.0343193`（CI `[-0.0552841,-0.0140495]`），但HF与ILD
+  分别退化`+0.0606510/+0.0778000 dB`且CI均为正；Full ERB差`+0.0110361`、CI跨0。
+- 决策：`ADVANCE_MATCHED_SEED_SCREEN`，不是`PROMOTE_FINAL_MODEL`。该CNN对单成员
+  FiLM产生跨被试一致的ERB/HF修正，证明结构互补性；但尚未超过FiLM ensemble或MCAR
+  的整体Pareto前沿。下一步只补matched seeds `20260822/20260823` 的同构E40开发run，
+  再依据三seed best-cycle轨迹冻结共同预算；不为D1调整架构、权重或访问test。
+- 完整性与证据：严格评价44 unique subjects、704 metric rows、quality 44行，全部
+  finite，`test_subject_count_read=0`。结果位于 `results/
+  sonicom_film_siren_spectral_cnn_d1_e40_validation/`；预测位于 `artifacts/
+  reconstruction/sonicom_film_siren_spectral_cnn_d1_seed20260821_e40_best_validation/`
+  与 `artifacts/reconstruction/
+  sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130_validation/`；评价规则冻结
+  commit `7185645`。
+
 ## 2026-08-28：Stage D FiLM-SIREN + zero-init MCAR spectral CNN 预注册并完成冒烟
 
 - 研究问题：沿用 corrected C4 的 train+validation 口径，以正式 E130 FiLM-SIREN

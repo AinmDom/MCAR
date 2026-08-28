@@ -1,5 +1,34 @@
 # 项目实验日志
 
+## 2026-08-28：Hybrid E190 vs MCAR/RANF/FSP-AE 严格 validation 完成
+
+- 在结果前冻结commit `79fefd8`后，对44个validation subjects重新运行同一
+  严格评价器，比较Hybrid E190 1/3 ensemble、MCAR v3.5.1、RANF和FSP-AE。
+  RANF使用已修正的完整HRIR提取` squeeze(ranfHrir(:, ear, :)).'`；FSP-AE
+  使用MATLAB `h5read`后的`[time,ear,direction]`维度。无test访问。
+- 聚合均值（HYBRID / MCAR / RANF / FSP-AE，dB，越低越好）：Full ERB
+  **`0.8044203111 / 0.8308081769 / 1.0746120927 / 1.1603106749`**；
+  Contra25 ERB **`1.2145930843 / 1.2889532413 / 1.6274987459 / 1.8479172775`**；
+  Contra HF **`3.5019939596 / 3.5380866071 / 3.4680092137 / 3.1038093697`**；
+  horizontal ILD **`0.6298114075 / 0.5811462483 / 0.7901671232 / 0.5977082576`**。
+- 10000次subject-paired percentile bootstrap（seed `20260819`，差值HYBRID−baseline）：
+  相对MCAR，Full/Contra25/HF为`-0.0263878658/-0.0743601571/-0.0360926475 dB`，
+  95% CI均低于0；ILD为`+0.0486651592`，CI `[0.0120743595,0.0866040936]`。
+  相对RANF，Full/Contra25/ILD为`-0.2701917816/-0.4129056616/-0.1603557157`，
+  CI均低于0；HF为`+0.0339847459`，CI `[-0.0094837640,0.0763655861]`，持平。
+  相对FSP-AE，Full/Contra25为`-0.3558903638/-0.6333241933`，CI均低于0；
+  HF为`+0.3981845898`，CI `[0.3524902093,0.4452281050]`；ILD为`+0.0321031499`，
+  CI `[-0.0111095174,0.0752905671]`，持平。
+- 论文定位：Hybrid是Full ERB和Contra25 ERB的明确第一，其HF与RANF统计持平、
+  但显著弱于FSP-AE；ILD显著弱于MCAR、与FSP-AE持平、显著优于RANF。
+  因此Hybrid仍是最强的广域/对侧ERB主候选，但应将FSP-AE高频与MCAR ILD
+  作为明确trade-off，不宣称全指标支配。
+- 完整性：`per_subject_metrics.csv` 44行、`metric_long.csv` 704行、
+  `quality_checks.csv` 44行、aggregate 4行、paired comparisons 12项；44 unique
+  subjects、4 methods、4 metrics，全numeric finite。Hybrid/MCAR逐被试重复评价与前一轮
+  最大绝对差`0 dB`；summary/decision均`test_subject_count_read=0`。证据：
+  `results/sonicom_film_siren_spectral_cnn_final_e190_vs_ranf_fsp_v351_validation/`。
+
 ## 2026-08-28：Stage D E190 ensemble 严格 validation 完成，升为论文主候选
 
 - 固定identity `A3CFAC9C...BDCCFE`的三成员cycle190 ensemble完成44/44

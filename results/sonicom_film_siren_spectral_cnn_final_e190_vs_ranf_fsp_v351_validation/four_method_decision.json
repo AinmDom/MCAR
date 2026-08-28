@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.0",
+  "analysis_scope": "Validation-only four-method comparison; no test subjects read",
+  "subject_count": 44,
+  "methods": [
+    "HYBRID",
+    "MCAR",
+    "RANF",
+    "FSPAE"
+  ],
+  "candidate_method": "HYBRID",
+  "candidate_label": "FiLM-SIREN + spectral CNN E190 1/3 ensemble",
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "bootstrap": {
+    "paired_resampling_unit": "subject row",
+    "replicates": 10000,
+    "seed": 20260819,
+    "interval": "two-sided percentile 95% CI"
+  },
+  "aggregate": {
+    "FullSphereERB": {
+      "HYBRID": 0.8044203110730913,
+      "MCAR": 0.8308081768778546,
+      "RANF": 1.0746120926761717,
+      "FSPAE": 1.1603106749036973
+    },
+    "Contralateral25ERB": {
+      "HYBRID": 1.214593084257463,
+      "MCAR": 1.2889532413126572,
+      "RANF": 1.627498745890078,
+      "FSPAE": 1.8479172775430348
+    },
+    "ContralateralHighFrequency": {
+      "HYBRID": 3.5019939595643708,
+      "MCAR": 3.538086607059492,
+      "RANF": 3.4680092137126852,
+      "FSPAE": 3.103809369743327
+    },
+    "HorizontalILDMAE": {
+      "HYBRID": 0.629811407492535,
+      "MCAR": 0.5811462482733765,
+      "RANF": 0.7901671231596392,
+      "FSPAE": 0.5977082576411121
+    }
+  },
+  "pairwise_candidate_vs_baseline": {
+    "FullSphereERB__HYBRID_minus_MCAR": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus MCAR; negative is better",
+      "candidate_mean_db": 0.8044203110730913,
+      "mcar_mean_db": 0.8308081768778546,
+      "paired_mean_difference_db": -0.026387865804762912,
+      "paired_percentile_95_ci_db": [
+        -0.0365959031351142,
+        -0.015756935330620846
+      ],
+      "candidate_wins": 36,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "FullSphereERB__HYBRID_minus_RANF": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus RANF; negative is better",
+      "candidate_mean_db": 0.8044203110730913,
+      "ranf_mean_db": 1.0746120926761717,
+      "paired_mean_difference_db": -0.27019178160308027,
+      "paired_percentile_95_ci_db": [
+        -0.28884842428529683,
+        -0.25058029902639745
+      ],
+      "candidate_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "FullSphereERB__HYBRID_minus_FSPAE": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus FSPAE; negative is better",
+      "candidate_mean_db": 0.8044203110730913,
+      "fspae_mean_db": 1.1603106749036973,
+      "paired_mean_difference_db": -0.3558903638306057,
+      "paired_percentile_95_ci_db": [
+        -0.38518371039875754,
+        -0.32782955986979295
+      ],
+      "candidate_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "Contralateral25ERB__HYBRID_minus_MCAR": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus MCAR; negative is better",
+      "candidate_mean_db": 1.214593084257463,
+      "mcar_mean_db": 1.2889532413126572,
+      "paired_mean_difference_db": -0.07436015705519426,
+      "paired_percentile_95_ci_db": [
+        -0.0952319646040257,
+        -0.053979229857704425
+      ],
+      "candidate_wins": 39,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "Contralateral25ERB__HYBRID_minus_RANF": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus RANF; negative is better",
+      "candidate_mean_db": 1.214593084257463,
+      "ranf_mean_db": 1.627498745890078,
+      "paired_mean_difference_db": -0.41290566163261483,
+      "paired_percentile_95_ci_db": [
+        -0.4701390378955794,
+        -0.3542138139537634
+      ],
+      "candidate_wins": 43,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "Contralateral25ERB__HYBRID_minus_FSPAE": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus FSPAE; negative is better",
+      "candidate_mean_db": 1.214593084257463,
+      "fspae_mean_db": 1.8479172775430348,
+      "paired_mean_difference_db": -0.6333241932855718,
+      "paired_percentile_95_ci_db": [
+        -0.6700108893857816,
+        -0.5955116968103789
+      ],
+      "candidate_wins": 44,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "ContralateralHighFrequency__HYBRID_minus_MCAR": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus MCAR; negative is better",
+      "candidate_mean_db": 3.5019939595643708,
+      "mcar_mean_db": 3.538086607059492,
+      "paired_mean_difference_db": -0.03609264749512208,
+      "paired_percentile_95_ci_db": [
+        -0.0671999089521958,
+        -0.004356127269082502
+      ],
+      "candidate_wins": 27,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "ContralateralHighFrequency__HYBRID_minus_RANF": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus RANF; negative is better",
+      "candidate_mean_db": 3.5019939595643708,
+      "ranf_mean_db": 3.4680092137126852,
+      "paired_mean_difference_db": 0.03398474585168525,
+      "paired_percentile_95_ci_db": [
+        -0.009483763971614283,
+        0.07636558610139477
+      ],
+      "candidate_wins": 14,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "ContralateralHighFrequency__HYBRID_minus_FSPAE": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus FSPAE; negative is better",
+      "candidate_mean_db": 3.5019939595643708,
+      "fspae_mean_db": 3.103809369743327,
+      "paired_mean_difference_db": 0.3981845898210439,
+      "paired_percentile_95_ci_db": [
+        0.35249020929519914,
+        0.4452281049892028
+      ],
+      "candidate_wins": 0,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "HorizontalILDMAE__HYBRID_minus_MCAR": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus MCAR; negative is better",
+      "candidate_mean_db": 0.629811407492535,
+      "mcar_mean_db": 0.5811462482733765,
+      "paired_mean_difference_db": 0.04866515921915842,
+      "paired_percentile_95_ci_db": [
+        0.01207435952583893,
+        0.08660409356259088
+      ],
+      "candidate_wins": 13,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "HorizontalILDMAE__HYBRID_minus_RANF": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus RANF; negative is better",
+      "candidate_mean_db": 0.629811407492535,
+      "ranf_mean_db": 0.7901671231596392,
+      "paired_mean_difference_db": -0.1603557156671044,
+      "paired_percentile_95_ci_db": [
+        -0.2135482092253512,
+        -0.10611192129637688
+      ],
+      "candidate_wins": 36,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    },
+    "HorizontalILDMAE__HYBRID_minus_FSPAE": {
+      "definition": "FiLM-SIREN + spectral CNN E190 1/3 ensemble minus FSPAE; negative is better",
+      "candidate_mean_db": 0.629811407492535,
+      "fspae_mean_db": 0.5977082576411121,
+      "paired_mean_difference_db": 0.03210314985142269,
+      "paired_percentile_95_ci_db": [
+        -0.011109517368902647,
+        0.07529056708577275
+      ],
+      "candidate_wins": 16,
+      "bootstrap_replicates": 10000,
+      "seed": 20260819
+    }
+  },
+  "test_subject_count_read": 0
+}

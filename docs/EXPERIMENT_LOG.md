@@ -19,7 +19,7 @@
 - 实现与验证：新增混合模型、Stage-C训练入口兼容分支、validation-only预测适配器和
   冒烟脚本。零初始化逐点等价性以`rtol=0, atol=0`通过；真实train被试P0002、2个
   global+2个horizontal方向、完整463频点的一步前反向冒烟通过，loss
-  `0.5122836232185364`、spectral output gradient norm `3.927502393722534`，
+  `0.5122836232185364`、spectral output gradient norm `3.0965585708618164`，
   FiLM主体无梯度。相关pytest `57 passed`，compileall和`git diff --check`通过；仅有
   pytest cache目录权限warning。
 - 边界与证据：`test_subjects_read=0`；协议见 `experiments/film_siren/

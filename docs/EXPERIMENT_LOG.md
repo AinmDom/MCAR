@@ -1,5 +1,21 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E formal E25三成员训练完成，严格validation入口冻结
+
+- 三个from-scratch formal run全部`FIXED_CYCLE_COMPLETE`：seeds
+  `20260821/22/23`均完成25 cycles/6550 optimizer steps，best cycles=`25/25/20`，
+  best validation objective=`0.7088460515845906/0.7071173556826331/
+  0.7063871716911142`。权威checkpoint按结果前协议固定为各自cycle25 `last.pt`，
+  不以seed23的cycle20 `best.pt`替换，也不进行成员筛选或权重调节。
+- 完整性：每run history 25行且numeric finite、ledger 5项cycles=`5,10,15,20,25`；
+  best/last/authoritative SHA-256全部与report匹配；三个`last.pt`各202 tensors且全部
+  finite；stderr均0 bytes；运行commit `5b7e0f0` clean；每run
+  `test_subjects_read=0`。E200保持未启动。
+- 已实现结果前冻结的manifest生成器和hash-guarded三成员推理入口。正式ensemble固定为
+  三个cycle25 residual-dB预测的`1/3,1/3,1/3`平均；后续只允许在44 validation
+  subjects上与Hybrid E190、FiLM E130 ensemble、MCAR v3.5.1按既有四指标和10000次
+  paired bootstrap比较。相关测试`28 passed`；禁止test。
+
 ## 2026-08-29：Stage E matched-seed E40完成，冻结formal E25
 
 - seeds `20260821/22/23`的best cycles=`25/25/20`，best validation objective=

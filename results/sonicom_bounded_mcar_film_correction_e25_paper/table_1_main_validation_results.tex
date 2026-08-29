@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Validation results on 44 SONICOM subjects. Values are subject mean $\pm$ standard deviation in dB; lower is better. Best means are bold.}
+\label{tab:bounded-main-validation}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Full-sphere ERB & Contra.-25 ERB & Contra. HF & Horizontal ILD \\
+\midrule
+Bounded correction E25 ensemble & \textbf{0.797 $\pm$ 0.157} & 1.217 $\pm$ 0.180 & 3.510 $\pm$ 0.275 & \textbf{0.565 $\pm$ 0.159} \\
+Spectral-CNN hybrid E190 & 0.804 $\pm$ 0.161 & \textbf{1.215 $\pm$ 0.189} & \textbf{3.502 $\pm$ 0.276} & 0.630 $\pm$ 0.181 \\
+FiLM-SIREN E130 ensemble & 0.828 $\pm$ 0.160 & 1.231 $\pm$ 0.188 & 3.703 $\pm$ 0.300 & 0.631 $\pm$ 0.183 \\
+MCAR v3.5.1 & 0.831 $\pm$ 0.152 & 1.289 $\pm$ 0.173 & 3.538 $\pm$ 0.262 & 0.581 $\pm$ 0.158 \\
+\bottomrule
+\end{tabular}
+\end{table*}

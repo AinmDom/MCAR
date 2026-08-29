@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\centering
+\caption{Development comparison on the same 44 validation subjects. The one-seed bounded model is included only as a development ablation; the formal result uses the fixed three-seed ensemble.}
+\label{tab:bounded-development}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Full-sphere ERB & Contra.-25 ERB & Contra. HF & Horizontal ILD \\
+\midrule
+MCAR v3.5.1 & 0.831 & 1.289 & 3.538 & 0.581 \\
+FiLM-SIREN E130 ensemble & 0.828 & 1.231 & 3.703 & 0.631 \\
+Spectral-CNN hybrid E190 & 0.804 & 1.215 & 3.502 & 0.630 \\
+Bounded correction, one seed & 0.805 & 1.223 & 3.526 & 0.575 \\
+Bounded correction E25 ensemble & 0.797 & 1.217 & 3.510 & 0.565 \\
+\bottomrule
+\end{tabular}
+\end{table*}

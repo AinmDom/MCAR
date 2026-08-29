@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-08-29",
+  "scope": "Validation-only paper artifact generation; no model selection or inference.",
+  "subject_count": 44,
+  "primary_model": "Bounded MCAR plus FiLM-SIREN correction E25 three-seed ensemble",
+  "model_manifest_identity": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705",
+  "source_files": [
+    {
+      "path": "results/sonicom_bounded_mcar_film_correction_final_e25_validation/aggregate_metrics.csv",
+      "sha256": "A671C98656819CF28D5D4F37DFA2AF6EC5DAFE58C3FFA9A0E4B4F5EFDE465113"
+    },
+    {
+      "path": "results/sonicom_bounded_mcar_film_correction_final_e25_validation/paired_bootstrap_comparisons.csv",
+      "sha256": "A292A67A97E5E0E96F1959F4E639F4E234D0C6156294E8457849234D19933A7D"
+    },
+    {
+      "path": "results/sonicom_bounded_mcar_film_correction_final_e25_validation/summary.json",
+      "sha256": "7A721A898A6703468B05E45D42B294E727EF21387B081F518330EAEE282BC973"
+    },
+    {
+      "path": "results/sonicom_bounded_mcar_film_correction_d1_e40_validation/aggregate_metrics.csv",
+      "sha256": "72F480F47935050868432F9BE72A48BDF0A07947C764A9EAF1F4EA0C991A1C95"
+    },
+    {
+      "path": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+      "sha256": "C00040B6AD07EAC10F3EB7420C24A9BD33E92B3F36471115825FF8BB3194B689"
+    },
+    {
+      "path": "scripts/generate_bounded_mcar_film_paper_pack.py",
+      "sha256": "E0389EF2444A171047ABAF7A91C338B79C73A5CE3E855F7B880EB34B0CD2AA35"
+    },
+    {
+      "path": "scripts/generate_bounded_mcar_film_paper_figures.m",
+      "sha256": "48C6B7460706B4603EEAA9A63A7CC949DCEEDCA86EAA85F77B02A96B6BAB9A6B"
+    }
+  ],
+  "policy": "Reformatting and visualization only. No dataset, checkpoint, prediction, test subject, tuning, or model-selection operation was performed.",
+  "test_subject_count_read": 0
+}

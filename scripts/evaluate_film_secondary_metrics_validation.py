@@ -26,7 +26,7 @@ from mcar.evaluation.secondary_metrics import (
     spectral_shape_metrics,
 )
 from mcar.paths import project_root
-from mcar.training.film_siren_stage_c import horizontal_interpolation_indices
+from mcar.training.train_film_siren_stage_c import horizontal_interpolation_indices
 from mcar.training.train_film_siren import split_subject_paths
 
 

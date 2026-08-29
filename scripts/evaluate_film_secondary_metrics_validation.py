@@ -58,7 +58,7 @@ def manifest_identity(payload: dict[str, Any]) -> str:
 
 def prediction_inventory_digest(root: Path, subjects: list[str]) -> str:
     digest = hashlib.sha256()
-    for subject in subjects:
+    for subject in sorted(subjects):
         path = root / "subjects" / subject / "prediction.h5"
         digest.update(subject.encode("ascii"))
         digest.update(b"\0")

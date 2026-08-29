@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-08-29",
+  "model_version": "bounded-mcar-film-correction-final-e25-ensemble-v1",
+  "model_family": "Bounded MCAR plus FiLM-SIREN correction ensemble",
+  "e_final": 25,
+  "scheduler_horizon_cycles": 40,
+  "ensemble": {
+    "type": "residual_db_mean",
+    "member_count": 3,
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "checkpoint_policy": "cycle-25 last.pt only"
+  },
+  "members": [
+    {
+      "member_index": 1,
+      "seed": 20260821,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_bounded_mcar_film_correction_final_seed20260821_e25.json",
+      "config_sha256": "03EF7D5C18BF33FB3E55CB61C29673EAB87CABD4A7E836EC1521322E2E489DDA",
+      "checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260821_e25/last.pt",
+      "checkpoint_sha256": "9377DA9DADE0DE4F997DB59975DEFF7A8322AEF19D3D466FE69899917CEA75F4",
+      "training_report": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260821_e25/training_report.json",
+      "training_git_commit": "5b7e0f0bc6df552772c52eaa1f0f151c7a7e3c6f",
+      "training_git_dirty": false,
+      "checkpoint_cycle": 25,
+      "checkpoint_tensor_count": 202,
+      "checkpoint_all_finite": true,
+      "history_rows": 25,
+      "ledger_cycles": [
+        5,
+        10,
+        15,
+        20,
+        25
+      ],
+      "stderr_bytes": 0,
+      "test_subjects_read": 0
+    },
+    {
+      "member_index": 2,
+      "seed": 20260822,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_bounded_mcar_film_correction_final_seed20260822_e25.json",
+      "config_sha256": "E7667A69C4E575B7EBE464C5794557FF644B51B964A252B0F814B232ED5D65E7",
+      "checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260822_e25/last.pt",
+      "checkpoint_sha256": "64700D21EF01AEEEE4EA63EAE6C858677F97B0F9C06A80C446088C846BB97909",
+      "training_report": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260822_e25/training_report.json",
+      "training_git_commit": "5b7e0f0bc6df552772c52eaa1f0f151c7a7e3c6f",
+      "training_git_dirty": false,
+      "checkpoint_cycle": 25,
+      "checkpoint_tensor_count": 202,
+      "checkpoint_all_finite": true,
+      "history_rows": 25,
+      "ledger_cycles": [
+        5,
+        10,
+        15,
+        20,
+        25
+      ],
+      "stderr_bytes": 0,
+      "test_subjects_read": 0
+    },
+    {
+      "member_index": 3,
+      "seed": 20260823,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_bounded_mcar_film_correction_final_seed20260823_e25.json",
+      "config_sha256": "91B9D3300D526ACCD3A254565E1F1BE90A4316DB26A733F11772C0CCEFB33411",
+      "checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260823_e25/last.pt",
+      "checkpoint_sha256": "CBC2D885A2E59B34B05164317FF2D52C5E3B49E1F54E9403F82E7C3CF8108A57",
+      "training_report": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260823_e25/training_report.json",
+      "training_git_commit": "5b7e0f0bc6df552772c52eaa1f0f151c7a7e3c6f",
+      "training_git_dirty": false,
+      "checkpoint_cycle": 25,
+      "checkpoint_tensor_count": 202,
+      "checkpoint_all_finite": true,
+      "history_rows": 25,
+      "ledger_cycles": [
+        5,
+        10,
+        15,
+        20,
+        25
+      ],
+      "stderr_bytes": 0,
+      "test_subjects_read": 0
+    }
+  ],
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "q26_normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "split": "val",
+    "subject_count": 44,
+    "tensor_layout": "ear,direction,frequency"
+  },
+  "evaluator": {
+    "git_commit": "c253f39ef4bc6d00a99cf59440f70545c73fc655",
+    "git_dirty_at_generation": false,
+    "resources": [
+      {
+        "path": "src/mcar/evaluation/predict_bounded_mcar_film_correction_ensemble.py",
+        "sha256": "E6CFB4368AF154B8FC71E396A316C32AE3D78852761C4ADA0115B1143A647A23",
+        "purpose": "hash-guarded three-member validation predictor"
+      },
+      {
+        "path": "src/mcar/predictors.py",
+        "sha256": "A15EBEDE2C2676A2E5AB3427C192A39D80F65D4E316E25C1DDD47E3A37FBBE62",
+        "purpose": "bounded-correction member predictor"
+      },
+      {
+        "path": "matlab/+mcar/evaluate_film_siren_spectral_cnn_d1_validation.m",
+        "sha256": "1BDA1F674CEB293306DCA604B8DF0D23B1F69C9DB671B99F7E9DAB618EF43AB0",
+        "purpose": "strict residual-method evaluator"
+      },
+      {
+        "path": "experiments/film_siren/STAGE_E_BOUNDED_CORRECTION_FORMAL_E25_FREEZE.md",
+        "sha256": "487C7FB44D96E629387249F31E9FBBCD44A2A7553CA9D3425E1FD1A215F60CFC",
+        "purpose": "formal budget and equal-weight freeze"
+      }
+    ]
+  },
+  "comparison": {
+    "methods": [
+      "BOUNDEDENS",
+      "HYBRID",
+      "FILMENS",
+      "MCAR"
+    ],
+    "metrics": [
+      "FullSphereERB",
+      "Contralateral25ERB",
+      "ContralateralHighFrequency",
+      "HorizontalILDMAE"
+    ],
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260828,
+    "difference": "bounded ensemble minus baseline; negative favors bounded ensemble"
+  },
+  "test_policy": "Validation only; test paths are never constructed or read.",
+  "identity_sha256": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705"
+}

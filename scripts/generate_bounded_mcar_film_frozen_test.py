@@ -37,7 +37,9 @@ def main() -> None:
     if source["identity_sha256"] != "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705":
         raise ValueError("Frozen validation identity changed")
     members = []
-    for member, seed in zip(source["members"], SEEDS, strict=True):
+    if len(source["members"]) != len(SEEDS):
+        raise ValueError("Expected exactly three frozen members")
+    for member, seed in zip(source["members"], SEEDS):
         if member["seed"] != seed or member["checkpoint_cycle"] != 25:
             raise ValueError("Unexpected member")
         if file_sha256(ROOT / member["checkpoint"]) != member["checkpoint_sha256"]:

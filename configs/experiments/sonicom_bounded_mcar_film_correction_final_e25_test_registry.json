@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-08-29T15:31:38.3013460Z",
+  "updated_at_utc": "2026-08-29T15:31:38.3013460Z",
+  "task_id": "bounded-mcar-film-final-e25-frozen-test-v1",
+  "state": "not_started",
+  "manifest": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_test_manifest.json",
+  "manifest_identity_sha256": "9F9A82D48D3D35BF63CEFCA3CB0998C11473F298A407233B46E6555D29CBDF61",
+  "authorization": {
+    "user_text": "\u53ef\u4ee5\u5148\u505atest\u8bc4\u4ef7",
+    "recorded_at_local": "2026-08-29T23:31:38+08:00"
+  },
+  "retry_count": 0,
+  "test_subject_count_read": 0,
+  "recovery_policy": "Only proven incomplete failure under unchanged identity; no tuning or retest"
+}

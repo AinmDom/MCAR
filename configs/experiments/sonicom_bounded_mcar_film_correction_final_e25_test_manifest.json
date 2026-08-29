@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_at_utc": "2026-08-29T15:31:38.3013460Z",
+  "model_version": "bounded-mcar-film-correction-final-e25-ensemble-test-v1",
+  "model_family": "Bounded MCAR plus FiLM-SIREN correction ensemble",
+  "e_final": 25,
+  "scheduler_horizon_cycles": 40,
+  "ensemble": {
+    "type": "residual_db_mean",
+    "member_count": 3,
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "checkpoint_policy": "cycle-25 last.pt only"
+  },
+  "members": [
+    {
+      "member_index": 1,
+      "seed": 20260821,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_bounded_mcar_film_correction_final_seed20260821_e25.json",
+      "config_sha256": "03EF7D5C18BF33FB3E55CB61C29673EAB87CABD4A7E836EC1521322E2E489DDA",
+      "checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260821_e25/last.pt",
+      "checkpoint_sha256": "9377DA9DADE0DE4F997DB59975DEFF7A8322AEF19D3D466FE69899917CEA75F4",
+      "training_report": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260821_e25/training_report.json",
+      "training_git_commit": "5b7e0f0bc6df552772c52eaa1f0f151c7a7e3c6f",
+      "training_git_dirty": false
+    },
+    {
+      "member_index": 2,
+      "seed": 20260822,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_bounded_mcar_film_correction_final_seed20260822_e25.json",
+      "config_sha256": "E7667A69C4E575B7EBE464C5794557FF644B51B964A252B0F814B232ED5D65E7",
+      "checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260822_e25/last.pt",
+      "checkpoint_sha256": "64700D21EF01AEEEE4EA63EAE6C858677F97B0F9C06A80C446088C846BB97909",
+      "training_report": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260822_e25/training_report.json",
+      "training_git_commit": "5b7e0f0bc6df552772c52eaa1f0f151c7a7e3c6f",
+      "training_git_dirty": false
+    },
+    {
+      "member_index": 3,
+      "seed": 20260823,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_bounded_mcar_film_correction_final_seed20260823_e25.json",
+      "config_sha256": "91B9D3300D526ACCD3A254565E1F1BE90A4316DB26A733F11772C0CCEFB33411",
+      "checkpoint": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260823_e25/last.pt",
+      "checkpoint_sha256": "CBC2D885A2E59B34B05164317FF2D52C5E3B49E1F54E9403F82E7C3CF8108A57",
+      "training_report": "artifacts/training/sonicom_bounded_mcar_film_correction_final_seed20260823_e25/training_report.json",
+      "training_git_commit": "5b7e0f0bc6df552772c52eaa1f0f151c7a7e3c6f",
+      "training_git_dirty": false
+    }
+  ],
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "q26_normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "split": "test",
+    "subject_count": 44,
+    "resources": [
+      {
+        "path": "configs/data/sonicom_subject_split_v1.csv",
+        "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132",
+        "purpose": "frozen 262/44/44 split"
+      },
+      {
+        "path": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+        "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287",
+        "purpose": "Q26 sparse grid"
+      },
+      {
+        "path": "configs/data/siren_b_q26_normalization_v1.json",
+        "sha256": "E247EFF81CC6FD4E62C123149FFD42F0DA7A429DF4485A48C1A98943D88C3EB8",
+        "purpose": "train-only Q26 normalization"
+      },
+      {
+        "path": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+        "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A",
+        "purpose": "train-only residual normalization"
+      }
+    ]
+  },
+  "evaluator": {
+    "git_commit": "1c046279c12438b6393334b4a7a03389d1150b7b",
+    "git_dirty_at_generation": false,
+    "resources": [
+      {
+        "path": "src/mcar/evaluation/predict_bounded_mcar_film_correction_frozen_test.py",
+        "sha256": "54388A05BF7B9933738073E60181E7388B1DFF373CFE03BEFD5E871F4FC05464",
+        "purpose": "single authorized predictor"
+      },
+      {
+        "path": "src/mcar/predictors.py",
+        "sha256": "A15EBEDE2C2676A2E5AB3427C192A39D80F65D4E316E25C1DDD47E3A37FBBE62",
+        "purpose": "bounded correction predictor"
+      },
+      {
+        "path": "src/mcar/frozen_test.py",
+        "sha256": "566283C2FFCBD5E7249EB26C481ADF92B4D1E6FAF09EF9268A3C252326FB1120",
+        "purpose": "manifest and registry guards"
+      },
+      {
+        "path": "matlab/+mcar/evaluate_sonicom_interpolation_baselines.m",
+        "sha256": "AC00C8066CB5D3B1BFDEB7089B838370C244DC97B101261EB12AC4CE05866ED3",
+        "purpose": "strict test evaluator"
+      },
+      {
+        "path": "scripts/analyze_bounded_mcar_film_frozen_test.py",
+        "sha256": "4F7497F8AED3BADD5F047C1BDD6BB83974ED9BC1655032658EB359B91F9F1EE7",
+        "purpose": "frozen nine-method merge and bootstrap"
+      },
+      {
+        "path": "experiments/film_siren/STAGE_E_BOUNDED_CORRECTION_FROZEN_TEST_PROTOCOL.md",
+        "sha256": "0A43CA16404F705CCB33B5A385323F25B5ADB4D8DF549C7884D2F2B0BF25DFF0",
+        "purpose": "test preregistration"
+      },
+      {
+        "path": "results/sonicom_eight_method_q26_v351_main_test/metric_long.csv",
+        "sha256": "3D74AF135CAD510FC3F9166076ECEDF41ABFAB11ADD5231219227D7592E97D63",
+        "purpose": "frozen eight-method test metrics"
+      }
+    ]
+  },
+  "comparison": {
+    "final_methods": [
+      "BOUNDED",
+      "MCARv351",
+      "FSPAE",
+      "RANF",
+      "MCA",
+      "SUpDEqBary",
+      "SUpDEqNN",
+      "SUpDEqSH",
+      "SHOnly"
+    ],
+    "paired_baselines": [
+      "MCARv351",
+      "RANF",
+      "FSPAE",
+      "MCA"
+    ],
+    "metrics": [
+      "FullSphereERB",
+      "Contralateral25ERB",
+      "ContralateralHighFrequency",
+      "HorizontalILDMAE"
+    ],
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260829
+  },
+  "authorization": {
+    "user_text": "\u53ef\u4ee5\u5148\u505atest\u8bc4\u4ef7",
+    "recorded_at_local": "2026-08-29T23:31:38+08:00"
+  },
+  "recovery_policy": "Only proven incomplete failure under unchanged identity; no tuning or retest",
+  "identity_sha256": "9F9A82D48D3D35BF63CEFCA3CB0998C11473F298A407233B46E6555D29CBDF61"
+}

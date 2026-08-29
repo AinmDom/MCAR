@@ -1,5 +1,17 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E bounded E25唯一候选test评价已授权并预注册
+
+- 用户明确授权`可以先做test评价`；授权记录时间为
+  `2026-08-29T23:31:38+08:00`。本次只允许冻结identity
+  `72B7319F...F2705`的三成员cycle25等权ensemble读取44名test被试一次，不允许
+  调权、成员/周期选择、重训或根据test结果追加候选。
+- 最终九方法表固定为Bounded候选加已冻结八方法表；paired bootstrap固定比较
+  MCAR v3.5.1、RANF、FSP-AE和MCA，四指标、10000次、seed `20260829`。结果无论
+  优劣均为最终可报告结果。
+- 本条登记时仅完成协议与工具准备，`test_subject_count_read=0`；须在协议/工具提交且
+  manifest/registry于clean Git生成并再次提交后，才可开始唯一test推理。
+
 ## 2026-08-29：Stage E formal E25 bounded-correction ensemble严格validation完成
 
 - manifest identity `72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705`

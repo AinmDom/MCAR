@@ -12,7 +12,7 @@ data.
 **Frozen manifest:**
 `configs/experiments/sonicom_film_secondary_metrics_v1_validation_manifest.json`,
 identity
-`4F70628ED6EC6525EE8B7275B423120DF49F75FA18B5555E6F2E824663A45548`.
+`8F61017E6D01EE9C5F271BE366A6C0B8C25DB22546A800CC1A4339738A3D520E`.
 
 ## 1. Result-blind declaration
 
@@ -62,7 +62,8 @@ The primary values are read without recomputation from the frozen Stage-E valida
 
 - Implementation commits: `90ab7d0`, the result-blind dataset-resource guard
   correction `afdf10b`, and the entry-import correction
-  `6d1b47be3b495fc32e28edbbcce615728b872b8b`.
+  `6d1b47b`. The canonical inventory-order correction is
+  `6abe3a7696b36ed72e2a6905cf82728fb775c3c7`.
 - Entry point: `scripts/evaluate_film_secondary_metrics_validation.py`.
 - Metric module: `src/mcar/evaluation/secondary_metrics.py`.
 - Existing spectral definitions are invoked from `src/mcar/losses.py`; ERB weights and
@@ -86,6 +87,14 @@ D:\miniconda3\envs\ml\python.exe scripts/evaluate_film_secondary_metrics_validat
 
 The entry point refuses an existing final or `.partial` output directory and writes to
 `results/sonicom_film_secondary_metrics_v1_validation` only after all checks complete.
+
+The first invocation of manifest identity `4F70628E...A45548` stopped before opening
+any subject spectrum because the manifest inventory generator used sorted subjects and
+an escaped separator while the evaluator used split order and a NUL separator. It
+created no output directory and computed zero metrics. Before retry, subject order was
+made explicitly sorted and all four inventory digests were regenerated with the exact
+evaluator function. This failure and correction occurred without observing a secondary
+result.
 
 ## 5. Frozen comparators
 

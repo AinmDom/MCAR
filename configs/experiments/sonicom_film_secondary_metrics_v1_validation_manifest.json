@@ -43,7 +43,7 @@
       "prediction_root": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_validation",
       "inference_report": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_validation/inference_report.json",
       "inference_report_sha256": "D9EEE83A35AE3DD2E9BA0A4B350A362F28DEC150274BB302747FE107A4E94311",
-      "prediction_inventory_sha256": "47022CA94747EB1ECF0481414246BD437E38CAE6098A10F875D3B9690DEF55BD",
+      "prediction_inventory_sha256": "0B27972665D17B69C0DDDEDFD8F1BB204222E50BC159DF438EBFF0A9D67BBE1B",
       "identity": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705"
     },
     "HYBRID": {
@@ -51,7 +51,7 @@
       "prediction_root": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation",
       "inference_report": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/inference_report.json",
       "inference_report_sha256": "836E8BB9CDCBA3AA95ABBE30AB519F4935E0E27A8C89452FA19024BE376D5412",
-      "prediction_inventory_sha256": "2368C0095F73D6349301AEAF5354F43EDAD5FFCF68199DE3239A1ED57FA36399",
+      "prediction_inventory_sha256": "A586C77658E4612DA7870193546DE0470772D4B981FD34DB419EE9E3F3ACE255",
       "identity": "A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE"
     },
     "FILMENS": {
@@ -59,7 +59,7 @@
       "prediction_root": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation",
       "inference_report": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation/inference_report.json",
       "inference_report_sha256": "1B402D678B0BC82E082C29C8025DE8981660D42503B78CD9CEF3BF7A7956483C",
-      "prediction_inventory_sha256": "E4CB2D7F40BE2EB8849F0ED987E458ECF6A7BD51A03003BC751B1D139160E756",
+      "prediction_inventory_sha256": "E185CFC4AEF7F53E23F6F977A9227315DA607998B9A2B4C6B8B3A10714A97B55",
       "identity": "1CE74CF0AEC21D29FDE22B952FBB038EDBA8600938037855028ECE84B06936BE"
     },
     "MCAR": {
@@ -67,7 +67,7 @@
       "prediction_root": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70",
       "inference_report": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70/inference_report.json",
       "inference_report_sha256": "0B96D30A39D14122A944F896E78BC0136AC8CBED22FDD83F547DA4D6B081B3BA",
-      "prediction_inventory_sha256": "A73AEB1ECF09635DC84030158AFE514EB03665F11527638B8A2EC9DC36DCA856",
+      "prediction_inventory_sha256": "D14CFC56E2667E8D6D93EAA9193068E8A3DE1A11243BFBD4BF05C1AA28BF971D",
       "identity": "v3.5.1-candidate"
     }
   },
@@ -83,7 +83,7 @@
     }
   },
   "implementation": {
-    "git_commit": "6d1b47be3b495fc32e28edbbcce615728b872b8b",
+    "git_commit": "6abe3a7696b36ed72e2a6905cf82728fb775c3c7",
     "git_dirty_at_freeze": false,
     "python_executable": "D:/miniconda3/envs/ml/python.exe",
     "runtime_versions": {
@@ -96,7 +96,7 @@
     "resources": [
       {
         "path": "scripts/evaluate_film_secondary_metrics_validation.py",
-        "sha256": "0799D37E9C16F8184CDBE1C94E71E8E2287409B7D5742FF7C0380CE218ADCF48"
+        "sha256": "F8D6A5BC93A9541396A986ADD1902889B7F7EAA7FD07C90A4510C3B01E7D1732"
       },
       {
         "path": "src/mcar/evaluation/secondary_metrics.py",
@@ -152,5 +152,5 @@
   ],
   "output_root": "results/sonicom_film_secondary_metrics_v1_validation",
   "test_policy": "Validation only. The entry point rejects non-val sources and records test_subject_count_read=0.",
-  "identity_sha256": "4F70628ED6EC6525EE8B7275B423120DF49F75FA18B5555E6F2E824663A45548"
+  "identity_sha256": "8F61017E6D01EE9C5F271BE366A6C0B8C25DB22546A800CC1A4339738A3D520E"
 }

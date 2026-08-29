@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-08-30",
+  "purpose": "Result-blind local secondary-metrics tranche for the frozen FiLM-family validation comparison",
+  "protocol": {
+    "path": "experiments/film_siren/FUTURE_FILM_CANDIDATE_SECONDARY_METRICS_PREREGISTRATION.md",
+    "sha256": "E5C8C231BA297ED395D0AFC170DF734CD88CC641CEA0B29F3434D1EA7FB829E0",
+    "hierarchy": "secondary_or_descriptive_only"
+  },
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "val",
+    "subject_count": 44,
+    "direction_count": 793,
+    "q26_direction_count": 26,
+    "interpolation_direction_count": 767,
+    "horizontal_interpolation_direction_count": 72,
+    "frequency_bin_count": 463,
+    "resources": [
+      {
+        "path": "configs/data/sonicom_preparation_report_v1.json",
+        "sha256": "A5B861A0ADB87146A283502EFB3FE748A9B8FF9EB68539D38E9E36FEA17C7A35"
+      },
+      {
+        "path": "configs/data/sonicom_subject_split_v1.csv",
+        "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132"
+      },
+      {
+        "path": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+        "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287"
+      },
+      {
+        "path": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+        "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A"
+      }
+    ]
+  },
+  "methods": {
+    "BOUNDED": {
+      "label": "Bounded correction E25 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "D9EEE83A35AE3DD2E9BA0A4B350A362F28DEC150274BB302747FE107A4E94311",
+      "prediction_inventory_sha256": "47022CA94747EB1ECF0481414246BD437E38CAE6098A10F875D3B9690DEF55BD",
+      "identity": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705"
+    },
+    "HYBRID": {
+      "label": "FiLM-SIREN plus spectral CNN E190 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "836E8BB9CDCBA3AA95ABBE30AB519F4935E0E27A8C89452FA19024BE376D5412",
+      "prediction_inventory_sha256": "2368C0095F73D6349301AEAF5354F43EDAD5FFCF68199DE3239A1ED57FA36399",
+      "identity": "A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE"
+    },
+    "FILMENS": {
+      "label": "FiLM-SIREN D1/D2 plus notch E130 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "1B402D678B0BC82E082C29C8025DE8981660D42503B78CD9CEF3BF7A7956483C",
+      "prediction_inventory_sha256": "E4CB2D7F40BE2EB8849F0ED987E458ECF6A7BD51A03003BC751B1D139160E756",
+      "identity": "1CE74CF0AEC21D29FDE22B952FBB038EDBA8600938037855028ECE84B06936BE"
+    },
+    "MCAR": {
+      "label": "MCAR v3.5.1",
+      "prediction_root": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70",
+      "inference_report": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70/inference_report.json",
+      "inference_report_sha256": "0B96D30A39D14122A944F896E78BC0136AC8CBED22FDD83F547DA4D6B081B3BA",
+      "prediction_inventory_sha256": "A73AEB1ECF09635DC84030158AFE514EB03665F11527638B8A2EC9DC36DCA856",
+      "identity": "v3.5.1-candidate"
+    }
+  },
+  "primary_metrics": {
+    "metric_long_csv": "results/sonicom_bounded_mcar_film_correction_final_e25_validation/metric_long.csv",
+    "sha256": "F5F2FE3C8648FA2E98A71576841564778E285BA0C823AADFC0D3ED16F0040D65",
+    "use": "tail-risk statistics only; values are not recomputed or reclassified",
+    "method_mapping": {
+      "HYBRID": "BOUNDED",
+      "PARENT": "HYBRID",
+      "FILMENS": "FILMENS",
+      "MCAR": "MCAR"
+    }
+  },
+  "implementation": {
+    "git_commit": "6d1b47be3b495fc32e28edbbcce615728b872b8b",
+    "git_dirty_at_freeze": false,
+    "python_executable": "D:/miniconda3/envs/ml/python.exe",
+    "runtime_versions": {
+      "python": "3.9.23",
+      "numpy": "1.26.4",
+      "h5py": "3.14.0",
+      "torch": "2.8.0+cu128"
+    },
+    "bootstrap_generator": "numpy.random.default_rng PCG64",
+    "resources": [
+      {
+        "path": "scripts/evaluate_film_secondary_metrics_validation.py",
+        "sha256": "0799D37E9C16F8184CDBE1C94E71E8E2287409B7D5742FF7C0380CE218ADCF48"
+      },
+      {
+        "path": "src/mcar/evaluation/secondary_metrics.py",
+        "sha256": "C1DA0A232E0D29790D31168FB9A87AB4D2A46001F16EB3695BEA1CB90EDA63C9"
+      },
+      {
+        "path": "src/mcar/losses.py",
+        "sha256": "E5470D122D6CB45D5648AC67D355522A82F46C5DE673CA1EE9C407C6A6D7707E"
+      },
+      {
+        "path": "src/mcar/training/train_mlp_v2.py",
+        "sha256": "43A403D437484CBE98BE1701AAA14AA222C4FF205EBFD76210EB88ED12025A19"
+      },
+      {
+        "path": "src/mcar/training/train_film_siren.py",
+        "sha256": "C0479BE9677DBB018EF9B094B2A2F778DAF26E75F384CEB7847F7CABE42B0471"
+      },
+      {
+        "path": "src/mcar/training/train_film_siren_stage_c.py",
+        "sha256": "0772CC41566A8DE0659529C6288157B4372F12CD5DF8E4CD77974AFF9FE128E3"
+      },
+      {
+        "path": "tests/test_secondary_metrics.py",
+        "sha256": "9EA01CEDD9C67DC4BBD745457C4A75980DE1722EE09851B3E94F9C2E598210F9"
+      }
+    ]
+  },
+  "registered_tranche": {
+    "scalar_endpoints": [
+      "FullSphereLSD",
+      "HFFirstDifferenceMAE",
+      "HFSecondDifferenceMAE",
+      "MultiScaleNotchDepthMAE",
+      "ERBBandILDMean"
+    ],
+    "profiles": [
+      "ERB-band horizontal ILD absolute-error profile",
+      "LSD by fixed distance-to-Q26 bin",
+      "subject and direction LSD maps"
+    ],
+    "paired_tail_risk": "all five scalar endpoints, four primary endpoints, and four distance-bin endpoints",
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260829,
+    "tie_tolerance": 1e-12,
+    "worst_decile_subject_count": 5
+  },
+  "deferred_unqualified_endpoints": [
+    "model_based_localization",
+    "ITD_sanity",
+    "gate_and_correction_behavior",
+    "efficiency_and_deployability",
+    "discrete_notch_location"
+  ],
+  "output_root": "results/sonicom_film_secondary_metrics_v1_validation",
+  "test_policy": "Validation only. The entry point rejects non-val sources and records test_subject_count_read=0.",
+  "identity_sha256": "4F70628ED6EC6525EE8B7275B423120DF49F75FA18B5555E6F2E824663A45548"
+}

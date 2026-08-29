@@ -130,8 +130,12 @@ def main() -> None:
 
     dataset_root = (root / payload["dataset"]["root"]).resolve()
     split_csv = (root / payload["dataset"]["split_csv"]).resolve()
-    if file_sha256(root / payload["dataset"]["definition"]) != payload["dataset"]["definition_sha256"]:
-        raise ValueError("Dataset definition hash mismatch")
+    for resource in payload["dataset"]["resources"]:
+        path = root / resource["path"]
+        if file_sha256(path) != resource["sha256"]:
+            raise ValueError(f"Dataset resource hash mismatch: {path}")
+    if np.random.default_rng(0).bit_generator.__class__.__name__ != "PCG64":
+        raise RuntimeError("The frozen bootstrap generator is NumPy PCG64")
     subject_rows = split_subject_paths(dataset_root, split_csv, "val")
     subject_labels = [row[1] for row in subject_rows]
     if len(subject_labels) != 44 or len(set(subject_labels)) != 44:

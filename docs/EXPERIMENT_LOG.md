@@ -1,5 +1,34 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E formal E25 bounded-correction ensemble严格validation完成
+
+- manifest identity `72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705`
+  锁定三个cycle25 `last.pt`和`1/3,1/3,1/3` residual-dB平均。44/44 validation
+  predictions均为`[2,793,463]`、finite、split=`val`且identity一致；
+  `test_subject_count_read=0`。
+- 严格指标均值（Bounded E25 ensemble / Hybrid E190 / FiLM E130 ensemble /
+  MCAR v3.5.1，dB，越低越好）：Full ERB=`0.7966490938/0.8044203111/
+  0.8275426681/0.8308081769`；Contra25 ERB=`1.2166261334/1.2145930843/
+  1.2307760839/1.2889532413`；Contra HF=`3.5098143716/3.5019939596/
+  3.7027516824/3.5380866071`；horizontal ILD=`0.5650044448/0.6298114075/
+  0.6305984391/0.5811462483`。
+- 相对Hybrid E190，Full差`-0.0077712173 dB`，95% CI
+  `[-0.0141895164,-0.0020268012]`；Contra25差`+0.0020330491`，CI
+  `[-0.0085863638,+0.0125082741]`；HF差`+0.0078204120`，CI
+  `[-0.0122404210,+0.0272680784]`；ILD差`-0.0648069627`，CI
+  `[-0.0882033298,-0.0434434925]`。即Full与ILD显著更好，Contra25/HF统计持平。
+- 相对MCAR，Full/Contra25/HF差=`-0.0341590831/-0.0723271080/
+  -0.0282722355 dB`且三个95% CI均低于0；ILD差=`-0.0161418035 dB`，CI
+  `[-0.0338212935,+0.0012352252]`，均值更好但统计持平。相对FiLM E130 ensemble
+  四项均显著改善。故该bounded ensemble成为当前论文主候选：相对Hybrid消除了ILD
+  trade-off，同时保持Contra25/HF，且Full进一步改善；不宣称四项均值全部支配Hybrid。
+- 完整性：metric/quality/aggregate/pairwise分别`704/44/16/12`行，44 subjects×4
+  methods×4 metrics全部finite；三个既有基线逐被试复算最大差=`0 dB`；每被试767
+  interpolation directions、72 horizontal directions，reference ILD metadata最大误差
+  `9.5357133e-7 dB`；bootstrap 10000次、seed `20260828`；禁止test。MATLAB沙箱内
+  首次启动因已知`File system inconsistency`在评价器前退出，升级到本机环境后同一冻结
+  命令正常完成，没有不完整结果被采用。
+
 ## 2026-08-29：Stage E formal E25三成员训练完成，严格validation入口冻结
 
 - 三个from-scratch formal run全部`FIXED_CYCLE_COMPLETE`：seeds

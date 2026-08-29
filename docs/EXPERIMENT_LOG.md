@@ -1,5 +1,33 @@
 # 项目实验日志
 
+## 2026-08-29：Stage E bounded E25 frozen test九方法评价完成
+
+- 用户授权后，先提交结果前协议/工具`ace2bd0`、Python兼容修正`1c04627`，再于
+  clean Git生成并提交test manifest/registry `8c0ea47`。test wrapper identity为
+  `9F9A82D48D3D35BF63CEFCA3CB0998C11473F298A407233B46E6555D29CBDF61`，
+  三个成员仍严格对应validation冻结identity `72B7319F...F2705`，只使用三个cycle25
+  `last.pt`的1/3 residual-dB均值。
+- 唯一候选test推理44/44完成；每份prediction为`[2,793,463]`、finite、split=test、
+  identity一致。registry=`completed`，`test_subject_count_read=44`。没有生成Hybrid或
+  FiLM ensemble的新test预测，也没有test后调权、选成员、重训或重测。
+- 严格test均值（Bounded / MCAR v3.5.1 / RANF / FSP-AE，dB，越低越好）：Full ERB=
+  `0.7941314445/0.8179370488/1.0632355612/1.1844928283`；Contra25 ERB=
+  `1.2015177313/1.2744892321/1.5573225324/1.9088722833`；Contra HF=
+  `3.4765800998/3.5084809629/3.4696827665/3.1643546865`；horizontal ILD=
+  `0.6743815182/0.6447090917/0.7754627714/0.7586678875`。
+- 相对MCAR，Bounded的Full/Contra25/HF差分别为`-0.0238056043/-0.0729715008/
+  -0.0319008630 dB`，95% CI分别为`[-0.0362774928,-0.0016266649]`、
+  `[-0.0905437052,-0.0594867716]`、`[-0.0470893796,-0.0170815437]`，胜场
+  `42/44,44/44,34/44`，三项均显著更好。ILD差`+0.0296724266 dB`，CI
+  `[-0.0248789107,+0.1210173598]`，Bounded胜`25/44`，统计上未发现差异，但不能宣称
+  均值更优。相对RANF，Full/Contra25显著更好，HF与ILD统计持平；相对FSP-AE，
+  Full/Contra25显著更好、HF显著更差、ILD持平；相对MCA前三项显著更好、ILD持平。
+- 完整性：最终九方法表`1584=44×9×4`行、全部metric finite；raw评价44份quality
+  rows，767 interpolation directions；本次重算的七个共享冻结基线与既有八方法表逐项
+  最大差`0 dB`，既有表SHA-256仍为`3D74AF13...D63`；paired bootstrap 10000次、
+  seed `20260829`。这是项目已历史消费test上的锁定工程评价，不包装为全项目从未看过的
+  独立确认，但本候选在本次访问前已由validation冻结，结果无论方向均最终报告。
+
 ## 2026-08-29：Stage E bounded E25唯一候选test评价已授权并预注册
 
 - 用户明确授权`可以先做test评价`；授权记录时间为

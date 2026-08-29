@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "candidate": "BOUNDED",
+  "subject_count": 44,
+  "method_count": 9,
+  "metric_count": 4,
+  "metric_rows": 1584,
+  "all_finite": true,
+  "raw_shared_baseline_max_abs_difference_db": 0.0,
+  "test_subject_count_read_by_candidate_inference": 44,
+  "test_subject_count_read_by_merge": 0,
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20260829
+  },
+  "interpretation": "Results are final regardless of outcome; no test-driven tuning."
+}

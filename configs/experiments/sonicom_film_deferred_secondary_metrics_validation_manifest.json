@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-08-30",
+  "purpose": "Validation-only gate, ITD, dominant-notch, and efficiency completion tranche",
+  "protocol": {
+    "parent": {
+      "path": "experiments/film_siren/FUTURE_FILM_CANDIDATE_SECONDARY_METRICS_PREREGISTRATION.md",
+      "sha256": "E5C8C231BA297ED395D0AFC170DF734CD88CC641CEA0B29F3434D1EA7FB829E0",
+      "hierarchy": "secondary_or_descriptive_only"
+    },
+    "amendment": "experiments/film_siren/FUTURE_FILM_DEFERRED_SECONDARY_METRICS_AMENDMENT_V1.md",
+    "hierarchy": "secondary_or_descriptive_only"
+  },
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "val",
+    "subject_count": 44,
+    "direction_count": 793,
+    "q26_direction_count": 26,
+    "interpolation_direction_count": 767,
+    "horizontal_interpolation_direction_count": 72,
+    "frequency_bin_count": 463,
+    "resources": [
+      {
+        "path": "configs/data/sonicom_preparation_report_v1.json",
+        "sha256": "A5B861A0ADB87146A283502EFB3FE748A9B8FF9EB68539D38E9E36FEA17C7A35"
+      },
+      {
+        "path": "configs/data/sonicom_subject_split_v1.csv",
+        "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132"
+      },
+      {
+        "path": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+        "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287"
+      },
+      {
+        "path": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+        "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A"
+      }
+    ],
+    "reference_sofa_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects",
+    "reference_sofa_inventory_sha256": "DC454456363704D64463C62E334246E6B9C455A9227A211D10913315BD3FF2E6",
+    "coordinate_tolerance_degrees": 1e-05
+  },
+  "methods": {
+    "BOUNDED": {
+      "label": "Bounded correction E25 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "D9EEE83A35AE3DD2E9BA0A4B350A362F28DEC150274BB302747FE107A4E94311",
+      "prediction_inventory_sha256": "0B27972665D17B69C0DDDEDFD8F1BB204222E50BC159DF438EBFF0A9D67BBE1B",
+      "identity": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705"
+    },
+    "HYBRID": {
+      "label": "FiLM-SIREN plus spectral CNN E190 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "836E8BB9CDCBA3AA95ABBE30AB519F4935E0E27A8C89452FA19024BE376D5412",
+      "prediction_inventory_sha256": "A586C77658E4612DA7870193546DE0470772D4B981FD34DB419EE9E3F3ACE255",
+      "identity": "A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE"
+    },
+    "FILMENS": {
+      "label": "FiLM-SIREN D1/D2 plus notch E130 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "1B402D678B0BC82E082C29C8025DE8981660D42503B78CD9CEF3BF7A7956483C",
+      "prediction_inventory_sha256": "E185CFC4AEF7F53E23F6F977A9227315DA607998B9A2B4C6B8B3A10714A97B55",
+      "identity": "1CE74CF0AEC21D29FDE22B952FBB038EDBA8600938037855028ECE84B06936BE"
+    },
+    "MCAR": {
+      "label": "MCAR v3.5.1",
+      "prediction_root": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70",
+      "inference_report": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70/inference_report.json",
+      "inference_report_sha256": "0B96D30A39D14122A944F896E78BC0136AC8CBED22FDD83F547DA4D6B081B3BA",
+      "prediction_inventory_sha256": "D14CFC56E2667E8D6D93EAA9193068E8A3DE1A11243BFBD4BF05C1AA28BF971D",
+      "identity": "v3.5.1-candidate"
+    }
+  },
+  "bounded_manifest": {
+    "path": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+    "identity_sha256": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705"
+  },
+  "implementation": {
+    "git_commit": "58462a9c13de2daacf13accb3a76e09facdff4fc",
+    "git_dirty_at_freeze": false,
+    "python_executable": "D:/miniconda3/envs/ml/python.exe",
+    "runtime_versions": {
+      "python": "3.9.23",
+      "numpy": "1.26.4",
+      "h5py": "3.14.0",
+      "scipy": "1.13.1",
+      "torch": "2.8.0+cu128"
+    },
+    "torchaudio_site_packages": "D:\\miniconda3\\envs\\asd\\Lib\\site-packages",
+    "torchaudio_version": "2.8.0+cu128",
+    "resources": [
+      {
+        "path": "scripts/evaluate_film_deferred_secondary_metrics_validation.py",
+        "sha256": "23D8EB11751DC356D04AE85BD130C38E77A1ECCD367FB4E22D92D6EDDF9577ED"
+      },
+      {
+        "path": "scripts/benchmark_bounded_mcar_film_efficiency.py",
+        "sha256": "F638AB583380BE3B3D3CC552280B53136DEBADB85C3F859233212D40F2FE78F0"
+      },
+      {
+        "path": "src/mcar/evaluation/deferred_secondary_metrics.py",
+        "sha256": "295F7CBD7D48BE6C41DDD8AA2AAD0338B3F370BBF0FF5544FFA75AE37F83AD51"
+      },
+      {
+        "path": "src/mcar/evaluation/secondary_metrics.py",
+        "sha256": "C1DA0A232E0D29790D31168FB9A87AB4D2A46001F16EB3695BEA1CB90EDA63C9"
+      },
+      {
+        "path": "src/mcar/fsp_ae_signal.py",
+        "sha256": "35A1125995EB2500AC468606CA52CE3B7F5AF0D4C4A944F0A197D1342F71585C"
+      },
+      {
+        "path": "src/mcar/predictors.py",
+        "sha256": "530A3C034B17F7B1EC47C5E38007E69506FCB180E079E7713BE81CE17C6F6F42"
+      },
+      {
+        "path": "tests/test_deferred_secondary_metrics.py",
+        "sha256": "6796E4E7E1522B154CA8AF9C2346EF2AE271FCC4462ACE7C1B50B4E303A05ECD"
+      }
+    ],
+    "external_resources": [
+      {
+        "path": "D:\\miniconda3\\envs\\asd\\Lib\\site-packages\\torchaudio-2.8.0+cu128.dist-info\\RECORD",
+        "sha256": "9208B5C17A8866A8363BAC4A054CD7DAF225264CBD0F798EB73A8EC2021D96B2"
+      },
+      {
+        "path": "D:\\miniconda3\\envs\\asd\\Lib\\site-packages\\torchaudio\\lib\\_torchaudio.pyd",
+        "sha256": "E203F390565D9F6A8EF0B3016796E47A912C826AB9F35C244AA831F28CB35F2A"
+      }
+    ]
+  },
+  "gate": {
+    "directions_per_block": 32,
+    "prediction_tolerance_db": 5e-05,
+    "saved_full_grid": "all 793 directions; aggregate summaries use only 767 interpolation directions",
+    "distance_bins_degrees": [
+      [
+        0,
+        10
+      ],
+      [
+        10,
+        20
+      ],
+      [
+        20,
+        30
+      ],
+      [
+        30,
+        180
+      ]
+    ],
+    "ensemble_rule": "weighted mean of applied member corrections; no ensemble gate",
+    "spearman_hierarchy": "one rho per subject over ear x interpolation direction x frequency"
+  },
+  "itd": {
+    "estimator": "mcar.fsp_ae_signal.estimate_itd_seconds",
+    "origin": "public compatibility port of official FSP-AE low-pass/cross-correlation procedure",
+    "sampling_rate_hz": 44100.0,
+    "upsampled_rate_hz": 384000.0,
+    "lowpass_hz": 1600.0,
+    "maximum_itd_seconds": 0.001,
+    "direction_batch_size": 64,
+    "interpolation": "none after argmax; resolution is 1/384000 s",
+    "reference": "measured subject SOFA Data.IR evaluated by the same estimator",
+    "candidate": "strict HRIR with inherited MCA phase and outside-band complex bins"
+  },
+  "notch": {
+    "representation": "ear-specific DTF after subtracting solid-angle-weighted directional mean",
+    "smoothing": "Savitzky-Golay, 11 bins, degree 3, scipy mode=interp",
+    "range_hz": [
+      4000.0,
+      18000.0
+    ],
+    "minimum_prominence_db": 1.0,
+    "minimum_separation_hz": 500.0,
+    "selection": "single highest-prominence notch; ties choose lowest frequency",
+    "matching_tolerance_hz": 1500.0,
+    "unmatched_penalty_hz": 1500.0
+  },
+  "efficiency": {
+    "subject_label": "P0001",
+    "batch_size": 1,
+    "directions_per_block": 32,
+    "warmups": 5,
+    "repeats": 30,
+    "precision": "float32",
+    "cpu_threads": 1,
+    "tf32": false,
+    "hardware": {
+      "gpu_name": "NVIDIA GeForce RTX 5060",
+      "driver_version": "595.79",
+      "power_limit_w": 145.0,
+      "power_mode": "driver-managed default; no application clock or power override",
+      "cpu": "Intel64 Family 6 Model 191 Stepping 2, GenuineIntel",
+      "logical_cpu_count": 16,
+      "operating_system": "Windows-10-10.0.26200-SP0"
+    },
+    "software": {
+      "python": "3.9.23",
+      "torch": "2.8.0+cu128",
+      "cuda_runtime": "12.8",
+      "cudnn": "91002"
+    },
+    "flop_profiler": "torch.utils.flop_counter.FlopCounterMode 2.8.0",
+    "flop_convention": "native profiler FLOPs; MACs=FLOPs/2",
+    "latency_scope": "prepared CPU arrays through GPU transfer/model/CPU result; excludes checkpoint and disk I/O",
+    "end_to_end_scope": "input HDF5 load, three-member prediction, averaging, output HDF5 serialization"
+  },
+  "localization": {
+    "status": "not_runnable_dependency_unavailable",
+    "reason": "No immutable AMT/SAM package or published model is present locally; no output may be generated",
+    "local_inventory": [
+      "external/SUpDEq"
+    ]
+  },
+  "statistics": {
+    "subject_count": 44,
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260829,
+    "tie_tolerance": 1e-12,
+    "candidate_vs_itd_baseline": "BOUNDED minus MCAR"
+  },
+  "outputs": {
+    "results_root": "results/sonicom_film_deferred_secondary_metrics_v1_validation",
+    "diagnostics_root": "artifacts/reconstruction/sonicom_bounded_mcar_film_gate_diagnostics_v1_validation",
+    "efficiency_root": "results/sonicom_bounded_mcar_film_efficiency_v1_validation"
+  },
+  "commands": [
+    "D:\\miniconda3\\envs\\ml\\python.exe scripts/evaluate_film_deferred_secondary_metrics_validation.py configs/experiments/sonicom_film_deferred_secondary_metrics_validation_manifest.json",
+    "D:\\miniconda3\\envs\\ml\\python.exe scripts/benchmark_bounded_mcar_film_efficiency.py configs/experiments/sonicom_film_deferred_secondary_metrics_validation_manifest.json"
+  ],
+  "expected_counts": {
+    "subjects": 44,
+    "methods": 4,
+    "directions": 793,
+    "interpolation_directions": 767,
+    "frequency_bins": 463,
+    "bounded_members": 3
+  },
+  "test_policy": "Validation only; non-val inputs are rejected and test_subject_count_read remains zero.",
+  "result_blind_statement": "No deferred validation endpoint or efficiency result was inspected before this freeze.",
+  "identity_sha256": "3DDED7DEF36A85BC01F98F3A94570B5DD9C5FE95F8660D66EF33C750AE1C451A"
+}

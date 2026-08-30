@@ -154,6 +154,9 @@ def main() -> None:
     for resource in payload["implementation"]["resources"]:
         if file_sha256(root / resource["path"]) != resource["sha256"]:
             raise ValueError(f"Implementation hash mismatch: {resource['path']}")
+    for resource in payload["implementation"]["external_resources"]:
+        if file_sha256(Path(resource["path"])) != resource["sha256"]:
+            raise ValueError(f"External dependency hash mismatch: {resource['path']}")
     torchaudio_version = enable_external_torchaudio(
         Path(payload["implementation"]["torchaudio_site_packages"])
     )

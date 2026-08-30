@@ -138,6 +138,9 @@ def main() -> None:
     torch.backends.cudnn.allow_tf32 = False
     if not torch.cuda.is_available():
         raise RuntimeError("Frozen benchmark requires CUDA")
+    for resource in payload["implementation"]["resources"]:
+        if file_sha256(root / resource["path"]) != resource["sha256"]:
+            raise ValueError(f"Implementation hash mismatch: {resource['path']}")
     actual_gpu = torch.cuda.get_device_name(0)
     if actual_gpu != benchmark_spec["hardware"]["gpu_name"]:
         raise RuntimeError(f"GPU mismatch: {actual_gpu}")

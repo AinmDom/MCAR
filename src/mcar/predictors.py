@@ -359,8 +359,8 @@ class FilmSirenSpectralCNNPredictor:
             raise ValueError("directions_per_block must be positive")
         self.allow_test = bool(allow_test)
 
-    def prepare_subject(self, source_h5: Path) -> BoundedCorrectionSubjectInputs:
-        """Load all subject inputs before a compute-only benchmark region."""
+    @torch.no_grad()
+    def predict_residual_db(self, source_h5: Path) -> np.ndarray:
         with h5py.File(source_h5, "r") as handle:
             subject_id = int(np.asarray(handle.attrs["subject_id"]).item())
             local_mca_db = np.asarray(handle["mca_logmag_db"][:], dtype=np.float32)
@@ -513,8 +513,8 @@ class BoundedMcarFilmCorrectionPredictor:
             raise ValueError("directions_per_block must be positive")
         self.allow_test = bool(allow_test)
 
-    @torch.no_grad()
-    def predict_residual_db(self, source_h5: Path) -> np.ndarray:
+    def prepare_subject(self, source_h5: Path) -> BoundedCorrectionSubjectInputs:
+        """Load all subject inputs before a compute-only benchmark region."""
         with h5py.File(source_h5, "r") as handle:
             subject_id = int(np.asarray(handle.attrs["subject_id"]).item())
             local_mca_db = np.asarray(handle["mca_logmag_db"][:], dtype=np.float32)

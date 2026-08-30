@@ -1,0 +1,31 @@
+Tier,BaselineLabel,Status,EndpointCount
+Deferred,FSP-AE,Comparable,2
+Deferred,FSP-AE,Significantly worse,4
+Deferred,MCAR v3.5.1,Comparable,3
+Deferred,MCAR v3.5.1,Significantly worse,3
+Deferred,RANF,Comparable,1
+Deferred,RANF,Significantly better,2
+Deferred,RANF,Significantly worse,3
+Primary,FSP-AE,Comparable,1
+Primary,FSP-AE,Significantly better,2
+Primary,FSP-AE,Significantly worse,1
+Primary,MCAR v3.5.1,Comparable,1
+Primary,MCAR v3.5.1,Significantly better,3
+Primary,RANF,Comparable,2
+Primary,RANF,Significantly better,2
+Secondary,FSP-AE,Comparable,1
+Secondary,FSP-AE,Significantly better,1
+Secondary,FSP-AE,Significantly worse,3
+Secondary,MCAR v3.5.1,Significantly better,4
+Secondary,MCAR v3.5.1,Significantly worse,1
+Secondary,RANF,Significantly better,1
+Secondary,RANF,Significantly worse,4
+All,FSP-AE,Comparable,4
+All,FSP-AE,Significantly better,3
+All,FSP-AE,Significantly worse,8
+All,MCAR v3.5.1,Comparable,4
+All,MCAR v3.5.1,Significantly better,7
+All,MCAR v3.5.1,Significantly worse,4
+All,RANF,Comparable,3
+All,RANF,Significantly better,5
+All,RANF,Significantly worse,7

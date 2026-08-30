@@ -1,0 +1,34 @@
+{
+  "status": "completed",
+  "split": "val",
+  "subject_count": 44,
+  "methods": [
+    "RANF",
+    "FSPAE"
+  ],
+  "test_subject_count_read": 0,
+  "secondary_endpoints": [
+    "FullSphereLSD",
+    "HFFirstDifferenceMAE",
+    "HFSecondDifferenceMAE",
+    "MultiScaleNotchDepthMAE",
+    "ERBBandILDMean"
+  ],
+  "deferred_endpoints": [
+    "DominantNotchMatchedMAE_Hz",
+    "DominantNotchMissRate",
+    "DominantNotchPenalizedMAE_Hz",
+    "DominantNotchSpuriousRate",
+    "ITDMaximumAbsoluteError_us",
+    "ITDWeightedMAE_us",
+    "ReferenceNotchFraction"
+  ],
+  "paired_baselines": [
+    "RANF",
+    "FSPAE"
+  ],
+  "manifest_identity_sha256": "63B5C5D61C32949A70A767B9CAA9A85BDDF869DD2817756A23FF5A83979B0A35",
+  "mechanism_comparison_status": "not_applicable_no_common_internal_quantity",
+  "efficiency_comparison_status": "not_available_no_same_hardware_benchmark",
+  "localization_status": "not_run_dependency_unavailable"
+}

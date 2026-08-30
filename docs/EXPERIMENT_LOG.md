@@ -1,5 +1,71 @@
 # 项目实验日志
 
+## 2026-08-30：Stage E 对 MCAR/RANF/FSP-AE 分层横向对比完成
+
+- 在RANF/FSP-AE validation-only新增指标扩展完成后，将Stage E正式Bounded E25 ensemble与
+  MCAR v3.5.1、RANF、FSP-AE做分层横向汇总。主证据固定使用已提交的44-subject frozen
+  engineering test四指标；secondary和deferred端点仅使用44-subject validation。汇总过程只读
+  已冻结CSV，不读取数据HDF5，不重跑模型或评价，新增`test_subject_count_read=0`；上游候选唯一
+  test inference读数仍为44。
+- 产物：`results/sonicom_stage_e_external_comparison/`，包含45行candidate-vs-baseline长表、
+  64行四方法均值表、分层scorecard、可比性状态、论文主表和英文Markdown报告；全部numeric
+  finite。另生成可筛选工作簿`outputs/stage_e_external_comparison/
+  stage_e_external_comparison.xlsx`，SHA-256=`68A85681DA6047AE488EAC6FA46B5076BFA25CD0A27A9803BF652BC2A93DC380`；
+  5个sheet逐一渲染核验、公式错误扫描0，Summary含12项primary配对比较与论文结论。
+- frozen test主结论：Stage E相对MCAR的Full/Contra25/HF均显著更好，差值
+  `-0.0238056/-0.0729715/-0.0319009 dB`，horizontal ILD差`+0.0296724 dB`但CI跨0；
+  相对RANF，Full/Contra25显著更好，HF/ILD持平；相对FSP-AE，Full/Contra25显著更好，
+  HF显著更差`+0.312225 dB`，ILD持平。Stage E在四方法Full与Contra25均排第1、ILD第2、
+  HF第3。
+- validation supplementary显示：相对MCAR，Stage E在LSD、HF一/二阶差分和ERB-band ILD
+  显著更好，仅multi-scale notch-depth显著更差；相对RANF/FSP-AE，Stage E在plain LSD与HF
+  谱差显著更差，但ERB-band ILD显著更好。ITD weighted MAE与MCAR/FSP-AE持平、显著优于
+  RANF；exploratory dominant-notch location则显著弱于三者。故论文必须把“宽带听觉加权
+  ERB优势”和“细粒度HF谱形/notch定位代价”并列陈述，不能概括为全指标支配。
+- 可比性边界：RANF/FSP-AE无共同gate/correction内部量，机制标记`NOT APPLICABLE`；三基线
+  未按冻结RTX 5060协议重做效率，标记`NOT AVAILABLE`；model-based localization仍因官方
+  immutable依赖缺失标记`NOT RUN`。报告生成曾有两次empty prewrite和三次partial格式兼容失败，
+  均未接纳；完整失败目录移至ignored `artifacts/report_generation_failures/`保留审计，最终包从头
+  生成并通过完整性核验。
+
+## 2026-08-30：RANF/FSP-AE新增指标横向扩展完成（validation only）
+
+- 用户要求补齐RANF、FSP-AE横向对比后，先提交comparator-specific result-blind amendment与
+  实现`b155556`，再在clean Git上冻结manifest并提交为`19017aa`。manifest identity为
+  `63B5C5D61C32949A70A767B9CAA9A85BDDF869DD2817756A23FF5A83979B0A35`。端点公式及既有四方法
+  secondary结果在本扩展前已知，且RANF/FSP-AE四个primary结果历史上已知；但本条新增的LSD、
+  HF谱差、notch-depth、band ILD、空间bins、ITD与dominant-notch comparator outputs在freeze前
+  未计算、汇总或查看。本扩展不能改变已冻结候选或授权test。
+- 输入映射固定为RANF `Data.IR [793,2,256]`做1024点FFT后按processed strict selected bins取值；
+  FSP-AE直接使用`predicted_magnitude_db [793,2,512]`且processed bin `i`映射到FSP bin `i-1`；
+  ITD均直接使用各自`[793,2,256]` HRIR。44 RANF/FSP-AE/refererence inventories及代码/runtime均
+  哈希守卫。RANF方向最大误差`0 deg`、FSP频点最大误差`0 Hz`；相关测试`12 passed, 1 skipped`。
+- 产物：`results/sonicom_film_secondary_baseline_extension_ranf_fsp_v1_validation/`。RANF/FSP-AE
+  各44 subjects；per-subject/aggregate secondary rows=`440/10`，band rows=`3150`，spatial
+  bins/map=`360/1534`，per-subject/aggregate deferred rows=`616/14`，paired secondary/primary
+  与deferred rows=`26/12`；全部finite、无partial目录、`test_subject_count_read=0`。
+- 五个secondary scalar均值（顺序RANF/FSP-AE）：FullSphereLSD=`3.3614502403/3.0700346219 dB`，
+  HF first=`0.4085859819/0.4105746265 dB/bin`，HF second=`0.2194569700/0.2188125815 dB/bin²`，
+  multi-scale notch depth=`0.4913962991/0.5033549626 dB`，ERB-band ILD mean=
+  `1.7228081524/1.5991126461 dB`。BOUNDED减RANF/FSP-AE的均值差分别为：LSD
+  `+0.2259944914/+0.5174101098`、HF first `+0.0186709017/+0.0166822570`、HF second
+  `+0.0200060701/+0.0206504586`、notch depth `+0.0156038058/+0.0036451424`（后者95% CI
+  `[-0.0002420884,+0.0077829808]`跨0）、band ILD `-0.2309854085/-0.1072899022`，其余上述CI均
+  不跨0。故RANF/FSP-AE在全频LSD和HF谱形上明显优于BOUNDED，而BOUNDED的band ILD更好；
+  notch-depth对RANF更差、对FSP-AE统计持平。
+- 作为同一tail-risk表的已提交primary rows，BOUNDED减RANF/FSP-AE为：FullSphereERB
+  `-0.2779629989/-0.3636615811 dB`，Contra25ERB `-0.4108726125/-0.6312911442 dB`，
+  HF `+0.0418051579/+0.4060050018 dB`，Horizontal ILD `-0.2251626784/-0.0327038128 dB`；
+  除BOUNDED-vs-FSP-AE ILD的CI`[-0.0734252727,+0.0082334221]`跨0外，其余CI不跨0。因此原四个
+  auditory primary端点与新增plain-LSD/谱导数端点给出的优劣方向不同，论文必须分开解释。
+- deferred均值（RANF/FSP-AE）：ITD weighted MAE=`17.589353/15.543916 us`，maximum=
+  `155.598963/104.403413 us`；BOUNDED差为weighted `-2.068515/-0.023078 us`（对FSP-AE CI
+  `[-1.077635,+0.949463]`跨0），maximum `-25.390629/+25.804921 us`。Exploratory dominant-notch
+  penalized MAE=`859.001/829.641 Hz`，均优于BOUNDED `962.414 Hz`；BOUNDED差
+  `+103.413/+132.772 Hz`且CI不跨0。机制内部量对RANF/FSP-AE定义性不可比，标记
+  `NOT APPLICABLE`；未做同RTX 5060协议效率benchmark，标记`NOT AVAILABLE`；localization继续
+  因官方AMT/SAM依赖缺失标记`NOT RUN`，这些状态不是零值。
+
 ## 2026-08-30：FiLM deferred secondary endpoints完成（定位模型除外）
 
 - 在结果前提交核心/入口/amendment链`53b7ed2`、`99298cf`、`58462a9`，首次manifest

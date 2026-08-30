@@ -1,0 +1,10 @@
+BaselineLabel,Category,Status
+MCAR v3.5.1,Mechanism,Not comparable: no FiLM gate
+RANF,Mechanism,Not applicable: no common internal quantity
+FSP-AE,Mechanism,Not applicable: no common internal quantity
+MCAR v3.5.1,Efficiency,Not available under the frozen same-hardware protocol
+RANF,Efficiency,Not available under the frozen same-hardware protocol
+FSP-AE,Efficiency,Not available under the frozen same-hardware protocol
+MCAR v3.5.1,Localization,Not run: immutable official dependency unavailable
+RANF,Localization,Not run: immutable official dependency unavailable
+FSP-AE,Localization,Not run: immutable official dependency unavailable

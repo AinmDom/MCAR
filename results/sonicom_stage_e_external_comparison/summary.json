@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "candidate": "Stage E Bounded E25 ensemble",
+  "baselines": [
+    "MCAR v3.5.1",
+    "RANF",
+    "FSP-AE"
+  ],
+  "primary_split": "test",
+  "secondary_split": "val",
+  "subject_count_per_split": 44,
+  "comparison_rows": 45,
+  "method_mean_rows": 64,
+  "all_numeric_finite": true,
+  "new_test_subject_count_read": 0,
+  "upstream_candidate_test_subject_count_read": 44,
+  "primary_status_counts": {
+    "significantly_better": 7,
+    "comparable": 4,
+    "significantly_worse": 1
+  },
+  "secondary_status_counts": {
+    "significantly_better": 6,
+    "comparable": 1,
+    "significantly_worse": 8
+  },
+  "deferred_status_counts": {
+    "significantly_better": 2,
+    "comparable": 6,
+    "significantly_worse": 10
+  },
+  "claim_boundary": [
+    "Primary metrics use the frozen engineering test, historically consumed at project level. ",
+    "Secondary metrics are validation supplementary; deferred notch endpoints are exploratory. ",
+    "No test data were read while generating this comparison."
+  ],
+  "sources": {
+    "primary": "results/sonicom_bounded_mcar_film_correction_final_e25_frozen_test_nine_method",
+    "secondary_internal": "results/sonicom_film_secondary_metrics_v1_validation",
+    "deferred_internal": "results/sonicom_film_deferred_secondary_metrics_v1_validation",
+    "external_extension": "results/sonicom_film_secondary_baseline_extension_ranf_fsp_v1_validation"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "split": "val",
+  "subject_count": 44,
+  "method_count": 2,
+  "methods": [
+    "RANF",
+    "FSPAE"
+  ],
+  "test_subject_count_read": 0,
+  "all_finite": true,
+  "direction_count": 793,
+  "interpolation_direction_count": 767,
+  "horizontal_interpolation_direction_count": 72,
+  "frequency_bin_count": 463,
+  "erb_band_count": 35,
+  "max_ranf_coordinate_error_degrees": 0.0,
+  "max_fsp_frequency_error_hz": 0.0,
+  "row_counts": {
+    "per_subject_metrics": 440,
+    "aggregate_metrics": 10,
+    "paired_tail_risk": 26,
+    "band_ild_profile": 3150,
+    "spatial_distance_bins": 360,
+    "spatial_direction_map": 1534,
+    "per_subject_endpoints": 616,
+    "aggregate_endpoints": 14,
+    "paired_deferred_tail_risk": 12
+  },
+  "mechanism_comparison_status": "not_applicable_no_common_internal_quantity",
+  "efficiency_comparison_status": "not_available_no_same_hardware_benchmark",
+  "localization_status": "not_run_dependency_unavailable",
+  "manifest_identity_sha256": "63B5C5D61C32949A70A767B9CAA9A85BDDF869DD2817756A23FF5A83979B0A35"
+}

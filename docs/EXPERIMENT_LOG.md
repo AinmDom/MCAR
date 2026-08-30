@@ -1,5 +1,43 @@
 # 项目实验日志
 
+## 2026-08-30：完整十方法横向对比集合登记与分层数据表完成
+
+- 按用户指定顺序将完整论文横向集合冻结为：SH only、SUpDEq SH、SUpDEq NN、
+  SUpDEq Barycentric、MCA、MCAR v3.5.1、FSP-AE、RANF、Hybrid E190、Bounded E25。
+  机器可读注册表为`configs/experiments/sonicom_complete_horizontal_comparison_methods_v1.json`，
+  汇总协议为`experiments/film_siren/STAGE_E_COMPLETE_TEN_METHOD_COMPARISON_PROTOCOL.md`。
+  这是一项既有冻结结果的consolidation，不是新的result-blind模型选择：未启动训练/评价，未读取
+  原始test HDF5/SOFA，新增`test_subject_count_read=0`；历史frozen engineering test上游读数仍为44。
+- 数据产物位于`results/sonicom_complete_ten_method_comparison_v1/`。主validation覆盖`10/10`
+  方法×4端点，historical frozen test覆盖`9/10`×4端点（Hybrid E190未进入冻结test方法集），
+  secondary/deferred validation各覆盖有同协议冻结产物的`5/10`方法（MCAR v3.5.1、FSP-AE、
+  RANF、Hybrid E190、Bounded E25）。完整method-endpoint状态表240格，其中156格有44-subject
+  均值/样本标准差且全部finite；其余格显式使用`NOT RUN`，不作插补。Bounded-vs-all可用方法
+  的paired table共128行，固定10000次PCG64 subject bootstrap；另含175行band ILD profile、
+  3835行spatial map、615行Bounded机制汇总、44行correction-benefit Spearman和2项部署效率。
+- 单张论文宽表为`paper_complete_comparison_wide.csv`。四个primary validation赢家依次为：
+  FullSphere ERB Bounded E25=`0.7966490938 dB`；Contralateral-25 ERB Hybrid E190=
+  `1.2145930843 dB`（Bounded=`1.2166261334`，差`+0.0020330491 dB`、95% bootstrap CI
+  `[-0.0084009848,+0.0124296471]`）；Contralateral HF FSP-AE=`3.1038093697 dB`；
+  Horizontal ILD Bounded E25=`0.5650044448 dB`。故Bounded在宽带Full与ILD最优、Contra25与
+  Hybrid统计持平，但不支配HF细节。
+- historical frozen test四项赢家依次为Bounded E25 Full=`0.7941314445 dB`、Bounded E25
+  Contra25=`1.2015177313 dB`、FSP-AE HF=`3.1643546865 dB`、MCAR v3.5.1 ILD=
+  `0.6447090917 dB`。Hybrid E190在test列严格标记`NOT RUN`，没有因本次横向汇总事后补测。
+  validation supplementary的9项中，FSP-AE在FullSphereLSD与四个spatial-LSD bin最优，
+  Hybrid E190在HF一/二阶差分与multi-scale notch-depth最优，Bounded E25在ERB-band ILD最优；
+  deferred notch/ITD仅作exploratory解释，`ReferenceNotchFraction`为描述量且不排名。
+- 工作簿`outputs/stage_e_complete_ten_method_comparison/stage_e_complete_ten_method_comparison.xlsx`
+  SHA-256=`5229C695EA37C792C47ADD4EAB6A614EC7D7E1F851A50C244FED77EF28961EB1`。含11个sheet：
+  Overview、Method Registry、Complete Table、All Means、Paired vs Bounded、Availability、
+  Band ILD、Spatial Map、Efficiency、Mechanism、Correction Correlation。逐sheet渲染核验，
+  结构检查为registry 10方法、Complete Table `25×16`、All Means `241×15`、paired
+  `129×18`、Spatial Map `3836×8`等，公式错误扫描0。
+- 可比性边界保持冻结：经典五基线缺少同协议secondary/deferred重建产物，标记`NOT RUN`；
+  除Bounded外没有共同gate/correction内部量，标记`NOT APPLICABLE`；其余方法没有冻结同硬件
+  benchmark，效率标记`NOT AVAILABLE`；model-based localization因官方immutable依赖缺失，
+  全部标记`NOT RUN`。不同split与证据等级不得合并排名或平均。
+
 ## 2026-08-30：Stage E 对 MCAR/RANF/FSP-AE 分层横向对比完成
 
 - 在RANF/FSP-AE validation-only新增指标扩展完成后，将Stage E正式Bounded E25 ensemble与

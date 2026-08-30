@@ -1,0 +1,54 @@
+{
+  "status": "verified",
+  "sheetCount": 11,
+  "expectedShapes": {
+    "Method Registry": [
+      11,
+      5
+    ],
+    "Complete Table": [
+      25,
+      16
+    ],
+    "All Means": [
+      241,
+      15
+    ],
+    "Paired vs Bounded": [
+      129,
+      18
+    ],
+    "Availability": [
+      71,
+      6
+    ],
+    "Band ILD": [
+      176,
+      7
+    ],
+    "Spatial Map": [
+      3836,
+      8
+    ],
+    "Efficiency": [
+      3,
+      14
+    ],
+    "Mechanism": [
+      616,
+      11
+    ],
+    "Correction Correlation": [
+      45,
+      4
+    ]
+  },
+  "registryMethodCount": 10,
+  "overviewChecks": [
+    10,
+    240,
+    156,
+    0
+  ],
+  "formulaErrors": 0
+}

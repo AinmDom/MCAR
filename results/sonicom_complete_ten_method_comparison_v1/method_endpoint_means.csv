@@ -1,0 +1,241 @@
+EvidenceTier,Split,EvidenceLevel,Endpoint,Unit,Direction,MethodOrder,Method,MethodLabel,Status,Reason,SubjectCount,Mean,SampleStd,RankWithinTier
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,2.6659559665157864,0.15452382402478576,10
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,1.819432875276224,0.23741393349616013,8
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,1.849413664920609,0.25002406141372197,9
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,1.7421466562590262,0.21966648231429284,7
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,1.0957382794104626,0.1446781338499423,5
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.8308081768778546,0.15217708712315192,3
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,1.1603106749036973,0.1618864253659326,6
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,1.0746120926761717,0.1466365478883623,4
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.8044203110730913,0.16137634283993174,2
+Primary validation,val,Validation primary,FullSphereERB,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.7966490937772325,0.15718464836259363,1
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,3.8296365508386105,0.3613569593236591,10
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,2.2459817023270876,0.15221907134555915,9
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,2.2194045152110182,0.16554501225508875,8
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,2.162174403720772,0.15918710924670115,7
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,1.7635078108972038,0.17712463792382588,5
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,1.2889532413126572,0.1732104330305677,3
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,1.8479172775430348,0.17490351779579538,6
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,1.627498745890078,0.22772345744640077,4
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,1.214593084257463,0.18868738861833947,1
+Primary validation,val,Validation primary,Contralateral25ERB,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,1.2166261333537989,0.18011817899409754,2
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,9.01637654401128,0.6207554141175401,10
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,6.00559886333293,0.36646527681907576,9
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,5.661935918451021,0.2859743117256122,8
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,5.527233499578518,0.27118355985285825,7
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,4.7492079941280805,0.23356608052912414,6
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.538086607059492,0.26180043534553354,5
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,3.103809369743327,0.2536186776542939,1
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.4680092137126852,0.2785362851213616,2
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,3.5019939595643708,0.2755469271193538,3
+Primary validation,val,Validation primary,ContralateralHighFrequency,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.509814371564856,0.27537930589784376,4
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,3.629144990905146,0.635844157294559,10
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,1.7388691435562678,0.44555501014848076,9
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,1.5634874626537645,0.473901408399945,8
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,1.5326360709746796,0.4400257054790827,7
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,0.8300137728355136,0.18106057648929053,6
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.5811462482733765,0.15808541575672228,2
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.5977082576411121,0.15314940110641143,3
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.7901671231596392,0.1769144871363441,5
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.629811407492535,0.1806695117012771,4
+Primary validation,val,Validation primary,HorizontalILDMAE,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.5650044447932491,0.15949453968779856,1
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,2.6853565503322385,0.10719709899095119,9
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,1.8820954164662245,0.5059550813480695,8
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,1.8517649012234778,0.29011171883636244,7
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,1.7522499008106955,0.2566555867172788,6
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,1.0821981924889854,0.09594779573712109,4
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.8179370487968771,0.17548315377463414,2
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,1.1844928283270788,0.3492147786673772,5
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,1.063235561224275,0.1263969562248575,3
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,9,HYBRID,Hybrid E190,NOT RUN,Hybrid E190 was not included in the frozen test method set,,,,
+Primary frozen engineering test,test,Historical frozen engineering test,FullSphereERB,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.7941314445271186,0.23968893769111158,1
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,3.835298459361723,0.44840786727952137,9
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,2.228058966831583,0.1946784030548492,7
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,2.2405069357103353,0.21233793322515948,8
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,2.1820943140533697,0.1928516981251219,6
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,1.7457551661165325,0.1550969897986205,4
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,1.2744892321005215,0.1477440454581583,2
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,1.9088722832721927,0.7008144347919009,5
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,1.5573225323745084,0.16359502653718577,3
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,9,HYBRID,Hybrid E190,NOT RUN,Hybrid E190 was not included in the frozen test method set,,,,
+Primary frozen engineering test,test,Historical frozen engineering test,Contralateral25ERB,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,1.2015177313170475,0.11383582341111831,1
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,9.066895819401736,0.8239832340774925,9
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,5.993626092737012,0.3439002741789864,8
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,5.595395176142248,0.25812149760528,7
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,5.475626457997767,0.21712596262129183,6
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,4.698648610844627,0.2660873203804296,5
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.5084809628530294,0.28791336352245417,4
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,3.1643546864916625,0.685424467474205,1
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.4696827665226184,0.25376626772377825,2
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,9,HYBRID,Hybrid E190,NOT RUN,Hybrid E190 was not included in the frozen test method set,,,,
+Primary frozen engineering test,test,Historical frozen engineering test,ContralateralHighFrequency,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.4765800998453718,0.27879540727969626,3
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,1,SHOnly,SH only,AVAILABLE,,44,3.5510804317871334,0.6636812251037446,9
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,AVAILABLE,,44,2.0181311881102575,1.5642938561149935,8
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,AVAILABLE,,44,1.6369763954333594,0.4687453398706081,7
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,AVAILABLE,,44,1.6150625009694033,0.4423952511167731,6
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,5,MCA,MCA,AVAILABLE,,44,0.8293849387608859,0.1582120451977182,5
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.6447090916559254,0.24790743768115445,1
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.7586678874618048,1.039700653084713,3
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.775462771438966,0.18878334402685124,4
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,9,HYBRID,Hybrid E190,NOT RUN,Hybrid E190 was not included in the frozen test method set,,,,
+Primary frozen engineering test,test,Historical frozen engineering test,HorizontalILDMAE,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.6743815182360612,0.48806449973080934,2
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.6097610496792503,0.2371819350284697,5
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,3.0700346219267796,0.21920149375146875,1
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.3614502402651145,0.24563252593434376,2
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,3.548925619007447,0.2672844638329812,3
+Secondary validation,val,Validation supplementary,FullSphereLSD,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.5874447316845934,0.25559269544901697,4
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.4295869212258946,0.058056000821317406,5
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.4105746265162121,0.058734004214157434,3
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.40858598188920453,0.05193856792487029,2
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.40270265394991095,0.052803476437396725,1
+Secondary validation,val,Validation supplementary,HFFirstDifferenceMAE,dB/bin,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.42725688354535535,0.059033212817467366,4
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.25380985980684106,0.05249642996734931,5
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.21881258149038663,0.046298489101355415,2
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.2194569700143554,0.038283550936428414,3
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.21679756993597205,0.0436123618810424,1
+Secondary validation,val,Validation supplementary,HFSecondDifferenceMAE,dB/bin^2,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.2394630400971933,0.049715754635632804,4
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.500103891573169,0.06708195228018586,3
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.5033549625765193,0.06824775790645948,4
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.49139629914001987,0.06612955211994317,2
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.4884118525819345,0.06537468135553952,1
+Secondary validation,val,Validation supplementary,MultiScaleNotchDepthMAE,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.5070001049475237,0.07031655368670378,5
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,1.5625394013794986,0.12054959748371862,3
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,1.5991126461462541,0.13756048278788177,4
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,1.72280815243721,0.1853409414981954,5
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,1.4992052533409812,0.1523079480288527,2
+Secondary validation,val,Validation supplementary,ERBBandILDMean,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,1.491822743957693,0.13687889613330795,1
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.4499094120961176,0.23171047374347317,5
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,2.6274097895647293,0.19101859403787974,1
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.011386950942528,0.22851533207091146,2
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,3.4116410253433656,0.25668277184151694,3
+Secondary validation,val,Validation supplementary,SpatialLSD_0_10deg,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.4486082679815353,0.2451050427954667,4
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.581829545524569,0.24531384309886978,5
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,3.1070763722734966,0.2267801702968003,1
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.371089329107272,0.26092530623936083,2
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,3.522653467888912,0.2726054748972956,3
+Secondary validation,val,Validation supplementary,SpatialLSD_10_20deg,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.56439755125468,0.2644876136223559,4
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.802478437760142,0.2531721616005814,5
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,3.316794192059734,0.25178810680694447,1
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.596232802945718,0.25572857027028106,2
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,3.7299262251879344,0.28753649486127314,3
+Secondary validation,val,Validation supplementary,SpatialLSD_20_30deg,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.758828600649851,0.2709252825724428,4
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,3.9120733673721975,0.6581414110631642,5
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,3.0422600639865864,0.5516688948514055,1
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,8,RANF,RANF,AVAILABLE,,44,3.5873455789988156,0.5802381976750186,2
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,3.725672578089188,0.745131439969663,3
+Secondary validation,val,Validation supplementary,SpatialLSD_30_180deg,dB,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,3.7685922990840073,0.6782118636818119,4
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,949.2494082161884,75.55977360261095,4
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,829.6414508345799,63.31230801246058,1
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,8,RANF,RANF,AVAILABLE,,44,859.0009601095112,83.94252267463169,2
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,935.6771458813672,74.07417479739668,3
+Deferred validation,val,Exploratory validation,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,962.4137754162804,74.69358440090187,5
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,502.0346522312713,58.8920023178486,4
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,417.5036538741795,45.12011643186553,1
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,8,RANF,RANF,AVAILABLE,,44,432.6876530586727,43.851593573228854,2
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,481.8079077389626,59.15797838161565,3
+Deferred validation,val,Exploratory validation,DominantNotchMatchedMAE_Hz,Hz,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,509.5136542288959,60.44239865475074,5
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.4486176587567286,0.0626480448572756,4
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.38017729811656265,0.05852540367060519,1
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.4002143527397703,0.06880414778150042,2
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.4460368832742345,0.062388098431290055,3
+Deferred validation,val,Exploratory validation,DominantNotchMissRate,fraction,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.4580530307984464,0.06081310198900484,5
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.022727272727272728,0.15075567228888181,1
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,0.022727272727272728,0.15075567228888181,2
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,8,RANF,RANF,AVAILABLE,,44,0.022727272727272728,0.15075567228888181,3
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.022727272727272728,0.15075567228888181,4
+Deferred validation,val,Exploratory validation,DominantNotchSpuriousRate,fraction,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.022727272727272728,0.15075567228888181,5
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,0.9999822609276101,0.0001176676944922254,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,7,FSPAE,FSP-AE,AVAILABLE,,44,0.9999822609276101,0.0001176676944922254,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,8,RANF,RANF,AVAILABLE,,44,0.9999822609276101,0.0001176676944922254,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,9,HYBRID,Hybrid E190,AVAILABLE,,44,0.9999822609276101,0.0001176676944922254,
+Deferred validation,val,Exploratory validation,ReferenceNotchFraction,fraction,Descriptive only,10,BOUNDED,Bounded E25,AVAILABLE,,44,0.9999822609276101,0.0001176676944922254,
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,15.520266032911964,2.2751558032080594,1
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,15.543915553698787,4.204318097510814,4
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,8,RANF,RANF,AVAILABLE,,44,17.589352647421784,2.527049896443619,5
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,15.522397562166388,2.3298415416068328,3
+Deferred validation,val,Exploratory validation,ITDWeightedMAE_us,us,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,15.520837234236467,2.29860723801188,2
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,1,SHOnly,SH only,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,2,SUpDEqSH,SUpDEq SH,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,3,SUpDEqNN,SUpDEq NN,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,4,SUpDEqBary,SUpDEq Barycentric,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,5,MCA,MCA,NOT RUN,No frozen same-protocol reconstruction/result for this endpoint tier,,,,
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,6,MCARv351,MCAR v3.5.1,AVAILABLE,,44,129.97159038522196,37.912323742543535,2
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,7,FSPAE,FSP-AE,AVAILABLE,,44,104.40341278891455,60.25108933837111,1
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,8,RANF,RANF,AVAILABLE,,44,155.5989630022933,57.085170807659345,5
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,9,HYBRID,Hybrid E190,AVAILABLE,,44,130.20833483262157,39.33809371738921,4
+Deferred validation,val,Exploratory validation,ITDMaximumAbsoluteError_us,us,Lower is better,10,BOUNDED,Bounded E25,AVAILABLE,,44,130.20833350972018,38.77681114538794,3

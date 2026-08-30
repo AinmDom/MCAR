@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "registered_methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA",
+    "MCARv351",
+    "FSPAE",
+    "RANF",
+    "HYBRID",
+    "BOUNDED"
+  ],
+  "method_count": 10,
+  "primary_validation_method_count": 10,
+  "primary_test_method_count": 9,
+  "primary_test_missing": [
+    "HYBRID"
+  ],
+  "secondary_validation_method_count": 5,
+  "deferred_validation_method_count": 5,
+  "method_endpoint_rows": 240,
+  "available_numeric_method_endpoint_rows": 156,
+  "paired_rows": 128,
+  "band_profile_rows": 175,
+  "spatial_direction_rows": 3835,
+  "bounded_mechanism_rows": 615,
+  "bounded_correction_correlation_rows": 44,
+  "all_available_means_finite": true,
+  "new_test_subject_count_read": 0,
+  "upstream_frozen_test_subject_count": 44,
+  "claim_boundary": "Validation, historical frozen engineering test, supplementary validation, and exploratory validation remain separate. Missing cells are not imputed."
+}

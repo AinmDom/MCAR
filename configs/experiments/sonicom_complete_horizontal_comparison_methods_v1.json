@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "registered_at_local": "2026-08-30T17:35:44+08:00",
+  "purpose": "Canonical complete horizontal comparison method set for paper tables and supplementary evidence",
+  "canonical_order": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA",
+    "MCARv351",
+    "FSPAE",
+    "RANF",
+    "HYBRID",
+    "BOUNDED"
+  ],
+  "methods": [
+    {"order": 1, "id": "SHOnly", "paper_label": "SH only", "family": "classical interpolation"},
+    {"order": 2, "id": "SUpDEqSH", "paper_label": "SUpDEq SH", "family": "classical interpolation"},
+    {"order": 3, "id": "SUpDEqNN", "paper_label": "SUpDEq NN", "family": "classical interpolation"},
+    {"order": 4, "id": "SUpDEqBary", "paper_label": "SUpDEq Barycentric", "family": "classical interpolation"},
+    {"order": 5, "id": "MCA", "paper_label": "MCA", "family": "classical interpolation"},
+    {"order": 6, "id": "MCARv351", "paper_label": "MCAR v3.5.1", "family": "learned residual"},
+    {"order": 7, "id": "FSPAE", "paper_label": "FSP-AE", "family": "external learned baseline"},
+    {"order": 8, "id": "RANF", "paper_label": "RANF", "family": "external learned baseline"},
+    {"order": 9, "id": "HYBRID", "paper_label": "Hybrid E190", "family": "FiLM-SIREN plus spectral CNN"},
+    {"order": 10, "id": "BOUNDED", "paper_label": "Bounded E25", "family": "bounded MCAR plus FiLM correction"}
+  ],
+  "evidence_policy": {
+    "primary_validation": "44-subject validation; all ten methods",
+    "primary_test": "historically consumed frozen engineering test; nine methods; Hybrid E190 not run",
+    "secondary_validation": "supplementary; only methods with existing frozen same-protocol outputs",
+    "deferred_validation": "exploratory; only methods with existing frozen same-protocol outputs",
+    "missing_values": "Use explicit NOT RUN / NOT AVAILABLE / NOT APPLICABLE; never impute",
+    "test_policy": "No new test inference or raw test-data read for this consolidation"
+  }
+}

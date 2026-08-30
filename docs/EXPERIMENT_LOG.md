@@ -1,5 +1,52 @@
 # 项目实验日志
 
+## 2026-08-30：FiLM deferred secondary endpoints完成（定位模型除外）
+
+- 在结果前提交核心/入口/amendment链`53b7ed2`、`99298cf`、`58462a9`，首次manifest
+  `1cff90c`运行时于P0001机制诊断前因predictor方法归属错误安全中止；两个partial目录为空，
+  没有写出或查看端点值。最小修正`e6f33b4`后从clean Git重新冻结manifest `ff6782c`，最终
+  identity为`63328B94B930D6A18269FF0D17C33647BD08488292832A7D0B80175989B05066`。
+  15项synthetic tests通过；全流程仅访问44名validation被试，`test_subject_count_read=0`。
+- 产物：小型表格位于`results/sonicom_film_deferred_secondary_metrics_v1_validation/`；44份
+  compressed gate/correction全点诊断位于`artifacts/reconstruction/
+  sonicom_bounded_mcar_film_gate_diagnostics_v1_validation/`（约743.6 MB，不进入Git）。
+  endpoint/mechanism-subject/mechanism-aggregate/Spearman rows=`1232/27060/615/44`，全部
+  finite；每份diagnostic的member gate/member correction/ensemble correction shape分别为
+  `[3,2,793,463]/[3,2,793,463]/[2,793,463]`。重新推导的Bounded ensemble residual与既有
+  prediction最大绝对差`1.9073486328125e-6 dB`，低于冻结容差`5e-5 dB`。
+- ITD使用官方FSP-AE兼容流程：1.6 kHz low-pass、44.1→384 kHz resampling、±1 ms raw
+  cross-correlation argmax且不做额外插值；reference为measured SOFA Data.IR，候选为继承MCA
+  phase/outside bins的严格HRIR。BOUNDED/Hybrid/FiLMENS/MCAR的weighted MAE为
+  `15.520837/15.522398/15.543201/15.520266 us`；maximum absolute error均值为
+  `130.208334/130.208335/130.326708/129.971590 us`。BOUNDED相对MCAR的weighted MAE差
+  `+0.000571 us`，95% CI`[-0.025863,+0.027849]`；maximum差`+0.236743 us`，CI
+  `[-0.355113,+0.887785]`。两项均统计持平，符合magnitude-only、继承相位的sanity定位。
+- exploratory dominant-notch按endpoint-specific结果盲规则冻结为：interpolation DTF、
+  Savitzky–Golay 11 bins/degree3、4--18 kHz、prominence>=1 dB、separation>=500 Hz、只取
+  dominant notch、1500 Hz匹配/缺失惩罚。BOUNDED/Hybrid/FiLMENS/MCAR penalized MAE为
+  `962.414/935.677/1024.122/949.249 Hz`；BOUNDED相对MCAR差`+13.164 Hz`，CI
+  `[+6.877,+19.613]`，miss-rate差`+0.009435`，CI`[+0.004957,+0.013902]`。因此该探索性
+  口径下Bounded略差于MCAR，不能用来宣称notch-location改善；因相关notch-depth结果在定义前
+  已知，该端点明确不升级为confirmatory证据。
+- 机制结果显示gate大面积饱和：三个成员subject-level mean `|g|`均值为
+  `0.496210/0.496950/0.497559`，`|g|>=0.45`比例为`0.982841/0.986554/0.988253`，而
+  `|g|<0.01`仅`0.000236/0.000105/0.000076`。deployed ensemble mean/median/P95/P99
+  `|C|`为`0.626335/0.435213/1.866539/2.750039 dB`；每被试`|C|`与pointwise benefit的
+  Spearman rho中位数`0.055844`，IQR`[0.012436,0.087927]`。解释为bounded gate多数点贴近
+  最大mix边界，但correction幅度仍由FiLM-minus-base差控制；弱正相关仅是机制描述。
+- 冻结效率环境为RTX 5060、driver 595.79、torch 2.8.0+cu128、float32、TF32关闭、block32、
+  P0001完整793×463重建。5 warmup+30 synchronized repeats：单成员trainable/total/unique
+  parameters=`514/1,794,250/1,794,250`，checkpoint `6.927 MiB`，FLOPs/MACs=
+  `8.38301924032e11/4.19150962016e11`，median/P95=`322.466/331.902 ms`；三成员顺序
+  ensemble=`1,542/5,382,750/4,684,242` parameters，checkpoint总计`20.782 MiB`，
+  FLOPs/MACs=`2.514905772096e12/1.257452886048e12`，median/P95=`986.562/1017.960 ms`，
+  end-to-end含HDF5 I/O=`1094.793 ms`。峰值CUDA allocated/reserved均为`88.841/108 MiB`。
+  训练provenance：单成员elapsed `1166.247 s`、`0.323958 GPU-h`；三成员并行wall-clock按
+  最慢成员`1166.247 s`，累计`0.959975 GPU-h`。
+- model-based localization没有运行：本地仅有SUpDEq，没有可哈希冻结的AMT/SAM官方模型。
+  不以自造proxy替代；后续若补充，必须另行提交官方包/commit、坐标测试、Monte Carlo设置、
+  seed和reference-self阈值后才能生成输出。该阻塞不影响本条已完成的gate、ITD、notch与效率。
+
 ## 2026-08-30：FiLM secondary metrics validation tranche完成
 
 - 按预注册协议与结果前 implementation amendment（manifest identity

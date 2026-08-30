@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "split": "val",
+  "subject_count": 44,
+  "test_subject_count_read": 0,
+  "endpoints": [
+    "DominantNotchMatchedMAE_Hz",
+    "DominantNotchMissRate",
+    "DominantNotchPenalizedMAE_Hz",
+    "DominantNotchSpuriousRate",
+    "ITDMaximumAbsoluteError_us",
+    "ITDWeightedMAE_us",
+    "ReferenceNotchFraction"
+  ],
+  "manifest_identity_sha256": "63328B94B930D6A18269FF0D17C33647BD08488292832A7D0B80175989B05066",
+  "localization_status": "blocked_missing_frozen_official_model"
+}

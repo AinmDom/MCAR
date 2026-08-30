@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "split": "val",
+  "subject_count": 44,
+  "method_count": 4,
+  "test_subject_count_read": 0,
+  "all_finite": true,
+  "direction_count": 793,
+  "interpolation_direction_count": 767,
+  "frequency_bin_count": 463,
+  "bounded_prediction_max_abs_difference_db": 1.9073486328125e-06,
+  "manifest_identity_sha256": "63328B94B930D6A18269FF0D17C33647BD08488292832A7D0B80175989B05066",
+  "localization_status": "not_run_dependency_unavailable"
+}

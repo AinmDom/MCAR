@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
@@ -43,6 +44,54 @@ class ResidualPredictor(Protocol):
     def predict_residual_db(self, source_h5: Path) -> np.ndarray:
         """Return residual dB with shape ``[2,D,F]``."""
         ...
+
+
+@dataclass(frozen=True)
+class BoundedCorrectionSubjectInputs:
+    """CPU-resident inputs for one complete Stage-E subject reconstruction."""
+
+    subject_id: int
+    local_mca_db: np.ndarray
+    correction_db: np.ndarray
+    directions: np.ndarray
+    frequency_hz: np.ndarray
+    q26_magnitude_db: np.ndarray
+    q26_xyz: np.ndarray
+    q26_mask: np.ndarray
+
+
+@dataclass(frozen=True)
+class BoundedCorrectionDiagnostics:
+    """Physical-unit outputs from one bounded-correction ensemble member."""
+
+    final_residual_db: np.ndarray
+    base_residual_db: np.ndarray
+    applied_correction_db: np.ndarray
+    gate: np.ndarray
+
+
+def bounded_diagnostics_to_db(
+    final_normalized: torch.Tensor,
+    base_normalized: torch.Tensor,
+    correction_normalized: torch.Tensor,
+    gate: torch.Tensor,
+    *,
+    target_mean: float,
+    target_std: float,
+) -> BoundedCorrectionDiagnostics:
+    """Convert normalized model internals without adding the mean to a delta."""
+    final = final_normalized.float() * target_std + target_mean
+    base = base_normalized.float() * target_std + target_mean
+    correction = correction_normalized.float() * target_std
+    gate_value = gate.float()
+    if not torch.allclose(final, base + correction, rtol=2e-6, atol=2e-6):
+        raise AssertionError("Bounded correction no longer satisfies final=base+correction")
+    return BoundedCorrectionDiagnostics(
+        final.cpu().numpy(),
+        base.cpu().numpy(),
+        correction.cpu().numpy(),
+        gate_value.cpu().numpy(),
+    )
 
 
 def _read_query_grid(source_h5: Path) -> tuple[np.ndarray, np.ndarray]:
@@ -310,8 +359,8 @@ class FilmSirenSpectralCNNPredictor:
             raise ValueError("directions_per_block must be positive")
         self.allow_test = bool(allow_test)
 
-    @torch.no_grad()
-    def predict_residual_db(self, source_h5: Path) -> np.ndarray:
+    def prepare_subject(self, source_h5: Path) -> BoundedCorrectionSubjectInputs:
+        """Load all subject inputs before a compute-only benchmark region."""
         with h5py.File(source_h5, "r") as handle:
             subject_id = int(np.asarray(handle.attrs["subject_id"]).item())
             local_mca_db = np.asarray(handle["mca_logmag_db"][:], dtype=np.float32)
@@ -480,18 +529,37 @@ class BoundedMcarFilmCorrectionPredictor:
             self.q26_csv,
             allow_test=self.allow_test,
         )
-        normalized_condition = self.condition_normalization.normalize(
-            condition.binaural_magnitude_db
-        )
-        latent = self.model.encode_condition(
-            torch.from_numpy(normalized_condition).unsqueeze(0).to(self.device),
-            torch.from_numpy(condition.xyz).unsqueeze(0).to(self.device),
-            torch.from_numpy(condition.mask).unsqueeze(0).to(self.device),
-        )
         directions, frequency = _read_query_grid(source_h5)
         expected = (2, directions.shape[0], frequency.size)
         if local_mca_db.shape != expected or correction_db.shape != expected:
             raise ValueError("Stage-E local spectral inputs have incompatible shape")
+        return BoundedCorrectionSubjectInputs(
+            subject_id=subject_id,
+            local_mca_db=local_mca_db,
+            correction_db=correction_db,
+            directions=directions,
+            frequency_hz=frequency,
+            q26_magnitude_db=condition.binaural_magnitude_db,
+            q26_xyz=condition.xyz,
+            q26_mask=condition.mask,
+        )
+
+    @torch.no_grad()
+    def predict_prepared_diagnostics(
+        self, inputs: BoundedCorrectionSubjectInputs
+    ) -> BoundedCorrectionDiagnostics:
+        """Run one prepared subject and retain gate/correction diagnostics."""
+        normalized_condition = self.condition_normalization.normalize(
+            inputs.q26_magnitude_db
+        )
+        latent = self.model.encode_condition(
+            torch.from_numpy(normalized_condition).unsqueeze(0).to(self.device),
+            torch.from_numpy(inputs.q26_xyz).unsqueeze(0).to(self.device),
+            torch.from_numpy(inputs.q26_mask).unsqueeze(0).to(self.device),
+        )
+        directions = inputs.directions
+        frequency = inputs.frequency_hz
+        expected = (2, directions.shape[0], frequency.size)
         frequency_coordinate = torch.from_numpy(
             frequency_coordinates(
                 frequency,
@@ -500,7 +568,10 @@ class BoundedMcarFilmCorrectionPredictor:
                 self.frequency_maximum_hz,
             )
         ).to(self.device)
-        prediction = np.empty(expected, dtype=np.float32)
+        final = np.empty(expected, dtype=np.float32)
+        base = np.empty(expected, dtype=np.float32)
+        correction = np.empty(expected, dtype=np.float32)
+        gate = np.empty(expected, dtype=np.float32)
         for start in range(0, directions.shape[0], self.directions_per_block):
             stop = min(directions.shape[0], start + self.directions_per_block)
             xyz = torch.from_numpy(directions[start:stop, 2:5]).to(self.device)
@@ -508,24 +579,41 @@ class BoundedMcarFilmCorrectionPredictor:
                 xyz,
                 frequency_coordinate,
                 self.conditioning_scope,
-                local_mca_db[:, start:stop, :],
+                inputs.local_mca_db[:, start:stop, :],
                 self.normalization,
             )
             point_features = torch.from_numpy(
                 build_point_features(
-                    local_mca_db[:, start:stop, :],
-                    correction_db[:, start:stop, :],
+                    inputs.local_mca_db[:, start:stop, :],
+                    inputs.correction_db[:, start:stop, :],
                     directions[start:stop, :],
                     frequency,
                     self.normalization,
                 )
             ).to(self.device)
-            normalized, _, _, _ = self.model.forward_grid(
-                query,
-                latent,
-                point_features,
+            normalized, normalized_base, normalized_correction, block_gate = (
+                self.model.forward_grid(query, latent, point_features)
             )
-            prediction[:, start:stop, :] = (
-                normalized.float() * self.target_std + self.target_mean
-            ).cpu().numpy()
-        return prediction
+            converted = bounded_diagnostics_to_db(
+                normalized,
+                normalized_base,
+                normalized_correction,
+                block_gate,
+                target_mean=self.target_mean,
+                target_std=self.target_std,
+            )
+            final[:, start:stop, :] = converted.final_residual_db
+            base[:, start:stop, :] = converted.base_residual_db
+            correction[:, start:stop, :] = converted.applied_correction_db
+            gate[:, start:stop, :] = converted.gate
+        return BoundedCorrectionDiagnostics(final, base, correction, gate)
+
+    @torch.no_grad()
+    def predict_diagnostics_db(
+        self, source_h5: Path
+    ) -> BoundedCorrectionDiagnostics:
+        return self.predict_prepared_diagnostics(self.prepare_subject(source_h5))
+
+    @torch.no_grad()
+    def predict_residual_db(self, source_h5: Path) -> np.ndarray:
+        return self.predict_diagnostics_db(source_h5).final_residual_db

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "val",
+  "subject_count": 44,
+  "test_subject_count_read": 0,
+  "manifest_identity_sha256": "8F61017E6D01EE9C5F271BE366A6C0B8C25DB22546A800CC1A4339738A3D520E",
+  "methods": [
+    "BOUNDED",
+    "HYBRID",
+    "FILMENS",
+    "MCAR"
+  ],
+  "secondary_scalar_endpoints": [
+    "FullSphereLSD",
+    "HFFirstDifferenceMAE",
+    "HFSecondDifferenceMAE",
+    "MultiScaleNotchDepthMAE",
+    "ERBBandILDMean",
+    "SpatialLSD_0_10deg",
+    "SpatialLSD_10_20deg",
+    "SpatialLSD_20_30deg",
+    "SpatialLSD_30_180deg"
+  ],
+  "primary_endpoints_used_for_tail_analysis": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20260829,
+  "deferred_unqualified_endpoints": [
+    "model_based_localization",
+    "ITD_sanity",
+    "gate_and_correction_behavior",
+    "efficiency_and_deployability",
+    "discrete_notch_location"
+  ],
+  "files": [
+    "aggregate_metrics.csv",
+    "band_ild_profile.csv",
+    "paired_tail_risk.csv",
+    "per_subject_direction_lsd.csv",
+    "per_subject_metrics.csv",
+    "protocol_snapshot.json",
+    "quality_checks.json",
+    "spatial_direction_map.csv",
+    "spatial_distance_bins.csv",
+    "summary.json"
+  ]
+}

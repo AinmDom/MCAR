@@ -1,5 +1,44 @@
 # 项目实验日志
 
+## 2026-08-30：FiLM secondary metrics validation tranche完成
+
+- 按预注册协议与结果前 implementation amendment（manifest identity
+  `8F61017E...3D520E`）运行一次 validation-only secondary evaluator。四种方法固定为
+  BOUNDED E25、Hybrid E190、FiLM E130 和 MCAR v3.5.1；没有新增训练、test读取或模型
+  选择。实现提交链为`90ab7d0`、`afdf10b`、`6d1b47b`、`6abe3a7`，冻结/重冻结文档与
+  manifest提交`5adc21e`、`70238c0`。
+- 产物：`results/sonicom_film_secondary_metrics_v1_validation/`。44/44 subjects、
+  4 methods，`per_subject_metrics.csv`=`880` rows，`aggregate_metrics.csv`=`20` rows，
+  `paired_tail_risk.csv`=`39` rows，band profile=`6300` rows，spatial bins=`720` rows，
+  direction map=`3068` rows，per-subject ear/direction LSD=`279136` rows；全部 finite。
+  quality checks为793 directions、26 Q26、767 interpolation、72 horizontal、463 frequency
+  bins、35个200--18000 Hz ERB bands，`test_subject_count_read=0`。
+- secondary均值（dB，越低越好；HF一阶单位dB/bin，二阶单位dB/bin²；顺序
+  BOUNDED/Hybrid/FiLM E130/MCAR）：Full-sphere LSD=`3.5874447317/3.5489256190/
+  3.7857646944/3.6097610497`；HF first=`0.4272568835/0.4027026539/0.4653138654/
+  0.4295869212`；HF second=`0.2394630401/0.2167975699/0.2704213827/0.2538098598`；
+  multi-scale notch depth=`0.5070001049/0.4884118526/0.5490026433/0.5001038916`；
+  ERB-band ILD mean=`1.4918227440/1.4992052533/1.5738732923/1.5625394014`。
+- BOUNDED相对MCAR的paired均值差（负值较好；10000次PCG64 bootstrap，seed
+  `20260829`）为：LSD=`-0.0223163180`，95% CI`[-0.0372003017,-0.0072102922]`，
+  wins/losses=`31/13`；HF first=`-0.0023300377`，CI`[-0.0037384654,-0.0006473509]`，
+  `34/10`；HF second=`-0.0143468197`，CI`[-0.0162102093,-0.0125566868]`，`43/1`；
+  notch depth=`+0.0068962134`，CI`[+0.0054273908,+0.0086348736]`，`1/43`；band ILD
+  `-0.0707166574`，CI`[-0.0850487964,-0.0563517803]`，`40/4`。因此补充证据显示
+  BOUNDED改善LSD、两项HF谱形和band ILD，但notch-depth略差；不能宣称secondary全面
+  支配MCAR。
+- 相对Hybrid，BOUNDED的LSD差`+0.0385191127 dB`（CI`[+0.0243161743,+0.05228911299]`）、
+  HF first/second分别`+0.0245542296/+0.0226654702`且CI均不跨0、notch depth
+  `+0.0185882524`且CI不跨0；band ILD差`-0.0073825094 dB`且CI跨0。空间LSD随Q26距离
+  分层的BOUNDED均值为`3.4486082680/3.5643975513/3.7588286006/3.7685922991 dB`
+  （0--10/10--20/20--30/>=30 deg），对MCAR差为`-0.0013011441/-0.0174319943/
+  -0.0436498371/-0.1434810683 dB`，其中后三区CI不跨0、最近邻bin CI跨0。
+- 图形仅读取已完成CSV生成：`figures/secondary_relative_to_mcar.{png,pdf}` 与
+  `figures/spatial_lsd_by_q26_distance.{png,pdf}`，MATLAB R2025b静态检查通过并视觉核验。
+  首次沙箱启动遇已知`File system inconsistency`，升级本机环境后成功导出；无不完整图形
+  被采用。定位模型、ITD、gate/correction、效率和离散notch-location仍按协议deferred，
+  不得从本条结果外推这些端点。
+
 ## 2026-08-29：Stage E bounded E25 frozen test九方法评价完成
 
 - 用户授权后，先提交结果前协议/工具`ace2bd0`、Python兼容修正`1c04627`，再于

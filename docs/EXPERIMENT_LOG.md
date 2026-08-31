@@ -1,5 +1,33 @@
 # 项目实验日志
 
+## 2026-08-31：Hybrid E190 唯一一次冻结 test 推理与十方法严格评价完成
+
+- 经仓库证据确认，FiLM-SIREN + zero-init MCAR spectral CNN 的三成员 Hybrid E190 此前从未读取
+  SONICOM test。依据用户本次明确授权，先冻结协议、三个 cycle190 `last.pt`、等权 `1/3` ensemble、
+  44 名 test 被试、四个主端点及 10000 次 paired bootstrap，再执行首次且唯一一次推理。manifest
+  identity=`CE01EE0D9F6DE2A454251CC25474FB371C68FEA0D33F3ADA8FA41019DFFBA1FB`；registry
+  已原子锁定为 `completed`，`test_subject_count_read=44`，禁止覆盖或再次推理。
+- 预测产物位于`artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_test/`：
+  `44/44` HDF5，逐文件 shape=`[2,793,463]`、split=`test`、manifest identity一致且全部finite。
+  严格原始评价与十方法合并分别位于
+  `results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_raw/`和
+  `results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/`。最终长表为
+  `44 subjects × 10 methods × 4 metrics = 1760`行、全部finite；重复计算的共享基线与历史冻结
+  test表最大绝对差为`0 dB`；合并步骤新增test读取为`0`。
+- Hybrid E190 的 test 均值依次为：FullSphere ERB=`0.8175440243 dB`、Contralateral-25 ERB=
+  `1.2003965313 dB`、Contralateral HF=`3.4549112589 dB`、Horizontal ILD=`0.7794497051 dB`。
+  对应四项赢家为Bounded E25=`0.7941314445`、Hybrid E190=`1.2003965313`、FSP-AE=
+  `3.1643546865`、MCAR v3.5.1=`0.6447090917 dB`，因此Hybrid不是四指标整体支配解。
+- 固定10000次subject-paired bootstrap（seed=`20260831`）显示：相对MCAR v3.5.1，Hybrid在
+  Contra25与HF显著更优（差`-0.0740927008`，95% CI `[-0.1119315495,-0.0458923772]`；
+  差`-0.0535697039`，CI `[-0.0890215416,-0.0223871616]`），Full持平（差
+  `-0.0003930245`，CI `[-0.0309952717,+0.0554647708]`），ILD显著更差（差
+  `+0.1347406134`，CI `[+0.0127054749,+0.3448492520]`）。相对Bounded，Full和ILD显著更差、
+  Contra25持平、HF小幅显著更优。
+- Hybrid ILD均值受单一尾部被试P0339=`6.0496669795 dB`明显牵引；中位数为
+  `0.6340056391 dB`，次高仅P0234=`1.1779 dB`。该点按冻结协议保留，不做test驱动剔除、
+  修补或重测。训练完整性继承已冻结E190三成员证据；本步骤训练/末点预算判据=N/A。
+
 ## 2026-08-30：完整十方法横向对比集合登记与分层数据表完成
 
 - 按用户指定顺序将完整论文横向集合冻结为：SH only、SUpDEq SH、SUpDEq NN、

@@ -1,5 +1,37 @@
 # 项目实验日志
 
+## 2026-08-31：五传统基线 secondary/deferred validation 补齐与十方法完整表 v2 完成
+
+- 按用户要求补齐`SHOnly`、`SUpDEqSH`、`SUpDEqNN`、`SUpDEqBary`和`MCA`。新增结果前先以
+  commit `bc871ea`冻结validation-only amendment、独立MATLAB导出器和Python评价器；导出器
+  硬拒绝非`val` split及`allowTest=true`。44人×5方法共导出`220/220`个HDF5，Python可见
+  频谱shape=`[2,793,463]`、HRIR shape=`[793,2,256]`，全部split=`val`且finite。用相同表示
+  回算既有四个primary validation指标，`880`个subject-method-endpoint单元与历史表最大绝对差
+  为`0 dB`，证明导出没有改变既有重建口径。
+- prediction inventory和所有评价依赖随后冻结于commit `0cfaa4e`，manifest identity=
+  `E088B3F0748B3FB2F4772D5ED25D7CC2B16B04E2E2EFCDB65B91B453E008ABC8`；只有在该提交之后才
+  首次计算新增指标。正式结果位于
+  `results/sonicom_film_secondary_classical_baseline_extension_v1_validation/`：5个scalar
+  secondary得到`1100`行per-subject、7个deferred得到`1540`行per-subject，另有35-band ILD、
+  4个空间距离bin及767方向map；quality=`passed`、全部finite、频率最大差`0 Hz`、
+  `test_subject_count_read=0`。
+- 五传统基线中，MCA在FullSphereLSD=`4.7977744230 dB`和ERBBandILDMean=`1.9954270829 dB`
+  最优；SUpDEq NN在MultiScaleNotchDepthMAE=`0.7451926158 dB`、dominant-notch penalized MAE=
+  `1018.3931737286 Hz`及ITD weighted MAE=`12.6764186527 us`最优；SUpDEq Bary在HF一阶差分=
+  `0.5831033472 dB/bin`略优于NN，并在FullSphereLSD=`5.7320541973 dB`优于其它SUpDEq变体。
+  `ReferenceNotchFraction`仍是描述量，不用于优劣声明。
+- 十方法完整数据v2位于`results/sonicom_complete_ten_method_comparison_v2/`，并同时纳入用户已完成
+  的Hybrid E190唯一冻结test。primary validation、frozen engineering test、secondary validation、
+  deferred validation现均覆盖`10/10`方法；方法×指标表`240/240`格均有44-subject finite数值，
+  Bounded-vs-all配对表由128行扩至`207`行，band profile=`350`行、spatial map=`7670`行。汇总
+  步骤没有读取新test数据，`new_test_subject_count_read=0`；上游唯一冻结test读数仍为44。
+- 更新工作簿为
+  `outputs/stage_e_complete_ten_method_comparison_v2/stage_e_complete_ten_method_comparison_v2.xlsx`，
+  SHA-256=`D6168669F01F594D2DB5B30BCEC41B333CDBF9B7B6B198E6868A6FF2FA8EC683`。11个sheet全部
+  渲染核验；Complete Table=`25×16`、All Means=`241×15`、Paired=`208×18`、Band ILD=
+  `351×7`、Spatial Map=`7671×8`，overview检查=`[10,240,240,0]`，公式错误0。机制、效率与
+  localization的结构性不可比状态保持不变，未作数值插补。训练/末点预算判据=N/A。
+
 ## 2026-08-31：Hybrid E190 唯一一次冻结 test 推理与十方法严格评价完成
 
 - 经仓库证据确认，FiLM-SIREN + zero-init MCAR spectral CNN 的三成员 Hybrid E190 此前从未读取

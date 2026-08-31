@@ -1,0 +1,11 @@
+MethodOrder,Method,MethodLabel,Family,RegisteredStatus
+1,SHOnly,SH only,classical interpolation,FROZEN
+2,SUpDEqSH,SUpDEq SH,classical interpolation,FROZEN
+3,SUpDEqNN,SUpDEq NN,classical interpolation,FROZEN
+4,SUpDEqBary,SUpDEq Barycentric,classical interpolation,FROZEN
+5,MCA,MCA,classical interpolation,FROZEN
+6,MCARv351,MCAR v3.5.1,learned residual,FROZEN
+7,FSPAE,FSP-AE,external learned baseline,FROZEN
+8,RANF,RANF,external learned baseline,FROZEN
+9,HYBRID,Hybrid E190,FiLM-SIREN plus spectral CNN,FROZEN
+10,BOUNDED,Bounded E25,bounded MCAR plus FiLM correction,FROZEN

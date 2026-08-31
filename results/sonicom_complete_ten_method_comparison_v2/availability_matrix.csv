@@ -1,0 +1,71 @@
+MethodOrder,Method,MethodLabel,MetricGroup,Status,Reason
+1,SHOnly,SH only,Primary validation,AVAILABLE,Existing frozen evidence
+1,SHOnly,SH only,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+1,SHOnly,SH only,Secondary validation,AVAILABLE,Existing frozen evidence
+1,SHOnly,SH only,Deferred validation,AVAILABLE,Existing frozen evidence
+1,SHOnly,SH only,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+1,SHOnly,SH only,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+1,SHOnly,SH only,Model-based localization,NOT RUN,Frozen official dependency unavailable
+2,SUpDEqSH,SUpDEq SH,Primary validation,AVAILABLE,Existing frozen evidence
+2,SUpDEqSH,SUpDEq SH,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+2,SUpDEqSH,SUpDEq SH,Secondary validation,AVAILABLE,Existing frozen evidence
+2,SUpDEqSH,SUpDEq SH,Deferred validation,AVAILABLE,Existing frozen evidence
+2,SUpDEqSH,SUpDEq SH,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+2,SUpDEqSH,SUpDEq SH,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+2,SUpDEqSH,SUpDEq SH,Model-based localization,NOT RUN,Frozen official dependency unavailable
+3,SUpDEqNN,SUpDEq NN,Primary validation,AVAILABLE,Existing frozen evidence
+3,SUpDEqNN,SUpDEq NN,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+3,SUpDEqNN,SUpDEq NN,Secondary validation,AVAILABLE,Existing frozen evidence
+3,SUpDEqNN,SUpDEq NN,Deferred validation,AVAILABLE,Existing frozen evidence
+3,SUpDEqNN,SUpDEq NN,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+3,SUpDEqNN,SUpDEq NN,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+3,SUpDEqNN,SUpDEq NN,Model-based localization,NOT RUN,Frozen official dependency unavailable
+4,SUpDEqBary,SUpDEq Barycentric,Primary validation,AVAILABLE,Existing frozen evidence
+4,SUpDEqBary,SUpDEq Barycentric,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+4,SUpDEqBary,SUpDEq Barycentric,Secondary validation,AVAILABLE,Existing frozen evidence
+4,SUpDEqBary,SUpDEq Barycentric,Deferred validation,AVAILABLE,Existing frozen evidence
+4,SUpDEqBary,SUpDEq Barycentric,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+4,SUpDEqBary,SUpDEq Barycentric,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+4,SUpDEqBary,SUpDEq Barycentric,Model-based localization,NOT RUN,Frozen official dependency unavailable
+5,MCA,MCA,Primary validation,AVAILABLE,Existing frozen evidence
+5,MCA,MCA,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+5,MCA,MCA,Secondary validation,AVAILABLE,Existing frozen evidence
+5,MCA,MCA,Deferred validation,AVAILABLE,Existing frozen evidence
+5,MCA,MCA,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+5,MCA,MCA,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+5,MCA,MCA,Model-based localization,NOT RUN,Frozen official dependency unavailable
+6,MCARv351,MCAR v3.5.1,Primary validation,AVAILABLE,Existing frozen evidence
+6,MCARv351,MCAR v3.5.1,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+6,MCARv351,MCAR v3.5.1,Secondary validation,AVAILABLE,Existing frozen evidence
+6,MCARv351,MCAR v3.5.1,Deferred validation,AVAILABLE,Existing frozen evidence
+6,MCARv351,MCAR v3.5.1,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+6,MCARv351,MCAR v3.5.1,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+6,MCARv351,MCAR v3.5.1,Model-based localization,NOT RUN,Frozen official dependency unavailable
+7,FSPAE,FSP-AE,Primary validation,AVAILABLE,Existing frozen evidence
+7,FSPAE,FSP-AE,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+7,FSPAE,FSP-AE,Secondary validation,AVAILABLE,Existing frozen evidence
+7,FSPAE,FSP-AE,Deferred validation,AVAILABLE,Existing frozen evidence
+7,FSPAE,FSP-AE,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+7,FSPAE,FSP-AE,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+7,FSPAE,FSP-AE,Model-based localization,NOT RUN,Frozen official dependency unavailable
+8,RANF,RANF,Primary validation,AVAILABLE,Existing frozen evidence
+8,RANF,RANF,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+8,RANF,RANF,Secondary validation,AVAILABLE,Existing frozen evidence
+8,RANF,RANF,Deferred validation,AVAILABLE,Existing frozen evidence
+8,RANF,RANF,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+8,RANF,RANF,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+8,RANF,RANF,Model-based localization,NOT RUN,Frozen official dependency unavailable
+9,HYBRID,Hybrid E190,Primary validation,AVAILABLE,Existing frozen evidence
+9,HYBRID,Hybrid E190,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+9,HYBRID,Hybrid E190,Secondary validation,AVAILABLE,Existing frozen evidence
+9,HYBRID,Hybrid E190,Deferred validation,AVAILABLE,Existing frozen evidence
+9,HYBRID,Hybrid E190,Mechanism validation,NOT APPLICABLE,No common bounded-gate/correction internal quantity
+9,HYBRID,Hybrid E190,Efficiency validation,NOT AVAILABLE,No frozen same-hardware benchmark
+9,HYBRID,Hybrid E190,Model-based localization,NOT RUN,Frozen official dependency unavailable
+10,BOUNDED,Bounded E25,Primary validation,AVAILABLE,Existing frozen evidence
+10,BOUNDED,Bounded E25,Primary frozen engineering test,AVAILABLE,Existing frozen evidence
+10,BOUNDED,Bounded E25,Secondary validation,AVAILABLE,Existing frozen evidence
+10,BOUNDED,Bounded E25,Deferred validation,AVAILABLE,Existing frozen evidence
+10,BOUNDED,Bounded E25,Mechanism validation,AVAILABLE,Existing frozen evidence
+10,BOUNDED,Bounded E25,Efficiency validation,AVAILABLE,Existing frozen evidence
+10,BOUNDED,Bounded E25,Model-based localization,NOT RUN,Frozen official dependency unavailable

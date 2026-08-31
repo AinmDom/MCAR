@@ -1,0 +1,40 @@
+{
+  "status": "completed",
+  "split": "val",
+  "subject_count": 44,
+  "methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA"
+  ],
+  "test_subject_count_read": 0,
+  "secondary_endpoints": [
+    "FullSphereLSD",
+    "HFFirstDifferenceMAE",
+    "HFSecondDifferenceMAE",
+    "MultiScaleNotchDepthMAE",
+    "ERBBandILDMean"
+  ],
+  "deferred_endpoints": [
+    "DominantNotchMatchedMAE_Hz",
+    "DominantNotchMissRate",
+    "DominantNotchPenalizedMAE_Hz",
+    "DominantNotchSpuriousRate",
+    "ITDMaximumAbsoluteError_us",
+    "ITDWeightedMAE_us",
+    "ReferenceNotchFraction"
+  ],
+  "paired_baselines": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA"
+  ],
+  "manifest_identity_sha256": "E088B3F0748B3FB2F4772D5ED25D7CC2B16B04E2E2EFCDB65B91B453E008ABC8",
+  "mechanism_comparison_status": "not_applicable_no_common_internal_quantity",
+  "efficiency_comparison_status": "not_available_no_same_hardware_benchmark",
+  "localization_status": "not_run_dependency_unavailable"
+}

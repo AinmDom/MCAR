@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "split": "val",
+  "subject_count": 44,
+  "method_count": 5,
+  "methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA"
+  ],
+  "test_subject_count_read": 0,
+  "all_finite": true,
+  "direction_count": 793,
+  "interpolation_direction_count": 767,
+  "horizontal_interpolation_direction_count": 72,
+  "frequency_bin_count": 463,
+  "erb_band_count": 35,
+  "max_prediction_frequency_error_hz": 0.0,
+  "row_counts": {
+    "per_subject_metrics": 1100,
+    "aggregate_metrics": 25,
+    "paired_tail_risk": 65,
+    "band_ild_profile": 7875,
+    "spatial_distance_bins": 900,
+    "spatial_direction_map": 3835,
+    "per_subject_endpoints": 1540,
+    "aggregate_endpoints": 35,
+    "paired_deferred_tail_risk": 30
+  },
+  "mechanism_comparison_status": "not_applicable_no_common_internal_quantity",
+  "efficiency_comparison_status": "not_available_no_same_hardware_benchmark",
+  "localization_status": "not_run_dependency_unavailable",
+  "manifest_identity_sha256": "E088B3F0748B3FB2F4772D5ED25D7CC2B16B04E2E2EFCDB65B91B453E008ABC8"
+}

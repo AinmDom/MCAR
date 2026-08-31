@@ -32,9 +32,9 @@ def git(*arguments: str) -> str:
 
 def main() -> None:
     dirty = [
-        line[3:]
+        line
         for line in git("status", "--porcelain", "--untracked-files=no").splitlines()
-        if line[3:] != ".gitignore"
+        if not line.endswith(".gitignore")
     ]
     if dirty:
         raise RuntimeError(f"Manifest generation requires relevant tracked files clean: {dirty}")
@@ -132,4 +132,3 @@ METRICS = (
 
 if __name__ == "__main__":
     main()
-

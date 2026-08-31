@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-08-31T03:49:13Z",
+  "updated_at_utc": "2026-08-31T03:49:13Z",
+  "task_id": "film-siren-spectral-cnn-final-e190-frozen-test-v1",
+  "state": "not_started",
+  "manifest": "configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_test_manifest.json",
+  "manifest_identity_sha256": "CE01EE0D9F6DE2A454251CC25474FB371C68FEA0D33F3ADA8FA41019DFFBA1FB",
+  "authorization": {
+    "user_text": "\u76ee\u524dFiLM-SIREN + CNN\uff08Hybrid E190\uff09\u662f\u4e0d\u662f\u6ca1\u6709\u5728test\u96c6\u4e0a\u8dd1\u8fc7\uff0c\u5982\u679c\u6ca1\u6709\u7684\u8bdd\u53ef\u4ee5\u8dd1\u4e00\u6b21",
+    "recorded_at_local": "2026-08-31T11:49:13+08:00"
+  },
+  "retry_count": 0,
+  "test_subject_count_read": 0,
+  "recovery_policy": "Only proven incomplete failure under unchanged identity; no tuning or retest"
+}

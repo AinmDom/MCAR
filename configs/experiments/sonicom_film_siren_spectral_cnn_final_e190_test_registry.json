@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
   "created_at_utc": "2026-08-31T03:49:13Z",
-  "updated_at_utc": "2026-08-31T03:49:13Z",
+  "updated_at_utc": "2026-08-31T03:57:37.905275+00:00",
   "task_id": "film-siren-spectral-cnn-final-e190-frozen-test-v1",
-  "state": "not_started",
+  "state": "completed",
   "manifest": "configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_test_manifest.json",
   "manifest_identity_sha256": "CE01EE0D9F6DE2A454251CC25474FB371C68FEA0D33F3ADA8FA41019DFFBA1FB",
   "authorization": {
@@ -11,6 +11,8 @@
     "recorded_at_local": "2026-08-31T11:49:13+08:00"
   },
   "retry_count": 0,
-  "test_subject_count_read": 0,
-  "recovery_policy": "Only proven incomplete failure under unchanged identity; no tuning or retest"
+  "test_subject_count_read": 44,
+  "recovery_policy": "Only proven incomplete failure under unchanged identity; no tuning or retest",
+  "run_name": "sonicom_film_siren_spectral_cnn_final_e190_ensemble_test",
+  "inference_report": "D:\\cuc\\CSMT\\MCAR\\artifacts\\reconstruction\\sonicom_film_siren_spectral_cnn_final_e190_ensemble_test\\inference_report.json"
 }

@@ -1,5 +1,19 @@
 # 项目实验日志
 
+## 2026-09-02：十方法方向敏感度三种冻结学习方法推理完成
+
+- 在修复后manifest identity `B625A3D0E145FD906854BF87DEB2821D1C49552FC1DF04AE2CD10B364B3C098E`
+  下完成MCAR v3.5.1、Hybrid E190、FSP-AE的44 validation×Q14/Q26/Q50产物。Q26中心档直接
+  复用各方法既有formal validation artifact；Q14/Q50仅改变当前观测方向集合，不更新参数。
+- 独立完整性扫描为396/396 HDF5：MCAR与Hybrid residual均为`[2,793,463]`；FSP-AE HRIR为
+  `[793,2,256]`，其magnitude/ITD/frequency附属张量也全部finite。所有split=`val`、Q标签覆盖
+  14/26/50，三种方法各132份。Q26最大绝对复现差均为`0`；两个completed report均记录
+  `test_subject_count_read=0`。MCAR/Hybrid用时`84.2155316 s`，FSP-AE用时`332.0170047 s`。
+- 本步骤只确认正式推理产物完整，不读取或汇总Q14/Q50指标；五种classical/MCA将在最终统一评价器中
+  现算。RANF Q14/Q50仍需按原生1000-epoch、batch=3适配，Q26复用既有formal validation RANF。
+- 证据：`artifacts/sparsity/sonicom_ten_method_direction_sensitivity_v1/`；
+  `inference_hybrid_mcar_report.json`；`inference_fspae_report.json`。训练/best/末点预算判据=N/A。
+
 ## 2026-09-02：十方法方向敏感度首次冻结推理被MCAR Q26复现闸门拒绝
 
 - 在manifest identity `41E1EE0752E563A68872F6469B2E591E832F383227A8CB66C2157F1BB5A55961`

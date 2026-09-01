@@ -3,7 +3,7 @@
   "status": "frozen_before_inference",
   "created_on": "2026-09-02",
   "experiment_config": "configs/experiments/sonicom_ten_method_direction_sensitivity_v1.json",
-  "experiment_config_sha256": "17397A73CF1B64F05AE6A9A6474B93F0111E5066B2513F8E6A1CD746C3092C09",
+  "experiment_config_sha256": "FBD17A9A752E6F7F102B558214C89266CAB27AE7CB01F26331260D1F8C88196B",
   "split": "val",
   "subject_count": 44,
   "direction_counts": [
@@ -16,8 +16,8 @@
   "resources": [
     {
       "path": "experiments/film_siren/STAGE_E_TEN_METHOD_DIRECTION_SENSITIVITY_PROTOCOL.md",
-      "sha256": "B0C7B19AF7A797B66EEAFC112468DDF8DD655F704D7663FBB72875F298F31554",
-      "size_bytes": 3022,
+      "sha256": "73710EA884147CA2F593360E54AB5ECE128EC93A169D322A986F93B637BBB186",
+      "size_bytes": 3297,
       "purpose": "result-blind protocol"
     },
     {
@@ -40,8 +40,8 @@
     },
     {
       "path": "src/mcar/evaluation/predict_ten_method_direction_sensitivity.py",
-      "sha256": "37F79C01B33834ABE584F410B092D74EA786E59B770F5C411B1C7BB6E85B6AEC",
-      "size_bytes": 16439,
+      "sha256": "E7BBD011F6C2D34A124E81FA0B82358F27CEB7264BFB868200E8A6911B30543D",
+      "size_bytes": 21397,
       "purpose": "frozen comparator inference"
     },
     {
@@ -60,20 +60,32 @@
       "path": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
       "sha256": "C00040B6AD07EAC10F3EB7420C24A9BD33E92B3F36471115825FF8BB3194B689",
       "size_bytes": 5739,
-      "purpose": "Bounded E25 and MCAR component identity"
+      "purpose": "Bounded E25 identity"
     },
     {
       "path": "artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt",
       "sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F",
       "size_bytes": 2937933,
       "purpose": "frozen FSP-AE checkpoint"
+    },
+    {
+      "path": "artifacts/training/sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10/best.pt",
+      "sha256": "1D6ED796B2C19F77380BC2CB8B233F7B5DA78A70CAE77BB7D42461A8330E9CF4",
+      "size_bytes": 2181765,
+      "purpose": "frozen MCAR previous_joint checkpoint"
+    },
+    {
+      "path": "artifacts/training/sonicom_mlp_cnn_q26_v351b_band_ild005_e40/best.pt",
+      "sha256": "3D657783E301300AC9B36C02E0C0FE1F98E82F611CE202638C84F84B036391EB",
+      "size_bytes": 2181957,
+      "purpose": "frozen MCAR v351b_continuation checkpoint"
     }
   ],
   "ranf_adapter_commit": "c50a1589c99654fb52d1a73ee17ac419b9a2654f",
   "git": {
-    "commit": "a68f0567f52419f0d9fe8bd0fde2c621a8026883",
+    "commit": "472337ca4283ccf57f4bb95deaa548a3d115a47d",
     "dirty": false
   },
   "test_subject_count_read": 0,
-  "identity_sha256": "41E1EE0752E563A68872F6469B2E591E832F383227A8CB66C2157F1BB5A55961"
+  "identity_sha256": "B625A3D0E145FD906854BF87DEB2821D1C49552FC1DF04AE2CD10B364B3C098E"
 }

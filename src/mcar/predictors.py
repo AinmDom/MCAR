@@ -319,6 +319,8 @@ class FilmSirenSpectralCNNPredictor:
         device: torch.device | None = None,
         directions_per_block: int = 64,
         allow_test: bool = False,
+        condition_source_indices: np.ndarray | None = None,
+        condition_dataset_root: Path | None = None,
     ) -> None:
         self.device = device or torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -362,6 +364,12 @@ class FilmSirenSpectralCNNPredictor:
         if self.directions_per_block < 1:
             raise ValueError("directions_per_block must be positive")
         self.allow_test = bool(allow_test)
+        self.condition_source_indices = (
+            None
+            if condition_source_indices is None
+            else np.asarray(condition_source_indices, dtype=np.int64).reshape(-1)
+        )
+        self.condition_dataset_root = condition_dataset_root
 
     @torch.no_grad()
     def predict_residual_db(self, source_h5: Path) -> np.ndarray:
@@ -371,14 +379,23 @@ class FilmSirenSpectralCNNPredictor:
             correction_db = np.asarray(
                 handle["correction_logmag_db"][:], dtype=np.float32
             )
-        dataset_root = source_h5.resolve().parents[2]
-        condition = build_q26_condition(
-            dataset_root,
-            self.split_csv,
-            subject_id,
-            self.q26_csv,
-            allow_test=self.allow_test,
-        )
+        dataset_root = self.condition_dataset_root or source_h5.resolve().parents[2]
+        if self.condition_source_indices is None:
+            condition = build_q26_condition(
+                dataset_root,
+                self.split_csv,
+                subject_id,
+                self.q26_csv,
+                allow_test=self.allow_test,
+            )
+        else:
+            condition = build_sparse_condition(
+                dataset_root,
+                self.split_csv,
+                subject_id,
+                self.condition_source_indices,
+                allow_test=self.allow_test,
+            )
         normalized_condition = self.condition_normalization.normalize(
             condition.binaural_magnitude_db
         )

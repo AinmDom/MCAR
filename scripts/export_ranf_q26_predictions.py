@@ -137,6 +137,7 @@ def main() -> None:
         "method": "RANF",
         "split": args.split,
         "subject_count": len(output_rows),
+        "test_subject_count_read": 0 if args.split == "val" else len(output_rows),
         "source_eval_root": str(args.eval_root),
         "source_mapping": str(args.mapping),
         "eval_log_sha256": sha256(eval_log),

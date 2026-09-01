@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-09-02",
+  "status": "preregistered",
+  "experiment_id": "SONICOM-TEN-METHOD-DIRECTION-SENSITIVITY-V1",
+  "protocol": "experiments/film_siren/STAGE_E_TEN_METHOD_DIRECTION_SENSITIVITY_PROTOCOL.md",
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "fspae_cache_root": "data/processed/sonicom_fsp_ae_q26_v1/subjects/val",
+    "sofa_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects",
+    "split_file": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "val",
+    "subject_count": 44,
+    "reference_direction_count": 793,
+    "sparse_grid_file": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+    "direction_counts": [14, 26, 50],
+    "center_direction_count": 26,
+    "fixed_evaluation_direction_count": 743,
+    "fixed_evaluation_mask_policy": "Exclude all 50 Q50 input directions for every method and count.",
+    "prepared_input_root": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1",
+    "prepared_input_manifest": "configs/experiments/sonicom_bounded_e25_input_direction_sensitivity_v1_manifest.json"
+  },
+  "methods": [
+    {"id": "SHOnly", "label": "SH only", "mode": "current_q_classical"},
+    {"id": "SUpDEqSH", "label": "SUpDEq + SH", "mode": "current_q_classical"},
+    {"id": "SUpDEqNN", "label": "SUpDEq + Natural Neighbor", "mode": "current_q_classical"},
+    {"id": "SUpDEqBary", "label": "SUpDEq + Barycentric", "mode": "current_q_classical"},
+    {"id": "MCA", "label": "MCA", "mode": "current_q_cache"},
+    {
+      "id": "MCARv351",
+      "label": "MCAR v3.5.1",
+      "mode": "frozen_current_q_residual",
+      "source_manifest": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+      "q26_reference_root": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70"
+    },
+    {
+      "id": "FSPAE",
+      "label": "FSP-AE",
+      "mode": "frozen_current_q_encoder",
+      "checkpoint": "artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt",
+      "checkpoint_sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F",
+      "q26_reference_root": "artifacts/reconstruction/sonicom_fsp_ae_q26_formal_validation"
+    },
+    {
+      "id": "RANF",
+      "label": "RANF",
+      "mode": "native_current_q_adaptation",
+      "adapter_repository": "baselines/ranf/worktree_q26",
+      "adapter_commit": "c50a1589c99654fb52d1a73ee17ac419b9a2654f",
+      "pretrained_checkpoint_sha256": "7B288F6F9198664E9CE75FEE418E90EC3DA2F5D0B7996A4EDEFE7D5F8DA3E367",
+      "adaptation_epochs": 1000,
+      "adaptation_batch_size": 3,
+      "prediction_roots": {
+        "q14": "artifacts/reconstruction/sonicom_ranf_ten_method_direction_sensitivity_q14_validation",
+        "q26": "artifacts/reconstruction/sonicom_ranf_q26_validation_frozen",
+        "q50": "artifacts/reconstruction/sonicom_ranf_ten_method_direction_sensitivity_q50_validation"
+      }
+    },
+    {
+      "id": "HYBRID",
+      "label": "Hybrid E190",
+      "mode": "frozen_current_q_residual",
+      "manifest": "configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json",
+      "manifest_identity_sha256": "A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE",
+      "q26_reference_root": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation"
+    },
+    {
+      "id": "BOUNDED",
+      "label": "Bounded E25",
+      "mode": "reuse_completed_sensitivity",
+      "manifest": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+      "manifest_identity_sha256": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705",
+      "prediction_root": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1"
+    }
+  ],
+  "inference": {
+    "normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "q26_reproduction_tolerance": 1e-5,
+    "test_access_allowed": false,
+    "parameter_updates_allowed": false
+  },
+  "metrics": ["FullSphereERB", "Contralateral25ERB", "ContralateralHighFrequency", "HorizontalILDMAE"],
+  "statistics": {
+    "contrasts": ["Q14-Q26", "Q50-Q26"],
+    "bounded_interactions": true,
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260902,
+    "subject_is_independent_unit": true
+  },
+  "output_name": "sonicom_ten_method_direction_sensitivity_v1",
+  "selection_policy": "No result-dependent model, grid, mask, endpoint, checkpoint, weight, adaptation budget, or implementation changes."
+}

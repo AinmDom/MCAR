@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen_before_inference",
+  "created_on": "2026-09-02",
+  "experiment_config": "configs/experiments/sonicom_ten_method_direction_sensitivity_v1.json",
+  "experiment_config_sha256": "17397A73CF1B64F05AE6A9A6474B93F0111E5066B2513F8E6A1CD746C3092C09",
+  "split": "val",
+  "subject_count": 44,
+  "direction_counts": [
+    14,
+    26,
+    50
+  ],
+  "fixed_evaluation_direction_count": 743,
+  "method_count": 10,
+  "resources": [
+    {
+      "path": "experiments/film_siren/STAGE_E_TEN_METHOD_DIRECTION_SENSITIVITY_PROTOCOL.md",
+      "sha256": "B0C7B19AF7A797B66EEAFC112468DDF8DD655F704D7663FBB72875F298F31554",
+      "size_bytes": 3022,
+      "purpose": "result-blind protocol"
+    },
+    {
+      "path": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+      "sha256": "47564F039D30391198B3D5386C161E149FB1D4384E1134488DFF0A1AC74CD6AB",
+      "size_bytes": 9153,
+      "purpose": "nested Q14/Q26/Q50 grid"
+    },
+    {
+      "path": "configs/experiments/sonicom_bounded_e25_input_direction_sensitivity_v1_manifest.json",
+      "sha256": "0EBE3B342D9DB1A52C3DC97C4DAC8DA92C70F6787AAD5F1CF661075C0F8FEA5D",
+      "size_bytes": 95670,
+      "purpose": "hash-locked current-Q inputs"
+    },
+    {
+      "path": "src/mcar/predictors.py",
+      "sha256": "5B4AC7515A9B94F8EC3AB8B9F69A76E193256F83983F86A27273296C1A39DC84",
+      "size_bytes": 27018,
+      "purpose": "variable-Q frozen predictors"
+    },
+    {
+      "path": "src/mcar/evaluation/predict_ten_method_direction_sensitivity.py",
+      "sha256": "37F79C01B33834ABE584F410B092D74EA786E59B770F5C411B1C7BB6E85B6AEC",
+      "size_bytes": 16439,
+      "purpose": "frozen comparator inference"
+    },
+    {
+      "path": "matlab/+mcar/evaluate_ten_method_direction_sensitivity.m",
+      "sha256": "FAAC4937B445071E733E29E4C12F403BA1E0CC8032D62E2EFD702EF465B55AEA",
+      "size_bytes": 25418,
+      "purpose": "strict ten-method evaluator"
+    },
+    {
+      "path": "configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json",
+      "sha256": "49109D146962D9049A03E5C0C98900FC0DF5AFE7F228D758C5E78D9CE4D50D03",
+      "size_bytes": 3672,
+      "purpose": "Hybrid E190 identity"
+    },
+    {
+      "path": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+      "sha256": "C00040B6AD07EAC10F3EB7420C24A9BD33E92B3F36471115825FF8BB3194B689",
+      "size_bytes": 5739,
+      "purpose": "Bounded E25 and MCAR component identity"
+    },
+    {
+      "path": "artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt",
+      "sha256": "25DB1EB83A1B647B2E0E12C6BE1FF9EE31BF2B216DC50B57C19ADC84D1E12F5F",
+      "size_bytes": 2937933,
+      "purpose": "frozen FSP-AE checkpoint"
+    }
+  ],
+  "ranf_adapter_commit": "c50a1589c99654fb52d1a73ee17ac419b9a2654f",
+  "git": {
+    "commit": "a68f0567f52419f0d9fe8bd0fde2c621a8026883",
+    "dirty": false
+  },
+  "test_subject_count_read": 0,
+  "identity_sha256": "41E1EE0752E563A68872F6469B2E591E832F383227A8CB66C2157F1BB5A55961"
+}

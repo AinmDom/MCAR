@@ -27,6 +27,15 @@ residual = log|H_ref| - log|H_MCA|
 `results/sonicom_bounded_mcar_film_correction_final_e25_frozen_test_nine_method/` 和
 `reports/BOUNDED_MCAR_FILM_CORRECTION_PAPER_DRAFT.md`。
 
+输入方向敏感性实验进一步把论文主配置固定为 **Bounded E25 + Q26**。在同一44名
+validation被试、统一排除Q50输入后的743个共同方向上，Q14/Q26/Q50的四项误差分别为：
+Full ERB `1.111461 / 0.792813 / 0.810526`、Contra25 ERB
+`1.726651 / 1.213857 / 1.272012`、Contra HF `4.052359 / 3.499964 / 3.533906`、
+Horizontal ILD `0.726235 / 0.559120 / 0.614061 dB`。相对Q26，Q14和Q50的四项
+paired-bootstrap 95% CI均完全大于0；因此冻结Q26模型既不耐受进一步稀疏，直接增加到Q50也
+不会带来单调增益。该实验未重训、未读取test，完整结果见
+`results/sonicom_bounded_e25_input_direction_sensitivity_v1/`。
+
 **当前工程主模型已更新为 MCAR v3.5.1**：固定输出融合为 previous-joint `30%` +
 v3.5.1-B epoch 23 `70%`。在 44 名 test 被试上，四项严格指标为
 `0.817937 / 1.274489 / 3.508481 / 0.644709 dB`；与其余七种方法横向比较时，

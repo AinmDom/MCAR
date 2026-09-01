@@ -4,8 +4,10 @@ Status: working paper draft. The formal three-member Bounded E25 ensemble is
 the paper main model as of 2026-09-01; its frozen identity is
 `72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705`.
 The model has completed its single authorized frozen engineering-test
-evaluation. Hybrid E190 and MCAR v3.5.1 remain key ablation/engineering
-comparators rather than alternative paper-main candidates.
+evaluation and a validation-only Q14/Q26/Q50 input-direction sensitivity
+experiment. The paper-main operating point is Bounded E25 with Q26 input.
+Hybrid E190 and MCAR v3.5.1 remain key ablation/engineering comparators rather
+than alternative paper-main candidates.
 
 ## Provisional titles
 
@@ -62,6 +64,9 @@ trade-off of a higher-capacity fusion network.
 3. A three-seed, fixed-budget evaluation showing a better spectral/binaural
    Pareto point than MCAR, the FiLM-SIREN ensemble, and the spectral-CNN hybrid
    on the locked validation cohort.
+4. A frozen-model input-direction sensitivity study showing that Q14 causes a
+   large, consistent degradation and that supplying Q50 to the Q26-trained
+   condition pathway does not yield monotonic improvement.
 
 ## Method draft
 
@@ -123,6 +128,13 @@ are measured in dB and lower is better. Uncertainty is assessed with 10,000
 subject-paired percentile bootstrap replicates. A difference is described as
 significant only when its two-sided 95% interval excludes zero.
 
+For input-direction sensitivity, Q14, Q26, and Q50 form an exactly nested grid.
+The model is not retrained: MCA and the condition input are recomputed from the
+current grid while every learned weight remains frozen. All three settings are
+evaluated on the same 743 directions after excluding the complete Q50 input
+set. The pre-registered comparisons are Q14 minus Q26 and Q50 minus Q26, using
+10,000 listener-paired bootstrap replicates with seed 20260901.
+
 ## Main validation result
 
 | Method | Full ERB | Contra25 ERB | Contra HF | Horizontal ILD |
@@ -135,6 +147,27 @@ significant only when its two-sided 95% interval excludes zero.
 Values are validation-subject means in dB. Standard deviations and
 publication-ready formatting are provided in Table 1 of the paper artifact
 pack.
+
+## Input-direction sensitivity
+
+| Observed directions | Full ERB | Contra25 ERB | Contra HF | Horizontal ILD |
+|---:|---:|---:|---:|---:|
+| Q14 | 1.1115 | 1.7267 | 4.0524 | 0.7262 |
+| Q26 | **0.7928** | **1.2139** | **3.5000** | **0.5591** |
+| Q50 | 0.8105 | 1.2720 | 3.5339 | 0.6141 |
+
+These validation means use the fixed 743-direction mask and therefore should
+not be mixed with the 767-direction means in the main comparison table. Q14
+minus Q26 was positive for all four endpoints: +0.3186 dB full ERB (95% CI
+[+0.3013,+0.3363]), +0.5128 dB Contra25 ERB ([+0.4761,+0.5509]), +0.5524 dB
+Contra HF ([+0.4847,+0.6226]), and +0.1671 dB horizontal ILD
+([+0.0996,+0.2351]). Q50 also did not improve on Q26: the corresponding
+differences were +0.0177 [+0.0108,+0.0240], +0.0582 [+0.0438,+0.0724],
++0.0339 [+0.0170,+0.0519], and +0.0549 dB [+0.0204,+0.0900]. Thus, the formal
+operating point is Bounded E25 with Q26 input. The Q50 result diagnoses
+distribution sensitivity of a Q26-trained frozen condition pathway; it is not
+evidence that additional measurements are generally harmful or that a
+Q50-trained model would behave the same way.
 
 ## Results draft
 
@@ -172,6 +205,10 @@ the bounded gate selects a conservative local adjustment.
 - **Why the ensemble helps.** The formal ensemble improves all four mean
   metrics over the one-seed bounded model, while using fixed equal weights and
   fixed cycle-25 checkpoints.
+- **Why Q26 remains the operating point.** Reducing the input to Q14 degrades
+  all endpoints substantially. Increasing it to Q50 without retraining also
+  causes a smaller but consistent degradation, indicating that the learned
+  condition pathway is calibrated to its Q26 training distribution.
 - **What cannot be claimed.** The candidate does not have the lowest mean on
   every metric: Hybrid E190 remains slightly lower on Contra25 and HF. Those
   differences are statistically indistinguishable, so the defensible claim is
@@ -194,18 +231,17 @@ the bounded gate selects a conservative local adjustment.
 
 ## Evidence and claim boundaries
 
-- Current new-model evidence is validation-only: 44/44 predictions are finite,
-  and all reports record `test_subject_count_read=0`.
+- The formal model has completed one authorized frozen engineering-test
+  evaluation. The Q14/Q26/Q50 sensitivity experiment is validation-only:
+  132/132 predictions are finite, Q26 reproduces the existing formal residual
+  exactly, and its report records `test_subject_count_read=0`.
 - The three pre-existing comparison methods reproduce their previous
   subject-level values exactly (maximum absolute difference 0 dB).
-- RANF and FSP-AE values exist under the same validation protocol, but the new
-  bounded model has not yet been placed in a pre-registered direct table with
-  them. Any such table must be labeled as a frozen-model supplementary report
-  and must not drive tuning.
-- A final locked-test evaluation of the new candidate requires a separate
-  pre-registration and explicit user authorization. Until that happens, the
-  abstract and conclusions must say "held-out validation subjects," not
-  "held-out test subjects."
+- RANF and FSP-AE direct comparisons are frozen supplementary evidence and must
+  not drive tuning. Validation and engineering-test results must remain
+  explicitly separated.
+- No further test access is authorized. Any new test evaluation requires a new
+  result-blind pre-registration and explicit user authorization.
 - Literature citations and venue-specific formatting remain placeholders; no
   source should be invented from memory.
 

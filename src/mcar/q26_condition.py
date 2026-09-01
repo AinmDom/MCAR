@@ -61,8 +61,8 @@ def verify_split_access(
 
 
 @dataclass(frozen=True)
-class Q26Condition:
-    """Sparse binaural magnitude condition for one subject."""
+class SparseCondition:
+    """Variable-size sparse binaural magnitude condition for one subject."""
 
     subject_label: str
     source_indices: np.ndarray
@@ -82,10 +82,8 @@ class Q26Condition:
     def validate(self) -> None:
         q = self.direction_count
         f = self.frequency_count
-        if self.source_indices.shape != (SONICOM_Q26_COUNT,):
-            raise ValueError(
-                f"source_indices must have shape [{SONICOM_Q26_COUNT}]"
-            )
+        if self.source_indices.shape != (q,) or q < 1:
+            raise ValueError("source_indices must be a non-empty vector")
         if len(set(self.source_indices.tolist())) != q:
             raise ValueError("source_indices must be unique")
         if np.any(self.source_indices < 0) or np.any(
@@ -109,6 +107,82 @@ class Q26Condition:
                 raise ValueError(f"{name} must be finite")
         if f < 2 or not bool(np.all(np.diff(self.frequency_hz) > 0.0)):
             raise ValueError("frequency_hz must be strictly increasing")
+
+
+@dataclass(frozen=True)
+class Q26Condition(SparseCondition):
+    """The original frozen 26-direction condition for one subject."""
+
+    def validate(self) -> None:
+        super().validate()
+        if self.source_indices.shape != (SONICOM_Q26_COUNT,):
+            raise ValueError(
+                f"source_indices must have shape [{SONICOM_Q26_COUNT}]"
+            )
+
+
+def build_sparse_condition(
+    dataset_root: Path,
+    split_csv: Path,
+    subject_id: int,
+    source_indices: np.ndarray,
+    *,
+    allow_test: bool = False,
+) -> SparseCondition:
+    """Load only the requested measured directions from a subject HDF5."""
+    label, csv_split = verify_split_access(
+        split_csv,
+        subject_id,
+        allow_test=allow_test,
+    )
+    indices = np.asarray(source_indices, dtype=np.int64).reshape(-1)
+    if indices.size < 1 or len(set(indices.tolist())) != indices.size:
+        raise ValueError("Sparse source indices must be non-empty and unique")
+    if not bool(np.all(np.diff(indices) > 0)):
+        raise ValueError("Sparse source indices must be strictly increasing")
+    if np.any(indices < 0) or np.any(indices >= SONICOM_DIRECTION_COUNT):
+        raise ValueError("Sparse source indices lie outside the reference grid")
+
+    path = dataset_root / "subjects" / label / "q26.h5"
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    with h5py.File(path, "r") as handle:
+        hdf5_split = normalize_split(handle.attrs["split"])
+        actual_subject_id = int(np.asarray(handle.attrs["subject_id"]).item())
+        if actual_subject_id != int(subject_id):
+            raise ValueError(
+                f"HDF5 identity mismatch for {path}: subject={actual_subject_id}"
+            )
+        if hdf5_split != csv_split:
+            raise ValueError(
+                f"Split mismatch for {path}: csv={csv_split!r}, "
+                f"hdf5={hdf5_split!r}"
+            )
+        if hdf5_split == "test" and not allow_test:
+            raise PermissionError(
+                f"test HDF5 {path} requires the explicit allow_test flag"
+            )
+        reference = handle["reference_logmag_db"]
+        directions = handle["direction_features"]
+        frequency_dataset = handle["frequency_hz"]
+        if reference.shape[:2] != (2, SONICOM_DIRECTION_COUNT):
+            raise ValueError(f"Unexpected reference layout {reference.shape}")
+        if directions.shape != (SONICOM_DIRECTION_COUNT, 6):
+            raise ValueError(f"Unexpected direction layout {directions.shape}")
+        magnitude = np.asarray(reference[:, indices, :], dtype=np.float32)
+        xyz = np.asarray(directions[indices, 2:5], dtype=np.float32)
+        frequency = np.asarray(frequency_dataset[:], dtype=np.float32).reshape(-1)
+
+    condition = SparseCondition(
+        subject_label=label,
+        source_indices=indices.copy(),
+        binaural_magnitude_db=magnitude,
+        xyz=xyz,
+        mask=np.ones(indices.size, dtype=bool),
+        frequency_hz=frequency,
+    )
+    condition.validate()
+    return condition
 
 
 def build_q26_condition(

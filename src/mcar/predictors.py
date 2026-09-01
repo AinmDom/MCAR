@@ -32,7 +32,11 @@ from mcar.evaluation.evaluate_mlp_cnn_v3 import (
     infer_model_architecture,
 )
 from mcar.paths import project_root
-from mcar.q26_condition import Q26MagnitudeNormalization, build_q26_condition
+from mcar.q26_condition import (
+    Q26MagnitudeNormalization,
+    build_q26_condition,
+    build_sparse_condition,
+)
 from mcar.training.train_siren import frequency_coordinates
 from mcar.training.train_film_siren import conditioned_coordinate_block
 
@@ -452,6 +456,8 @@ class BoundedMcarFilmCorrectionPredictor:
         device: torch.device | None = None,
         directions_per_block: int = 64,
         allow_test: bool = False,
+        condition_source_indices: np.ndarray | None = None,
+        condition_dataset_root: Path | None = None,
     ) -> None:
         self.device = device or torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -512,6 +518,12 @@ class BoundedMcarFilmCorrectionPredictor:
         if self.directions_per_block < 1:
             raise ValueError("directions_per_block must be positive")
         self.allow_test = bool(allow_test)
+        self.condition_source_indices = (
+            None
+            if condition_source_indices is None
+            else np.asarray(condition_source_indices, dtype=np.int64).reshape(-1)
+        )
+        self.condition_dataset_root = condition_dataset_root
 
     def prepare_subject(self, source_h5: Path) -> BoundedCorrectionSubjectInputs:
         """Load all subject inputs before a compute-only benchmark region."""
@@ -521,14 +533,23 @@ class BoundedMcarFilmCorrectionPredictor:
             correction_db = np.asarray(
                 handle["correction_logmag_db"][:], dtype=np.float32
             )
-        dataset_root = source_h5.resolve().parents[2]
-        condition = build_q26_condition(
-            dataset_root,
-            self.split_csv,
-            subject_id,
-            self.q26_csv,
-            allow_test=self.allow_test,
-        )
+        dataset_root = self.condition_dataset_root or source_h5.resolve().parents[2]
+        if self.condition_source_indices is None:
+            condition = build_q26_condition(
+                dataset_root,
+                self.split_csv,
+                subject_id,
+                self.q26_csv,
+                allow_test=self.allow_test,
+            )
+        else:
+            condition = build_sparse_condition(
+                dataset_root,
+                self.split_csv,
+                subject_id,
+                self.condition_source_indices,
+                allow_test=self.allow_test,
+            )
         directions, frequency = _read_query_grid(source_h5)
         expected = (2, directions.shape[0], frequency.size)
         if local_mca_db.shape != expected or correction_db.shape != expected:

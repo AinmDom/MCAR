@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-09-01",
+  "status": "preregistered",
+  "experiment_id": "SONICOM-BOUNDED-E25-INPUT-DIRECTION-SENSITIVITY-V1",
+  "purpose": "Characterize the frozen paper main model at one sparser and one denser observed-direction count.",
+  "protocol": "experiments/film_siren/STAGE_E_BOUNDED_E25_DIRECTION_SENSITIVITY_PROTOCOL.md",
+  "paper_main_model": {
+    "label": "Bounded E25",
+    "manifest": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+    "manifest_identity_sha256": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705",
+    "parameter_updates_allowed": false,
+    "ensemble_weights": [0.3333333333333333, 0.3333333333333333, 0.3333333333333333]
+  },
+  "dataset": {
+    "name": "SONICOM FreeFieldCompMinPhase 44.1 kHz",
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "sofa_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects",
+    "split_file": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "val",
+    "subject_count": 44,
+    "reference_grid": "configs/data/sonicom_reference_grid_v1.csv",
+    "reference_direction_count": 793,
+    "sparse_grid_file": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+    "sparse_grid_report": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.json",
+    "direction_counts": [14, 26, 50],
+    "center_direction_count": 26,
+    "fixed_evaluation_mask_policy": "Exclude all 50 Q50 input directions at Q14, Q26, and Q50.",
+    "fixed_evaluation_direction_count": 743,
+    "sampling_rate_hz": 44100,
+    "hrir_length": 256
+  },
+  "inference": {
+    "mode": "frozen_model_input_sensitivity_without_retraining",
+    "mca_policy": "Recompute order-3 MCA and correction from the current Q observations.",
+    "condition_policy": "Encode only the current Q observed binaural magnitudes and coordinates.",
+    "normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "q26_prediction_reproduction_tolerance_db": 1e-5,
+    "test_access_allowed": false
+  },
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "statistics": {
+    "contrasts": ["Q14-Q26", "Q50-Q26"],
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260901,
+    "subject_is_independent_unit": true
+  },
+  "output_name": "sonicom_bounded_e25_input_direction_sensitivity_v1",
+  "selection_policy": "No result-dependent model, grid, mask, metric, checkpoint, weight, or hyperparameter changes are allowed."
+}

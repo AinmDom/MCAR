@@ -1,5 +1,31 @@
 # 项目实验日志
 
+## 2026-09-01：Bounded E25正式固定为论文主模型，输入方向敏感性实验预注册
+
+- 用户明确将formal Bounded E25设为论文主模型。规范模型保持identity
+  `72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705`：三个seed
+  `20260821/22/23`的cycle25 `last.pt`，residual-dB权重固定为`1/3`。该决策不改变当前工程部署
+  主模型MCAR v3.5.1，也不改写Bounded已冻结test的已知trade-off：宽带/对侧ERB占优，高频细节
+  弱于FSP-AE，test ILD与MCAR v3.5.1统计持平，故不声明全指标支配。
+- 为补充输入稀疏度证据，在任何新增预测或指标前冻结validation-only sensitivity协议。中心为原Q26；
+  更稀疏档固定为历史嵌套Q14；更稠密档固定为Q50，即保留全部Q26并按与原Q26一致的“最小大圆距离
+  优先、order-3 SH Gram logdet次级、索引最终打破并列”规则新增12对左右镜像实测方向。三档严格满足
+  `Q14 ⊂ Q26 ⊂ Q50`，只使用44名validation被试，`test_subject_count_read=0`。
+- Q14/Q26/Q50最小点间角为`39.36699615882736/31.915838841829665/20.53677810221674°`；Q50
+  mean/p95/max覆盖距离为`11.0677284280/17.9638601298/27.3447980931°`，order-3 SH设计矩阵
+  rank=`16`、condition=`2.4482635509`。网格只读取坐标，不读取HRTF值或结果。
+- 每一档均不重训：只用当前Q观测重新计算order-3 MCA与correction，并把同一Q的观测幅度/坐标送入
+  冻结的permutation-invariant condition encoder；FiLM、两个MCAR分量、bounded gate和ensemble权重
+  均不更新。Q26新入口必须以最大绝对差`<=1e-5 dB`复现既有formal validation residual后，Q14/Q50
+  才可接纳。
+- 三档统一排除完整Q50输入集合，只评价相同743方向。端点仍为FullSphere ERB、Contra25 ERB、
+  Contra HF和Horizontal ILD；预注册对比为`Q14-Q26`与`Q50-Q26`，固定10000次paired-listener
+  percentile bootstrap、seed=`20260901`。协议、配置、网格和实现见
+  `experiments/film_siren/STAGE_E_BOUNDED_E25_DIRECTION_SENSITIVITY_PROTOCOL.md`、
+  `configs/experiments/sonicom_bounded_e25_input_direction_sensitivity_v1.json`及
+  `configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.json`。本条仅为模型决策与结果前冻结，
+  训练/末点预算判据=N/A；44×3重建、推理、finite与严格指标均尚未运行。
+
 ## 2026-09-01：十方法 24 个指标逐指标论文级可视化完成
 
 - 以已提交的十方法v2逐被试CSV为唯一数据源，为4个primary validation、4个frozen engineering

@@ -16,6 +16,17 @@ residual = log|H_ref| - log|H_MCA|
 
 ## 当前结果
 
+**论文主模型现正式固定为 Bounded E25 三成员 ensemble**：模型 identity 为
+`72B7319F…F2705`，只使用三个正式 cycle-25 `last.pt` 并按 `1/3` 等权平均 residual。
+在 44 名 validation 被试上，Full ERB / Contra25 ERB / Contra HF / Horizontal ILD
+分别为 `0.796649 / 1.216626 / 3.509814 / 0.565004 dB`；在已冻结 engineering test 上
+分别为 `0.794131 / 1.201518 / 3.476580 / 0.674382 dB`。Bounded 在宽带 ERB 与对侧 ERB
+最强，但高频细节弱于 FSP-AE，test ILD 与 MCAR v3.5.1 未显示显著差异，因此论文不作
+全指标支配声明。正式模型、结果与论文证据分别见
+`configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json`、
+`results/sonicom_bounded_mcar_film_correction_final_e25_frozen_test_nine_method/` 和
+`reports/BOUNDED_MCAR_FILM_CORRECTION_PAPER_DRAFT.md`。
+
 **当前工程主模型已更新为 MCAR v3.5.1**：固定输出融合为 previous-joint `30%` +
 v3.5.1-B epoch 23 `70%`。在 44 名 test 被试上，四项严格指标为
 `0.817937 / 1.274489 / 3.508481 / 0.644709 dB`；与其余七种方法横向比较时，
@@ -25,7 +36,7 @@ v3.5.1-B epoch 23 `70%`。在 44 名 test 被试上，四项严格指标为
 论文模型及其一次性测试结论作为历史冻结记录保留；由于 validation 与 test 均已被
 项目历史实验使用，新的独立确认仍需未见拆分或外部数据。
 
-SONICOM Q26 的一次性最终 test 已在模型完全锁定并获得用户明确授权后完成。论文主模型为
+以下为此前冻结的历史论文模型记录。SONICOM Q26 的一次性最终 test 已在模型完全锁定并获得用户明确授权后完成。此前论文主模型为
 MLP+CNN v3.2（严格 ILD 权重 `0.75`、epoch 6）：44 名 test 被试上的全空间 ERB、
 对侧 25° ERB、对侧高频和水平面严格 ILD MAE 分别为
 `0.867805 / 1.365327 / 3.611854 / 0.686999 dB`；相对 MCA 分别改善

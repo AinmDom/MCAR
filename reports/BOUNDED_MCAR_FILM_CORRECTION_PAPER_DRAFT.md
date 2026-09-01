@@ -1,7 +1,11 @@
 # Bounded FiLM-SIREN Correction for Sparse HRTF Reconstruction
 
-Status: working paper draft based on the frozen 44-subject SONICOM validation
-evaluation. The new model has not been evaluated on the locked test split.
+Status: working paper draft. The formal three-member Bounded E25 ensemble is
+the paper main model as of 2026-09-01; its frozen identity is
+`72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705`.
+The model has completed its single authorized frozen engineering-test
+evaluation. Hybrid E190 and MCAR v3.5.1 remain key ablation/engineering
+comparators rather than alternative paper-main candidates.
 
 ## Provisional titles
 
@@ -213,4 +217,3 @@ the bounded gate selects a conservative local adjustment.
 - `results/sonicom_bounded_mcar_film_correction_e25_paper/figure_1_main_validation.{png,pdf}`
 - `results/sonicom_bounded_mcar_film_correction_e25_paper/figure_2_paired_effects.{png,pdf}`
 - `results/sonicom_bounded_mcar_film_correction_e25_paper/manifest.json`
-

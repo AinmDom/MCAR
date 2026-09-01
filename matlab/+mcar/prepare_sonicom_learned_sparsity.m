@@ -1,5 +1,5 @@
 function prepare_sonicom_learned_sparsity(configFile, subjectLimit, numWorkers)
-%PREPARE_SONICOM_LEARNED_SPARSITY Build MCAR inputs for Q6/Q14/Q26.
+%PREPARE_SONICOM_LEARNED_SPARSITY Build MCAR inputs for configured nested Q.
 
 if nargin < 1 || isempty(configFile)
     configFile = fullfile('configs', 'experiments', ...
@@ -24,15 +24,18 @@ splitTable = readtable(fullfile(projectRoot, config.dataset.split_file), ...
     'TextType', 'string');
 splitRows = splitTable(splitTable.split == string(config.dataset.split), :);
 assert(height(splitRows) == config.dataset.subject_count, ...
-    'Frozen SONICOM test subject count mismatch.');
+    'Frozen SONICOM subject count mismatch.');
 splitRows = splitRows(1:min(height(splitRows), floor(subjectLimit)), :);
 gridTable = readtable(fullfile(projectRoot, config.dataset.sparse_grid_file), ...
     'TextType', 'string');
 referenceTable = readtable(fullfile(projectRoot, config.dataset.reference_grid), ...
     'TextType', 'string');
 counts = double(config.dataset.direction_counts(:).');
-assert(isequal(counts, [6, 14, 26]) && height(referenceTable) == 793, ...
-    'Frozen sparsity or reference grid was modified.');
+expectedSplit = string(config.dataset.split);
+assert(~isempty(counts) && all(counts > 0) && ...
+    all(counts == floor(counts)) && issorted(counts) && ...
+    height(referenceTable) == config.dataset.reference_direction_count, ...
+    'Configured sparsity or reference grid is invalid.');
 for count = counts
     rows = gridTable(gridTable.direction_count == count, :);
     assert(height(rows) == count && numel(unique(rows.source_index_zero_based)) == count, ...
@@ -68,13 +71,15 @@ if requestedWorkers > 1
     parfor subjectIndex = 1:height(splitRows)
         workerEnvironment.Value;
         statusCells{subjectIndex} = process_subject(splitRows(subjectIndex, :), ...
-            counts, gridTable, referenceTable, sofaRoot, subjectsRoot);
+            counts, gridTable, referenceTable, sofaRoot, subjectsRoot, ...
+            expectedSplit);
     end
     delete(workerEnvironment);
 else
     for subjectIndex = 1:height(splitRows)
         statusCells{subjectIndex} = process_subject(splitRows(subjectIndex, :), ...
-            counts, gridTable, referenceTable, sofaRoot, subjectsRoot);
+            counts, gridTable, referenceTable, sofaRoot, subjectsRoot, ...
+            expectedSplit);
     end
 end
 status = vertcat(statusCells{:});
@@ -94,7 +99,7 @@ clear restoreDirectory;
 end
 
 function status = process_subject(splitRow, counts, gridTable, ...
-        referenceTable, sofaRoot, subjectsRoot)
+        referenceTable, sofaRoot, subjectsRoot, expectedSplit)
 subjectLabel = splitRow.subject_id;
 subjectRoot = fullfile(subjectsRoot, char(subjectLabel));
 if ~isfolder(subjectRoot)
@@ -159,7 +164,8 @@ for count = counts
         save(temporaryCache, 'cache', '-v7.3');
         movefile(temporaryCache, cacheFile, 'f');
         write_model_input(inputFile, mcaDb, correctionDb, ...
-            directionFeatures, frequencyHz(frequencyMask), subjectLabel, count);
+            directionFeatures, frequencyHz(frequencyMask), subjectLabel, ...
+            count, expectedSplit);
         rows = [rows; status_row(subjectLabel, count, true, toc(started), ...
             "")]; %#ok<AGROW>
     catch exception
@@ -190,7 +196,7 @@ features = single([azimuth.'; elevation.'; ...
 end
 
 function write_model_input(path, mcaDb, correctionDb, directions, ...
-        frequencyHz, subjectLabel, count)
+        frequencyHz, subjectLabel, count, split)
 partial = [path '.partial'];
 delete_if_present(partial);
 delete_if_present(path);
@@ -206,7 +212,7 @@ h5writeatt(partial, '/', 'complete', int32(1));
 h5writeatt(partial, '/', 'subject_id', ...
     int32(str2double(extractAfter(subjectLabel, 1))));
 h5writeatt(partial, '/', 'subject_label', char(subjectLabel));
-h5writeatt(partial, '/', 'split', 'test');
+h5writeatt(partial, '/', 'split', char(split));
 h5writeatt(partial, '/', 'sparse_order', int32(3));
 h5writeatt(partial, '/', 'sparse_direction_count', int32(count));
 movefile(partial, path, 'f');

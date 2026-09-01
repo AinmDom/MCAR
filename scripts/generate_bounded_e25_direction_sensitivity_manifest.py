@@ -74,7 +74,9 @@ def main() -> None:
     artifact_root = ROOT / "artifacts/sparsity" / config["output_name"]
     status_path = artifact_root / "preparation_status.csv"
     status = list(csv.DictReader(status_path.open("r", encoding="utf-8-sig", newline="")))
-    if len(status) != 132 or not all(row["Success"].lower() == "true" for row in status):
+    if len(status) != 132 or not all(
+        row["Success"].strip().lower() in {"1", "true"} for row in status
+    ):
         raise ValueError("Expected 132 successful preparation rows")
 
     inventory: list[dict[str, object]] = []

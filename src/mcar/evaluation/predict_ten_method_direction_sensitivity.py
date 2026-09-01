@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+import shutil
 import time
 from pathlib import Path
 
@@ -13,13 +14,17 @@ import h5py
 import numpy as np
 import torch
 
+from mcar.data import Normalization
+from mcar.evaluation.evaluate_mlp_cnn_v3 import (
+    build_point_features,
+    infer_global_context_arguments,
+    infer_model_architecture,
+)
 from mcar.fsp_ae_signal import reconstruct_hrir_with_itd
 from mcar.models.fsp_ae import FreqSrcPosCondAutoEncoder
+from mcar.models.residual_mlp_cnn import ResidualMLPCNN
 from mcar.paths import project_root
-from mcar.predictors import (
-    BoundedMcarFilmCorrectionPredictor,
-    FilmSirenSpectralCNNPredictor,
-)
+from mcar.predictors import FilmSirenSpectralCNNPredictor
 from mcar.training.train_film_siren import file_sha256, split_subject_paths
 
 
@@ -173,6 +178,84 @@ def method_spec(config: dict[str, object], method_id: str) -> dict[str, object]:
     return matches[0]
 
 
+def load_mcar_model(
+    checkpoint_path: Path, expected_hash: str, device: torch.device
+) -> ResidualMLPCNN:
+    validate_hash(checkpoint_path, expected_hash)
+    payload = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    state = payload["model_state"]
+    width, blocks, channels = infer_model_architecture(state)
+    model = ResidualMLPCNN(
+        mlp_width=width,
+        mlp_block_count=blocks,
+        cnn_channels=channels,
+        **infer_global_context_arguments(payload),
+    ).to(device)
+    model.load_state_dict(state)
+    model.eval()
+    return model
+
+
+@torch.no_grad()
+def predict_mcar_component(
+    source_h5: Path,
+    model: ResidualMLPCNN,
+    normalization: Normalization,
+    device: torch.device,
+    directions_per_block: int,
+    use_amp: bool,
+) -> np.ndarray:
+    with h5py.File(source_h5, "r") as source:
+        split = source.attrs["split"]
+        if isinstance(split, bytes):
+            split = split.decode()
+        if str(split) != "val":
+            raise PermissionError(f"MCAR input is not validation: {source_h5}")
+        mca = source["mca_logmag_db"]
+        correction = source["correction_logmag_db"]
+        directions = np.asarray(source["direction_features"][:], dtype=np.float32)
+        frequency_hz = np.squeeze(source["frequency_hz"][:]).astype(np.float32)
+        prediction = np.empty(mca.shape, dtype=np.float32)
+        for start in range(0, mca.shape[1], directions_per_block):
+            stop = min(start + directions_per_block, mca.shape[1])
+            point_features = build_point_features(
+                np.asarray(mca[:, start:stop, :], dtype=np.float32),
+                np.asarray(correction[:, start:stop, :], dtype=np.float32),
+                directions[start:stop],
+                frequency_hz,
+                normalization,
+            )
+            point_tensor = torch.from_numpy(point_features).to(device)
+            with torch.amp.autocast(
+                "cuda", enabled=use_amp and device.type == "cuda"
+            ):
+                normalized, _, _ = model(point_tensor)
+            predicted_db = (
+                normalized.permute(1, 0, 2).float() * normalization.target_std
+                + normalization.target_mean
+            )
+            prediction[:, start:stop, :] = predicted_db.cpu().numpy()
+    return prediction
+
+
+def predict_mcar_v351(
+    source_h5: Path,
+    models: tuple[ResidualMLPCNN, ResidualMLPCNN],
+    normalization: Normalization,
+    device: torch.device,
+    directions_per_block: int,
+    use_amp: bool,
+    candidate_weight: float,
+) -> np.ndarray:
+    previous = predict_mcar_component(
+        source_h5, models[0], normalization, device, directions_per_block, use_amp
+    )
+    candidate = predict_mcar_component(
+        source_h5, models[1], normalization, device, directions_per_block, use_amp
+    )
+    return previous + np.float32(candidate_weight) * (candidate - previous)
+
+
 def write_residual(
     path: Path,
     prediction: np.ndarray,
@@ -225,6 +308,23 @@ def q26_fspae_error(candidate: Path, reference: Path) -> float:
     return maximum
 
 
+def copy_reference_hdf5(
+    source: Path, destination: Path, *, identity: str, count: int
+) -> None:
+    if destination.exists():
+        raise FileExistsError(f"Refusing to overwrite {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    partial = destination.with_suffix(destination.suffix + ".partial")
+    partial.unlink(missing_ok=True)
+    shutil.copy2(source, partial)
+    with h5py.File(partial, "r+") as handle:
+        handle.attrs["sparse_direction_count"] = count
+        handle.attrs["manifest_identity_sha256"] = identity
+        handle.attrs["q26_reused_formal_artifact"] = 1
+        handle.attrs["test_subject_count_read"] = 0
+    partial.replace(destination)
+
+
 def main() -> None:
     args = parse_arguments()
     root = project_root()
@@ -260,19 +360,33 @@ def main() -> None:
     maxima = {method: 0.0 for method in requested}
     predictions = {method: 0 for method in requested}
 
-    bounded_spec = method_spec(config, "BOUNDED")
-    bounded_manifest_path = root / bounded_spec["manifest"]
-    bounded_manifest = json.loads(bounded_manifest_path.read_text(encoding="utf-8"))
-    bounded_member = bounded_manifest["members"][0]
-    bounded_checkpoint = root / bounded_member["checkpoint"]
-    validate_hash(bounded_checkpoint, bounded_member["checkpoint_sha256"])
-    q26_csv = root / bounded_manifest["dataset"]["q26_csv"]
     normalization = root / config["inference"]["normalization"]
 
     hybrid_spec = method_spec(config, "HYBRID")
     hybrid_manifest = json.loads((root / hybrid_spec["manifest"]).read_text(encoding="utf-8"))
     if hybrid_manifest["identity_sha256"] != hybrid_spec["manifest_identity_sha256"]:
         raise ValueError("Hybrid E190 identity mismatch")
+    q26_csv = root / hybrid_manifest["dataset"]["q26_csv"]
+
+    mcar_spec = method_spec(config, "MCARv351")
+    mcar_models: tuple[ResidualMLPCNN, ResidualMLPCNN] | None = None
+    mcar_normalization: Normalization | None = None
+    if "mcar" in requested:
+        components = mcar_spec["components"]
+        if [component["role"] for component in components] != [
+            "previous_joint",
+            "v351b_continuation",
+        ]:
+            raise ValueError("Frozen MCAR component order changed")
+        mcar_models = tuple(
+            load_mcar_model(
+                root / component["checkpoint"], component["checkpoint_sha256"], device
+            )
+            for component in components
+        )
+        mcar_normalization = Normalization.from_json(
+            root / config["inference"]["mcar_normalization"]
+        )
 
     fsp_spec = method_spec(config, "FSPAE")
     fsp_checkpoint_path = root / fsp_spec["checkpoint"]
@@ -287,21 +401,8 @@ def main() -> None:
 
     for count in counts:
         indices = grid_indices(grid_csv, count)
-        mcar_predictor = None
-        if "mcar" in requested:
-            mcar_predictor = BoundedMcarFilmCorrectionPredictor(
-                bounded_checkpoint,
-                split_csv,
-                q26_csv,
-                normalization,
-                device=device,
-                directions_per_block=args.directions_per_block,
-                allow_test=False,
-                condition_source_indices=indices,
-                condition_dataset_root=dataset_root,
-            )
         hybrid_predictors: list[FilmSirenSpectralCNNPredictor] = []
-        if "hybrid" in requested:
+        if "hybrid" in requested and count != 26:
             for member in hybrid_manifest["members"]:
                 checkpoint = root / member["checkpoint"]
                 validate_hash(checkpoint, member["checkpoint_sha256"])
@@ -323,38 +424,68 @@ def main() -> None:
             level_root = output_root / "subjects" / subject_label / f"q{count}"
             if not source_h5.is_file():
                 raise FileNotFoundError(source_h5)
-            if mcar_predictor is not None:
-                prediction = mcar_predictor.predict_diagnostics_db(source_h5).base_residual_db
+            if mcar_models is not None and mcar_normalization is not None:
+                reference = root / mcar_spec["q26_reference_root"] / "subjects" / subject_label / "prediction.h5"
+                if count == 26:
+                    with h5py.File(reference, "r") as handle:
+                        prediction = np.asarray(
+                            handle["predicted_residual_db"][:], dtype=np.float32
+                        )
+                else:
+                    prediction = predict_mcar_v351(
+                        source_h5,
+                        mcar_models,
+                        mcar_normalization,
+                        device,
+                        int(mcar_spec["directions_per_block"]),
+                        bool(mcar_spec["cuda_amp"]),
+                        float(mcar_spec["candidate_weight"]),
+                    )
                 if prediction.shape != (2, 793, 463) or not np.all(np.isfinite(prediction)):
                     raise FloatingPointError(f"Invalid MCAR Q{count} {subject_label}")
                 if count == 26:
-                    reference = root / method_spec(config, "MCARv351")["q26_reference_root"] / "subjects" / subject_label / "prediction.h5"
                     maxima["mcar"] = max(maxima["mcar"], q26_residual_error(prediction, reference))
                 write_residual(level_root / "mcar_v351_prediction.h5", prediction, method="MCARv351", subject_label=subject_label, count=count, identity=identity)
                 predictions["mcar"] += 1
-            if hybrid_predictors:
-                member_predictions = [predictor.predict_residual_db(source_h5) for predictor in hybrid_predictors]
-                prediction = np.mean(np.stack(member_predictions), axis=0, dtype=np.float64).astype(np.float32)
+            if "hybrid" in requested:
+                reference = root / hybrid_spec["q26_reference_root"] / "subjects" / subject_label / "prediction.h5"
+                if count == 26:
+                    with h5py.File(reference, "r") as handle:
+                        prediction = np.asarray(
+                            handle["predicted_residual_db"][:], dtype=np.float32
+                        )
+                else:
+                    member_predictions = [
+                        predictor.predict_residual_db(source_h5)
+                        for predictor in hybrid_predictors
+                    ]
+                    prediction = np.mean(
+                        np.stack(member_predictions), axis=0, dtype=np.float64
+                    ).astype(np.float32)
                 if prediction.shape != (2, 793, 463) or not np.all(np.isfinite(prediction)):
                     raise FloatingPointError(f"Invalid Hybrid Q{count} {subject_label}")
                 if count == 26:
-                    reference = root / hybrid_spec["q26_reference_root"] / "subjects" / subject_label / "prediction.h5"
                     maxima["hybrid"] = max(maxima["hybrid"], q26_residual_error(prediction, reference))
                 write_residual(level_root / "hybrid_e190_prediction.h5", prediction, method="HYBRID", subject_label=subject_label, count=count, identity=identity)
                 predictions["hybrid"] += 1
             if fsp_model is not None:
                 output = level_root / "fspae_prediction.h5"
-                predict_fspae(
-                    root / config["dataset"]["fspae_cache_root"] / f"{subject_label}.h5",
-                    output,
-                    indices,
-                    fsp_checkpoint_path,
-                    fsp_model,
-                    device,
-                    args.target_directions_per_chunk,
-                )
+                reference = root / fsp_spec["q26_reference_root"] / "subjects" / subject_label / "prediction.h5"
                 if count == 26:
-                    reference = root / fsp_spec["q26_reference_root"] / "subjects" / subject_label / "prediction.h5"
+                    copy_reference_hdf5(
+                        reference, output, identity=identity, count=count
+                    )
+                else:
+                    predict_fspae(
+                        root / config["dataset"]["fspae_cache_root"] / f"{subject_label}.h5",
+                        output,
+                        indices,
+                        fsp_checkpoint_path,
+                        fsp_model,
+                        device,
+                        args.target_directions_per_chunk,
+                    )
+                if count == 26:
                     maxima["fspae"] = max(maxima["fspae"], q26_fspae_error(output, reference))
                 predictions["fspae"] += 1
             print(f"Q{count} [{index}/{len(subjects)}] {subject_label}", flush=True)

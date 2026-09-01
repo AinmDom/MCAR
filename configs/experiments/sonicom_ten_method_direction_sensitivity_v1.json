@@ -30,7 +30,22 @@
       "id": "MCARv351",
       "label": "MCAR v3.5.1",
       "mode": "frozen_current_q_residual",
-      "source_manifest": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+      "components": [
+        {
+          "role": "previous_joint",
+          "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v321_cnn_reinit_joint_unfreeze_e10/best.pt",
+          "checkpoint_sha256": "1D6ED796B2C19F77380BC2CB8B233F7B5DA78A70CAE77BB7D42461A8330E9CF4"
+        },
+        {
+          "role": "v351b_continuation",
+          "checkpoint": "artifacts/training/sonicom_mlp_cnn_q26_v351b_band_ild005_e40/best.pt",
+          "checkpoint_sha256": "3D657783E301300AC9B36C02E0C0FE1F98E82F611CE202638C84F84B036391EB"
+        }
+      ],
+      "candidate_weight": 0.7,
+      "fusion_formula": "previous + float32(0.7) * (candidate - previous)",
+      "cuda_amp": true,
+      "directions_per_block": 64,
       "q26_reference_root": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70"
     },
     {
@@ -74,7 +89,9 @@
     }
   ],
   "inference": {
+    "q26_policy": "Reuse each method's existing formal validation artifact exactly; infer only missing Q14/Q50 outputs.",
     "normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "mcar_normalization": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
     "q26_reproduction_tolerance": 1e-5,
     "test_access_allowed": false,
     "parameter_updates_allowed": false

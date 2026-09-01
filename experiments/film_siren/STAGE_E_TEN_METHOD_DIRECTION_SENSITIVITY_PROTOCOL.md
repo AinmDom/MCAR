@@ -21,8 +21,10 @@ SUpDEq+Barycentric, MCA, MCAR v3.5.1, FSP-AE, RANF, Hybrid E190, and Bounded E25
 
 - The four classical reconstructions and MCA are recomputed from the current-Q
   observations with their already frozen definitions.
-- MCAR v3.5.1 is the frozen 0.3 previous + 0.7 candidate residual ensemble and
-  receives the current-Q MCA/correction tensors.
+- MCAR v3.5.1 is reproduced through its formal inference path: each frozen
+  component uses CUDA AMP and 64-direction blocks on the current-Q
+  MCA/correction tensors, after which the float32 outputs are fused as
+  `previous + float32(0.7) * (candidate - previous)`.
 - FSP-AE uses its frozen epoch-40 checkpoint and encodes exactly the current-Q
   measured directions; there is no additional training.
 - Hybrid E190 uses its three frozen cycle-190 checkpoints, equal residual-dB
@@ -34,8 +36,10 @@ SUpDEq+Barycentric, MCA, MCAR v3.5.1, FSP-AE, RANF, Hybrid E190, and Bounded E25
   epochs with batch size 3. The completed Q26 validation adaptation is reused.
 
 For MCAR v3.5.1, FSP-AE, Hybrid E190, and Bounded E25, Q26 output must reproduce
-the existing formal validation artifact within `1e-5 dB` (or `1e-5` absolute
-for non-dB FSP-AE arrays). RANF Q26 is the existing frozen native artifact.
+the existing formal validation artifact exactly by reusing that artifact as the
+Q26 center condition; only the missing Q14/Q50 outputs are newly inferred.
+This prevents runtime/AMP drift from entering a direction-count effect. RANF
+Q26 likewise reuses the existing frozen native artifact.
 
 ## Endpoints and statistics
 

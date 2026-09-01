@@ -24,6 +24,7 @@ def test_registry_and_fixed_validation_boundary() -> None:
     assert config["dataset"]["fixed_evaluation_direction_count"] == 743
     assert config["inference"]["test_access_allowed"] is False
     assert config["inference"]["parameter_updates_allowed"] is False
+    assert config["inference"]["q26_policy"].startswith("Reuse each method's existing")
 
 
 def test_grids_are_exactly_nested() -> None:
@@ -60,3 +61,9 @@ def test_frozen_model_identities_and_native_ranf_budget() -> None:
     assert bounded["identity_sha256"] == methods["BOUNDED"]["manifest_identity_sha256"]
     assert methods["RANF"]["adaptation_epochs"] == 1000
     assert methods["RANF"]["adaptation_batch_size"] == 3
+    assert [item["role"] for item in methods["MCARv351"]["components"]] == [
+        "previous_joint", "v351b_continuation"
+    ]
+    assert methods["MCARv351"]["candidate_weight"] == 0.7
+    assert methods["MCARv351"]["cuda_amp"] is True
+    assert methods["MCARv351"]["directions_per_block"] == 64

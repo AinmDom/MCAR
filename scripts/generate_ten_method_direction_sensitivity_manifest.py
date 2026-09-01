@@ -60,6 +60,7 @@ def main() -> None:
         text=True,
     ).strip():
         raise RuntimeError("RANF adapter repository is dirty")
+    mcar = next(method for method in config["methods"] if method["id"] == "MCARv351")
     resources = [
         resource(config["protocol"], "result-blind protocol"),
         resource(config["dataset"]["sparse_grid_file"], "nested Q14/Q26/Q50 grid"),
@@ -68,9 +69,13 @@ def main() -> None:
         resource("src/mcar/evaluation/predict_ten_method_direction_sensitivity.py", "frozen comparator inference"),
         resource("matlab/+mcar/evaluate_ten_method_direction_sensitivity.m", "strict ten-method evaluator"),
         resource("configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json", "Hybrid E190 identity"),
-        resource("configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json", "Bounded E25 and MCAR component identity"),
+        resource("configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json", "Bounded E25 identity"),
         resource("artifacts/frozen/fsp_ae_q26_epoch40_25db1eb83a1b647b.pt", "frozen FSP-AE checkpoint"),
     ]
+    resources.extend(
+        resource(component["checkpoint"], f"frozen MCAR {component['role']} checkpoint")
+        for component in mcar["components"]
+    )
     manifest = {
         "schema_version": "1.0",
         "status": "frozen_before_inference",

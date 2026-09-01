@@ -1,5 +1,21 @@
 # 项目实验日志
 
+## 2026-09-02：十方法方向敏感度首次冻结推理被MCAR Q26复现闸门拒绝
+
+- 在manifest identity `41E1EE0752E563A68872F6469B2E591E832F383227A8CB66C2157F1BB5A55961`
+  锁定后，首次运行MCAR v3.5.1与Hybrid E190的44 validation × Q14/Q26/Q50冻结推理。264个
+  HDF5均完成且张量shape为`[2,793,463]`、finite；test读取为0。
+- 正式接纳前的Q26逐元素复现闸门拒绝该run：从Bounded内部diagnostics导出的MCAR base相对既有
+  formal MCAR v3.5.1最大绝对差为`0.10586357116699219 dB`，超过预注册`1e-5 dB`。Hybrid未触发
+  Q26失败。根因范围已收敛为实现路径：Bounded内部base使用全精度forward，而既有formal MCAR
+  两分量是固定64-direction block、CUDA AMP后再作0.3/0.7 output ensemble；这不是模型或超参数
+  选择问题。
+- 决策：该run状态为FAILED/REJECTED，不进入任何方法比较，不运行十方法评价；264个文件整体移入
+  diagnostics保留。随后只允许作意图保持的复现修复：显式按正式MCAR两个冻结checkpoint、AMP=true、
+  direction block=64、权重0.3/0.7运行，并重新生成依赖manifest。不得根据Q14/Q50结果改变方法。
+- 完整性：prediction files=`264`；失败在报告写出前由gate抛出，因此无completed report；
+  `test_subject_count_read=0`；训练/best/末点预算判据=N/A。
+
 ## 2026-09-01：Bounded E25 Q14/Q26/Q50 输入方向敏感性实验完成
 
 - 在结果前冻结的validation-only协议下，使用论文主模型Bounded E25三成员等权ensemble

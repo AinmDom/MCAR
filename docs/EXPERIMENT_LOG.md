@@ -1,5 +1,19 @@
 # 项目实验日志
 
+## 2026-09-02：十方法方向敏感度RANF Q14→Q50原生适配已启动
+
+- 在RANF adapter commit `c50a1589c99654fb52d1a73ee17ac419b9a2654f`和冻结预训练checkpoint
+  SHA-256 `7b288f6f9198664e9ce75fee418e90ec3da2f5d0b7996a4edefe7d5f8da3e367`下，启动顺序
+  controller：先Q14，再Q50。每档重新从同一checkpoint开始，retrieval bank仅用262名train被试，
+  原生适配预算固定1000 epochs、batch size 3，随后评价44名validation被试；test不读。
+- 启动确认：Windows后台WSL PID=`39500`，Linux controller PID=`305`，phase=`q14:adaptation`。
+  controller根为`/home/ill3/ranf-work/exp/mcar_ten_method_direction_sensitivity/`；Q14/Q50实验根分别为
+  `/home/ill3/ranf-work/exp/mcar_ten_method_direction_sensitivity_q14_validation/`和
+  `..._q50_validation/`。控制器会在Q14自然完成后自动进入Q50。
+- 本条仅表示已启动，不表示完成。训练/评价finite、adaptation checkpoint、1000-epoch末点和44/44输出
+  均为PENDING；按Codex长任务约定不主动轮询。完成后需导出两档SOFA、验证Q26既有RANF复用，才可运行
+  5280行十方法统一评价。`test_subject_count_read=0`。
+
 ## 2026-09-02：十方法方向敏感度三种冻结学习方法推理完成
 
 - 在修复后manifest identity `B625A3D0E145FD906854BF87DEB2821D1C49552FC1DF04AE2CD10B364B3C098E`

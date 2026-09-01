@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "figure_count": 24,
+  "method_count_per_figure": 10,
+  "subject_count_per_method": 44,
+  "summary_rows": 240,
+  "all_finite": true,
+  "bootstrap_replicates": 10000,
+  "bootstrap_base_seed": 20260901,
+  "new_test_subject_count_read": 0,
+  "source": "committed per-subject CSV results only"
+}

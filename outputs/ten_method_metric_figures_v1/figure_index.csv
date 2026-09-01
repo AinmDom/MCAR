@@ -1,0 +1,25 @@
+FigureNumber,EvidenceTier,Split,Endpoint,Title,DisplayUnit,Direction,PngFile,PdfFile
+1,Primary validation,val,FullSphereERB,Full-sphere ERB error,dB,Lower is better,png/01_primary_validation_fullsphereerb.png,pdf/01_primary_validation_fullsphereerb.pdf
+2,Primary validation,val,Contralateral25ERB,Contralateral 25-degree ERB error,dB,Lower is better,png/02_primary_validation_contralateral25erb.png,pdf/02_primary_validation_contralateral25erb.pdf
+3,Primary validation,val,ContralateralHighFrequency,Contralateral high-frequency error,dB,Lower is better,png/03_primary_validation_contralateralhighfrequency.png,pdf/03_primary_validation_contralateralhighfrequency.pdf
+4,Primary validation,val,HorizontalILDMAE,Horizontal-plane ILD MAE,dB,Lower is better,png/04_primary_validation_horizontalildmae.png,pdf/04_primary_validation_horizontalildmae.pdf
+5,Primary frozen engineering test,test,FullSphereERB,Full-sphere ERB error,dB,Lower is better,png/05_frozen_engineering_test_fullsphereerb.png,pdf/05_frozen_engineering_test_fullsphereerb.pdf
+6,Primary frozen engineering test,test,Contralateral25ERB,Contralateral 25-degree ERB error,dB,Lower is better,png/06_frozen_engineering_test_contralateral25erb.png,pdf/06_frozen_engineering_test_contralateral25erb.pdf
+7,Primary frozen engineering test,test,ContralateralHighFrequency,Contralateral high-frequency error,dB,Lower is better,png/07_frozen_engineering_test_contralateralhighfrequency.png,pdf/07_frozen_engineering_test_contralateralhighfrequency.pdf
+8,Primary frozen engineering test,test,HorizontalILDMAE,Horizontal-plane ILD MAE,dB,Lower is better,png/08_frozen_engineering_test_horizontalildmae.png,pdf/08_frozen_engineering_test_horizontalildmae.pdf
+9,Secondary validation,val,FullSphereLSD,Full-sphere log-spectral distance,dB,Lower is better,png/09_secondary_validation_fullspherelsd.png,pdf/09_secondary_validation_fullspherelsd.pdf
+10,Secondary validation,val,HFFirstDifferenceMAE,High-frequency first-difference MAE,dB/bin,Lower is better,png/10_secondary_validation_hffirstdifferencemae.png,pdf/10_secondary_validation_hffirstdifferencemae.pdf
+11,Secondary validation,val,HFSecondDifferenceMAE,High-frequency second-difference MAE,dB/bin^2,Lower is better,png/11_secondary_validation_hfseconddifferencemae.png,pdf/11_secondary_validation_hfseconddifferencemae.pdf
+12,Secondary validation,val,MultiScaleNotchDepthMAE,Multi-scale notch-depth MAE,dB,Lower is better,png/12_secondary_validation_multiscalenotchdepthmae.png,pdf/12_secondary_validation_multiscalenotchdepthmae.pdf
+13,Secondary validation,val,ERBBandILDMean,ERB-band horizontal ILD error,dB,Lower is better,png/13_secondary_validation_erbbandildmean.png,pdf/13_secondary_validation_erbbandildmean.pdf
+14,Secondary validation,val,SpatialLSD_0_10deg,Spatial LSD: 0-10 degrees from Q26,dB,Lower is better,png/14_secondary_validation_spatiallsd_0_10deg.png,pdf/14_secondary_validation_spatiallsd_0_10deg.pdf
+15,Secondary validation,val,SpatialLSD_10_20deg,Spatial LSD: 10-20 degrees from Q26,dB,Lower is better,png/15_secondary_validation_spatiallsd_10_20deg.png,pdf/15_secondary_validation_spatiallsd_10_20deg.pdf
+16,Secondary validation,val,SpatialLSD_20_30deg,Spatial LSD: 20-30 degrees from Q26,dB,Lower is better,png/16_secondary_validation_spatiallsd_20_30deg.png,pdf/16_secondary_validation_spatiallsd_20_30deg.pdf
+17,Secondary validation,val,SpatialLSD_30_180deg,Spatial LSD: 30-180 degrees from Q26,dB,Lower is better,png/17_secondary_validation_spatiallsd_30_180deg.png,pdf/17_secondary_validation_spatiallsd_30_180deg.pdf
+18,Deferred validation,val,DominantNotchPenalizedMAE_Hz,Dominant-notch penalized MAE,Hz,Lower is better,png/18_deferred_validation_dominantnotchpenalizedmae_hz.png,pdf/18_deferred_validation_dominantnotchpenalizedmae_hz.pdf
+19,Deferred validation,val,DominantNotchMatchedMAE_Hz,Dominant-notch matched-only MAE,Hz,Lower is better,png/19_deferred_validation_dominantnotchmatchedmae_hz.png,pdf/19_deferred_validation_dominantnotchmatchedmae_hz.pdf
+20,Deferred validation,val,DominantNotchMissRate,Dominant-notch miss rate,%,Lower is better,png/20_deferred_validation_dominantnotchmissrate.png,pdf/20_deferred_validation_dominantnotchmissrate.pdf
+21,Deferred validation,val,DominantNotchSpuriousRate,Dominant-notch spurious rate,%,Lower is better,png/21_deferred_validation_dominantnotchspuriousrate.png,pdf/21_deferred_validation_dominantnotchspuriousrate.pdf
+22,Deferred validation,val,ReferenceNotchFraction,Reference notch fraction,%,Descriptive only,png/22_deferred_validation_referencenotchfraction.png,pdf/22_deferred_validation_referencenotchfraction.pdf
+23,Deferred validation,val,ITDWeightedMAE_us,ITD solid-angle-weighted MAE,us,Lower is better,png/23_deferred_validation_itdweightedmae_us.png,pdf/23_deferred_validation_itdweightedmae_us.pdf
+24,Deferred validation,val,ITDMaximumAbsoluteError_us,ITD maximum absolute error,us,Lower is better,png/24_deferred_validation_itdmaximumabsoluteerror_us.png,pdf/24_deferred_validation_itdmaximumabsoluteerror_us.pdf

@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "figure_count": 24,
+  "png_count": 24,
+  "pdf_count": 24,
+  "method_count_per_figure": 10,
+  "subject_count_per_method": 44,
+  "all_files_nonempty": true,
+  "new_test_subject_count_read": 0
+}

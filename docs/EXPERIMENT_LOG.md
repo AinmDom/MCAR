@@ -1,5 +1,26 @@
 # 项目实验日志
 
+## 2026-09-01：十方法 24 个指标逐指标论文级可视化完成
+
+- 以已提交的十方法v2逐被试CSV为唯一数据源，为4个primary validation、4个frozen engineering
+  test、9个secondary validation和7个deferred validation指标分别生成一张独立对比图，共24张。
+  每张图完整包含10种登记方法和每方法44名被试；点为subject mean，横向whisker为固定10,000次
+  subject-bootstrap 95% CI（base seed=`20260901`），除`ReferenceNotchFraction`外均按均值从低到高
+  排序。比例指标转换为百分比显示，`ReferenceNotchFraction`明确标记为method-invariant描述量；
+  全方法均值完全相同的spurious-rate图标记为tie，不虚构单一赢家。
+- 绘图数据位于`results/sonicom_complete_ten_method_metric_figure_data_v1/`，包含240行
+  method-metric summary、24行figure index和完整性摘要；全部数值finite，所有mean位于各自bootstrap
+  区间内。该步骤只读取已提交结果CSV，不运行模型、不读取原始HRTF/test数据，新增
+  `test_subject_count_read=0`；上游唯一冻结test仍为44人。
+- 图件位于`outputs/ten_method_metric_figures_v1/`：`24/24`张300-dpi PNG和`24/24`张vector PDF，
+  PNG分辨率均不低于`3573×2391`、全部文件非空、PDF头有效。首次渲染后抽检发现接近100%的
+  `ReferenceNotchFraction`通用留白超出语义范围，以及全均值并列图不应标单一best；已在版式层修正
+  并从头重导，未改任何数据或统计。最终批次代表性抽检覆盖primary、secondary、百分比、描述量和
+  ITD端点，布局、标签、CI和排序均通过。
+- 完整交付另打包为`outputs/ten_method_metric_figures_v1.zip`，53个archive entries，SHA-256=
+  `2C4354F7B2C704C03195FD4A17B2B295E9685C07811CBB20E7F95BF4A73CA1EF`。训练、推理和预算判据
+  均为N/A；四个证据层继续保持分离，不据这些图生成跨层总排名。
+
 ## 2026-08-31：五传统基线 secondary/deferred validation 补齐与十方法完整表 v2 完成
 
 - 按用户要求补齐`SHOnly`、`SUpDEqSH`、`SUpDEqNN`、`SUpDEqBary`和`MCA`。新增结果前先以

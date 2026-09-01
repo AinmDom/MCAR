@@ -1,0 +1,2314 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen_before_inference",
+  "created_on": "2026-09-01",
+  "experiment_config": "configs/experiments/sonicom_bounded_e25_input_direction_sensitivity_v1.json",
+  "experiment_config_sha256": "D9CEE73C1E04FC8EB8AAB1335CC7B8C50CFB06704C3D0D4B4FEA8131C0CDC705",
+  "paper_main_model_manifest": "configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json",
+  "paper_main_model_manifest_sha256": "C00040B6AD07EAC10F3EB7420C24A9BD33E92B3F36471115825FF8BB3194B689",
+  "paper_main_model_identity_sha256": "72B7319F8334307664A02BC6369FBD9EECE1D22383C402EC9683D1F6F05F2705",
+  "split": "val",
+  "subject_count": 44,
+  "direction_counts": [
+    14,
+    26,
+    50
+  ],
+  "prepared_case_count": 132,
+  "q26_input_reproduction": {
+    "maximum_mca_abs_error_db": 0.0,
+    "maximum_correction_abs_error_db": 0.0,
+    "tolerance_db": 0.0001,
+    "passed": true
+  },
+  "resources": [
+    {
+      "path": "experiments/film_siren/STAGE_E_BOUNDED_E25_DIRECTION_SENSITIVITY_PROTOCOL.md",
+      "sha256": "958A3730055619FCB6C8CDBC5FD73D518343A95A2DA5DA7E5BEDC62CAD5BE480",
+      "size_bytes": 3050,
+      "purpose": "result-blind protocol"
+    },
+    {
+      "path": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+      "sha256": "47564F039D30391198B3D5386C161E149FB1D4384E1134488DFF0A1AC74CD6AB",
+      "size_bytes": 9153,
+      "purpose": "nested Q14/Q26/Q50 grid"
+    },
+    {
+      "path": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.json",
+      "sha256": "306BDBBFD3EA1248B2B4EAFA0FED423D145E1744C37FC7ED3413C85E3B3CA81F",
+      "size_bytes": 2766,
+      "purpose": "grid geometry report"
+    },
+    {
+      "path": "matlab/+mcar/prepare_sonicom_learned_sparsity.m",
+      "sha256": "A93CC2C162C824F642BFA0CBE816152062A77AED4FEA04EF30393C44F7030885",
+      "size_bytes": 10527,
+      "purpose": "current-Q MCA input preparation"
+    },
+    {
+      "path": "src/mcar/evaluation/predict_bounded_e25_direction_sensitivity.py",
+      "sha256": "E226D15044B19F55A755E2FDB31C6C61A637E5F12FF43C6418C903D3DBB30DBA",
+      "size_bytes": 9784,
+      "purpose": "hash-guarded frozen-ensemble inference"
+    },
+    {
+      "path": "matlab/+mcar/evaluate_bounded_e25_direction_sensitivity.m",
+      "sha256": "CB3A4D89096BD0E3AB23375412B88644D7A7D46ECF86861F41275106391005D8",
+      "size_bytes": 14321,
+      "purpose": "fixed-mask strict evaluator"
+    }
+  ],
+  "input_inventory": [
+    {
+      "subject_label": "P0001",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0001/q14/model_input.h5",
+      "model_input_sha256": "8A5F07B597D80CA5E96B2A4CF0DAE8C9EE88B0F11E279646FB3EE4E74275194E",
+      "model_input_size_bytes": 5222839,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0001/q14/cache.mat",
+      "cache_sha256": "97BC560FBD236A5582D906B100AEF6A281F1F8B573973912954FD62D14DB9FCF",
+      "cache_size_bytes": 13638811,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0001",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0001/q26/model_input.h5",
+      "model_input_sha256": "A91F874E192918D72AABA07CF81530B69714E9E58A409BFC9AD2A63590564570",
+      "model_input_size_bytes": 5221036,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0001/q26/cache.mat",
+      "cache_sha256": "1A01F913B10FD44C11515AB7CB95AE63C60B68D54CF31E90EFC8ECEE49351CA7",
+      "cache_size_bytes": 13640614,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0001",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0001/q50/model_input.h5",
+      "model_input_sha256": "CA561D954AE9D3F5BDDCF48DF82B3A73FCDA864BB8B7BA8144787D40F9669815",
+      "model_input_size_bytes": 5191217,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0001/q50/cache.mat",
+      "cache_sha256": "0B19BED0CE412AF4B0F13FA42A5B3FB8913DB5F05A649ED65BD8E0D1C8543E5A",
+      "cache_size_bytes": 13641017,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0012",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0012/q14/model_input.h5",
+      "model_input_sha256": "6192B1A00ACF72D5358D182C2A8DF396CD76AB887F7933F9E757576E939971E5",
+      "model_input_size_bytes": 5216156,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0012/q14/cache.mat",
+      "cache_sha256": "21A04B1284F8317ED56C0AEDEC493DC6BA35E02027B9AA1ECD878F4AFCB12139",
+      "cache_size_bytes": 13634161,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0012",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0012/q26/model_input.h5",
+      "model_input_sha256": "68EF6E418C2C61E0635763460E4FB6FB0A2C34BBB5F88CF88818D33D5FC1D551",
+      "model_input_size_bytes": 5214529,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0012/q26/cache.mat",
+      "cache_sha256": "268714B46D53BAA36C26716C97998FA64B8BB0A27676E21CA6DD43AA60878733",
+      "cache_size_bytes": 13632593,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0012",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0012/q50/model_input.h5",
+      "model_input_sha256": "77B6D33E61BA2E579E4ADDCA9B5CF3654F7BC324002C0640F9597B6C2E804D83",
+      "model_input_size_bytes": 5198007,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0012/q50/cache.mat",
+      "cache_sha256": "2C19216448DE8BD383F0C2B83604AFEB83B50D17470790A0C436989F9B046EE3",
+      "cache_size_bytes": 13633545,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0013",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0013/q14/model_input.h5",
+      "model_input_sha256": "2A5D2176F82EDE14B81AEF62D8873CB034C600C3A775E22456EBAC3B60EE5553",
+      "model_input_size_bytes": 5204430,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0013/q14/cache.mat",
+      "cache_sha256": "4FAEDB5FBD559329D22F533C86E6ABBB305525B64AC3DCE4E4FF9D664244A060",
+      "cache_size_bytes": 13621965,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0013",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0013/q26/model_input.h5",
+      "model_input_sha256": "74C28283E0A58356B5940A4F46B237B0D26E3CF6C6189B9E8DDCF42B47994FA3",
+      "model_input_size_bytes": 5201734,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0013/q26/cache.mat",
+      "cache_sha256": "3BE10EA42DEDCB03B91EF9352B3E6C40DE70B7880ACDB818FDD779520E8A085A",
+      "cache_size_bytes": 13624194,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0013",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0013/q50/model_input.h5",
+      "model_input_sha256": "7C0948892F4E5F780BD1D1FCB10AF8742A04D84ED5185DEACC1112F653C9602A",
+      "model_input_size_bytes": 5176698,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0013/q50/cache.mat",
+      "cache_sha256": "F2900593CE32C6FA118EEBBAF0787A221857B514EE1E5D566522CBF631CB40BB",
+      "cache_size_bytes": 13624512,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0022",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0022/q14/model_input.h5",
+      "model_input_sha256": "E7C91401C54FFB316DACA1CAB812EB7E6D31312830795DF081F01C44490CDD9D",
+      "model_input_size_bytes": 5227305,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0022/q14/cache.mat",
+      "cache_sha256": "A96EC8591E4C2E59BB99A56E8CC3A4744D84D6D0966A8EB30C5D4322AD45D814",
+      "cache_size_bytes": 13644346,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0022",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0022/q26/model_input.h5",
+      "model_input_sha256": "4A5F93873214BD60ECE147DC64D8B2195F540F3B388D55E40F66B24BAF424A1E",
+      "model_input_size_bytes": 5220187,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0022/q26/cache.mat",
+      "cache_sha256": "BD5D2AF8A2F8B6D4907ED88E25AFFE8B8B8427F84223587A47C99D3CEC5A3EA9",
+      "cache_size_bytes": 13643539,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0022",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0022/q50/model_input.h5",
+      "model_input_sha256": "092D4CF5D1ACC72E85E66684287022837BDBE38FA2B5FAF443871554F137AFBC",
+      "model_input_size_bytes": 5204858,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0022/q50/cache.mat",
+      "cache_sha256": "AA39AF972A1A8478533DC9B36F787BB33FD6AB4DFF8E11479C6F35F2F59ECEA1",
+      "cache_size_bytes": 13644162,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0026",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0026/q14/model_input.h5",
+      "model_input_sha256": "1114782FF908F7515C36D62111AF1B99B3D95CEA55DFD981BF09BD924EBDEBD3",
+      "model_input_size_bytes": 5223924,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0026/q14/cache.mat",
+      "cache_sha256": "17B77BCF86D21BFBD04E122DEA0BAEC346445868C7442E57D27825D3F1CA4689",
+      "cache_size_bytes": 13633213,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0026",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0026/q26/model_input.h5",
+      "model_input_sha256": "FEC6622281B0D74C0622E4B2CB96E3C08C1B7D6C78EBB9B6EBB2A5F5AF2CC326",
+      "model_input_size_bytes": 5222595,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0026/q26/cache.mat",
+      "cache_sha256": "5718BDD0E3F94E11727CBC289DBA30E9C25F13D9BCD69F6D73B444BB8E006AF4",
+      "cache_size_bytes": 13634205,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0026",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0026/q50/model_input.h5",
+      "model_input_sha256": "ADB7B17864F6F727FAD781E7FBD34BEFDE898F1CE105547811F4DA46ABFA0942",
+      "model_input_size_bytes": 5198496,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0026/q50/cache.mat",
+      "cache_sha256": "EE53F757AE5F511A0956FAF8470454ADCC0880511608B36FFE33D3E65E5790BF",
+      "cache_size_bytes": 13633897,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0046",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0046/q14/model_input.h5",
+      "model_input_sha256": "251F228F16B24ECEFAAE85EDD15D303F267AC046305EA73F76F86E13BA3C2322",
+      "model_input_size_bytes": 5224148,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0046/q14/cache.mat",
+      "cache_sha256": "F3CD96A511B68E602A20A6DC30B6FDA564FA0D5E154EFADE6D9AEC7B80C28DCD",
+      "cache_size_bytes": 13642644,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0046",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0046/q26/model_input.h5",
+      "model_input_sha256": "7D4946CEE527132158FAB20A877B1DCF379E85880756B1FA8A4C672B73EED5CA",
+      "model_input_size_bytes": 5216077,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0046/q26/cache.mat",
+      "cache_sha256": "CE0F2E342CDB0529D53005A43AF3D62334AB6584F6C6963C1EB70FD9D896C880",
+      "cache_size_bytes": 13643475,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0046",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0046/q50/model_input.h5",
+      "model_input_sha256": "A40060E145B9408E54F0B6A07C6493067A446E3BEE9DC7AD4A919D3F05B320D0",
+      "model_input_size_bytes": 5205159,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0046/q50/cache.mat",
+      "cache_sha256": "4C409E77D2230B3FA782F620CBEB3C344A66ADD97A7758702B53CEECFAE63058",
+      "cache_size_bytes": 13644990,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0066",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0066/q14/model_input.h5",
+      "model_input_sha256": "0A9DEA8CE89CF2D784E31D170813CEA75E65963A34D4FFE553E015218D0702EC",
+      "model_input_size_bytes": 5214590,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0066/q14/cache.mat",
+      "cache_sha256": "8E01209E2559346E4B9C5D4853A9C282BB880D569F0D7160FF61112B75B66BCB",
+      "cache_size_bytes": 13640687,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0066",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0066/q26/model_input.h5",
+      "model_input_sha256": "4F19B2354213E0462F5A6B05BE0565900565006D52ECF9AFB2C8005EE3B8D26A",
+      "model_input_size_bytes": 5213301,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0066/q26/cache.mat",
+      "cache_sha256": "3BE62969DC6724789BD3B8F48E1F85D9AA4ECDEE1AE685554A77849F4591C197",
+      "cache_size_bytes": 13642222,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0066",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0066/q50/model_input.h5",
+      "model_input_sha256": "A9B69E2926B723BCA58F8F37E3C2E2F98760D80C35ECC7C93C9EF7B23CEAC863",
+      "model_input_size_bytes": 5207529,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0066/q50/cache.mat",
+      "cache_sha256": "0D66C1D86DE166DA50AEFA66899A4B54BF22F65759E700676B76F92DFCB7DFEC",
+      "cache_size_bytes": 13644143,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0073",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0073/q14/model_input.h5",
+      "model_input_sha256": "0C86AFE2404FFC4C3F8C051A0D4BF514823FFE74B1F83858D02A99754D9C1DA1",
+      "model_input_size_bytes": 5211195,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0073/q14/cache.mat",
+      "cache_sha256": "8A5991148FEC5C2ED4D91B90215D2DB26A63988A2BFDF6D10FE54865F24AEF49",
+      "cache_size_bytes": 13634007,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0073",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0073/q26/model_input.h5",
+      "model_input_sha256": "4097EFF5471505B6CF51A6B22160E87E7C56703B028B67C9807BE52A74D63065",
+      "model_input_size_bytes": 5206145,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0073/q26/cache.mat",
+      "cache_sha256": "AC8F1C0F134CE5A22BFFAA78B7FC44D121626D90654C20835309DF5916CB4B99",
+      "cache_size_bytes": 13635153,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0073",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0073/q50/model_input.h5",
+      "model_input_sha256": "E7A482ECD7E5E0E15BE72DA2460C4FEA99C9C4EFC210BE50154540091486835D",
+      "model_input_size_bytes": 5197705,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0073/q50/cache.mat",
+      "cache_sha256": "96D7D9954C5011626581C1C577164040B7E3BB24912B5511C696F4B383243624",
+      "cache_size_bytes": 13635082,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0113",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0113/q14/model_input.h5",
+      "model_input_sha256": "C7E4882DC1C36206281531559E1E5B7B2441BD867E0C8938508F2E57B6AC9C94",
+      "model_input_size_bytes": 5213098,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0113/q14/cache.mat",
+      "cache_sha256": "202536C9AB6AF63978CCC872EA7605E29AD7A17054534662CBBF616CDDFDE9F1",
+      "cache_size_bytes": 13620895,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0113",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0113/q26/model_input.h5",
+      "model_input_sha256": "D293AB7036BEED84213407CC6CECEF62EB70E92D34BFD8C8F0A44BD7FC33FF66",
+      "model_input_size_bytes": 5207420,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0113/q26/cache.mat",
+      "cache_sha256": "C8DAF7CDA7CA2F47AC46A016CF379BC485D6BC3207B7B003A1F77A6D96180FAA",
+      "cache_size_bytes": 13618551,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0113",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0113/q50/model_input.h5",
+      "model_input_sha256": "D9805AFA20FA3A1F564E05AFA33BA26A8C9D1B57AEACC1529A352B1F700CB8FA",
+      "model_input_size_bytes": 5190535,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0113/q50/cache.mat",
+      "cache_sha256": "27BE70B29A4D0F01B49F60B5BA1DE6539512C39FEE3DD235936504D87B1E32F9",
+      "cache_size_bytes": 13617717,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0116",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0116/q14/model_input.h5",
+      "model_input_sha256": "276EF548518BAF3C567887B75123AB811EBAC7E9870FCC6D76D78F55EFA10A46",
+      "model_input_size_bytes": 5225737,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0116/q14/cache.mat",
+      "cache_sha256": "B49B8EEB4CA5B869412000509C636159F06C940BEF22BA947935DC77047CB90E",
+      "cache_size_bytes": 13644059,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0116",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0116/q26/model_input.h5",
+      "model_input_sha256": "A935567A36431562C6BE985008D32254BF72BDA6C5F62C5A30563021AC13B0F2",
+      "model_input_size_bytes": 5215009,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0116/q26/cache.mat",
+      "cache_sha256": "09D03CEAC0F2F50690E4FF4DE82054A383AB72311DCD4A74A770320C37429881",
+      "cache_size_bytes": 13642904,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0116",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0116/q50/model_input.h5",
+      "model_input_sha256": "6B5ADC02F40E1E6E6E4DCCE1D3C5454B918CF859AB15AC97154AF1537CC93609",
+      "model_input_size_bytes": 5184867,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0116/q50/cache.mat",
+      "cache_sha256": "5F9DFC39A49F79C4DDCF8A3AD9A69F0CA896264379A41B63169E224C405CD709",
+      "cache_size_bytes": 13645031,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0125",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0125/q14/model_input.h5",
+      "model_input_sha256": "8AE3EEAC08DE73AF6C7A29C98A80EAC4921C039D0636C671A20E3E5AA947486B",
+      "model_input_size_bytes": 5206103,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0125/q14/cache.mat",
+      "cache_sha256": "545989E0FE589768AA62B67660BDFC1D7DC4B487EA41EB4F0BCF741C92CCA9D3",
+      "cache_size_bytes": 13626439,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0125",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0125/q26/model_input.h5",
+      "model_input_sha256": "9E113100BCD92E4414D6646D46F6AB12F96993AE3456B9487F7264590FB75322",
+      "model_input_size_bytes": 5191125,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0125/q26/cache.mat",
+      "cache_sha256": "E0296E77D07C955B2AE3AAE77C446971B091F81D63CD36FDCEA22126DDDE94D7",
+      "cache_size_bytes": 13625602,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0125",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0125/q50/model_input.h5",
+      "model_input_sha256": "DADCE3A1355D3E534F94A6870AB5156F7A613E291B6BF9C0AE0102484EF6DBFD",
+      "model_input_size_bytes": 5171573,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0125/q50/cache.mat",
+      "cache_sha256": "8A97EDC89DB582804CD1F6E0DD18B79EFCF64017EF8C2797477300854E7A528B",
+      "cache_size_bytes": 13627440,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0149",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0149/q14/model_input.h5",
+      "model_input_sha256": "0F5A291BDEAE9EEAE064FE2E22504AF6CE1A3137DCC81CD47BF63B3A78E7F429",
+      "model_input_size_bytes": 5214035,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0149/q14/cache.mat",
+      "cache_sha256": "BCBB340C12C875DFDD9BBE0C741DC2BCFB9F434C21782299C2605F211AE5FDAB",
+      "cache_size_bytes": 13644783,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0149",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0149/q26/model_input.h5",
+      "model_input_sha256": "CA269A5FCCAE594E6957AE80FE368E7DF284FD5F89AA33B8AAFA8AC153C4C98E",
+      "model_input_size_bytes": 5222835,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0149/q26/cache.mat",
+      "cache_sha256": "82B54BF1A4420389EF51238CD6D7FF1893B3785F737B0E7C7D78507D2573C2E2",
+      "cache_size_bytes": 13647224,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0149",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0149/q50/model_input.h5",
+      "model_input_sha256": "11B40D11E970C9E5836B21D3D08E2D8D965C9A23BC5E0F87619B6E7FB5E75DED",
+      "model_input_size_bytes": 5202959,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0149/q50/cache.mat",
+      "cache_sha256": "2A6E07A364903AED46E6DF78208058DB0403F66261A8636A748A2A07CFA0F597",
+      "cache_size_bytes": 13647020,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0161",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0161/q14/model_input.h5",
+      "model_input_sha256": "BAD8ED006242842126D4746630F6B5CEC8EAA1855BD7AB7656D1D1497E817973",
+      "model_input_size_bytes": 5209876,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0161/q14/cache.mat",
+      "cache_sha256": "9E9375CF0FDBF66D53A40F94EDB58B1AD70E27D82507D2FDA46722CD090792DE",
+      "cache_size_bytes": 13625443,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0161",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0161/q26/model_input.h5",
+      "model_input_sha256": "B1D0CCC33763A9FEA21BA07495089E54766FB89019CD0505D14D37C2224114B4",
+      "model_input_size_bytes": 5202989,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0161/q26/cache.mat",
+      "cache_sha256": "EE8C22358D0D3985D5C581202BD19D03F1B7D622267EF77DCB83DEA1A9F76194",
+      "cache_size_bytes": 13623725,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0161",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0161/q50/model_input.h5",
+      "model_input_sha256": "575D5CFF20023C81A02CB7AE587DEF1481B35CF6C5790D1311729D235AFAD8C3",
+      "model_input_size_bytes": 5180250,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0161/q50/cache.mat",
+      "cache_sha256": "F438F54B932B8A1B4CA123B7045DA2281A32903A117A7DC023CB777B2CDBEFF6",
+      "cache_size_bytes": 13624731,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0166",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0166/q14/model_input.h5",
+      "model_input_sha256": "E73BE280F93FFE7D8F8EC735E94BA448C432D4ED66E8B192713F95DCFFB01DE9",
+      "model_input_size_bytes": 5200623,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0166/q14/cache.mat",
+      "cache_sha256": "F377FAA7A9B33E4E6C1012F9B034CE58913B19EB860902DCB4E3F75EEE8B9611",
+      "cache_size_bytes": 13632011,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0166",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0166/q26/model_input.h5",
+      "model_input_sha256": "BACCB314DDDD7D13FE5DB802B3F7AEE32EBC8382371B77DFE77B66705FA81528",
+      "model_input_size_bytes": 5211947,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0166/q26/cache.mat",
+      "cache_sha256": "18A4DD99C998674675D79BBBFEE952E650CFAFF3CEB0571B33BE1DF544ACE6A1",
+      "cache_size_bytes": 13633775,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0166",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0166/q50/model_input.h5",
+      "model_input_sha256": "584EA5CA736C44091A858A53AC16D38DA2BB2E00DA8750EABC6329D6685887EB",
+      "model_input_size_bytes": 5181768,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0166/q50/cache.mat",
+      "cache_sha256": "5CE525F5A2C45607CC81F7E8580D8B05F1C5ACFC785E42FCE26AD01E4D0521A0",
+      "cache_size_bytes": 13632994,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0167",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0167/q14/model_input.h5",
+      "model_input_sha256": "004944AD9BC9A4C2EB734106BCE033ACBFE1E0784014A9C8A38CCACA7AA3445C",
+      "model_input_size_bytes": 5216958,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0167/q14/cache.mat",
+      "cache_sha256": "937FD8B35A371463C7AB96A640CED6C5851D1CC335767B2A1DEB8928F0FB5443",
+      "cache_size_bytes": 13638808,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0167",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0167/q26/model_input.h5",
+      "model_input_sha256": "69CE21AAEB9B5E2F516E4B99D6BC4A6BFE9BD4A9F825BBCFF3413098B41354C9",
+      "model_input_size_bytes": 5214234,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0167/q26/cache.mat",
+      "cache_sha256": "E0D057B0CFEF0648B094792425D94A882E1C7AD9ECCEB7A9F02354C502E47B07",
+      "cache_size_bytes": 13636142,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0167",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0167/q50/model_input.h5",
+      "model_input_sha256": "6ADA4933B1D648E14ED703128EF4B803BE8767F9FAA8CE5B7D249729E6E91CF5",
+      "model_input_size_bytes": 5179881,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0167/q50/cache.mat",
+      "cache_sha256": "35E81F719DE2ACE238734C403082B8A2EB0A94A571D3C5433BF612A55C89671B",
+      "cache_size_bytes": 13635920,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0170",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0170/q14/model_input.h5",
+      "model_input_sha256": "91532311443F1FAC502DCAE52FBF0F762E185213E391A4EF15B05F0334581BF4",
+      "model_input_size_bytes": 5217436,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0170/q14/cache.mat",
+      "cache_sha256": "D7614B49B5821F57F484E556C7AC9E03DC99239041B2365259CAF26D1949A7E5",
+      "cache_size_bytes": 13641687,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0170",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0170/q26/model_input.h5",
+      "model_input_sha256": "CE2917C481EA039849650B56F1D064F62284F3030C4CCBC6EBE5E10B72F4D4A1",
+      "model_input_size_bytes": 5220769,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0170/q26/cache.mat",
+      "cache_sha256": "D1E584BACE4DD8921E8837CFCE44CA824AFFEB1397F3F6C97C45736252AEBB47",
+      "cache_size_bytes": 13643355,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0170",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0170/q50/model_input.h5",
+      "model_input_sha256": "B7AE1DE68ED1A24E2F14773A1A1CA5137E324D268E9A0242A06D1867B28417FF",
+      "model_input_size_bytes": 5187027,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0170/q50/cache.mat",
+      "cache_sha256": "F12F4E358F3290385A2DD9A45444411A42200533CC3210E447F8AFDC159D83D2",
+      "cache_size_bytes": 13643985,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0171",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0171/q14/model_input.h5",
+      "model_input_sha256": "8CA2BA042BF65D796DC481A61CA519DE9BD190391FB14303A30F74E26E7E222C",
+      "model_input_size_bytes": 5210797,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0171/q14/cache.mat",
+      "cache_sha256": "E09D295A29D428F4A82F806C11C2B748643F1FB781BD76B4253C57361C1AEC1E",
+      "cache_size_bytes": 13627056,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0171",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0171/q26/model_input.h5",
+      "model_input_sha256": "89F7FC7CC7C3339823BFD15ACFC95D254CEDC316DFD800E06C64A51FFE27C4BB",
+      "model_input_size_bytes": 5208694,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0171/q26/cache.mat",
+      "cache_sha256": "D1DD97A0C1D23DF30DB1AE79DD8504654839F64F8EA58C8B32E9E12F56CA1406",
+      "cache_size_bytes": 13625191,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0171",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0171/q50/model_input.h5",
+      "model_input_sha256": "6B4A34DC18B268309CB390A2766A9D5A28D7AFC02328DB7F41DD0F3CCD37EB18",
+      "model_input_size_bytes": 5192774,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0171/q50/cache.mat",
+      "cache_sha256": "B1C20EBAC5B3EAE1084B7779858F2663260EB75C53D729BD072337512ED8761D",
+      "cache_size_bytes": 13628176,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0172",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0172/q14/model_input.h5",
+      "model_input_sha256": "B317CBAEAD65DAEAAC0483A02407102AEBAA096C780C3C849B1D1A7CED7B11B5",
+      "model_input_size_bytes": 5201392,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0172/q14/cache.mat",
+      "cache_sha256": "78A11CB49342388253C14A206C1BCE4D235537A98890C09C0241758A40E5190A",
+      "cache_size_bytes": 13619266,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0172",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0172/q26/model_input.h5",
+      "model_input_sha256": "2B1A79B8F222D1E094B9DBC2CBD0E39E98E94F884982412697DE2CF0AB34D185",
+      "model_input_size_bytes": 5186372,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0172/q26/cache.mat",
+      "cache_sha256": "4C986FD3BD9510AC31A53A71F8E723E66FA9F9A1B78F73B53D20AC0D21F55409",
+      "cache_size_bytes": 13617959,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0172",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0172/q50/model_input.h5",
+      "model_input_sha256": "04EB4F93855C1504BB928F6CCE39295C0AAC8B0F366CB0698E376BF94FC1AC9B",
+      "model_input_size_bytes": 5170147,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0172/q50/cache.mat",
+      "cache_sha256": "1E223AEAD31C87665159A5AF2D6D355A1548842EDD75B539C0A3EB21395B6B83",
+      "cache_size_bytes": 13618780,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0174",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0174/q14/model_input.h5",
+      "model_input_sha256": "12BF0EC78C53207F9A27367A5B38B1C3CF6DCD5CF125DFC55AF1247CBA95A89D",
+      "model_input_size_bytes": 5211195,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0174/q14/cache.mat",
+      "cache_sha256": "6A20E86B987CDFCBB4AB4EDE62AFED9DE4374CCEE048FED2872ECF88857F1DCE",
+      "cache_size_bytes": 13644454,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0174",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0174/q26/model_input.h5",
+      "model_input_sha256": "40C36CC5B238CDF2608F1C8C16104F9EFA033D55130A12D2788F267E991FF60C",
+      "model_input_size_bytes": 5205979,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0174/q26/cache.mat",
+      "cache_sha256": "3924B7741AE490E8DC2A2C129C940181629A4D2434BB62AF590544855F721D46",
+      "cache_size_bytes": 13643248,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0174",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0174/q50/model_input.h5",
+      "model_input_sha256": "9F05339B6CED2C426A745892B515334364BDEB4507FCA3D58FAF593B3FA65825",
+      "model_input_size_bytes": 5181119,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0174/q50/cache.mat",
+      "cache_sha256": "825821B4B680849868145AE64001445521ED98029A2B01CDC7C8BFF9AD4669E5",
+      "cache_size_bytes": 13644538,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0193",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0193/q14/model_input.h5",
+      "model_input_sha256": "FB82E70E7906C75E798DF4757A854F2B77296B92E4473D3A6D4420DC7B018697",
+      "model_input_size_bytes": 5207957,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0193/q14/cache.mat",
+      "cache_sha256": "FA35B079343057F76129E99DB35804206F9BE3C9A58EEB70240749FBAE55DB40",
+      "cache_size_bytes": 13642209,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0193",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0193/q26/model_input.h5",
+      "model_input_sha256": "270E75FDC6A28F5943959886A45E55C8553CE3C6F5BA65D5EF716978CEE22F91",
+      "model_input_size_bytes": 5206661,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0193/q26/cache.mat",
+      "cache_sha256": "57378E989D46FE3950D4407756C44A37035BE189E1E9E6AE5A57CCFD66AF1EB7",
+      "cache_size_bytes": 13640714,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0193",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0193/q50/model_input.h5",
+      "model_input_sha256": "3B27003E3BD74CC152D84FAB6FA526D70BCBD477C618EA1D4A8A62E0B17F190C",
+      "model_input_size_bytes": 5182182,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0193/q50/cache.mat",
+      "cache_sha256": "A01340D6BA11859470D82E6EDC1290FCD2E952B251AD957614AD8639A3428ACD",
+      "cache_size_bytes": 13641802,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0194",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0194/q14/model_input.h5",
+      "model_input_sha256": "3043034933FAB63DD2F03C06310418F05FE9E3A585B12FF309F373E685CB416D",
+      "model_input_size_bytes": 5199044,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0194/q14/cache.mat",
+      "cache_sha256": "74B8D9F51AE7AE3211914D6B2C1B7C82ED04A175A684D75F16C55995DD22603D",
+      "cache_size_bytes": 13616066,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0194",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0194/q26/model_input.h5",
+      "model_input_sha256": "269B778B809C3A2FB3D2C91335DCF2661124CACC2D37809D8583F835872DB6D2",
+      "model_input_size_bytes": 5187919,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0194/q26/cache.mat",
+      "cache_sha256": "6D9516B460B2E5097C7ABD07EC61962B2619980F4144D5F064148202F6A91A6A",
+      "cache_size_bytes": 13615644,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0194",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0194/q50/model_input.h5",
+      "model_input_sha256": "1091FDEDF4DEBDD65C3C9ED2AC2881EA815D64A6B0941283EC8C60A6E77AD8E5",
+      "model_input_size_bytes": 5167426,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0194/q50/cache.mat",
+      "cache_sha256": "DBD4661009316833878F690E07BC65E6C1359FB9F629D10549048D0780A7E45C",
+      "cache_size_bytes": 13617602,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0198",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0198/q14/model_input.h5",
+      "model_input_sha256": "35EC83DE692A71401E7A7D503FA02F3C65918A6AFEC9F38CB24864C5119DF697",
+      "model_input_size_bytes": 5218575,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0198/q14/cache.mat",
+      "cache_sha256": "979A43DD431B77AF1589A216891B3F89154B494E296E1E9EA8A93E89D0BD596D",
+      "cache_size_bytes": 13637776,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0198",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0198/q26/model_input.h5",
+      "model_input_sha256": "860BAEA98DC2286C431F6F493AB62E429674E0B461F67A03E918360B962A20A8",
+      "model_input_size_bytes": 5210541,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0198/q26/cache.mat",
+      "cache_sha256": "EBB1AE7CBE44C46201F0FC71E60D3E959753D2E45B5CEFBA1B65DA6EC1D3EA3C",
+      "cache_size_bytes": 13639546,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0198",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0198/q50/model_input.h5",
+      "model_input_sha256": "1D94144B1EA3C690544D97DF506E87549A3FA206ADE66E1D6E49C6DA048668B4",
+      "model_input_size_bytes": 5194619,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0198/q50/cache.mat",
+      "cache_sha256": "32B4B1B2BB6DA9026A3D3F3132D0F9594CE0D1A79C65B41C7FBC8F358C39CB79",
+      "cache_size_bytes": 13642813,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0202",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0202/q14/model_input.h5",
+      "model_input_sha256": "DB95A68A9005DDF71D2D3BD00757A8C43EB82033B9E21DE4931EC2E1FACF3C49",
+      "model_input_size_bytes": 5226921,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0202/q14/cache.mat",
+      "cache_sha256": "BF74F5FC023D9A6489B2A9E56BB864467630B0B6681060F3EC8D50C1F3E9899D",
+      "cache_size_bytes": 13637252,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0202",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0202/q26/model_input.h5",
+      "model_input_sha256": "BA7FEC35D494FED8CB2A4EA8FAF650C84E710E7C4D82335CABF763A9F7B5A6B8",
+      "model_input_size_bytes": 5210423,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0202/q26/cache.mat",
+      "cache_sha256": "C65FE624F4148FA2F795706BAB7C46DE5C8E6B38408CB2600639846C2AE82FE6",
+      "cache_size_bytes": 13634713,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0202",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0202/q50/model_input.h5",
+      "model_input_sha256": "5DF2C76D71FBDA206D0FD1BC742C32982D237F32F2BA9FE2B20DDD6921F8A7BF",
+      "model_input_size_bytes": 5187757,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0202/q50/cache.mat",
+      "cache_sha256": "BB02362F22CA61048B9BAE424F8423A25A5B1BE63FE8052C158F7B4552FA63F1",
+      "cache_size_bytes": 13635615,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0203",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0203/q14/model_input.h5",
+      "model_input_sha256": "468CBAD66C457B64FEC629AFCD07EBC96E8B9D61E8582DF3F381AC6CB8A11900",
+      "model_input_size_bytes": 5214960,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0203/q14/cache.mat",
+      "cache_sha256": "788118333187DD55A6B4B24F699B0085324BFD10A99146B6CCBE211C83A95685",
+      "cache_size_bytes": 13631860,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0203",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0203/q26/model_input.h5",
+      "model_input_sha256": "AE7C297B200549BFDDE9046EEB35883E2A201558A15404DCAEC0DFE2E7BBFC85",
+      "model_input_size_bytes": 5205838,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0203/q26/cache.mat",
+      "cache_sha256": "F1E523283631CD76DBA5A977021C391C11DFFC5F3BBDFA0D9B64B0C4E89EC0D9",
+      "cache_size_bytes": 13633849,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0203",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0203/q50/model_input.h5",
+      "model_input_sha256": "87EE12D357034B634C09A8B20F3AF4BC74E301DC9B97E7A28A2BEC2035B50FE7",
+      "model_input_size_bytes": 5183978,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0203/q50/cache.mat",
+      "cache_sha256": "00BB0CEAE4C24C477FE2D090853D87F9D17B3969C263A82F163D8D28A70E1CA6",
+      "cache_size_bytes": 13634897,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0207",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0207/q14/model_input.h5",
+      "model_input_sha256": "C000C4A15DDFB9F4B5D1450D932F0229C5E87B4B335C3AA32485ABCDDB89E642",
+      "model_input_size_bytes": 5227724,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0207/q14/cache.mat",
+      "cache_sha256": "BF7C181FF9B50C334509C6B7DF7ADC284A44B1CBD8695C0082DF6A8DB5CFB678",
+      "cache_size_bytes": 13630841,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0207",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0207/q26/model_input.h5",
+      "model_input_sha256": "4924363ED30D4DC2F729510E2940CD5610FB96584A7BE690AEC929A832E61602",
+      "model_input_size_bytes": 5229588,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0207/q26/cache.mat",
+      "cache_sha256": "A08E8D1B7D82518FB414DCF3379EF44B1F9B954E6BA25DD42840703D2911A0FF",
+      "cache_size_bytes": 13631833,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0207",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0207/q50/model_input.h5",
+      "model_input_sha256": "351DB9A17A737B2392D8EEB0738933A39E553B4A04B4D4A4059CBF63B663E444",
+      "model_input_size_bytes": 5201337,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0207/q50/cache.mat",
+      "cache_sha256": "508FAB4DDD14960DE2AFE492BC2BDBFC8AD23B18AF07603DFA2AA973414B02F4",
+      "cache_size_bytes": 13632811,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0208",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0208/q14/model_input.h5",
+      "model_input_sha256": "832CF90AD0A2D0D7AF2AFEDB4F83FE3BEA29E40746C9F445041E1F830DFFDC3E",
+      "model_input_size_bytes": 5227248,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0208/q14/cache.mat",
+      "cache_sha256": "E72635B62AF1673ECA48E56F60899F3EF9D2E274ADD078D7BC78B38BE697D58F",
+      "cache_size_bytes": 13646677,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0208",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0208/q26/model_input.h5",
+      "model_input_sha256": "40904AC495864037E5B6E0B0596494704E59DCD8D6F31D726BC2BB70CD893F33",
+      "model_input_size_bytes": 5226873,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0208/q26/cache.mat",
+      "cache_sha256": "E5172991754466C6F8FA5B310B5D48E21816A54694C2079574E65145A8842F6D",
+      "cache_size_bytes": 13646544,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0208",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0208/q50/model_input.h5",
+      "model_input_sha256": "EBCCC6EF37FCF8CF81B7FF66CE1E192E253507EA34B588C70948F40DE5CEDC78",
+      "model_input_size_bytes": 5207593,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0208/q50/cache.mat",
+      "cache_sha256": "47C0C795B3220633E13BCDA785AA98375A57B1206B3E9D4C14DDA184DBEA3083",
+      "cache_size_bytes": 13648773,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0221",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0221/q14/model_input.h5",
+      "model_input_sha256": "E02664AD787E2C7F836EB6FD1CB3C9E2032D416594E2BEA23D1D6DF103651A2D",
+      "model_input_size_bytes": 5225271,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0221/q14/cache.mat",
+      "cache_sha256": "6B62DBB3D66EB1962BD5CF1DC8170B1C3AD9CB909238DA7328D2851A85404E73",
+      "cache_size_bytes": 13632855,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0221",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0221/q26/model_input.h5",
+      "model_input_sha256": "7EB15E82C31D4A041FBC1172A0A7736C2EC69EE24714D8DDD55DB7F3F73437BB",
+      "model_input_size_bytes": 5214513,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0221/q26/cache.mat",
+      "cache_sha256": "63CE7C0615E09440F134220C440FCA1BB2113358256836D2653388EA9D682230",
+      "cache_size_bytes": 13630605,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0221",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0221/q50/model_input.h5",
+      "model_input_sha256": "ABBAB68928AAA512B7AAFFBD5AAD2D4E1484D055AFD466A6CE1AC74E6B1F5601",
+      "model_input_size_bytes": 5195125,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0221/q50/cache.mat",
+      "cache_sha256": "ACC258DA63CE66AF3D16F6527AD1D948692F26D48192967FEB53C0C48BC5931D",
+      "cache_size_bytes": 13633242,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0230",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0230/q14/model_input.h5",
+      "model_input_sha256": "2CE307BCFB1099DB2352974C5548134060A45CBAF2AB422FB88384A467075100",
+      "model_input_size_bytes": 5225888,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0230/q14/cache.mat",
+      "cache_sha256": "0F22165630CF75B32BB059F8CBCEDDB567A5D39C899A9594D4B51C55B050DFEC",
+      "cache_size_bytes": 13637248,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0230",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0230/q26/model_input.h5",
+      "model_input_sha256": "A483B933D1033CE39F23ADE23352968491DF453670D97FD0473DF5E1CCCAB966",
+      "model_input_size_bytes": 5224066,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0230/q26/cache.mat",
+      "cache_sha256": "3B5A393A6FE865F316115F32927C2BD9A0A65B93199B3231D4F517077EDFACAA",
+      "cache_size_bytes": 13636604,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0230",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0230/q50/model_input.h5",
+      "model_input_sha256": "6536D507E999EF58D313A08028AB41CDE270F753FC43D76292CF884B4F6FF839",
+      "model_input_size_bytes": 5204440,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0230/q50/cache.mat",
+      "cache_sha256": "B45A4DBABFADC314F523F59C757D39E242AD91C6E3987BD014F7170431E4448F",
+      "cache_size_bytes": 13638217,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0242",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0242/q14/model_input.h5",
+      "model_input_sha256": "8917995C9530E05566099234A083D8761A9B4C684081A17ED0F5370A819C4119",
+      "model_input_size_bytes": 5203096,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0242/q14/cache.mat",
+      "cache_sha256": "F94A210A6E9FAA9C91915A7FCD70157FBDDFD71A4AFF27A061056BC0EE30CFB7",
+      "cache_size_bytes": 13638461,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0242",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0242/q26/model_input.h5",
+      "model_input_sha256": "1CF59254782D4F242EDCB5A7CE78163442D5612FF873C915F44F56467AA9B8FD",
+      "model_input_size_bytes": 5201411,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0242/q26/cache.mat",
+      "cache_sha256": "FDBD49DE82016B6922124589AA6D8F8DB31E47BA46FF97568AE1931782233D29",
+      "cache_size_bytes": 13639795,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0242",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0242/q50/model_input.h5",
+      "model_input_sha256": "1D5890D111BDFA16FC14A7725487E8D59CC3A148E08ED6D2D816710B6E202261",
+      "model_input_size_bytes": 5184833,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0242/q50/cache.mat",
+      "cache_sha256": "2AFB2B60BF02983CEBB7254709F7A22E2BD551889F36E6E076BAD84D3179C283",
+      "cache_size_bytes": 13639599,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0256",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0256/q14/model_input.h5",
+      "model_input_sha256": "C068351B5D24B6DC2750A5B6B125FE49E0FA820EFDE2338DE585248CE6D20DD4",
+      "model_input_size_bytes": 5193749,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0256/q14/cache.mat",
+      "cache_sha256": "FFB0B583CFAB74623D7A8B8446196D527A50CC510759A2C3990BA2B5CC9FB930",
+      "cache_size_bytes": 13629823,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0256",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0256/q26/model_input.h5",
+      "model_input_sha256": "15A0488A0E6586FE84839EB74C5EC128EB9822A8A123FB9012F53DDD67924E72",
+      "model_input_size_bytes": 5187286,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0256/q26/cache.mat",
+      "cache_sha256": "6E141970E632C4287B8DB1FC92952F142D2BFE83FDC8FBFE06C00EEB352489D2",
+      "cache_size_bytes": 13630560,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0256",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0256/q50/model_input.h5",
+      "model_input_sha256": "B7884D7BFB0B990CA063D698A39CD078E61A71583E9D5E5BC4C131B6EFFC7E08",
+      "model_input_size_bytes": 5177614,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0256/q50/cache.mat",
+      "cache_sha256": "57CC8747A8A3D6282611CBC07570AE88C6F8AB3E13C7662470457A883ED56F86",
+      "cache_size_bytes": 13632641,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0257",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0257/q14/model_input.h5",
+      "model_input_sha256": "C6B52F86550E73EE986CF57814E2E6B7B874C25EFD9E2C3DEAC8178009647146",
+      "model_input_size_bytes": 5194978,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0257/q14/cache.mat",
+      "cache_sha256": "84EFE85587FFF7F9C755D9582F4B06F15E0EFDE34D955923A70CCE2CA728DC40",
+      "cache_size_bytes": 13649464,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0257",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0257/q26/model_input.h5",
+      "model_input_sha256": "9A05052B4BC0BD4A97A85376F2B5A0A851B66B4AF5F27F76F97FFD27AC4FFAAA",
+      "model_input_size_bytes": 5200395,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0257/q26/cache.mat",
+      "cache_sha256": "E2A1A9012D21B2F061C1B584A56E7EAC4EF0CFDA1CBF41C9B0B2A1E2527A08EA",
+      "cache_size_bytes": 13655668,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0257",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0257/q50/model_input.h5",
+      "model_input_sha256": "73094CF9324CC6F7E595BEEC4205A008EBA9822AF6B0A1240557E948BBD3500E",
+      "model_input_size_bytes": 5185521,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0257/q50/cache.mat",
+      "cache_sha256": "8729D2C20BD6C5E17BAA60E5836438E614157251BABB5983D660AE9FACB415AB",
+      "cache_size_bytes": 13655991,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0274",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0274/q14/model_input.h5",
+      "model_input_sha256": "6E3E75ECBC0BBE707A26B29A674F1A0AD9A6253C6A484C29C0143DAC9EC09037",
+      "model_input_size_bytes": 5186561,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0274/q14/cache.mat",
+      "cache_sha256": "7EB460E7AE898016EC6BF93E3B36378A659B0460066A52B446C0E30C05D56958",
+      "cache_size_bytes": 13635054,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0274",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0274/q26/model_input.h5",
+      "model_input_sha256": "D4F4ABAA4A3172B4E7D2B1264F8AFAF1A812B6A17E762A6DDF6015AD0F3D6B3E",
+      "model_input_size_bytes": 5180909,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0274/q26/cache.mat",
+      "cache_sha256": "770BB98D066C09C78F09D01F58799F77FD609EB0129A705AF89AFD39580466A8",
+      "cache_size_bytes": 13635316,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0274",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0274/q50/model_input.h5",
+      "model_input_sha256": "89C192114144CB93DF809DFD32D6F82BC844A691F4F77534DC3264738D89F58D",
+      "model_input_size_bytes": 5165912,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0274/q50/cache.mat",
+      "cache_sha256": "A22F57F02C05C71320256BAE7A9EE77C17B6EA7D69A7B56B80679E93F2A982EC",
+      "cache_size_bytes": 13635491,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0277",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0277/q14/model_input.h5",
+      "model_input_sha256": "B3867A0A5B24068998E6E00430673CA084FB931C5ED68D36FBF9A4164B93451D",
+      "model_input_size_bytes": 5191057,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0277/q14/cache.mat",
+      "cache_sha256": "B76940A4816FA63B6B7319FAE83C73B9331835228C29EEAA708C56A45BE15E2F",
+      "cache_size_bytes": 13633281,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0277",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0277/q26/model_input.h5",
+      "model_input_sha256": "676C2E73EE1EEA53A382CAEBE989855DAA7F6DC87801E67BF194C5300117F64C",
+      "model_input_size_bytes": 5183010,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0277/q26/cache.mat",
+      "cache_sha256": "0CD66E39756CB4D0743D36CD0D308146D268D4F4504B79BA956E984D075B8906",
+      "cache_size_bytes": 13634576,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0277",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0277/q50/model_input.h5",
+      "model_input_sha256": "34BE086BF696D2E8F18C772C08B3E9A00D916265B4207CB041B62370AF68AA82",
+      "model_input_size_bytes": 5160429,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0277/q50/cache.mat",
+      "cache_sha256": "FCF67211EDF4F574B575CD6DED4FE630A9CBDFCD57F87251BE075600F5052857",
+      "cache_size_bytes": 13635591,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0278",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0278/q14/model_input.h5",
+      "model_input_sha256": "E51B6E25E94EF79F506AEE4918ED029042322789835B7B33AA9C46901824D6C9",
+      "model_input_size_bytes": 5185208,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0278/q14/cache.mat",
+      "cache_sha256": "FACD19ADCDD1B61F23DC01F834433A82C6B713FE6FA584AB56EF9FA3E02FFBEA",
+      "cache_size_bytes": 13638505,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0278",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0278/q26/model_input.h5",
+      "model_input_sha256": "58B6036013ECC4D0B4882E2408B58EC94642FA6E41D77EF3E904E7D7A76F78BA",
+      "model_input_size_bytes": 5193555,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0278/q26/cache.mat",
+      "cache_sha256": "98FE00DB298610528D8D8810FF0DAE9D9349CFC2F6326FA0BC071F791B00B039",
+      "cache_size_bytes": 13643733,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0278",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0278/q50/model_input.h5",
+      "model_input_sha256": "141A16E097D6AA6342FD1CBDFB05B9835BA0A560A2D78FC5C0AF24EA7F1CD156",
+      "model_input_size_bytes": 5180493,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0278/q50/cache.mat",
+      "cache_sha256": "BFA594AC34A24BC0AE63D1149568DC516067AA16A3F3AB01D8A3B0A2865A0E68",
+      "cache_size_bytes": 13644257,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0294",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0294/q14/model_input.h5",
+      "model_input_sha256": "D36A801D59DF010B642FF4C13B06024110E77BA8C43255F13D88E0683D7D5E38",
+      "model_input_size_bytes": 5204278,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0294/q14/cache.mat",
+      "cache_sha256": "2DA65CB6371CC0086723AFD6C22B0B4E4746239E4E99B8E2FFEB07F626BDD668",
+      "cache_size_bytes": 13661945,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0294",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0294/q26/model_input.h5",
+      "model_input_sha256": "D842AD6ABD2072F3E7225430634DC2F48E4CD7AA4E6B4954FDB0D2DF4DA47802",
+      "model_input_size_bytes": 5199383,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0294/q26/cache.mat",
+      "cache_sha256": "F4A2A0BCFFC2CFD780D1C5E99917DD6369778D25AD00FB67C567DF30B075B6D8",
+      "cache_size_bytes": 13659944,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0294",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0294/q50/model_input.h5",
+      "model_input_sha256": "4C7974EEBA738480CFE69D516CF7E2C015730EF12A361405553657C6D8AF6B9F",
+      "model_input_size_bytes": 5185267,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0294/q50/cache.mat",
+      "cache_sha256": "912C988FF73BEAADF687C962C98E74928297778A74D70392FAB023087E7D5C4B",
+      "cache_size_bytes": 13659266,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0295",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0295/q14/model_input.h5",
+      "model_input_sha256": "CAD9A3C47528E3BC33D9F1B384C02BEFC878000D5BE9B0AC8F5591CA7144B289",
+      "model_input_size_bytes": 5191365,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0295/q14/cache.mat",
+      "cache_sha256": "F7E375B44FBD2101D07DF05B5A118D64DF86747578EFC62C2FF15FB0490AC4AF",
+      "cache_size_bytes": 13639047,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0295",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0295/q26/model_input.h5",
+      "model_input_sha256": "A87A5B95719D2D5773527BB5A4EBEB49CF95E3724D1EF007B4AF434207536A71",
+      "model_input_size_bytes": 5182400,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0295/q26/cache.mat",
+      "cache_sha256": "E152C4FAAA4EE731B32B3D449337EA3C6EBD3388999C057A63D07E612E36F83A",
+      "cache_size_bytes": 13640326,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0295",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0295/q50/model_input.h5",
+      "model_input_sha256": "632DFF10BDC52AA7E4992FEF81ADE2FC806EB47E6570C23F5A73618B0B22FCF0",
+      "model_input_size_bytes": 5175217,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0295/q50/cache.mat",
+      "cache_sha256": "436BD218D92BBC733FF19B921E7C2D3B3BD7896155109E99B71730F9F4CE44DB",
+      "cache_size_bytes": 13641750,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0307",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0307/q14/model_input.h5",
+      "model_input_sha256": "16EFAEB95B838949ADC96DFE03EACB0836A41182282D1DDAC54996E87C588499",
+      "model_input_size_bytes": 5193166,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0307/q14/cache.mat",
+      "cache_sha256": "3782AE3D3FA8294B6AF555955D7C3B2C8FBC8B46DBF96636CF417E979BBA0DCC",
+      "cache_size_bytes": 13639798,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0307",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0307/q26/model_input.h5",
+      "model_input_sha256": "E13AB73CDF0B29871DF31BA57447A6A860C419B8AFFA26CA5202502387E0A213",
+      "model_input_size_bytes": 5192422,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0307/q26/cache.mat",
+      "cache_sha256": "A0FB33DDB410AE159A22ED37F093B67C9896CD0061DC1E654B53ECBB13379DEC",
+      "cache_size_bytes": 13642190,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0307",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0307/q50/model_input.h5",
+      "model_input_sha256": "9594E0674C45B955F957293C7442F9E3A60709AC3B3F6E91860EE42979CEA73C",
+      "model_input_size_bytes": 5176805,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0307/q50/cache.mat",
+      "cache_sha256": "0CDDADC32B636D391CC59B24F09FCB24C0647B5853FFD60039FB384D76C38AC3",
+      "cache_size_bytes": 13642171,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0313",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0313/q14/model_input.h5",
+      "model_input_sha256": "5BD229D834E27D4D474783690CBB1D7DC2E57CA4E9E01145AD8D862D9453D173",
+      "model_input_size_bytes": 5190099,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0313/q14/cache.mat",
+      "cache_sha256": "0C05186D95298C9724833CF00C63D6440848578B5CADF25A6F3BC44C300803FF",
+      "cache_size_bytes": 13637832,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0313",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0313/q26/model_input.h5",
+      "model_input_sha256": "5DB9FE3263BA44F2F402388CE0FBB343071804173C3D8CF7257BD85CAEC7FA9C",
+      "model_input_size_bytes": 5188830,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0313/q26/cache.mat",
+      "cache_sha256": "5DD589E7DA59DA648A7F4B19BFBF98BF2CF3B9950F024420240BD5DB6B2F0A43",
+      "cache_size_bytes": 13636702,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0313",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0313/q50/model_input.h5",
+      "model_input_sha256": "8256E474689413000EA330AFC6E9BB63330136FCF424B569116AA9A2274902B6",
+      "model_input_size_bytes": 5173632,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0313/q50/cache.mat",
+      "cache_sha256": "6479B4B6082C2DBFACE4E230549E01825E79F923D8DE913E82763ADE046C983F",
+      "cache_size_bytes": 13637167,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0335",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0335/q14/model_input.h5",
+      "model_input_sha256": "9F9F093EA1B74274400E65F9017ABD18B9F650770F85CC6621B580DC2EA30601",
+      "model_input_size_bytes": 5205441,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0335/q14/cache.mat",
+      "cache_sha256": "598F24CF70B7B51B4996D8AED5DCEE33A7A709A37BAF22755D514B6015955EB0",
+      "cache_size_bytes": 13656024,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0335",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0335/q26/model_input.h5",
+      "model_input_sha256": "10FF94CC083FFDF05FBD78F8C6607846D005A6D922C9CF4BE2107E6B9A3B6747",
+      "model_input_size_bytes": 5191704,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0335/q26/cache.mat",
+      "cache_sha256": "AD2C1081F5E2892D7877A9619078A914A51887F12ECB769ADE91C92517F94C84",
+      "cache_size_bytes": 13649449,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0335",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0335/q50/model_input.h5",
+      "model_input_sha256": "0FE441B23D1471FB07E01324CCF8A0F54F6621937FAA724F8E4150B63EC69E1D",
+      "model_input_size_bytes": 5172629,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0335/q50/cache.mat",
+      "cache_sha256": "0B3A83663DB5E486E30253256CEB25DAC1B7F206EF70F3F6E0A457AED6E8D19B",
+      "cache_size_bytes": 13648193,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0338",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0338/q14/model_input.h5",
+      "model_input_sha256": "7455A0DFDE638FAFF648F44EEC7F09DF4B653EA76062C7C8D729D51A5FE13753",
+      "model_input_size_bytes": 5204285,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0338/q14/cache.mat",
+      "cache_sha256": "9304392D61AF1E8A9D1BB4AD35AB4E3F73CBB52E02F8DB3E647B0C0B6CFC94B7",
+      "cache_size_bytes": 13642062,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0338",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0338/q26/model_input.h5",
+      "model_input_sha256": "A3975504C887790FCED01E8D2E14D9BD4128D445E73256C9C0EF4984566D8C81",
+      "model_input_size_bytes": 5190468,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0338/q26/cache.mat",
+      "cache_sha256": "DD373466AA48ED1C565F20611313A80147D8802108532CFB2DDA28094F83DBBF",
+      "cache_size_bytes": 13642316,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0338",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0338/q50/model_input.h5",
+      "model_input_sha256": "EF8019E0D7FBD7471C6515853E4A84E259C1EADF3A95BA0984012B3AFD684FAA",
+      "model_input_size_bytes": 5168586,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0338/q50/cache.mat",
+      "cache_sha256": "7FC8779E159C3EA4469F5AF7BE387AFAB6FE45404CA878921F229ED64714184D",
+      "cache_size_bytes": 13641818,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0341",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0341/q14/model_input.h5",
+      "model_input_sha256": "1E5A80BE9D3D630A31F3DE70CEC6AB1A37B350636445B6D1E1AF6C2EBF9B2A69",
+      "model_input_size_bytes": 5188401,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0341/q14/cache.mat",
+      "cache_sha256": "9654FE7CFD748CA15EBF2F215EF5D42FFCFED0ED0EEEE218F5F763C8B520F0B7",
+      "cache_size_bytes": 13643770,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0341",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0341/q26/model_input.h5",
+      "model_input_sha256": "3C58151F461AC6BFA3B614AC73C57838908331E3F7A225695D795EDEB5BD6C0F",
+      "model_input_size_bytes": 5181596,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0341/q26/cache.mat",
+      "cache_sha256": "BC776C699C6ADE1DC81D8BB3800BEDFFF57063009427FAA9ACDC19CCE6EB12BA",
+      "cache_size_bytes": 13641484,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0341",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0341/q50/model_input.h5",
+      "model_input_sha256": "DC5260EB45DCE2A9BB00212552560F3F75111D8A3C9C9C9E400CEC6735318775",
+      "model_input_size_bytes": 5172915,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0341/q50/cache.mat",
+      "cache_sha256": "39E9187A20AA6EEBF09A85E71AB079C908C7A203CF2C585549838B923C3EDBD4",
+      "cache_size_bytes": 13644673,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0354",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0354/q14/model_input.h5",
+      "model_input_sha256": "BE27022700E02CEABA2F618F8FE4DD3A4B0D352491A92BEFA81243DE6027C7C6",
+      "model_input_size_bytes": 5206401,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0354/q14/cache.mat",
+      "cache_sha256": "0642490B78FE1735EC9C3C1B8BB0880F5AE0CA0AB779DDE43BC32A08B94ACB33",
+      "cache_size_bytes": 13643196,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0354",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0354/q26/model_input.h5",
+      "model_input_sha256": "1B831C7593ED032466E76B83253C28C07AB6B9A2571E5AF902DBD156C80FDD3C",
+      "model_input_size_bytes": 5202723,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0354/q26/cache.mat",
+      "cache_sha256": "F6ACBC43F044262C18D986FD7000156181B42A572E8BDE3B15CC3069B0FFB98E",
+      "cache_size_bytes": 13644135,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0354",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0354/q50/model_input.h5",
+      "model_input_sha256": "0ED9020E33850169528D72C217B8163797927D06FF312C19CD5D3DB447BE28A3",
+      "model_input_size_bytes": 5194511,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0354/q50/cache.mat",
+      "cache_sha256": "99314F7F737C2D02617C55DAEE5FB46BE8BEB76D46A8CA1B3799CEE9A18D5C1E",
+      "cache_size_bytes": 13642409,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0360",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0360/q14/model_input.h5",
+      "model_input_sha256": "3BA06EA5A82FB0A6ADD12CA0B6B6D57D0835ED13B6C198ADF3076846EBCA9B6A",
+      "model_input_size_bytes": 5185063,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0360/q14/cache.mat",
+      "cache_sha256": "28D9B97090254318AB7015C3EE9CE4CD2EE53B6EF02DF1708317EABBEB06EEC3",
+      "cache_size_bytes": 13627670,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0360",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0360/q26/model_input.h5",
+      "model_input_sha256": "CAC15BC827D85C67F24B947616AE21AB38DAEBA2C4E3C3AF259C6575DC61D7DC",
+      "model_input_size_bytes": 5183532,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0360/q26/cache.mat",
+      "cache_sha256": "0094F047813E6D8D653CE6C365EDFC0C7D4732C6AB7741D33EA8A222BAFBB262",
+      "cache_size_bytes": 13627567,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0360",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0360/q50/model_input.h5",
+      "model_input_sha256": "E802A9647EA9F769CE454B0CE590B0FAFC8B59D53F98F60988C18F61A6A92FAF",
+      "model_input_size_bytes": 5174467,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0360/q50/cache.mat",
+      "cache_sha256": "FF01CF8F417DB5CA9E433D5319076531C5E2D37466BB4C277B31DF8656E24CAD",
+      "cache_size_bytes": 13628627,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0369",
+      "direction_count": 14,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0369/q14/model_input.h5",
+      "model_input_sha256": "FEC339C7ED875FE1D0C09D4272FCFA97DF27FA1CE198370325844326991FCEB4",
+      "model_input_size_bytes": 5200247,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0369/q14/cache.mat",
+      "cache_sha256": "BB47991E0786C277F9A7D53657F09227FE1BC56916323A2557E357239FF3B9A4",
+      "cache_size_bytes": 13655524,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0369",
+      "direction_count": 26,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0369/q26/model_input.h5",
+      "model_input_sha256": "C4EFFD93EFE007970B77633EE68B0B8CBF25075ECA6CA1E172B09021952CF4FA",
+      "model_input_size_bytes": 5206310,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0369/q26/cache.mat",
+      "cache_sha256": "2C4D187518685CF80324A42CA987AEA3AAEFF5BF501FE8E598E33EA38D99B442",
+      "cache_size_bytes": 13657777,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    },
+    {
+      "subject_label": "P0369",
+      "direction_count": 50,
+      "model_input": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0369/q50/model_input.h5",
+      "model_input_sha256": "3416DDCB4CAF5965560F52596CEB607255574E198284AA8EADCDA7EB85A6811A",
+      "model_input_size_bytes": 5195351,
+      "cache": "artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/subjects/P0369/q50/cache.mat",
+      "cache_sha256": "3864B93FCFCF9001D8546A373254D3B132EEDED4E2E1E643583278DB2EAB7E89",
+      "cache_size_bytes": 13658209,
+      "shape": [
+        2,
+        793,
+        463
+      ],
+      "finite": true,
+      "split": "val"
+    }
+  ],
+  "git": {
+    "commit": "a2568058f8d74b687f6fd0d62c5b5368515a93b4",
+    "dirty": false
+  },
+  "test_subject_count_read": 0,
+  "identity_sha256": "D55191DCD1859E80DDA77B8676324149463DAE9DE9CBCF31A79B84E13158D7BC"
+}

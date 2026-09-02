@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import platform
@@ -14,7 +15,6 @@ import scipy
 import torch
 
 from mcar.paths import project_root
-from mcar.training.train_film_siren import split_subject_paths
 
 
 OUTPUT = Path(
@@ -66,6 +66,25 @@ def require_clean_git(root: Path) -> str:
     ).stdout.strip()
 
 
+def test_subject_paths(dataset_root: Path, split_csv: Path) -> list[tuple[int, str, Path]]:
+    with split_csv.open("r", encoding="utf-8-sig", newline="") as handle:
+        rows = [row for row in csv.DictReader(handle) if row.get("split", "").lower() == "test"]
+    if len(rows) != 44:
+        raise ValueError("Expected 44 frozen test subjects")
+    output = []
+    for row in rows:
+        label = row["subject_id"]
+        if not label.startswith("P") or not label[1:].isdigit():
+            raise ValueError("Invalid subject label: {}".format(label))
+        path = dataset_root / "subjects" / label / "q26.h5"
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        output.append((int(label[1:]), label, path))
+    if len({item[0] for item in output}) != 44:
+        raise ValueError("Duplicate test subject")
+    return output
+
+
 def main() -> None:
     root = project_root()
     output = root / OUTPUT
@@ -74,7 +93,7 @@ def main() -> None:
     commit = require_clean_git(root)
     dataset_root = root / "data/processed/sonicom_residual_q26_v1"
     split_csv = root / "configs/data/sonicom_subject_split_v1.csv"
-    subject_rows = split_subject_paths(dataset_root, split_csv, "test")
+    subject_rows = test_subject_paths(dataset_root, split_csv)
     labels = [row[1] for row in subject_rows]
     if len(labels) != 44 or len(set(labels)) != 44:
         raise ValueError("Expected 44 frozen test subjects")

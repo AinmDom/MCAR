@@ -33,7 +33,6 @@ from mcar.evaluation.secondary_metrics import (
 )
 from mcar.fsp_ae_signal import estimate_itd_seconds
 from mcar.paths import project_root
-from mcar.training.train_film_siren import split_subject_paths
 from mcar.training.train_film_siren_stage_c import horizontal_interpolation_indices
 
 
@@ -162,6 +161,25 @@ def derived_seed(base_seed: int, *parts: str) -> int:
     return (base_seed + int.from_bytes(digest[:4], "big")) % (2 ** 32)
 
 
+def test_subject_paths(dataset_root: Path, split_csv: Path) -> List[Tuple[int, str, Path]]:
+    with split_csv.open("r", encoding="utf-8-sig", newline="") as handle:
+        rows = [row for row in csv.DictReader(handle) if row.get("split", "").lower() == "test"]
+    if len(rows) != 44:
+        raise ValueError("Expected 44 frozen test subjects")
+    output = []
+    for row in rows:
+        label = row["subject_id"]
+        if not label.startswith("P") or not label[1:].isdigit():
+            raise ValueError("Invalid subject label: {}".format(label))
+        path = dataset_root / "subjects" / label / "q26.h5"
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        output.append((int(label[1:]), label, path))
+    if len({item[0] for item in output}) != 44:
+        raise ValueError("Duplicate test subject")
+    return output
+
+
 def load_standardized_prediction(path: Path, split: str) -> Tuple[np.ndarray, np.ndarray]:
     with h5py.File(path, "r") as handle:
         if decode_attribute(handle.attrs["split"]) != split:
@@ -254,7 +272,7 @@ def main() -> None:
 
     dataset_root = root / payload["dataset"]["root"]
     split_csv = root / payload["dataset"]["split_csv"]
-    subject_rows = split_subject_paths(dataset_root, split_csv, "test")
+    subject_rows = test_subject_paths(dataset_root, split_csv)
     subject_labels = [row[1] for row in subject_rows]
     if len(subject_rows) != 44 or len(set(subject_labels)) != 44:
         raise ValueError("Expected 44 unique test subjects")

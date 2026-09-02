@@ -1,5 +1,15 @@
 # 项目实验日志
 
+## 2026-09-02：十方法统一评价器修复后manifest重新冻结
+
+- 配置容器兼容修复已在1-subject smoke验证并提交为`3a1ec45`。随后在clean tracked worktree、
+  RANF adapter clean commit `c50a1589c99654fb52d1a73ee17ac419b9a2654f`上运行原manifest生成脚本。
+- 新manifest identity为`A317503131FDF3D1DAA73C13146C3BB9CCCBB39105B8D4717B97A0B118219539`；
+  修复后MATLAB evaluator SHA-256为`D2B9DA8B2CB8FA24A975A0BA2EEDE95E5C88B73C26E98DD68037DB95F1A51E25`。
+  其余方法、配置、grid、input manifest和checkpoint resource不变。
+- manifest固定split=`val`、44 subjects、10 methods、Q14/Q26/Q50、统一743评价方向，
+  `test_subject_count_read=0`。该manifest提交且工作树clean后方可启动44人正式评价。
+
 ## 2026-09-02：十方法统一评价1-subject smoke修复后通过
 
 - 修复仅兼容MATLAB `jsondecode`对异构methods对象返回cell array的行为；方法、输入、方向网格、

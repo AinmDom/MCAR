@@ -46,7 +46,18 @@ assert(string(boundedReport.status) == "completed" && ...
     boundedReport.test_subject_count_read == 0, ...
     'Completed Bounded sensitivity report is required.');
 
-ranfMethod = config.methods(find(string({config.methods.id}) == "RANF", 1));
+if iscell(config.methods)
+    ranfIndex = find(cellfun(@(method) string(method.id) == "RANF", ...
+        config.methods), 1);
+else
+    ranfIndex = find(string({config.methods.id}) == "RANF", 1);
+end
+assert(~isempty(ranfIndex), 'RANF method configuration is required.');
+if iscell(config.methods)
+    ranfMethod = config.methods{ranfIndex};
+else
+    ranfMethod = config.methods(ranfIndex);
+end
 ranfRoots = containers.Map({'14', '26', '50'}, { ...
     fullfile(projectRoot, ranfMethod.prediction_roots.q14), ...
     fullfile(projectRoot, ranfMethod.prediction_roots.q26), ...

@@ -1,5 +1,28 @@
 # 项目实验日志
 
+## 2026-09-02：十方法统一评价1-subject smoke修复后通过
+
+- 修复仅兼容MATLAB `jsondecode`对异构methods对象返回cell array的行为；方法、输入、方向网格、
+  固定743方向mask、四项指标、配对效应和统计规则均未改变。`checkcode`为0条问题。
+- 修复后的1-subject validation smoke自然完成，exit=`0`。`metric_long.csv`、
+  `aggregate_metrics.csv`、`paired_direction_effects.csv`、`bounded_interactions.csv`、
+  `quality_checks.csv`行数分别为`120/120/80/72/3`，summary为`status=completed`、
+  `all_finite=true`，PNG与vector PDF均非空。
+- 本步骤仅用于执行链路完整性，不接纳单被试数值作为科研结论；固定评价方向数=`743`、
+  bootstrap=`10000`（seed `20260902`）、`test_subject_count_read=0`、训练/预算判据=N/A。
+  正式44人评价前须先在clean HEAD重生成并提交hash-locked manifest。
+
+## 2026-09-02：十方法统一评价首次1-subject smoke因配置解析失败，未接纳结果
+
+- 命令在正式指标计算前于`matlab/+mcar/evaluate_ten_method_direction_sensitivity.m:49`退出，
+  MATLAB exit=`1`。原因是配置中的十个方法对象字段异构，`jsondecode`返回cell array，而评价器
+  误按struct array访问`config.methods.id`。
+- `results/sonicom_ten_method_direction_sensitivity_smoke/`未创建，metric/aggregate/effect/
+  interaction/quality均未产生，因此无数值被接纳、无任何模型或实验结论变化。
+- 修复边界仅为cell/struct配置容器兼容，不改变已冻结方法、输入、方向网格、743方向mask、指标、
+  bootstrap或选择规则；修复通过smoke后必须重新生成并提交hash-locked manifest，方可运行44人正式评价。
+  本次未读取test，`test_subject_count_read=0`；训练/预算判据=N/A。
+
 ## 2026-09-02：十方法方向敏感度RANF Q14/Q50原生适配完成
 
 - 顺序controller自然结束，exit=`0`、phase=`complete`，运行区间

@@ -67,8 +67,9 @@ predictionOutputName = char(predictionOutputName);
 assert(any(splitName == ["val", "test"]), 'splitName must be val or test.');
 assert(splitName ~= "test" || allowTest, ...
     'The locked SONICOM test split requires allowTest=true.');
-assert(splitName == "val" && ~allowTest, ...
-    'This exporter is permanently restricted to validation-only operation.');
+assert((splitName == "val" && ~allowTest) || ...
+    (splitName == "test" && allowTest), ...
+    'allowTest must be false for val and true for test.');
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -266,7 +267,7 @@ for subjectIndex = 1:subjectCount
             methodSpectra.(char(classicalMethod)), selectedIndices, 256);
         write_classical_prediction(classicalPredictionRoot, subjectLabel, ...
             classicalMethod, classicalMagnitudeDb, classicalHrir, ...
-            frequencyHzAll(selectedIndices));
+            frequencyHzAll(selectedIndices), splitName);
     end
     fspFrequencyError = NaN;
     if includeFsp
@@ -306,6 +307,11 @@ for subjectIndex = 1:subjectCount
             [selectedMagnitudeDb, hrir] = method_representation( ...
                 methodSpectra.(char(methodIds(methodIndex))), ...
                 selectedIndices, 256);
+        end
+        if ~ismember(methodIds(methodIndex), classicalMethodIds)
+            write_classical_prediction(classicalPredictionRoot, subjectLabel, ...
+                methodIds(methodIndex), selectedMagnitudeDb, hrir, ...
+                frequencyHzAll(selectedIndices), splitName);
         end
         metricValues(methodIndex, :) = strict_metrics( ...
             selectedMagnitudeDb, hrir, referenceDb, referenceHrir, ...
@@ -396,7 +402,7 @@ clear restoreDirectory;
 end
 
 function write_classical_prediction(root, subjectLabel, method, ...
-        selectedMagnitudeDb, hrir, frequencyHz)
+        selectedMagnitudeDb, hrir, frequencyHz, splitName)
 subjectRoot = fullfile(root, 'subjects', char(subjectLabel), char(method));
 if ~isfolder(subjectRoot)
     mkdir(subjectRoot);
@@ -422,10 +428,11 @@ h5create(path, '/predicted_hrir', size(hrirForHdf5), 'Datatype', 'single');
 h5write(path, '/predicted_hrir', single(hrirForHdf5));
 h5create(path, '/frequency_hz', size(frequencyHz), 'Datatype', 'double');
 h5write(path, '/frequency_hz', double(frequencyHz));
-h5writeatt(path, '/', 'split', 'val');
+h5writeatt(path, '/', 'split', char(splitName));
 h5writeatt(path, '/', 'subject_id', char(subjectLabel));
 h5writeatt(path, '/', 'method', char(method));
-h5writeatt(path, '/', 'test_subject_count_read', int32(0));
+h5writeatt(path, '/', 'test_subject_count_read', ...
+    int32(splitName == "test"));
 end
 
 function compatibilityFile = activate_findvoronoi_compatibility(projectRoot)

@@ -1,5 +1,22 @@
 # 项目实验日志
 
+## 2026-09-02：十方法方向敏感度RANF Q14/Q50原生适配完成
+
+- 顺序controller自然结束，exit=`0`、phase=`complete`，运行区间
+  `2026-09-02T00:54:50+08:00`至`09:48:03+08:00`，总耗时`31,993 s`。Q14适配耗时
+  `1:57:27`，Q50适配耗时`6:52:08`；两档均从同一冻结Q26-pretrained checkpoint
+  `7b288f6f...3e367`重启，train-only retrieval=262人，1000 epochs、batch size 3，评价44名
+  validation被试，`test_subject_count_read=0`。
+- Q14/Q50各生成44个prediction SOFA，eval log均完整；best/adaptation/adaptation_loss三个checkpoint
+  每档均含119个finite tensor。Q14/Q50 adaptation checkpoint SHA-256分别为
+  `da92bd635217619416140016b35aa8012a8f8cc4251fc889535739e2b02d77e6`和
+  `a30e124d9543917f56e8d09165dc10c55023cb952b25a83e9baaf29fd2d473af`。
+- RANF原生汇总用于完整性诊断而非最终统一指标：Q14 ITD/ILD/LSD mean为
+  `11.5074880883 us / 0.7750957795 dB / 3.4310708305 dB`，Q50为
+  `9.6767661170 us / 0.6764719991 dB / 2.8810324954 dB`；两档所有被试均低于原生阈值。
+- 下一步：把Q14/Q50 SOFA导出到根项目artifact布局，Q26复用既有validation RANF；完成44×3
+  provenance检查后运行五种classical/MCA现算及十方法固定743方向统一评价。
+
 ## 2026-09-02：十方法方向敏感度RANF Q14→Q50原生适配已启动
 
 - 在RANF adapter commit `c50a1589c99654fb52d1a73ee17ac419b9a2654f`和冻结预训练checkpoint

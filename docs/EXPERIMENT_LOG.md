@@ -1,5 +1,41 @@
 # 项目实验日志
 
+## 2026-09-02：十方法Q14/Q26/Q50正式统一评价完成
+
+- 正式MATLAB session `55629`自然结束，132/132个validation subject×direction-count单元完成，exit=`0`。
+  统一口径为44名validation受试者、10方法、嵌套Q14/Q26/Q50、固定排除全部Q50输入方向后的743
+  评价方向、四项dB误差、10,000次paired-listener bootstrap（seed `20260902`）；test不读。
+- 表格完整性：`metric_long.csv`/`aggregate_metrics.csv`/`paired_direction_effects.csv`/
+  `bounded_interactions.csv`/`quality_checks.csv`分别`5280/120/80/72/132`行；120个
+  method×direction×metric组均恰有44名受试者。所有numeric列finite，summary为
+  `status=completed`、`all_finite=true`、`test_subject_count_read=0`。NN/Bary输入点回代最大误差
+  `4.2494e-15/4.8036e-15`，FSP频率误差0，RANF grid误差0 deg、观测HRIR误差`1.4857e-8`。
+- Full-sphere ERB的Q14/Q26/Q50均值：SH-only `2.792926/2.658619/2.962315`；SUpDEq+SH
+  `1.842031/1.815283/1.997039`；SUpDEq+NN `2.076842/1.836076/1.655922`；SUpDEq+Bary
+  `2.010790/1.731476/1.508370`；MCA `1.396600/1.089779/1.007027`；MCAR v3.5.1
+  `1.181744/0.826642/0.838240`；FSP-AE `2.108286/1.155485/2.036753`；RANF
+  `1.102148/1.071196/1.028151`；Hybrid E190 `1.105695/0.800820/0.817103`；Bounded E25
+  `1.111461/0.792813/0.810526 dB`。
+- 相对Q26的四指标显著性模式（95% paired-bootstrap CI）：Q14时Bounded、MCAR、Hybrid、FSP-AE、
+  MCA、SH-only均为4/4显著退化；RANF为2退化/2不显著；SUpDEq+SH为2退化/1改善/1不显著，
+  NN与Bary均为3退化/1不显著。Q50时Bounded和FSP-AE为4/4显著退化，MCAR为3退化/1不显著，
+  Hybrid为2退化/2不显著；RANF为2改善/2不显著，Bary为4改善，NN为3改善/1退化，MCA为
+  3改善/1不显著。由此Q50小幅退化是冻结Q26学习模型的分布失配现象，不能概括为更多测量一般有害。
+- Bounded E25仍是论文主模型和Q26正式操作点；工程主模型仍为MCAR v3.5.1。该补充实验不用于
+  调参、模型选择或新增test访问。图`ten_method_direction_sensitivity.{png,pdf}`已目视通过；
+  训练/末点预算判据=N/A。证据根：`results/sonicom_ten_method_direction_sensitivity_v1/`。
+
+## 2026-09-02：十方法Q14/Q26/Q50正式统一评价已启动
+
+- 在manifest identity `A317503131FDF3D1DAA73C13146C3BB9CCCBB39105B8D4717B97A0B118219539`
+  已提交、tracked worktree clean的HEAD `d50b03a`上启动正式评价；MATLAB PID=`10048`（helper
+  `39128`）、session=`55629`，输出根为`results/sonicom_ten_method_direction_sensitivity_v1/`。
+- 固定范围为44名validation受试者、10方法、Q14/Q26/Q50，所有条件统一排除50个Q50输入方向并在
+  743方向评价FullSphereERB、Contralateral25ERB、ContralateralHighFrequency、HorizontalILDMAE；
+  统计为10,000次paired-listener bootstrap（seed `20260902`）。
+- 启动已进入`[1/132] P0001 Q14`。本条仅表示正式run已启动，finite、完整行数、统计与图表均为
+  PENDING；不得重复启动或把部分输出作为结论。`test_subject_count_read=0`，训练/末点预算判据=N/A。
+
 ## 2026-09-02：十方法统一评价器修复后manifest重新冻结
 
 - 配置容器兼容修复已在1-subject smoke验证并提交为`3a1ec45`。随后在clean tracked worktree、

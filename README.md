@@ -33,8 +33,11 @@ Full ERB `1.111461 / 0.792813 / 0.810526`、Contra25 ERB
 `1.726651 / 1.213857 / 1.272012`、Contra HF `4.052359 / 3.499964 / 3.533906`、
 Horizontal ILD `0.726235 / 0.559120 / 0.614061 dB`。相对Q26，Q14和Q50的四项
 paired-bootstrap 95% CI均完全大于0；因此冻结Q26模型既不耐受进一步稀疏，直接增加到Q50也
-不会带来单调增益。该实验未重训、未读取test，完整结果见
-`results/sonicom_bounded_e25_input_direction_sensitivity_v1/`。
+不会带来单调增益。十方法统一补充实验进一步表明，Q14对所有方法都至少造成两项显著退化；
+Q50则取决于方法：SUpDEq+Bary四项改善、MCA三项改善，RANF两项改善且两项无显著变化，
+而Bounded E25与FSP-AE四项均退化。因此“Q50退化”只解释为冻结Q26学习路径的输入分布失配，
+不能外推成更多测量通常有害。实验未重训、未读取test，完整十方法结果见
+`results/sonicom_ten_method_direction_sensitivity_v1/`。
 
 **当前工程主模型已更新为 MCAR v3.5.1**：固定输出融合为 previous-joint `30%` +
 v3.5.1-B epoch 23 `70%`。在 44 名 test 被试上，四项严格指标为

@@ -64,9 +64,9 @@ trade-off of a higher-capacity fusion network.
 3. A three-seed, fixed-budget evaluation showing a better spectral/binaural
    Pareto point than MCAR, the FiLM-SIREN ensemble, and the spectral-CNN hybrid
    on the locked validation cohort.
-4. A frozen-model input-direction sensitivity study showing that Q14 causes a
-   large, consistent degradation and that supplying Q50 to the Q26-trained
-   condition pathway does not yield monotonic improvement.
+4. A ten-method input-direction sensitivity study showing that Q14 generally
+   degrades reconstruction, while Q50 behavior depends on whether the method
+   recomputes a current-grid interpolator or applies a Q26-trained predictor.
 
 ## Method draft
 
@@ -133,7 +133,7 @@ The model is not retrained: MCA and the condition input are recomputed from the
 current grid while every learned weight remains frozen. All three settings are
 evaluated on the same 743 directions after excluding the complete Q50 input
 set. The pre-registered comparisons are Q14 minus Q26 and Q50 minus Q26, using
-10,000 listener-paired bootstrap replicates with seed 20260901.
+10,000 listener-paired bootstrap replicates with seed 20260902.
 
 ## Main validation result
 
@@ -150,6 +150,35 @@ pack.
 
 ## Input-direction sensitivity
 
+The completed comparison covers all ten reported methods. The table below
+shows full-sphere ERB means on the common 743-direction mask; the last two
+columns count significant endpoint changes among all four metrics relative to
+Q26 (W = worse, B = better, NS = not significant; lower error is better).
+
+| Method | Q14 | Q26 | Q50 | Q14 vs Q26 | Q50 vs Q26 |
+|---|---:|---:|---:|---:|---:|
+| SH only | 2.7929 | 2.6586 | 2.9623 | 4W | 2W / 2B |
+| SUpDEq + SH | 1.8420 | 1.8153 | 1.9970 | 2W / 1B / 1NS | 4W |
+| SUpDEq + Natural Neighbor | 2.0768 | 1.8361 | 1.6559 | 3W / 1NS | 1W / 3B |
+| SUpDEq + Barycentric | 2.0108 | 1.7315 | 1.5084 | 3W / 1NS | 4B |
+| MCA | 1.3966 | 1.0898 | 1.0070 | 4W | 3B / 1NS |
+| MCAR v3.5.1 | 1.1817 | 0.8266 | 0.8382 | 4W | 3W / 1NS |
+| FSP-AE | 2.1083 | 1.1555 | 2.0368 | 4W | 4W |
+| RANF | **1.1021** | 1.0712 | 1.0282 | 2W / 2NS | 2B / 2NS |
+| Hybrid E190 | 1.1057 | 0.8008 | 0.8171 | 4W | 2W / 2NS |
+| Bounded E25 | 1.1115 | **0.7928** | **0.8105** | 4W | 4W |
+
+Q14 significantly worsened at least two endpoints for every method and all
+four endpoints for six methods, including Bounded, MCAR, Hybrid, FSP-AE, MCA,
+and SH-only. Q50 was method dependent: current-grid Barycentric and MCA
+improved four and three endpoints, respectively, and RANF improved two without
+significant degradation; in contrast, the frozen Q26-trained Bounded and
+FSP-AE paths worsened all four endpoints. This contrast is evidence for input-
+distribution mismatch in particular learned pipelines, not evidence that more
+measurements are intrinsically harmful.
+
+For the paper main model specifically:
+
 | Observed directions | Full ERB | Contra25 ERB | Contra HF | Horizontal ILD |
 |---:|---:|---:|---:|---:|
 | Q14 | 1.1115 | 1.7267 | 4.0524 | 0.7262 |
@@ -159,11 +188,11 @@ pack.
 These validation means use the fixed 743-direction mask and therefore should
 not be mixed with the 767-direction means in the main comparison table. Q14
 minus Q26 was positive for all four endpoints: +0.3186 dB full ERB (95% CI
-[+0.3013,+0.3363]), +0.5128 dB Contra25 ERB ([+0.4761,+0.5509]), +0.5524 dB
-Contra HF ([+0.4847,+0.6226]), and +0.1671 dB horizontal ILD
-([+0.0996,+0.2351]). Q50 also did not improve on Q26: the corresponding
-differences were +0.0177 [+0.0108,+0.0240], +0.0582 [+0.0438,+0.0724],
-+0.0339 [+0.0170,+0.0519], and +0.0549 dB [+0.0204,+0.0900]. Thus, the formal
+[+0.3018,+0.3361]), +0.5128 dB Contra25 ERB ([+0.4752,+0.5515]), +0.5524 dB
+Contra HF ([+0.4846,+0.6231]), and +0.1671 dB horizontal ILD
+([+0.0991,+0.2348]). Q50 also did not improve on Q26: the corresponding
+differences were +0.0177 [+0.0108,+0.0241], +0.0582 [+0.0439,+0.0723],
++0.0339 [+0.0160,+0.0518], and +0.0549 dB [+0.0202,+0.0894]. Thus, the formal
 operating point is Bounded E25 with Q26 input. The Q50 result diagnoses
 distribution sensitivity of a Q26-trained frozen condition pathway; it is not
 evidence that additional measurements are generally harmful or that a
@@ -205,10 +234,11 @@ the bounded gate selects a conservative local adjustment.
 - **Why the ensemble helps.** The formal ensemble improves all four mean
   metrics over the one-seed bounded model, while using fixed equal weights and
   fixed cycle-25 checkpoints.
-- **Why Q26 remains the operating point.** Reducing the input to Q14 degrades
-  all endpoints substantially. Increasing it to Q50 without retraining also
-  causes a smaller but consistent degradation, indicating that the learned
-  condition pathway is calibrated to its Q26 training distribution.
+- **Why Q26 remains the operating point.** For Bounded E25, reducing the input
+  to Q14 degrades all endpoints substantially, while increasing it to Q50
+  without retraining causes a smaller but consistent degradation. The ten-
+  method comparison shows that this is a Q26-trained-path calibration issue:
+  current-grid Barycentric and MCA instead benefit from Q50.
 - **What cannot be claimed.** The candidate does not have the lowest mean on
   every metric: Hybrid E190 remains slightly lower on Contra25 and HF. Those
   differences are statistically indistinguishable, so the defensible claim is
@@ -237,6 +267,10 @@ the bounded gate selects a conservative local adjustment.
   exactly, and its report records `test_subject_count_read=0`.
 - The three pre-existing comparison methods reproduce their previous
   subject-level values exactly (maximum absolute difference 0 dB).
+- The complete ten-method sensitivity tables contain 5,280 subject-level rows,
+  120 aggregate rows, 80 paired direction effects, 72 Bounded interaction
+  effects, and 132 quality rows; every numeric field is finite and each
+  method--direction--metric group contains all 44 validation listeners.
 - RANF and FSP-AE direct comparisons are frozen supplementary evidence and must
   not drive tuning. Validation and engineering-test results must remain
   explicitly separated.

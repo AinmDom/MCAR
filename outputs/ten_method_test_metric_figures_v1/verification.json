@@ -1,0 +1,48 @@
+{
+  "status": "verified",
+  "split": "test",
+  "figure_count": 20,
+  "png_count": 20,
+  "vector_pdf_count": 20,
+  "method_count_per_figure": 10,
+  "subject_count_per_method": 44,
+  "all_numeric_finite": true,
+  "all_means_inside_bootstrap_intervals": true,
+  "png_dimensions": [
+    [
+      4151,
+      2814
+    ],
+    [
+      4163,
+      2814
+    ],
+    [
+      4163,
+      2815
+    ],
+    [
+      4190,
+      2815
+    ],
+    [
+      4243,
+      2814
+    ],
+    [
+      4244,
+      2814
+    ],
+    [
+      4245,
+      2814
+    ],
+    [
+      4245,
+      2815
+    ]
+  ],
+  "png_total_bytes": 5765311,
+  "pdf_total_bytes": 938317,
+  "new_test_subject_count_read": 0
+}

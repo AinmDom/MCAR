@@ -1,0 +1,21 @@
+FigureNumber,EvidenceTier,Split,Endpoint,Title,Unit,Direction,PngFile,PdfFile
+1,Primary frozen engineering test,test,FullSphereERB,Full-sphere ERB error,dB,Lower is better,png/01_test_fullsphereerb.png,pdf/01_test_fullsphereerb.pdf
+2,Primary frozen engineering test,test,Contralateral25ERB,Contralateral-25 ERB error,dB,Lower is better,png/02_test_contralateral25erb.png,pdf/02_test_contralateral25erb.pdf
+3,Primary frozen engineering test,test,ContralateralHighFrequency,Contralateral high-frequency error,dB,Lower is better,png/03_test_contralateralhighfrequency.png,pdf/03_test_contralateralhighfrequency.pdf
+4,Primary frozen engineering test,test,HorizontalILDMAE,Horizontal-plane ILD MAE,dB,Lower is better,png/04_test_horizontalildmae.png,pdf/04_test_horizontalildmae.pdf
+5,Secondary test,test,FullSphereLSD,Full-sphere log-spectral distortion,dB,Lower is better,png/05_test_fullspherelsd.png,pdf/05_test_fullspherelsd.pdf
+6,Secondary test,test,HFFirstDifferenceMAE,High-frequency first-difference MAE,dB/bin,Lower is better,png/06_test_hffirstdifferencemae.png,pdf/06_test_hffirstdifferencemae.pdf
+7,Secondary test,test,HFSecondDifferenceMAE,High-frequency second-difference MAE,dB/bin^2,Lower is better,png/07_test_hfseconddifferencemae.png,pdf/07_test_hfseconddifferencemae.pdf
+8,Secondary test,test,MultiScaleNotchDepthMAE,Multi-scale notch-depth MAE,dB,Lower is better,png/08_test_multiscalenotchdepthmae.png,pdf/08_test_multiscalenotchdepthmae.pdf
+9,Secondary test,test,ERBBandILDMean,ERB-band ILD mean absolute error,dB,Lower is better,png/09_test_erbbandildmean.png,pdf/09_test_erbbandildmean.pdf
+10,Secondary test,test,SpatialLSD_0_10deg,Spatial LSD: 0-10 deg from Q26,dB,Lower is better,png/10_test_spatiallsd_0_10deg.png,pdf/10_test_spatiallsd_0_10deg.pdf
+11,Secondary test,test,SpatialLSD_10_20deg,Spatial LSD: 10-20 deg from Q26,dB,Lower is better,png/11_test_spatiallsd_10_20deg.png,pdf/11_test_spatiallsd_10_20deg.pdf
+12,Secondary test,test,SpatialLSD_20_30deg,Spatial LSD: 20-30 deg from Q26,dB,Lower is better,png/12_test_spatiallsd_20_30deg.png,pdf/12_test_spatiallsd_20_30deg.pdf
+13,Secondary test,test,SpatialLSD_30_180deg,Spatial LSD: 30-180 deg from Q26,dB,Lower is better,png/13_test_spatiallsd_30_180deg.png,pdf/13_test_spatiallsd_30_180deg.pdf
+14,Deferred test,test,DominantNotchPenalizedMAE_Hz,Dominant-notch penalized MAE,Hz,Lower is better,png/14_test_dominantnotchpenalizedmae_hz.png,pdf/14_test_dominantnotchpenalizedmae_hz.pdf
+15,Deferred test,test,DominantNotchMatchedMAE_Hz,Dominant-notch matched-only MAE,Hz,Lower is better,png/15_test_dominantnotchmatchedmae_hz.png,pdf/15_test_dominantnotchmatchedmae_hz.pdf
+16,Deferred test,test,DominantNotchMissRate,Dominant-notch miss rate,fraction,Lower is better,png/16_test_dominantnotchmissrate.png,pdf/16_test_dominantnotchmissrate.pdf
+17,Deferred test,test,DominantNotchSpuriousRate,Dominant-notch spurious rate,fraction,Lower is better,png/17_test_dominantnotchspuriousrate.png,pdf/17_test_dominantnotchspuriousrate.pdf
+18,Deferred test,test,ReferenceNotchFraction,Reference notch fraction,fraction,Descriptive only,png/18_test_referencenotchfraction.png,pdf/18_test_referencenotchfraction.pdf
+19,Deferred test,test,ITDWeightedMAE_us,ITD solid-angle-weighted MAE,us,Lower is better,png/19_test_itdweightedmae_us.png,pdf/19_test_itdweightedmae_us.pdf
+20,Deferred test,test,ITDMaximumAbsoluteError_us,ITD maximum absolute error,us,Lower is better,png/20_test_itdmaximumabsoluteerror_us.png,pdf/20_test_itdmaximumabsoluteerror_us.pdf

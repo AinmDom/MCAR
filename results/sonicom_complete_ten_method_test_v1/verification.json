@@ -1,0 +1,17 @@
+{
+  "status": "verified",
+  "split": "test",
+  "method_count": 10,
+  "endpoint_count": 20,
+  "subject_count": 44,
+  "per_subject_rows": 8800,
+  "aggregate_rows": 200,
+  "paired_rows": 180,
+  "wide_rows": 20,
+  "method_registry_rows": 10,
+  "all_numeric_finite": true,
+  "primary_source_max_abs_error": 0.0,
+  "supplementary_source_max_abs_error": 0.0,
+  "aggregate_mean_max_abs_error": 0.0,
+  "new_test_subject_count_read": 0
+}

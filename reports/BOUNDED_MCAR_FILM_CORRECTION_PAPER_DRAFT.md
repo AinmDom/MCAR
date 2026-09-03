@@ -271,11 +271,22 @@ the bounded gate selects a conservative local adjustment.
   120 aggregate rows, 80 paired direction effects, 72 Bounded interaction
   effects, and 132 quality rows; every numeric field is finite and each
   method--direction--metric group contains all 44 validation listeners.
+- After explicit authorization and result-blind preregistration, the complete
+  same-test comparison contains all ten registered methods and 20 common
+  endpoints: 8,800 subject-level rows, 200 aggregate rows, 180 paired
+  Bounded-versus-baseline rows, and a 20-row paper-wide table. The four frozen
+  primary values and sixteen supplementary values reproduce their source CSVs
+  exactly; all numeric fields are finite and each method--endpoint cell contains
+  all 44 test listeners. The twenty standalone PNG/vector-PDF figures are stored
+  with the consolidated tables.
 - RANF and FSP-AE direct comparisons are frozen supplementary evidence and must
   not drive tuning. Validation and engineering-test results must remain
   explicitly separated.
-- No further test access is authorized. Any new test evaluation requires a new
-  result-blind pre-registration and explicit user authorization.
+- The newly authorized supplementary test run is post-lock characterization,
+  not a fresh independent confirmation, because the project had already
+  consumed this split. No further test access is authorized; any additional
+  test evaluation requires another result-blind preregistration and explicit
+  user authorization.
 - Literature citations and venue-specific formatting remain placeholders; no
   source should be invented from memory.
 

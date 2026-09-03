@@ -1,5 +1,40 @@
 # 项目实验日志
 
+## 2026-09-03：十方法完整20指标test评价完成
+
+- 在用户明确授权后，按结果盲预注册协议
+  `experiments/film_siren/STAGE_E_COMPLETE_TEN_METHOD_SECONDARY_DEFERRED_TEST_PROTOCOL.md`
+  和manifest identity `E9403269543B6C135871BD8008809B488F2E29977601C95E3FF2BD491FDB229E`
+  完成44名test被试的十方法补充评价。方法固定为SH only、SUpDEq SH、SUpDEq NN、
+  SUpDEq Barycentric、MCA、MCAR v3.5.1、FSP-AE、RANF、Hybrid E190和Bounded E25；
+  不训练、不更新参数、不改变预测，也不根据test调参或选型。
+- 8种外部/经典方法的统一表示为352/352 HDF5，频谱shape均`[2,793,463]`、HRIR均
+  `[793,2,256]`、split=`test`且finite；其4项既有primary逐被试复现最大误差`0 dB`。
+  统一评价session `95875`自然结束exit 0，新9个secondary和7个deferred端点的
+  per-subject/aggregate/paired行数为`7040/160/144`，band profile=`350`、spatial map=`7670`，
+  全部numeric finite，`test_subject_count_read=44`。
+- 随后只读合并既有4项primary，完整包的per-subject/aggregate/paired/wide行数为
+  `8800/200/180/20`；每个method-endpoint恰有44名被试，primary与supplementary源值逐键最大误差
+  均为`0`，聚合均值复核误差`0`。合并不重新读取test，`new_test_subject_count_read=0`。
+- 19个误差/率端点中，18个有唯一最低均值：FSP-AE最低10项（Contra HF、Full LSD、四个空间LSD、
+  两个dominant-notch位置误差、notch miss rate、ITD最大误差），Hybrid E190最低4项（Contra25、
+  HF一/二阶差分、multi-scale notch depth），Bounded E25最低2项（Full ERB、ERB-band ILD），
+  MCAR v3.5.1最低Horizontal ILD，SUpDEq NN最低ITD weighted MAE。notch spurious rate十方法均为0，
+  并列第1；ReferenceNotchFraction十方法均为1，作为方法无关描述量不排名。因此不支持任何方法
+  “全指标支配”的声明。
+- 代表性均值：Bounded的Full ERB=`0.7941314445 dB`、ERB-band ILD=`1.5733966177 dB`；
+  Hybrid的Contra25=`1.2003965313 dB`、HF一/二阶差分=`0.3997093568/0.2145803510 dB/bin[/bin^2]`、
+  notch-depth=`0.4876985604 dB`；FSP-AE的Contra HF=`3.1643546865 dB`、Full LSD=
+  `3.1202205122 dB`、notch miss=`0.3766895693`、ITD max=`123.6387278451 us`；MCAR v3.5.1的
+  Horizontal ILD=`0.6447090917 dB`；SUpDEq NN的ITD weighted MAE=`15.1370557204 us`。
+- 20张独立dot-and-whisker图均含10方法均值和10,000次subject-bootstrap 95% CI；20 PNG和20
+  vector PDF非空，PNG约`4151--4245 × 2814--2815`，所有均值位于对应区间内，机器验证和四类
+  代表图目视抽查均通过。证据：`results/sonicom_complete_ten_method_secondary_deferred_test_v1/`、
+  `results/sonicom_complete_ten_method_test_v1/`、`outputs/ten_method_test_metric_figures_v1/`。
+- 本批结果属于**post-lock supplementary test characterization**：test在项目历史中已经消费，
+  所以它补齐同一test上的横向描述与配对统计，但不是新的未见独立确认，也不能用于训练、调参、
+  模型晋升或改变Bounded E25/MCAR v3.5.1的既有角色。训练/best/末点预算判据=N/A。
+
 ## 2026-09-02：十方法Q14/Q26/Q50正式统一评价完成
 
 - 正式MATLAB session `55629`自然结束，132/132个validation subject×direction-count单元完成，exit=`0`。

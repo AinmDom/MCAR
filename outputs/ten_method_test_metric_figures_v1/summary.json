@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "split": "test",
+  "figure_count": 20,
+  "png_count": 20,
+  "pdf_count": 20,
+  "method_count_per_figure": 10,
+  "subject_count_per_method": 44,
+  "all_files_nonempty": true,
+  "new_test_subject_count_read": 0
+}

@@ -27,6 +27,14 @@ residual = log|H_ref| - log|H_MCA|
 `results/sonicom_bounded_mcar_film_correction_final_e25_frozen_test_nine_method/` 和
 `reports/BOUNDED_MCAR_FILM_CORRECTION_PAPER_DRAFT.md`。
 
+十方法现已在同一44人test上补齐为**20个共同端点**：复用4项冻结primary结果，并按结果盲
+预注册补算9项secondary和7项deferred指标。完整论文宽表、200行方法-端点汇总、180行
+Bounded配对统计和8,800行逐被试数据位于
+`results/sonicom_complete_ten_method_test_v1/`；每指标一张的20组PNG/vector PDF位于
+`outputs/ten_method_test_metric_figures_v1/`。Bounded最低均值2项、Hybrid 4项、FSP-AE 10项，
+另有MCAR v3.5.1与SUpDEq NN各1项；notch spurious rate十方法并列，ReferenceNotchFraction
+为方法无关描述量。该批属于post-lock test characterization，不用于调参、选型或晋升。
+
 输入方向敏感性实验进一步把论文主配置固定为 **Bounded E25 + Q26**。在同一44名
 validation被试、统一排除Q50输入后的743个共同方向上，Q14/Q26/Q50的四项误差分别为：
 Full ERB `1.111461 / 0.792813 / 0.810526`、Contra25 ERB

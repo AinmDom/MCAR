@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "test",
+  "method_count": 10,
+  "endpoint_count": 20,
+  "subject_count": 44,
+  "per_subject_rows": 8800,
+  "aggregate_rows": 200,
+  "paired_rows": 180,
+  "wide_rows": 20,
+  "method_registry_rows": 10,
+  "all_finite": true,
+  "bootstrap_replicates": 10000,
+  "bootstrap_base_seed": 20260903,
+  "source_test_subject_count_read": 44,
+  "new_test_subject_count_read_during_consolidation": 0,
+  "primary_reproduction_max_abs_error_db": 0.0,
+  "supplementary_manifest_identity_sha256": "E9403269543B6C135871BD8008809B488F2E29977601C95E3FF2BD491FDB229E",
+  "source_sha256": {
+    "results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv": "EF64CF69B21322EC6255F0155BEE9F04C7144D59FE1E9A315B259513B9E11824",
+    "results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/summary.json": "0176DE837F383653BB19FE0671C0780759405E175F12EF10F0F060901A346BFB",
+    "results/sonicom_complete_ten_method_secondary_deferred_test_v1/per_subject_metrics.csv": "5DD62A04EB467CABC8E5A0DC1A163790177E1E07A9A4DB2A0B028F81A4B663A9",
+    "results/sonicom_complete_ten_method_secondary_deferred_test_v1/summary.json": "4A8EBEF7D4EC6A70688F399D1ED20F05D1CC9DCE1CD9CBFF3C48BBF0F6EC9A3E"
+  },
+  "claim_boundary": "Post-lock supplementary test characterization; no tuning, selection, or promotion decision."
+}

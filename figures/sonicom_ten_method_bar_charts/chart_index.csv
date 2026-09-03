@@ -1,0 +1,25 @@
+﻿chart_no,evidence_tier,split,endpoint,unit,direction,methods_plotted,not_run_methods,best_method,best_value,relative_path
+1,Primary validation,val,FullSphereERB,dB,Lower is better,10,,Bounded E25,0.7966490937772325,01_primary_validation/01_FullSphereERB_val.png
+2,Primary validation,val,Contralateral25ERB,dB,Lower is better,10,,Hybrid E190,1.214593084257463,01_primary_validation/02_Contralateral25ERB_val.png
+3,Primary validation,val,ContralateralHighFrequency,dB,Lower is better,10,,FSP-AE,3.103809369743327,01_primary_validation/03_ContralateralHighFrequency_val.png
+4,Primary validation,val,HorizontalILDMAE,dB,Lower is better,10,,Bounded E25,0.5650044447932491,01_primary_validation/04_HorizontalILDMAE_val.png
+5,Primary frozen engineering test,test,FullSphereERB,dB,Lower is better,9,Hybrid E190,Bounded E25,0.7941314445271186,02_primary_frozen_engineering_test/05_FullSphereERB_test.png
+6,Primary frozen engineering test,test,Contralateral25ERB,dB,Lower is better,9,Hybrid E190,Bounded E25,1.2015177313170475,02_primary_frozen_engineering_test/06_Contralateral25ERB_test.png
+7,Primary frozen engineering test,test,ContralateralHighFrequency,dB,Lower is better,9,Hybrid E190,FSP-AE,3.1643546864916625,02_primary_frozen_engineering_test/07_ContralateralHighFrequency_test.png
+8,Primary frozen engineering test,test,HorizontalILDMAE,dB,Lower is better,9,Hybrid E190,MCAR v3.5.1,0.6447090916559254,02_primary_frozen_engineering_test/08_HorizontalILDMAE_test.png
+9,Secondary validation,val,FullSphereLSD,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,3.0700346219267796,03_secondary_validation/09_FullSphereLSD_val.png
+10,Secondary validation,val,HFFirstDifferenceMAE,dB/bin,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,Hybrid E190,0.40270265394991095,03_secondary_validation/10_HFFirstDifferenceMAE_val.png
+11,Secondary validation,val,HFSecondDifferenceMAE,dB/bin^2,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,Hybrid E190,0.21679756993597205,03_secondary_validation/11_HFSecondDifferenceMAE_val.png
+12,Secondary validation,val,MultiScaleNotchDepthMAE,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,Hybrid E190,0.4884118525819345,03_secondary_validation/12_MultiScaleNotchDepthMAE_val.png
+13,Secondary validation,val,ERBBandILDMean,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,Bounded E25,1.491822743957693,03_secondary_validation/13_ERBBandILDMean_val.png
+14,Secondary validation,val,SpatialLSD_0_10deg,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,2.6274097895647293,03_secondary_validation/14_SpatialLSD_0_10deg_val.png
+15,Secondary validation,val,SpatialLSD_10_20deg,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,3.1070763722734966,03_secondary_validation/15_SpatialLSD_10_20deg_val.png
+16,Secondary validation,val,SpatialLSD_20_30deg,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,3.316794192059734,03_secondary_validation/16_SpatialLSD_20_30deg_val.png
+17,Secondary validation,val,SpatialLSD_30_180deg,dB,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,3.0422600639865864,03_secondary_validation/17_SpatialLSD_30_180deg_val.png
+18,Deferred validation,val,DominantNotchPenalizedMAE_Hz,Hz,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,829.6414508345799,04_deferred_validation/18_DominantNotchPenalizedMAE_Hz_val.png
+19,Deferred validation,val,DominantNotchMatchedMAE_Hz,Hz,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,417.5036538741795,04_deferred_validation/19_DominantNotchMatchedMAE_Hz_val.png
+20,Deferred validation,val,DominantNotchMissRate,fraction,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,0.38017729811656265,04_deferred_validation/20_DominantNotchMissRate_val.png
+21,Deferred validation,val,DominantNotchSpuriousRate,fraction,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,MCAR v3.5.1,0.022727272727272728,04_deferred_validation/21_DominantNotchSpuriousRate_val.png
+22,Deferred validation,val,ReferenceNotchFraction,fraction,Descriptive only,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,,,04_deferred_validation/22_ReferenceNotchFraction_val.png
+23,Deferred validation,val,ITDWeightedMAE_us,us,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,MCAR v3.5.1,15.520266032911964,04_deferred_validation/23_ITDWeightedMAE_us_val.png
+24,Deferred validation,val,ITDMaximumAbsoluteError_us,us,Lower is better,5,SH only; SUpDEq SH; SUpDEq NN; SUpDEq Barycentric; MCA,FSP-AE,104.40341278891455,04_deferred_validation/24_ITDMaximumAbsoluteError_us_val.png

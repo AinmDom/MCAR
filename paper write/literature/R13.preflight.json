@@ -1,0 +1,12 @@
+{
+  "schema": "pdf_read_preflight/1",
+  "verdict": "PASS",
+  "file": "D:\\course\\CUC_2\\CSMT\\MCAR\\paper write\\ref\\review\\2020 - Measurement of Head-Related Transfer Functions.pdf",
+  "sha256": "66421cec69e1aa00a6cac96838466f7aee9baa64ab62d2280413f079bb54d4d3",
+  "declared_page_count": 40,
+  "enumerated_page_count": 40,
+  "reader_page_count": 40,
+  "warnings": [],
+  "generated_at": "2026-09-04T10:24:29.911025+00:00",
+  "tool": "pdf_read_preflight/1.0.0"
+}

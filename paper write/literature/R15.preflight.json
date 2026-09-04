@@ -1,0 +1,12 @@
+{
+  "schema": "pdf_read_preflight/1",
+  "verdict": "PASS",
+  "file": "D:\\course\\CUC_2\\CSMT\\MCAR\\paper write\\ref\\review\\2024 - A Review on Head-Related Transfer Function Generation for.pdf",
+  "sha256": "8b3bbdcd9c3ca8f0c6d65d9ef2cd639fa5645d0d5874518ac48bf8a7453e7667",
+  "declared_page_count": 46,
+  "enumerated_page_count": 46,
+  "reader_page_count": 46,
+  "warnings": [],
+  "generated_at": "2026-09-04T10:24:35.560140+00:00",
+  "tool": "pdf_read_preflight/1.0.0"
+}

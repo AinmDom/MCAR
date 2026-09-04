@@ -1,0 +1,12 @@
+{
+  "schema": "pdf_read_preflight/1",
+  "verdict": "PASS",
+  "file": "D:\\course\\CUC_2\\CSMT\\MCAR\\paper write\\ref\\method\\2017 - AKtools.pdf",
+  "sha256": "ca0637e44eb0505a4d4ac2535fbee590e44f982b54eac2a76e6219bed728c47c",
+  "declared_page_count": 7,
+  "enumerated_page_count": 7,
+  "reader_page_count": 7,
+  "warnings": [],
+  "generated_at": "2026-09-04T10:22:53.752455+00:00",
+  "tool": "pdf_read_preflight/1.0.0"
+}

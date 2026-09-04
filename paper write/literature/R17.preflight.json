@@ -1,0 +1,12 @@
+{
+  "schema": "pdf_read_preflight/1",
+  "verdict": "PASS",
+  "file": "D:\\course\\CUC_2\\CSMT\\MCAR\\paper write\\ref\\review\\2025 - Deep Learning for Personalized Binaural Audio Reproduction.pdf",
+  "sha256": "93924c5b573b987375b3f30b8157e421c19f11796413a4c56615355f23f034aa",
+  "declared_page_count": 27,
+  "enumerated_page_count": 27,
+  "reader_page_count": 27,
+  "warnings": [],
+  "generated_at": "2026-09-04T10:24:49.837833+00:00",
+  "tool": "pdf_read_preflight/1.0.0"
+}

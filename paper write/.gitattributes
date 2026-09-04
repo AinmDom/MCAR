@@ -1,0 +1,3 @@
+# 官方来源快照必须保留原始字节，避免自动换行转换破坏已记录的SHA-256。
+# 快照自带的空白不是本文维护的格式，不对其执行空白修复。
+data_provenance/sonicom/** -text -whitespace

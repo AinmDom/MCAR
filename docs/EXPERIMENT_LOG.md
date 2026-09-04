@@ -2,6 +2,12 @@
 
 ## 2026-09-04：Hybrid LSD B三seed协议冻结、启动前验证通过
 
+- 启动尝试1（23:36:35+08:00）：controller PID43156、训练PID29812/40732/41124，
+  三者均exit1，原因是新增运行日志目录未被Git忽略，trainer的clean-Git guard拒绝。
+  失败发生在dataset解析前，optimizer_steps=0、test_subjects_read=0，没有正式训练产物。
+  保留`outputs/hybrid_lsd_b_e190/launch.json`及stderr；新增仅该运行日志目录的ignore规则，
+  attempt2使用独立日志子目录并沿用原三份配置。未关闭clean-Git检查。
+
 - 用户将此前四组设想缩减为B组，明确要求seeds `20260821/20260822/20260823`
   同时运行，旧Hybrid结果作为对照。预注册协议：
   `experiments/film_siren/STAGE_D_HYBRID_LSD_B_E190_PROTOCOL.md`。

@@ -83,3 +83,10 @@ GPU, have distinct run/log directories, and refuse to overwrite earlier runs.
 Use `scripts/run_hybrid_lsd_b.py` for a single launch; its controller waits without
 polling and records exit codes. Codex stops active monitoring after one startup
 verification; a later handoff checks completion and performs the frozen analysis.
+
+Launch bookkeeping correction, before any optimizer step: the first attempt
+(2026-09-04 23:36:35 +08:00) exited at the clean-Git guard because its own log
+directory was untracked. Preserve that receipt and all stderr logs. Ignore only
+the dedicated operational log directory, then use `--attempt 2` to write a new
+receipt under `outputs/hybrid_lsd_b_e190/attempt2/`. No model, objective, data or
+budget change; all three failed processes exited before subject paths were read.

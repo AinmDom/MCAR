@@ -6,6 +6,7 @@ starts inference. Run once from a clean Git tree. All output is local/ignored.
 from __future__ import annotations
 
 from datetime import datetime
+import argparse
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,11 @@ from prepare_hybrid_lsd_b import MANIFEST, ROOT, sha
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--attempt", type=int, default=1)
+    args = parser.parse_args()
+    if args.attempt < 1:
+        raise ValueError("attempt must be positive")
     manifest = json.loads((ROOT / MANIFEST).read_text())
     git_status = subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True)
     if git_status.strip():
@@ -28,9 +34,11 @@ def main():
         if (ROOT / member["output_directory"]).exists():
             raise FileExistsError(member["output_directory"])
     log_dir = ROOT / "outputs/hybrid_lsd_b_e190"
+    if args.attempt > 1:
+        log_dir = log_dir / f"attempt{args.attempt}"
     log_dir.mkdir(parents=True, exist_ok=True)
     receipt_path = log_dir / "launch.json"
-    receipt = {"status": "launching", "started_at": datetime.now().astimezone().isoformat(),
+    receipt = {"status": "launching", "attempt": args.attempt, "started_at": datetime.now().astimezone().isoformat(),
                "controller_pid": os.getpid(), "python": sys.executable,
                "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                "git_dirty": False, "manifest_sha256": sha(ROOT / MANIFEST),

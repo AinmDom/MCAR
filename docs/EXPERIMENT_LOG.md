@@ -1,5 +1,29 @@
 # 项目实验日志
 
+## 2026-09-04：Hybrid LSD B三seed协议冻结、启动前验证通过
+
+- 用户将此前四组设想缩减为B组，明确要求seeds `20260821/20260822/20260823`
+  同时运行，旧Hybrid结果作为对照。预注册协议：
+  `experiments/film_siren/STAGE_D_HYBRID_LSD_B_E190_PROTOCOL.md`。
+- 原MCA/ERB处理、模型、损失和训练设置不变；从各自冻结FiLM E130开始，新建零输出CNN；
+  仅新增`1.0 * LSD_loss / target_std`，训练sqrt内加入`(1e-6 dB)^2`，报告LSD不加epsilon。
+  LSD先逐耳/方向跨463频点算RMS，再双耳和立体角方向平均；validation最后44被试等权平均。
+  三份同seed配置自动比较通过，仅身份字段及两个LSD参数不同。
+- 固定E190、49,780步、horizon200/warmup2；权威checkpoint为`last.pt`，
+  `best.pt`仅原总loss诊断。不得按LSD改选checkpoint、调权重或追加预算。
+  完成后构造三成员等权residual-dB ensemble，复用旧44名validation预测/结果，报告
+  LSD新减旧配对bootstrap（10,000次、seed20260904）及ERB/HF/ILD/尾部权衡。
+- `configs/experiments/sonicom_hybrid_lsd_b_e190_preparation_manifest.json`冻结3个父模型、
+  3个旧对照配置/checkpoint/完成报告及44个旧validation预测的SHA256；旧报告均E190完成、
+  clean training Git、test_subjects_read=0。旧Hybrid LSD均值3.5489256190074472 dB。
+- `reports/HYBRID_LSD_B_PREFLIGHT_20260904.json`记录41/41测试通过；CUDA单train被试P0002、
+  16 global+16 horizontal前后向passed，total=1.108809232711792，采样LSD=3.5230913162231445 dB，
+  output梯度norm=3.8066632747650146，骨干无梯度，峰值allocated=268505600 bytes。
+  该smoke非validation结论，亦不代表完整run峰值。pytest缓存目录写权限警告不影响测试结果。
+- 当前状态为已准备、尚未训练；启动前将本轮代码/配置/证据提交，require_clean_git=true。
+  正式run启动和PID以后续交接及`outputs/hybrid_lsd_b_e190/launch.json`为准。
+  新test_subjects_read=0；正式训练finite/best/完成性待运行后核验。禁止复用已消费test做独立确认。
+
 ## 2026-09-03：十方法完整20指标test评价完成
 
 - 在用户明确授权后，按结果盲预注册协议

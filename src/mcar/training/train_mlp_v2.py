@@ -45,6 +45,8 @@ class LossMetrics:
     spectral_band_ild_smooth_l1_db: float = 0.0
     spectral_band_ild_mae_db: float = 0.0
     notch_depth_mae_db: float = 0.0
+    full_sphere_lsd_db: float = 0.0
+    lsd_loss_db: float = 0.0
 
 
 @dataclass

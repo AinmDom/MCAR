@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from typing import Mapping
 
 import numpy as np
@@ -12,7 +13,9 @@ from mcar.losses import (
     spectral_band_ild_smooth_l1_and_mae,
     strict_hrir_ild_mae,
 )
-from mcar.training.train_mlp_v2 import LossMetrics, calculate_losses
+from mcar.training.train_mlp_v2 import (
+    LossMetrics, calculate_losses, weighted_direction_mean,
+)
 
 
 @dataclass(frozen=True)
@@ -33,6 +36,8 @@ class StageCLossConfiguration:
     notch_radii_bins: tuple[int, ...] = (4, 8, 16)
     notch_depth_threshold_db: float = 1.0
     notch_softplus_temperature_db: float = 0.5
+    lsd_weight: float = 0.0
+    lsd_epsilon_db: float = 1e-6
 
     def validate(self) -> None:
         scalar_weights = (
@@ -43,15 +48,34 @@ class StageCLossConfiguration:
             self.high_frequency_first_difference_weight,
             self.high_frequency_second_difference_weight,
             self.notch_depth_weight,
+            self.lsd_weight,
         )
-        if any(weight < 0.0 for weight in scalar_weights):
-            raise ValueError("Stage C loss weights must be non-negative")
+        if any(not math.isfinite(weight) or weight < 0.0 for weight in scalar_weights):
+            raise ValueError("Stage C loss weights must be finite and non-negative")
+        if not math.isfinite(self.lsd_epsilon_db) or self.lsd_epsilon_db <= 0.0:
+            raise ValueError("lsd_epsilon_db must be finite and positive")
         if self.spectral_band_ild_beta_db <= 0.0:
             raise ValueError("spectral_band_ild_beta_db must be positive")
         if not self.notch_radii_bins or any(
             radius < 1 for radius in self.notch_radii_bins
         ):
             raise ValueError("notch_radii_bins must contain positive integers")
+
+
+def spectral_lsd_db(
+    error_db: torch.Tensor,
+    direction_weights: torch.Tensor,
+    epsilon_db: float = 0.0,
+) -> torch.Tensor:
+    """Frequency RMS per ear/direction, then solid-angle and ear means.
+
+    Use a positive epsilon for backpropagation at zero error; reporting uses
+    detached errors with epsilon zero, matching secondary_metrics.full_sphere_lsd.
+    """
+    return weighted_direction_mean(
+        torch.sqrt(torch.mean(error_db.square(), dim=-1) + epsilon_db ** 2),
+        direction_weights,
+    )
 
 
 def strict_metadata_to_device(
@@ -149,6 +173,21 @@ def calculate_stage_c_losses(
         configuration.strict_ild_weight * strict_ild
         + configuration.spectral_band_ild_weight * band_smooth_l1
     ) / target_std
+    if configuration.lsd_weight > 0.0 or calculate_spectral_diagnostics:
+        error_db = (
+            global_prediction_normalized.float() * target_std + target_mean
+            - global_target_db.float()
+        )
+        global_weights = global_direction_features[:, 5].float()
+        lsd_loss = spectral_lsd_db(
+            error_db, global_weights, configuration.lsd_epsilon_db
+        )
+        if configuration.lsd_weight > 0.0:
+            total = total + configuration.lsd_weight * lsd_loss / target_std
+        metrics.full_sphere_lsd_db = float(
+            spectral_lsd_db(error_db.detach(), global_weights).item()
+        )
+        metrics.lsd_loss_db = float(lsd_loss.detach().item())
     metrics.total = float(total.detach().item())
     metrics.ild_mae_db = float(strict_ild.detach().item())
     metrics.spectral_band_ild_smooth_l1_db = float(

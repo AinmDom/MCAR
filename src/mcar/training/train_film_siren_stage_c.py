@@ -490,6 +490,7 @@ def evaluate_validation(
                 "subject_id": subject.subject_id,
                 "subject_label": subject.subject_label,
                 "objective_total": metrics.total,
+                "full_sphere_lsd_db": metrics.full_sphere_lsd_db,
                 "weighted_residual_mae_db": raw_metrics.residual_mae_db,
                 "weighted_residual_rmse_db": raw_metrics.residual_rmse_db,
                 "erb_mae_db": metrics.erb_mae_db,
@@ -510,6 +511,7 @@ def evaluate_validation(
     averaged = average_metrics(accumulated, len(subjects))
     return {
         "objective_metrics": asdict(averaged),
+        "aggregate_full_sphere_lsd_db": averaged.full_sphere_lsd_db,
         "aggregate_weighted_residual_mae_db": float(np.mean(residual_mae)),
         "aggregate_weighted_residual_rmse_db": float(np.mean(residual_rmse)),
         "per_subject": rows,

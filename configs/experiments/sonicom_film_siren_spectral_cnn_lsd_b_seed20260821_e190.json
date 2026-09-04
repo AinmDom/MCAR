@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-09-04",
+  "experiment_id": "HYBRID-LSD-B-SEED20260821-E190",
+  "model_version": "film-siren-spectral-cnn-lsd-b-v1",
+  "experiment_type": "film_siren_spectral_cnn_stage_d",
+  "protocol": "experiments/film_siren/STAGE_D_HYBRID_LSD_B_E190_PROTOCOL.md",
+  "search_stage": "lsd_b_fixed_cycle_e190",
+  "dataset_root": "data/processed/sonicom_residual_q26_v1",
+  "subject_split_csv": "configs/data/sonicom_subject_split_v1.csv",
+  "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+  "q26_normalization": "configs/data/siren_b_q26_normalization_v1.json",
+  "initial_film_checkpoint": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130/last.pt",
+  "initial_film_checkpoint_sha256": "E37676D843D608B4DDD7B311EBA8B28A933183A03E7BAA49E1CF20E35F8B4129",
+  "freeze_film_siren": true,
+  "direction_protocol": "global_767_interpolation_plus_independent_horizontal_72_interpolation",
+  "frequency_mapping": {
+    "mode": "dual",
+    "formula_version": "dual_linear_erb_v1",
+    "frequency_minimum_hz": 86.1328125,
+    "frequency_maximum_hz": 19982.8125,
+    "coordinate_minimum": -1.0,
+    "coordinate_maximum": 1.0
+  },
+  "condition_encoder": {
+    "frequency_count": 463,
+    "convolution_channels": 32,
+    "direction_embedding_dimension": 128,
+    "latent_dimension": 128
+  },
+  "model": {
+    "coordinate_dimension": 7,
+    "hidden_width": 256,
+    "sine_layer_count": 6,
+    "first_omega": 20.0,
+    "hidden_omega": 20.0,
+    "output_dimension": 2,
+    "latent_dimension": 128,
+    "modulation_variant": "full",
+    "placement": "all",
+    "modulator_width": 128,
+    "gamma_max_delta": 0.5,
+    "beta_max": 3.141592653589793,
+    "amplitude_max_delta": 0.5
+  },
+  "spectral_refiner": {
+    "input_channels": 7,
+    "channels": 48,
+    "dilation_schedule": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "kernel_size": 7,
+    "condition_width": 64
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0001
+  },
+  "scheduler": {
+    "name": "warmup_cosine",
+    "horizon_cycles": 200,
+    "warmup_cycles": 2
+  },
+  "objective": {
+    "erb_weight": 0.75,
+    "high_frequency_weight": 0.25,
+    "strict_ild_weight": 0.75,
+    "spectral_band_ild_weight": 0.05,
+    "spectral_band_ild_minimum_center_hz": 200.0,
+    "spectral_band_ild_maximum_center_hz": 18000.0,
+    "spectral_band_ild_beta_db": 0.5,
+    "high_frequency_first_difference_weight": 0.25,
+    "high_frequency_second_difference_weight": 0.15,
+    "spectral_difference_minimum_frequency_hz": 4000.0,
+    "notch_depth_weight": 0.3,
+    "notch_minimum_frequency_hz": 4000.0,
+    "notch_maximum_frequency_hz": 18000.0,
+    "notch_radii_bins": [
+      4,
+      8,
+      16
+    ],
+    "notch_depth_threshold_db": 1.0,
+    "notch_softplus_temperature_db": 0.5,
+    "lsd_weight": 1.0,
+    "lsd_epsilon_db": 1e-06
+  },
+  "cycles": 190,
+  "steps_per_cycle": 262,
+  "global_directions_per_step": 16,
+  "horizontal_directions_per_step": 16,
+  "validation_interval_cycles": 5,
+  "validation_directions_per_block": 32,
+  "gradient_clip": 5.0,
+  "automatic_mixed_precision": false,
+  "precision": "FP32",
+  "seed": 20260821,
+  "require_cuda": true,
+  "require_clean_git": true,
+  "test_policy": "Only the 262 train and 44 validation rows are resolved. Test paths are never constructed or opened.",
+  "run_name": "sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190",
+  "conditioning_scope": "global_plus_local_mca",
+  "local_mca_policy": "append_binaural_query_mca_logmag_db_normalized_by_train_only_statistics",
+  "formal_fixed_cycle": true,
+  "checkpoint_policy": "fixed_stop_cycle_last"
+}

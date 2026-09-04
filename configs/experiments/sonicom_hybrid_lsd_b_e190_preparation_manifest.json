@@ -1,0 +1,468 @@
+{
+  "status": "prepared_not_started",
+  "created_on": "2026-09-04",
+  "protocol": "experiments/film_siren/STAGE_D_HYBRID_LSD_B_E190_PROTOCOL.md",
+  "members": [
+    {
+      "seed": 20260821,
+      "config": {
+        "path": "configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190.json",
+        "sha256": "40A692B7BCB3CC20DED1F005EDD49D2796FC3CBEF3C2C599168FF267B2D49F35",
+        "bytes": 3656
+      },
+      "parent": {
+        "path": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130/last.pt",
+        "sha256": "E37676D843D608B4DDD7B311EBA8B28A933183A03E7BAA49E1CF20E35F8B4129",
+        "bytes": 17386333
+      },
+      "existing_control_config": {
+        "path": "configs/experiments/sonicom_film_siren_spectral_cnn_final_seed20260821_e190.json",
+        "sha256": "556BAC76A0D3269C8E06C1575EA3906E5BECF92C5CCF2CEDF4A9B910E8A97E8C",
+        "bytes": 3733
+      },
+      "existing_control_checkpoint": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260821_e190/last.pt",
+        "sha256": "0596FD3BC3B03C5C269254CBE5CC96198DD94369901CFBC514293CD3F8F4A6DC",
+        "bytes": 6764817
+      },
+      "existing_control_report": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260821_e190/training_report.json",
+        "sha256": "2C5AFBD71875E6DBC96E3AFF37F210A43BC0F5FEEEC162378F686576F26CEC42",
+        "bytes": 1584
+      },
+      "output_directory": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190"
+    },
+    {
+      "seed": 20260822,
+      "config": {
+        "path": "configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260822_e190.json",
+        "sha256": "EB07D1C449527B1F63596DA61D2ECEA0D5695FA32F57F17D849B4FD62FE40166",
+        "bytes": 3656
+      },
+      "parent": {
+        "path": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260822_e130/last.pt",
+        "sha256": "5463CFE9FA618F5CEA0ADF7415E7CEAC978D071C24FB2038772A968519808A1D",
+        "bytes": 17386333
+      },
+      "existing_control_config": {
+        "path": "configs/experiments/sonicom_film_siren_spectral_cnn_final_seed20260822_e190.json",
+        "sha256": "53585DF74C0CBE5A288DA8FC757B8AFD8DDE702E095E25A7B43EFFFCD567EB97",
+        "bytes": 3733
+      },
+      "existing_control_checkpoint": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260822_e190/last.pt",
+        "sha256": "C89CCF90BA48382756C15B15FC3A789E7D4710AE44DC82A0E530A97F30FEC789",
+        "bytes": 6764817
+      },
+      "existing_control_report": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260822_e190/training_report.json",
+        "sha256": "440D00D020FD736270A32C9A74540FA1B4ED3E151216DDB34E5DF5812F1EA2A1",
+        "bytes": 1589
+      },
+      "output_directory": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260822_e190"
+    },
+    {
+      "seed": 20260823,
+      "config": {
+        "path": "configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260823_e190.json",
+        "sha256": "9E73493D6607514AD3E490C93694597E9C008D8E405E6FD11ADB1BA0B26FDBB7",
+        "bytes": 3656
+      },
+      "parent": {
+        "path": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260823_e130/last.pt",
+        "sha256": "DD3C55F6E7FC32A5AC089272978BEF771009BF140768E19A33EDD74E1C704070",
+        "bytes": 17386333
+      },
+      "existing_control_config": {
+        "path": "configs/experiments/sonicom_film_siren_spectral_cnn_final_seed20260823_e190.json",
+        "sha256": "55380B987A3920AF3AE3C6C293C89907B62D165ABA100400C16B980B91787B25",
+        "bytes": 3733
+      },
+      "existing_control_checkpoint": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260823_e190/last.pt",
+        "sha256": "465B24AD7189AE43242D39F47FD8CF036E3EACAD4D0A460058A9CDC817B34BDE",
+        "bytes": 6764817
+      },
+      "existing_control_report": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260823_e190/training_report.json",
+        "sha256": "4189D9FB6AED615F5F2F825CC0F0FA0E6E9512E4CE8905743CA237374244450A",
+        "bytes": 1584
+      },
+      "output_directory": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260823_e190"
+    }
+  ],
+  "sources": [
+    {
+      "path": "configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json",
+      "sha256": "49109D146962D9049A03E5C0C98900FC0DF5AFE7F228D758C5E78D9CE4D50D03",
+      "bytes": 3672
+    },
+    {
+      "path": "configs/data/sonicom_subject_split_v1.csv",
+      "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132",
+      "bytes": 14758
+    },
+    {
+      "path": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+      "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287",
+      "bytes": 2062
+    },
+    {
+      "path": "configs/data/siren_b_q26_normalization_v1.json",
+      "sha256": "E247EFF81CC6FD4E62C123149FFD42F0DA7A429DF4485A48C1A98943D88C3EB8",
+      "bytes": 62498
+    },
+    {
+      "path": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+      "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A",
+      "bytes": 4215
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/aggregate_metrics.csv",
+      "sha256": "60B92D6A07E845DB52DB6DB662E45083CC3B52C8820E99087B820AE3086547DE",
+      "bytes": 3024
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/band_ild_profile.csv",
+      "sha256": "3AEAEF23C7208A06C8E5550DAE0BA285FA70A9FC0D1AD6B7F9919ECDC8AD909D",
+      "bytes": 424353
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/paired_tail_risk.csv",
+      "sha256": "778B60ACC9E1F6160CA27E6E71CC16C2F83FDDB2BA58C7C569911F75CE749015",
+      "bytes": 10938
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/per_subject_direction_lsd.csv",
+      "sha256": "F112D7FFC0B6B58750DFDCCAF5A8AF1626C6E7C7F825E9CC0162290DCEE73D42",
+      "bytes": 13969810
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/per_subject_metrics.csv",
+      "sha256": "56262269AF2FEB122863B50FD0DB4743BDE1BA5E8F9431E4FD4E9FBC66864FC9",
+      "bytes": 86079
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/protocol_snapshot.json",
+      "sha256": "CA61A60C0121C3AEAD76189F5815DC8435F2C1F8FE59D27664CD3C7E0BC7457F",
+      "bytes": 7341
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/quality_checks.json",
+      "sha256": "C2E1AF9FD022A1D4C29F547649D307AD774A6BA31506655AA985741C88BF9F48",
+      "bytes": 493
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/spatial_direction_map.csv",
+      "sha256": "C82F9E42047E71484B0C388758B280F66E76DFE39FFE806DADD72C6B2EC55458",
+      "bytes": 241595
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/spatial_distance_bins.csv",
+      "sha256": "EC1401DF6E604F86EBB366614BE356E3F7ABD5522274C64C2D693F3FE9D3FE4E",
+      "bytes": 38524
+    },
+    {
+      "path": "results/sonicom_film_secondary_metrics_v1_validation/summary.json",
+      "sha256": "91B607B7323039BD7E09E584F02DE019197B909E642EEC6B04206042CF24535F",
+      "bytes": 1358
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/aggregate_metrics.csv",
+      "sha256": "389E5BF93D9F8B5CD3F6D1DA3DCA1B1861698A1622463086F9CA10023C9ED6A3",
+      "bytes": 1089
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/metric_long.csv",
+      "sha256": "2F1563797BAD2378DA848764F2BD1E8661B81965E1507C3EAF50B6F9493AB2DD",
+      "bytes": 59495
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/paired_bootstrap_comparisons.csv",
+      "sha256": "C78A7F5C9BC443F7122B364C286F9E46DDB2131BD79336855E3943195C725F79",
+      "bytes": 1236
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/quality_checks.csv",
+      "sha256": "80A62B892D11D54777CEB9F8A12E8723A4C20E5CBF314AC3899DE229D76171E9",
+      "bytes": 1814
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/summary.json",
+      "sha256": "5EA3F53942A49538EB3E1FB6068670CA9C2CB0DE7E36573D2B8141D0A1762DE9",
+      "bytes": 5362
+    }
+  ],
+  "existing_validation_prediction_files": [
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0001/prediction.h5",
+      "sha256": "17A46101BDEFD72ECD9F5815725008632582775C79350ACD4CA4B8339CD993F2",
+      "bytes": 2753618
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0012/prediction.h5",
+      "sha256": "79FBDB3E8E9893B45B013B3495FFF55A21762B7F93D40AE79F13EE906748E76C",
+      "bytes": 2754475
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0013/prediction.h5",
+      "sha256": "427AEEC01662D00D1D7C95AAC1EFAF31E3CCEA112E69BAE3BC4D3ADBE75F1B97",
+      "bytes": 2754846
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0022/prediction.h5",
+      "sha256": "5CCCB94C517E0DA5F0CE76155B4706E3B1E3F8723B21C2FE921C2096895BD574",
+      "bytes": 2752926
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0026/prediction.h5",
+      "sha256": "C72FE783BC69DA189F120CB1FE1F93BAB3E71316A1CE8D3D5131730AF795C0B2",
+      "bytes": 2754846
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0046/prediction.h5",
+      "sha256": "7D6B2CAC8BAF39FCF0C2AAA0EE8AB1FD03B5C690EBAE39347B33C9C635EAFE13",
+      "bytes": 2754214
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0066/prediction.h5",
+      "sha256": "7503953141B042800E95E9429CC61B7684AE58C29B3C403E662FD71F3D0BBBE8",
+      "bytes": 2753261
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0073/prediction.h5",
+      "sha256": "C27F8EE4B29AEFE73F2FF94EB923D9B95EF76BAFA0047200412A2C35E03BB49C",
+      "bytes": 2754897
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0113/prediction.h5",
+      "sha256": "A562053478A9FFFB227FD12997BAA61BBFEBD6FF922D3E25B18BDE6B05511B78",
+      "bytes": 2754326
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0116/prediction.h5",
+      "sha256": "70924EF0517624DC0D54F7B78089CB13765474498C2DC74E4A978C170CC92AAB",
+      "bytes": 2755810
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0125/prediction.h5",
+      "sha256": "82AAB7F942A5F0FCD5F1D5503E0F2D660121DE518A9F7384A4F1F475F91F537E",
+      "bytes": 2753954
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0149/prediction.h5",
+      "sha256": "0D00DDF765EECF689B3AB2C840A0B1E9DB8EBFF6C6B9D9A62D890E81C327E5C3",
+      "bytes": 2756075
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0161/prediction.h5",
+      "sha256": "E4D71933BABC68BBA527C980CF358BD7CAFA81B8C876A1D054643F4865C34D11",
+      "bytes": 2754908
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0166/prediction.h5",
+      "sha256": "B3EAF6E6D3059D450D96E171E12DB5CBB3774141EE375B781FEDAEB39A9CBCC9",
+      "bytes": 2755880
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0167/prediction.h5",
+      "sha256": "8A76C7575CA084116A7DC72F3893B0BFBF4A32CA7CD8A188FF8E10E3B64B9EFA",
+      "bytes": 2756080
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0170/prediction.h5",
+      "sha256": "2D64EAE9B39B668825A9C50E5AA6671C71182CF90C5C894FD07F1BEE7AF6DF9D",
+      "bytes": 2755265
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0171/prediction.h5",
+      "sha256": "359414F1F3652AD064C401D00F2DF1D9C8680D29B0011D34FBF8CB5DD4AC63AF",
+      "bytes": 2753012
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0172/prediction.h5",
+      "sha256": "4870B4911AF7E4D18396E356303C0A479DE9648F3C0C5A04883C5F08A114A23B",
+      "bytes": 2754707
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0174/prediction.h5",
+      "sha256": "B19B68CCA94FB06F55EB89A056021D17438E119DC5CAB375841F31213B23996E",
+      "bytes": 2755997
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0193/prediction.h5",
+      "sha256": "4F076E1DE937B04A15FCD474510A68E034C84EF8BCFEBA75CDD8A30967E9E906",
+      "bytes": 2753849
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0194/prediction.h5",
+      "sha256": "8C8DFE656DE387CEFF71A984E4C43460B41E33ED2F2129A6C6B8F0EC211AD037",
+      "bytes": 2754979
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0198/prediction.h5",
+      "sha256": "1735334B69033E98533978085460C14C225EEE227BA5FEBD20F7514C99D3AAA9",
+      "bytes": 2753423
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0202/prediction.h5",
+      "sha256": "C8F0BF19B0B1B5154ED26C0230834B38A6179E1E2939AC8BD5EFCB97BCF26D62",
+      "bytes": 2751698
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0203/prediction.h5",
+      "sha256": "CB343696441853092250860F673C53E2FA9CD18D734F046C78EAB893F9F1C219",
+      "bytes": 2753510
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0207/prediction.h5",
+      "sha256": "171B0294FFDEC440C899E85DC97D873D1D521A63B25CC599D7470546C1C299A2",
+      "bytes": 2750579
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0208/prediction.h5",
+      "sha256": "715D71811D5A4D618ACD15DE6B37B6337578EFFC1D6491AEA8743CC3736DBEB9",
+      "bytes": 2755165
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0221/prediction.h5",
+      "sha256": "7E2AF0B05661604A78BB0D9FDF3669AD0094D7EFC8CCA1CCECDD5FC113C6C819",
+      "bytes": 2753532
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0230/prediction.h5",
+      "sha256": "9A092C517FF8CD50F37F18FEE67FF4BB9750A1BA9829063C315AAD60B5C399FD",
+      "bytes": 2756232
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0242/prediction.h5",
+      "sha256": "2D86C13DDDB42636793A43BBDA5E3BDB185BB7B1AA2B47334CDA0AF51ABF1CF8",
+      "bytes": 2755579
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0256/prediction.h5",
+      "sha256": "369DE1FEB51F5F5062C85F0D67895393FCD15C11B811D3891F673D867A278CED",
+      "bytes": 2755491
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0257/prediction.h5",
+      "sha256": "A0F7B95CEF1FF9BDE43E60D3FFCCDFEBA63777C2531FFAE42C2FD8665C1A7C20",
+      "bytes": 2755641
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0274/prediction.h5",
+      "sha256": "0ED5EA3CC4EF20FD12072D72F4F1ADB4B70C0445A8C0B5A63EE9BF94ACF10DC9",
+      "bytes": 2754375
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0277/prediction.h5",
+      "sha256": "600D21D34639AFCD352C182FBAE419D93B5DA14E793EE3A7D6630C7E6A907F1A",
+      "bytes": 2755138
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0278/prediction.h5",
+      "sha256": "8AFF72561EEF8FFC9066BE103433E366511B1FF0382BBC938828F35548F32BCA",
+      "bytes": 2753295
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0294/prediction.h5",
+      "sha256": "597E24AF72B59C57F0BD5C52042E18114AD7F6E46F75ED92CDA2D46E252CD83A",
+      "bytes": 2757367
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0295/prediction.h5",
+      "sha256": "C5C3C6B37867A8CA9C78443AFEE1CD3067CF83467ACE9CDCCA889C2194214FB1",
+      "bytes": 2754722
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0307/prediction.h5",
+      "sha256": "F9B6791E0325F50EB87831508F525C717823053E97A99932C2480E8FAEAC4386",
+      "bytes": 2756145
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0313/prediction.h5",
+      "sha256": "A03FA2A080A7B3B552C84198E73E413013393E3A833C72ED1E7AE3B3B6BD4FC8",
+      "bytes": 2753565
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0335/prediction.h5",
+      "sha256": "890DB682ED52A437F335A474EE0C518D6C4DE00602050AB3C1D059A3CD74127B",
+      "bytes": 2756138
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0338/prediction.h5",
+      "sha256": "01B9FC5B003A5E437DAA74DACF39F0D0B8426D0599CED5A185F8CAC181771A85",
+      "bytes": 2752765
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0341/prediction.h5",
+      "sha256": "FD2DF2C11F0B17A13B042F880D2B8275DCF4666CBBECE4A96A14087D723D0DF0",
+      "bytes": 2756001
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0354/prediction.h5",
+      "sha256": "BC3890B831A402D672149E041D69002E5AC15180B3F339637D82A8CC9B3EA4EC",
+      "bytes": 2755908
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0360/prediction.h5",
+      "sha256": "44C5EDC238BD2C990ED84D65C95BD4A9C29045267F8DA875783FC80E9A26D525",
+      "bytes": 2753197
+    },
+    {
+      "path": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/subjects/P0369/prediction.h5",
+      "sha256": "29040348A66CECA82A90CCA9D261A3DCAEDD3F973B2F918EA0DAE9AE94B483F9",
+      "bytes": 2755436
+    }
+  ],
+  "existing_hybrid_val_lsd_mean_db": 3.548925619007447,
+  "test_subjects_read": 0,
+  "control_training_runs_started": 0,
+  "validation_subject_labels": [
+    "P0001",
+    "P0012",
+    "P0013",
+    "P0022",
+    "P0026",
+    "P0046",
+    "P0066",
+    "P0073",
+    "P0113",
+    "P0116",
+    "P0125",
+    "P0149",
+    "P0161",
+    "P0166",
+    "P0167",
+    "P0170",
+    "P0171",
+    "P0172",
+    "P0174",
+    "P0193",
+    "P0194",
+    "P0198",
+    "P0202",
+    "P0203",
+    "P0207",
+    "P0208",
+    "P0221",
+    "P0230",
+    "P0242",
+    "P0256",
+    "P0257",
+    "P0274",
+    "P0277",
+    "P0278",
+    "P0294",
+    "P0295",
+    "P0307",
+    "P0313",
+    "P0335",
+    "P0338",
+    "P0341",
+    "P0354",
+    "P0360",
+    "P0369"
+  ],
+  "integrity": "Existing config/checkpoint hashes and completed E190 reports verified; 44 validation prediction byte hashes captured. No prediction tensor re-evaluation."
+}

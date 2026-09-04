@@ -342,7 +342,8 @@ def test_final_e130_configs_are_matched_fixed_cycle_members(seed: int) -> None:
     assert configuration["ensemble"]["weight"] == pytest.approx(1 / 3)
 
 
-def test_stage_c_dual_sampling_loss_has_finite_gradient_and_exact_increment() -> None:
+@pytest.mark.parametrize("target_std", [1.0, 2.5])
+def test_stage_c_dual_sampling_loss_has_finite_gradient_and_exact_increment(target_std: float) -> None:
     torch.manual_seed(7)
     global_directions = 5
     horizontal_directions = 4
@@ -397,7 +398,7 @@ def test_stage_c_dual_sampling_loss_has_finite_gradient_and_exact_increment() ->
         log_weights,
         centers,
         0.0,
-        1.0,
+        target_std,
     )
     baseline, _ = calculate_stage_c_losses(*arguments, baseline_configuration)
     total, metrics = calculate_stage_c_losses(*arguments, stage_c_configuration)
@@ -406,9 +407,24 @@ def test_stage_c_dual_sampling_loss_has_finite_gradient_and_exact_increment() ->
         + stage_c_configuration.spectral_band_ild_weight
         * metrics.spectral_band_ild_smooth_l1_db
     )
-    torch.testing.assert_close(total - baseline, torch.tensor(expected), rtol=1e-5, atol=1e-6)
+    torch.testing.assert_close(total - baseline, torch.tensor(expected / target_std), rtol=1e-5, atol=1e-6)
+    from dataclasses import replace
+    from mcar.training.film_siren_stage_c import spectral_lsd_db
+    with_lsd, lsd_metrics = calculate_stage_c_losses(
+        *arguments, replace(stage_c_configuration, lsd_weight=1.0)
+    )
+    error_db = global_prediction * target_std - global_target
+    expected_lsd = spectral_lsd_db(error_db, global_features[:, 5], 1e-6)
+    torch.testing.assert_close(with_lsd - total, expected_lsd / target_std)
+    assert lsd_metrics.full_sphere_lsd_db == pytest.approx(
+        spectral_lsd_db(error_db.detach(), global_features[:, 5]).item()
+    )
+    diagnostic_total, _ = calculate_stage_c_losses(
+        *arguments, stage_c_configuration, calculate_spectral_diagnostics=True
+    )
+    torch.testing.assert_close(diagnostic_total, total, rtol=0, atol=0)
     assert torch.isfinite(total)
-    total.backward()
+    with_lsd.backward()
     assert global_prediction.grad is not None
     assert horizontal_prediction.grad is not None
     assert torch.all(torch.isfinite(global_prediction.grad))

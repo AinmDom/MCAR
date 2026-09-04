@@ -1,0 +1,47 @@
+{
+  "status": "passed_prelaunch",
+  "date": "2026-09-04",
+  "protocol": "experiments/film_siren/STAGE_D_HYBRID_LSD_B_E190_PROTOCOL.md",
+  "preparation_manifest": "configs/experiments/sonicom_hybrid_lsd_b_e190_preparation_manifest.json",
+  "environment": {
+    "python": "D:/miniconda3/envs/ml/python.exe",
+    "python_version": "3.9.23",
+    "torch_version": "2.8.0+cu128",
+    "cuda_version": "12.8",
+    "gpu": "NVIDIA GeForce RTX 5060",
+    "gpu_total_mib": 8151
+  },
+  "tests": {
+    "command": "python -m pytest tests/test_hybrid_lsd.py tests/test_film_siren_stage_c.py tests/test_film_siren_spectral_cnn.py -q",
+    "passed": 41,
+    "failed": 0,
+    "exit_code": 0,
+    "warning": "pytest cache write denied; test execution unaffected",
+    "coverage": ["NumPy evaluator parity", "LSD distinct from global RMSE", "finite zero-error gradient", "exact loss increment at target_std 1 and 2.5", "zero-weight original objective preserved", "three matched configs", "existing Stage C and frozen backbone regression tests"]
+  },
+  "cuda_smoke": {
+    "command": "python scripts/smoke_film_siren_spectral_cnn.py configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190.json --device cuda --directions 16",
+    "status": "passed",
+    "split": "train",
+    "subject_id": 2,
+    "global_direction_count": 16,
+    "horizontal_direction_count": 16,
+    "loss": 1.108809232711792,
+    "full_sphere_lsd_db": 3.5230913162231445,
+    "lsd_loss_db": 3.5230913162231445,
+    "film_siren_frozen": true,
+    "spectral_output_gradient_norm": 3.8066632747650146,
+    "cuda_peak_allocated_bytes": 268505600,
+    "limitation": "One sampled train subject forward/backward; not validation or a complete-run memory bound",
+    "test_subjects_read": 0
+  },
+  "integrity": {
+    "same_seed_film_parent_hashes_verified": 3,
+    "old_control_config_and_checkpoint_hashes_verified": 3,
+    "old_control_completed_e190_clean_git_reports_verified": 3,
+    "existing_validation_prediction_hashes_captured": 44,
+    "new_control_runs": 0,
+    "formal_training_runs_started_at_report_creation": 0,
+    "test_subjects_read": 0
+  }
+}

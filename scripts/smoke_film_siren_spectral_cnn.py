@@ -40,6 +40,7 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("config", type=Path)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    parser.add_argument("--directions", type=int, default=2)
     return parser.parse_args()
 
 
@@ -69,10 +70,12 @@ def main() -> None:
         "train",
     )
     directions, frequency, interpolation_mask, _ = read_common_grid(subjects[0].path)
-    interpolation_indices = np.flatnonzero(interpolation_mask)[:2]
+    if not 1 <= arguments.directions <= 72:
+        raise ValueError("directions must be between 1 and 72")
+    interpolation_indices = np.flatnonzero(interpolation_mask)[:arguments.directions]
     horizontal_indices = horizontal_interpolation_indices(
         directions, interpolation_mask
-    )[:2]
+    )[:arguments.directions]
     mapping = configuration["frequency_mapping"]
     frequency_coordinate = torch.from_numpy(
         frequency_coordinates(
@@ -150,11 +153,16 @@ def main() -> None:
                 "horizontal_direction_count": int(horizontal_indices.size),
                 "loss": float(loss.detach().item()),
                 "objective_total": metrics.total,
+                "full_sphere_lsd_db": metrics.full_sphere_lsd_db,
+                "lsd_loss_db": metrics.lsd_loss_db,
                 "film_siren_frozen": model.film_siren_frozen,
                 "spectral_output_gradient_norm": float(
                     torch.linalg.vector_norm(output_gradient).item()
                 ),
                 "test_subjects_read": 0,
+                "cuda_peak_allocated_bytes": (
+                    torch.cuda.max_memory_allocated(device) if device.type == "cuda" else None
+                ),
             },
             indent=2,
         )

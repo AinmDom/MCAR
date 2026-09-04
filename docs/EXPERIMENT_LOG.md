@@ -1,5 +1,21 @@
 # 项目实验日志
 
+## 2026-09-04：Hybrid LSD B三seed并发训练已启动（未完成）
+
+- attempt2于`2026-09-04T23:38:47+08:00`启动；controller PID47352，
+  seed20260821/20260822/20260823分别PID2856/22080/43544。
+  启动证据：`reports/HYBRID_LSD_B_START_20260904.json`；实时进程退出记录：
+  `outputs/hybrid_lsd_b_e190/attempt2/launch.json`，该目录内分别保存stdout/stderr。
+- 三run均从干净提交`bd00151f7fc717fc748454e5419fc16d3f65d06e`启动，configuration.json
+  确认每run train=262、val=44、FiLM frozen=true、LSD weight=1.0；与冻结配置hash一致。
+  输出目录为`artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed{seed}_e190/`。
+- 23:39:17+08:00单次启动核验：四进程存活、三configuration.json齐全、stderr均空；
+  GPU used=2469 MiB。尚未观察首个完整cycle，不宣称训练完成或全程finite。
+  preflight finite已通过；后续须核验190 cycles/49,780 steps/last.pt、ledger/history与权重finite、
+  Git/hash及test_subjects_read=0。best仍为总loss诊断，权威末点190不变。
+- 初次启动失败已保留证据并修复日志目录忽略规则；未改loss/配置/预算或关闭clean-Git检查。
+  不重训旧对照，不访问test。启动后Codex停止主动监控，下一次接手按协议核验并比较validation。
+
 ## 2026-09-04：Hybrid LSD B三seed协议冻结、启动前验证通过
 
 - 启动尝试1（23:36:35+08:00）：controller PID43156、训练PID29812/40732/41124，

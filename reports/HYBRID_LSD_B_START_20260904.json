@@ -1,0 +1,27 @@
+{
+  "status": "started_not_completed",
+  "started_at": "2026-09-04T23:38:47.118950+08:00",
+  "startup_verified_at": "2026-09-04T23:39:17+08:00",
+  "attempt": 2,
+  "controller_pid": 47352,
+  "launch_receipt": "outputs/hybrid_lsd_b_e190/attempt2/launch.json",
+  "failed_attempt_receipt": "outputs/hybrid_lsd_b_e190/launch.json",
+  "training_git_commit": "bd00151f7fc717fc748454e5419fc16d3f65d06e",
+  "all_three_training_git_dirty": false,
+  "preparation_manifest_sha256": "D8D19DE29186378505AAA708413940B354AC4F9956CC9DB0C37B9FB34D0CB4CA",
+  "train_subject_count_per_run": 262,
+  "validation_subject_count_per_run": 44,
+  "test_subjects_read": 0,
+  "lsd_weight": 1.0,
+  "film_siren_frozen": true,
+  "fixed_cycles": 190,
+  "authoritative_checkpoint": "last.pt",
+  "members": [
+    {"seed": 20260821, "pid": 2856, "config_sha256": "40A692B7BCB3CC20DED1F005EDD49D2796FC3CBEF3C2C599168FF267B2D49F35", "output_directory": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190"},
+    {"seed": 20260822, "pid": 22080, "config_sha256": "EB07D1C449527B1F63596DA61D2ECEA0D5695FA32F57F17D849B4FD62FE40166", "output_directory": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260822_e190"},
+    {"seed": 20260823, "pid": 43544, "config_sha256": "9E73493D6607514AD3E490C93694597E9C008D8E405E6FD11ADB1BA0B26FDBB7", "output_directory": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260823_e190"}
+  ],
+  "startup_checks": "All four processes alive; all three configuration.json provenance files present with clean training Git, correct split counts, LSD weight and frozen backbone; all stderr logs empty. GPU used 2469 MiB at snapshot.",
+  "finite_completion": "Preflight finite; full training history, validation ledger and checkpoints pending. First completed cycle not yet observed at startup check.",
+  "next_action": "No active polling. After processes finish, verify exit codes, E190 reports/history/ledger/checkpoints before releasing Baton and performing the frozen validation comparison."
+}

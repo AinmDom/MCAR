@@ -1,5 +1,35 @@
 # 项目实验日志
 
+## 2026-09-03：作者指定Hybrid E190为当前论文主模型（写作决策，无新实验）
+
+- 时间/agent：2026-09-03T17:11:40+08:00，CODEX。作者明确要求将Hybrid E190作为主模型并修改
+  `reports/PAPER_OUTLINE_ARS.md`。本次更新论文呈现角色：Hybrid E190+Q26为主方法，
+  Bounded E25为对照，MCAR v3.5.1仍为工程主模型；既有结果已知后作出的作者选择不得回写成
+  test前预注册选型，原训练、评价和历史模型决策不重写。
+- 冻结模型保持identity `A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE`：
+  三个seed20260821/22/23的cycle190 last.pt、residual-dB权重1/3；冻结FiLM E130，仅训练新增
+  双耳频谱CNN。开发best cycles190/190/170、中位数E190、调度horizon200均按既有协议引用，
+  不修改配置或checkpoint。证据：`experiments/film_siren/STAGE_D_FILM_SIREN_SPECTRAL_CNN_FORMAL_E190_FREEZE.md`
+  及 `configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json`。
+- 已核验并保留的44人engineering-test、Q26/767方向四primary均值为
+  `0.8175440242629026/1.2003965313140803/3.454911258906816/0.7794497051040513 dB`。
+  直接Hybrid−MCAR统计来自
+  `results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/paired_bootstrap.csv`
+  （10000次被试配对bootstrap，seed20260831）：Contra25差−0.07409270078644113 dB，
+  HF差−0.053569703946212764 dB，二者CI均小于0；Full差−0.00039302453397463915 dB，
+  CI[−0.030995271684337845,+0.055464770777911954]；ILD差+0.13474061344812602 dB，
+  CI[+0.012705474934938392,+0.34484925204924877]。框架保留ILD代价及P0339失败案例，不声称全指标支配。
+- 方向敏感性使用现有44人validation/743方向结果：Hybrid的Q14四指标退化；Q50的Full/Contra25
+  退化、HF/ILD的CI含零。Bounded门控及效率材料未移植为Hybrid证据；CNN可训练参数按现有代码
+  维度计数为74402/成员，完整Hybrid效率证据仍待补。
+- 完整性与范围：原始 `test_subjects_read=0`；仅读取已生成test CSV、配置、代码和日志，
+  未训练、未加载checkpoint、未推理、未运行评价器或新bootstrap。既有primary summary为
+  completed/all_finite=true、1760行，20端点verification为8800行且finite、源值误差0；
+  不把这些历史验证说成本轮重新验证checkpoint。训练/best/末点预算判据=N/A。
+- Git：基准 `codex/project-structure-refactor` / `ae71552da02f0b4e0292e72696c2aba554fe123a`；
+  接续上一轮未跟踪框架并修改，增量更新交接页及本条，无提交。下一步为Hybrid正文写作与
+  原始文献核验；旧Baton仍UNKNOWN，不启动有重叠风险的实验。
+
 ## 2026-09-03：十方法完整20指标test评价完成
 
 - 在用户明确授权后，按结果盲预注册协议

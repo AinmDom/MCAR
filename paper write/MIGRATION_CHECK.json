@@ -1,0 +1,145 @@
+{
+  "status": "moved_and_path_metadata_updated",
+  "completed_at": "2026-09-04T10:28:16+08:00",
+  "writing_root": "paper write",
+  "entry_point": "paper write/CSMT_2026/main.tex",
+  "scope": "Current Hybrid writing artifacts only; legacy Bounded draft, experiment code, data, frozen results and original templates remain in place.",
+  "file_count": 17,
+  "all_files_byte_identical_immediately_after_move": true,
+  "byte_identical_after_metadata_updates": 15,
+  "path_only_updates": [
+    "paper write/PAPER_OUTLINE_ARS.md",
+    "paper write/CSMT_2026/SOURCE_CHECK.json"
+  ],
+  "validation": {
+    "local_markdown_links": 47,
+    "latex_inputs_and_bibliography": 10,
+    "missing_referenced_files": 0,
+    "old_source_paths_absent": true,
+    "compiler_invoked": false,
+    "pdf_generated": false
+  },
+  "files": [
+    {
+      "old_path": "reports/PAPER_OUTLINE_ARS.md",
+      "new_path": "paper write/PAPER_OUTLINE_ARS.md",
+      "sha256_before": "B8D2884E4C81967B5234FB46C3F726E2CBCD420287042656111291A9789131A1",
+      "sha256_after": "0C2105227B069B04E6E096D8AC653C06CFE04025DDBF595302E830C8588620F8",
+      "byte_identical": false
+    },
+    {
+      "old_path": "reports/CSMT_2026/DISCUSSION_WRITING_NOTES_ARS.md",
+      "new_path": "paper write/CSMT_2026/DISCUSSION_WRITING_NOTES_ARS.md",
+      "sha256_before": "CFC92F3280695EC286A330A50D772393DDBFEA5A4EFFB85C5F96EEEABDA2BDAA",
+      "sha256_after": "CFC92F3280695EC286A330A50D772393DDBFEA5A4EFFB85C5F96EEEABDA2BDAA",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/gbt-7714-2015-numerical.bst",
+      "new_path": "paper write/CSMT_2026/gbt-7714-2015-numerical.bst",
+      "sha256_before": "C0C15EC5374E7D283B44CA02746FB4C7A5B9CE56D6C919562FACEAB1E0541833",
+      "sha256_after": "C0C15EC5374E7D283B44CA02746FB4C7A5B9CE56D6C919562FACEAB1E0541833",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/main.tex",
+      "new_path": "paper write/CSMT_2026/main.tex",
+      "sha256_before": "3B50C1C99ECDAFD814490C25D131354FB57B83355CED571DBA46E1E7EAB906A2",
+      "sha256_after": "3B50C1C99ECDAFD814490C25D131354FB57B83355CED571DBA46E1E7EAB906A2",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/material_passport.json",
+      "new_path": "paper write/CSMT_2026/material_passport.json",
+      "sha256_before": "068EE49F883C228F95DD7983EED3FDDFBD518E5F5F6F36E871CDB15B04099F17",
+      "sha256_after": "068EE49F883C228F95DD7983EED3FDDFBD518E5F5F6F36E871CDB15B04099F17",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/references.bib",
+      "new_path": "paper write/CSMT_2026/references.bib",
+      "sha256_before": "78168DEECFE7B3030E8D3E50AFCFC6EB29920046A1F7398668F5A670EC0F9C41",
+      "sha256_after": "78168DEECFE7B3030E8D3E50AFCFC6EB29920046A1F7398668F5A670EC0F9C41",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/RESULTS_WRITING_NOTES_ARS.md",
+      "new_path": "paper write/CSMT_2026/RESULTS_WRITING_NOTES_ARS.md",
+      "sha256_before": "59D6C5873EFFA6D25648AD8C9622BC4037E12A2AC7709E7B1DB48FF0083151A2",
+      "sha256_after": "59D6C5873EFFA6D25648AD8C9622BC4037E12A2AC7709E7B1DB48FF0083151A2",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/SOURCE_CHECK.json",
+      "new_path": "paper write/CSMT_2026/SOURCE_CHECK.json",
+      "sha256_before": "DD628EE476F9E0E5470998F6DE2B0F1C8C8FCC7C126C5C13AE5F57807A6EF151",
+      "sha256_after": "5671873A3FAD3B98D4EA0C6391C037710687C4BFD719300E08DABA49F2F84016",
+      "byte_identical": false
+    },
+    {
+      "old_path": "reports/CSMT_2026/WRITING_NOTES_ARS.md",
+      "new_path": "paper write/CSMT_2026/WRITING_NOTES_ARS.md",
+      "sha256_before": "B350F8027EEDE4557820C5EE5AB3ADEFA498BA512FD79308E30382B8CA37D84D",
+      "sha256_after": "B350F8027EEDE4557820C5EE5AB3ADEFA498BA512FD79308E30382B8CA37D84D",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/sections/discussion.tex",
+      "new_path": "paper write/CSMT_2026/sections/discussion.tex",
+      "sha256_before": "DF03929296EE5889EBEFEF64179650E1F3F781624DDBFEC45BBF22B7C884C5DA",
+      "sha256_after": "DF03929296EE5889EBEFEF64179650E1F3F781624DDBFEC45BBF22B7C884C5DA",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/sections/experimental_setup.tex",
+      "new_path": "paper write/CSMT_2026/sections/experimental_setup.tex",
+      "sha256_before": "AF1BECE47E20AF11B5FAED898931E9265222DFEDFA77821E419D021AB82C6EE4",
+      "sha256_after": "AF1BECE47E20AF11B5FAED898931E9265222DFEDFA77821E419D021AB82C6EE4",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/sections/method.tex",
+      "new_path": "paper write/CSMT_2026/sections/method.tex",
+      "sha256_before": "B1548FAD9C02CC70FC25EECE188BFE8C6AF6143435D3DBCCD47E8FE0F87AEC32",
+      "sha256_after": "B1548FAD9C02CC70FC25EECE188BFE8C6AF6143435D3DBCCD47E8FE0F87AEC32",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/sections/results.tex",
+      "new_path": "paper write/CSMT_2026/sections/results.tex",
+      "sha256_before": "4944A5349B4A591A68A66BD1B8FDFFE2A5A6D2B7A9DCC2B56DABEA0324B6FC04",
+      "sha256_after": "4944A5349B4A591A68A66BD1B8FDFFE2A5A6D2B7A9DCC2B56DABEA0324B6FC04",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/tables/component_results.tex",
+      "new_path": "paper write/CSMT_2026/tables/component_results.tex",
+      "sha256_before": "D542ED2D612DD4E2DF9231E946E32F0F551B2ABA66B05AF2CF5D7F83CD1559F2",
+      "sha256_after": "D542ED2D612DD4E2DF9231E946E32F0F551B2ABA66B05AF2CF5D7F83CD1559F2",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/tables/direction_sensitivity.tex",
+      "new_path": "paper write/CSMT_2026/tables/direction_sensitivity.tex",
+      "sha256_before": "4BE01025AB284EE20C2D494C60374A03F391B74B8DF58F8D4443A7597518EE64",
+      "sha256_after": "4BE01025AB284EE20C2D494C60374A03F391B74B8DF58F8D4443A7597518EE64",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/tables/primary_results.tex",
+      "new_path": "paper write/CSMT_2026/tables/primary_results.tex",
+      "sha256_before": "FFBD81182678C42CDC44EB6A4162AE77BC42C0E603F86E955CAB8727C9F96469",
+      "sha256_after": "FFBD81182678C42CDC44EB6A4162AE77BC42C0E603F86E955CAB8727C9F96469",
+      "byte_identical": true
+    },
+    {
+      "old_path": "reports/CSMT_2026/tables/spectral_results.tex",
+      "new_path": "paper write/CSMT_2026/tables/spectral_results.tex",
+      "sha256_before": "573182EAF6DC37670C76C1A74D73D5CF9BD47CBD59C33B9DF01E213CF2DCC620",
+      "sha256_after": "573182EAF6DC37670C76C1A74D73D5CF9BD47CBD59C33B9DF01E213CF2DCC620",
+      "byte_identical": true
+    }
+  ],
+  "historical_reference_policy": "Do not rewrite historical handoff or experiment logs. Resolve old writing paths using this mapping.",
+  "future_work_location": "All new manuscript text, paper figures, references, writing notes and build artifacts stay under paper write/. Repository-level AGENTS.md and docs/AI_HANDOFF.md remain at their established paths."
+}

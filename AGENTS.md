@@ -68,3 +68,11 @@
 - 不自行清理另一智能体的进程、checkpoint、日志或工作区修改；需要接管时先在交接
   页留下明确的释放或中止记录。
 
+## 论文写作工作区
+
+- 作者于2026-09-04指定 `paper write/` 为后续论文写作的唯一工作目录。
+- 当前总框架：`paper write/PAPER_OUTLINE_ARS.md`；LaTeX入口：`paper write/CSMT_2026/main.tex`。
+- 新增或修改正文、论文图表、参考文献、写作记录及编译产物均在该目录树内进行，不再向 `reports/` 新建当前稿件文件。
+- 实验代码、配置、原始数据及冻结结果保持原位，作为写作的只读证据；旧Bounded历史稿暂留原位，不作为当前写作入口。
+- 本文件与 `docs/AI_HANDOFF.md` 仍按仓库协作规则维护。历史记录中的旧路径不回写，迁移映射见 `paper write/MIGRATION_CHECK.json`。
+

@@ -1,0 +1,27 @@
+% Scoped draft; source versions and read scopes in literature/LITERATURE_MAP_20260904.md.
+\section{相关工作}
+\label{sec:related}
+
+\subsection{经典稀疏插值与幅度校正}
+% Role RW-P1: classical lineage; local R2S has UNAVAILABLE structural verdict, so no page anchor.
+经典HRTF插值可通过球谐展开或邻近方向加权实现。时间对齐可降低球谐表示的有效阶数需求\cite{R3}；% <!--ref:R3--><!--anchor:section:Abstract-->
+SUpDEq在插值前后进行方向均衡及逆均衡，其后续研究比较了不同球面采样方案\cite{R2S}。% <!--ref:R2S--><!--anchor:section:Abstract-->
+MCA则在时间对齐插值后，以平滑幅度的插值结果为参考进行幅度校正\cite{R1}。% <!--ref:R1--><!--anchor:section:II. METHOD-->
+本文继承MCA作为残差基准、相位及未预测频点的来源，研究神经网络对其剩余幅度误差的补偿，不把传统方法简单视为应被替换的环节。
+
+\subsection{基于学习的空间重建}
+% Role RW-P2: scope and closest learned comparators, including strong adjacent frequency modeling.
+HRTF生成研究还包括物理建模、形态特征映射及个体适配等路线\cite{R15}。% <!--ref:R15--><!--anchor:section:Abstract-->
+本文以已有稀疏测量为前提，不评价人体网格模拟或无声学测量的个体化方法。与这些任务比较时，需要先区分目标个体能提供的信息，不能把使用更丰富输入获得的精度直接解释为模型结构优势。
+HRTF个体化方法的输入既可以是人体形态，也可以是稀疏声学观测，两者的信息条件不同\cite{R16}。% <!--ref:R16--><!--anchor:section:ABSTRACT-->
+在稀疏重建中，FSP-AE将正则化线性回归解释为自编码器，使用声源位置和频率条件化的编码、解码权重，并通过输入类型标识联合处理幅度与ITD\cite{R4}。% <!--ref:R4--><!--anchor:section:IV. PROPOSED METHOD-->
+RANF结合检索HRTF、卷积与双向序列建模，并在目标个体上微调部分参数，另可接入panning插值结果\cite{R5}。% <!--ref:R5--><!--anchor:section:III. RETRIEVAL-AUGMENTED NEURAL FIELD-->
+Hybrid通过观测编码前向生成个体条件，输出MCA幅度残差，不学习ITD。本文比较采用项目内统一重评价，不能与这些论文原报分数直接混排；MCAR、FiLM父模型及Bounded属于项目内对照。
+测试时是否进行个体适配、相位如何恢复以及观测方向是否纳入评价，均须在实验设置中明确，而不能由方法名称推定相同。
+
+\subsection{条件隐式表示与频谱约束}
+% Role RW-P3: attribution and distinction, no invented novelty gap.
+FiLM通过条件生成的逐特征缩放和平移调制网络\cite{R7}，% <!--ref:R7--><!--anchor:section:2.1 Feature-wise Linear Modulation-->
+SIREN使用周期激活表示连续信号及其导数\cite{R11}。% <!--ref:R11--><!--anchor:section:Abstract-->
+本文将两者用于条件残差基场，再由双耳频谱卷积细化其输出。区别在于残差接口、冻结策略和具体训练组合，而非首次提出条件表示或跨频率建模。空间感知损失综述也指出，技术度量与感知质量的关系并不直接\cite{R18}。% <!--ref:R18--><!--anchor:section:II. SPATIAL AUDIO QUALITIES-->
+因此，本文的频谱差分、凹口和ILD结果分别解释，不将复合损失或某项误差降低等同于定位、外化或听音偏好的改善。

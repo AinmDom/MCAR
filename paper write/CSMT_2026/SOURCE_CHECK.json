@@ -1,0 +1,248 @@
+{
+  "date": "2026-09-04",
+  "timezone": "Asia/Hong_Kong",
+  "scope": "Method, Experimental Setup, Results, Discussion and four results tables",
+  "status": "source_and_table_transcription_checks_only_not_compiled",
+  "source_files": {
+    "main.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 120
+    },
+    "sections/method.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 1832
+    },
+    "sections/experimental_setup.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 2592
+    },
+    "sections/results.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 1358
+    },
+    "tables/primary_results.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 80
+    },
+    "tables/spectral_results.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 99
+    },
+    "tables/component_results.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 73
+    },
+    "tables/direction_sensitivity.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 76
+    },
+    "sections/discussion.tex": {
+      "brace_balance": 0,
+      "chinese_characters": 1069
+    }
+  },
+  "environment_errors": [],
+  "missing_cross_references": [],
+  "duplicate_labels": [],
+  "missing_citations": [],
+  "missing_inputs": [],
+  "new_source_readback_exact": true,
+  "table_transcription": {
+    "tables/primary_results.tex": {
+      "rows": 10,
+      "numeric_values": 80,
+      "exact_formatted_values": true
+    },
+    "tables/spectral_results.tex": {
+      "rows": 10,
+      "numeric_values": 40,
+      "exact_formatted_values": true
+    },
+    "tables/component_results.tex": {
+      "rows": 4,
+      "numeric_values": 20,
+      "exact_formatted_values": true
+    },
+    "tables/direction_sensitivity.tex": {
+      "rows": 3,
+      "numeric_values": 24,
+      "exact_formatted_values": true
+    }
+  },
+  "existing_claim_intent_preserved": true,
+  "claim_intent_count": 3,
+  "result_chinese_characters_including_table_text": 1686,
+  "provisional_result_target": 1800,
+  "result_deviation_percent": -6.333333333333333,
+  "compiler_environment": "author reports TeX Live downloading on 2026-09-04; readiness unverified; no compiler or installer invoked",
+  "pdf_generated": false,
+  "page_count_verified": false,
+  "visual_layout_verified": false,
+  "original_test_subjects_read": 0,
+  "new_bootstrap": false,
+  "remaining_issues": [
+    "R6 locator and baseline literature matching pending",
+    "original download manifest and metadata hash chain pending",
+    "no compiled PDF or visual/page-count verification",
+    "Introduction, Related Work, Conclusion and bilingual abstracts not drafted",
+    "Setup kept as detailed review draft; author detail preference unanswered"
+  ],
+  "sources": [
+    {
+      "path": "results/sonicom_complete_ten_method_test_v1/paper_complete_test_wide.csv",
+      "sha256": "EAAE35E1DF96EB2D2EFFC23520FA04B4792F3363FD414EED2069971336A52DDA",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_complete_ten_method_test_v1/aggregate_metrics.csv",
+      "sha256": "BCE111E2EF2F5925565DDED0C2133FE7B3A8EBDA9982B73BC4E6E29DEF64D1D7",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv",
+      "sha256": "318B6A685C3A7F5F88FFC0247CA12F7482F3F8E9AD86D34627A4E4D4258E24C7",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/paired_bootstrap.csv",
+      "sha256": "97B4CB522CDD21583949AA3D102A8D9A2A71863974C2CE812C4F706DEB47075C",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/aggregate_metrics.csv",
+      "sha256": "389E5BF93D9F8B5CD3F6D1DA3DCA1B1861698A1622463086F9CA10023C9ED6A3",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_film_siren_spectral_cnn_final_e190_validation/paired_bootstrap_comparisons.csv",
+      "sha256": "C78A7F5C9BC443F7122B364C286F9E46DDB2131BD79336855E3943195C725F79",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_ten_method_direction_sensitivity_v1/aggregate_metrics.csv",
+      "sha256": "F163473D2679C493616028F7896A14C61EBB5E90EDD0DB34A661E76114B81995",
+      "tracked": true
+    },
+    {
+      "path": "results/sonicom_ten_method_direction_sensitivity_v1/paired_direction_effects.csv",
+      "sha256": "4DCCDCB3B342D48470DC3FC8138118D638B67B423AFF47F16C6074A2BF7488E9",
+      "tracked": true
+    }
+  ],
+  "mca_relative_changes": [
+    {
+      "endpoint": "FullSphereERB",
+      "mca_mean": 1.0821981924889854,
+      "hybrid_mean": 0.8175440242629026,
+      "relative_reduction_percent": 24.45524027511037
+    },
+    {
+      "endpoint": "Contralateral25ERB",
+      "mca_mean": 1.7457551661165325,
+      "hybrid_mean": 1.2003965313140803,
+      "relative_reduction_percent": 31.239124786072576
+    },
+    {
+      "endpoint": "ContralateralHighFrequency",
+      "mca_mean": 4.698648610844627,
+      "hybrid_mean": 3.454911258906816,
+      "relative_reduction_percent": 26.47010778944453
+    },
+    {
+      "endpoint": "HorizontalILDMAE",
+      "mca_mean": 0.8293849387608859,
+      "hybrid_mean": 0.7794497051040513,
+      "relative_reduction_percent": 6.020754817592737
+    }
+  ],
+  "relative_change_definition": "(MCA mean - Hybrid mean) / MCA mean * 100; arithmetic on dB error metric means, not mean subject percentage or linear amplitude reduction",
+  "preserved_files_sha256": {
+    "docs/EXPERIMENT_LOG.md": "7537AD3A2D2B4CF8F52E0F6E4DEF9BA3C631C884C919B419FC8AD172CD0A5576",
+    "paper write/CSMT_2026/sections/method.tex": "B1548FAD9C02CC70FC25EECE188BFE8C6AF6143435D3DBCCD47E8FE0F87AEC32",
+    "paper write/CSMT_2026/sections/experimental_setup.tex": "AF1BECE47E20AF11B5FAED898931E9265222DFEDFA77821E419D021AB82C6EE4",
+    "paper write/CSMT_2026/references.bib": "78168DEECFE7B3030E8D3E50AFCFC6EB29920046A1F7398668F5A670EC0F9C41"
+  },
+  "table_transcription_checked_on": "2026-09-03",
+  "table_transcription_carry_forward": "All four table files and all eight CSV source hashes unchanged on 2026-09-04; numeric transcription not rerun this turn.",
+  "discussion_update": {
+    "errors": [],
+    "missing_cross_references": [],
+    "duplicate_labels": [],
+    "missing_citations": [],
+    "missing_inputs": [],
+    "source_files": {
+      "main.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 120
+      },
+      "sections/method.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 1832
+      },
+      "sections/experimental_setup.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 2592
+      },
+      "sections/results.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 1358
+      },
+      "tables/primary_results.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 80
+      },
+      "tables/spectral_results.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 99
+      },
+      "tables/component_results.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 73
+      },
+      "tables/direction_sensitivity.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 76
+      },
+      "sections/discussion.tex": {
+        "brace_balance": 0,
+        "chinese_characters": 1069
+      }
+    },
+    "protected_files_unchanged": {
+      "paper write/CSMT_2026/sections/method.tex": true,
+      "paper write/CSMT_2026/sections/experimental_setup.tex": true,
+      "paper write/CSMT_2026/sections/results.tex": true,
+      "paper write/CSMT_2026/references.bib": true,
+      "paper write/CSMT_2026/tables/primary_results.tex": true,
+      "paper write/CSMT_2026/tables/spectral_results.tex": true,
+      "paper write/CSMT_2026/tables/component_results.tex": true,
+      "paper write/CSMT_2026/tables/direction_sensitivity.tex": true
+    },
+    "discussion_chinese_characters": 1069,
+    "discussion_target": 1000,
+    "discussion_deviation_percent": 6.9,
+    "discussion_paragraphs": 7,
+    "new_citations": 0,
+    "prior_manifest_entries_preserved": true,
+    "claim_intent_count": 3,
+    "source_and_experiment_log_hashes_unchanged": true,
+    "author_priority": "horizontal ILD and individual failure cases",
+    "new_experiments": false,
+    "installer_interaction": false,
+    "pdf_generated": false,
+    "independent_review": false
+  },
+  "path_resolution": {
+    "writing_root": "paper write/",
+    "source_files": "relative to this JSON directory",
+    "sources_and_protected_files": "repository-relative paths"
+  },
+  "directory_migration": {
+    "date": "2026-09-04",
+    "previous_directory": "reports/CSMT_2026/",
+    "current_directory": "paper write/CSMT_2026/",
+    "all_17_files_byte_identical_immediately_after_move": true,
+    "changes_after_move": "Only outline entry text and this check report path metadata updated; see ../MIGRATION_CHECK.json.",
+    "compiler_invoked": false
+  }
+}

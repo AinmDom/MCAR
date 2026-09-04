@@ -1,0 +1,175 @@
+{
+  "date": "2026-09-04",
+  "scope": "Introduction and Related Work, bounded setup source update, six-chapter build; not submission certification",
+  "source_counts": {
+    "main.tex": 119,
+    "sections\\discussion.tex": 1069,
+    "sections\\experimental_setup.tex": 2660,
+    "sections\\introduction.tex": 928,
+    "sections\\method.tex": 1832,
+    "sections\\related_work.tex": 702,
+    "sections\\results.tex": 1358,
+    "tables\\component_results.tex": 73,
+    "tables\\direction_sensitivity.tex": 76,
+    "tables\\primary_results.tex": 80,
+    "tables\\spectral_results.tex": 99
+  },
+  "bib_records": 18,
+  "cited_keys": [
+    "R1",
+    "R11",
+    "R13",
+    "R15",
+    "R16",
+    "R18",
+    "R2S",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8"
+  ],
+  "rendered_bibitems": 13,
+  "missing_citations": [],
+  "duplicate_bibkeys": [],
+  "missing_cross_references": [],
+  "duplicate_labels": [],
+  "pdf_pages": 13,
+  "pdf_bytes": 285952,
+  "pdf_sha256": "5477bc46fbcb3450a464d877a9e37a2501c48a5bd0036a0a3039f52eebe715ee",
+  "source_pdf_count": 17,
+  "source_pdf_preflight": {
+    "PASS": 15,
+    "UNAVAILABLE": 2,
+    "FAIL": 0
+  },
+  "source_pdf_hashes_unchanged": true,
+  "final_log_issues": [],
+  "known_layout_warnings": [
+    "caption class defaults",
+    "SimSun/SimHei bold font substitution"
+  ],
+  "visual_qa": {
+    "pages_rendered": 13,
+    "pages_visually_inspected": 13,
+    "clipping_overlap_or_blank_pages_detected": false,
+    "formal_template_certified": false
+  },
+  "new_experiments": false,
+  "original_test_subjects_read": 0,
+  "new_bootstrap": false,
+  "full_paper_complete": false,
+  "remaining": [
+    "Conclusion and bilingual abstracts",
+    "Full-paper stylistic and bibliography-format review",
+    "R2 original journal PDF and correction",
+    "Explicit SONICOM data license",
+    "Official Chinese submission/template/anonymity details"
+  ],
+  "duplicate_aux_labels": [],
+  "cross_reference_check": "compiled aux labels, including bilingual caption macro labels",
+  "preservation_checks": [
+    {
+      "path": "docs/EXPERIMENT_LOG.md",
+      "unchanged": true
+    },
+    {
+      "path": "AGENTS.md",
+      "unchanged": true
+    },
+    {
+      "path": "data/HRTF/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "src/mcar/data_tools/download_sonicom.py",
+      "unchanged": true
+    },
+    {
+      "path": "configs/data/sonicom_preparation_report_v1.json",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/DISCUSSION_WRITING_NOTES_ARS.md",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/gbt-7714-2015-numerical.bst",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/main.aux",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/main.log",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/main.pdf",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/main.synctex.gz",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/main.tex",
+      "unchanged": false
+    },
+    {
+      "path": "paper write/CSMT_2026/material_passport.json",
+      "unchanged": false
+    },
+    {
+      "path": "paper write/CSMT_2026/references.bib",
+      "unchanged": false
+    },
+    {
+      "path": "paper write/CSMT_2026/RESULTS_WRITING_NOTES_ARS.md",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/SOURCE_CHECK.json",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/WRITING_NOTES_ARS.md",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/sections/discussion.tex",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/sections/experimental_setup.tex",
+      "unchanged": false
+    },
+    {
+      "path": "paper write/CSMT_2026/sections/method.tex",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/sections/results.tex",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/tables/component_results.tex",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/tables/direction_sensitivity.tex",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/tables/primary_results.tex",
+      "unchanged": true
+    },
+    {
+      "path": "paper write/CSMT_2026/tables/spectral_results.tex",
+      "unchanged": true
+    }
+  ],
+  "log_check": "No Citation/Reference undefined, missing-character, overfull or underfull warnings; font shape substitutions listed separately"
+}

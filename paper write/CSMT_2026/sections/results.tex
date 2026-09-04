@@ -1,0 +1,54 @@
+% New Section 5. Paragraph roles and source IDs are editorial annotations.
+\section{结果}
+\label{sec:results}
+
+% Role: scope, links to setup. Evidence: E1w/E1a/E2/E4/E8; frozen protocols.
+本节首先检验MCA之后的残差补偿效果，再比较学习方法之间的优势与代价。测试结果沿用同一44名历史工程测试被试，验证集组件比较及方向敏感性分别报告。以下区间均来自既有被试级bootstrap，未校正多重比较，不将均值排序、区间含零或验证集趋势解释为全面优越、统计等效或独立测试确认。
+
+% Role: principal result versus MCA. Evidence: E1w/E2. Relative percentages are arithmetic on means.
+\subsection{相对MCA的残差补偿效果}
+Hybrid降低了MCA的三项主要频谱误差。表\ref{tab:primary-results}中，全域ERB从1.0822降至0.8175\,dB，对侧$25^\circ$ ERB从1.7458降至1.2004\,dB，对侧高频误差从4.6986降至3.4549\,dB。以MCA均值为分母，三项相对降幅分别为24.46\%、31.24\%和26.47\%；这些百分比描述dB误差指标均值的相对变化，不表示线性声压幅度的下降比例。
+
+\input{tables/primary_results}
+
+% Role: paired support and boundary. Evidence: E2, candidate HYBRID/baseline MCA.
+三项频谱配对差的95\%区间依次为$[-0.315895,-0.178416]$、$[-0.594202,-0.491940]$和$[-1.297170,-1.187683]$\,dB，均低于零；对应改善人数为43、43和44人。水平面ILD均值也由0.8294降至0.7794\,dB，但差值为$-0.049935$\,dB、区间为$[-0.220991,+0.235298]$\,dB，仍包含零。因此，相对MCA的明确证据集中在频谱重建，不能同时宣称已获得稳定的ILD收益。
+
+% Role: trade-off against the project's strong learned baseline. Evidence: E1a/E2.
+\subsection{与其他学习方法的比较}
+相对MCAR v3.5.1，Hybrid的优势和代价并存。对侧$25^\circ$ ERB及对侧高频均值差分别为$-0.074093$和$-0.053570$\,dB，95\%区间分别为$[-0.111932,-0.045892]$和$[-0.089022,-0.022387]$\,dB。全域ERB差仅$-0.000393$\,dB且区间含零。与此同时，水平面ILD增加$0.134741$\,dB，区间为$[+0.012705,+0.344849]$\,dB；频谱改善伴随双耳能量关系上的代价。
+
+% Role: strongest competing metrics, not uniform superiority. Evidence: E1a/E2.
+十方法的四项主要最低均值分别属于Bounded、Hybrid、FSP-AE和MCAR。Hybrid相对Bounded的全域ERB和水平面ILD差分别为$+0.023413$、$+0.105068$\,dB，配对区间均高于零。其对侧$25^\circ$ ERB均值虽略低，但差值$-0.001121$\,dB的区间$[-0.022054,+0.014415]$\,dB含零；对侧高频则有小幅降低，差值$-0.021669$\,dB、区间$[-0.050092,-0.000766]$\,dB。最低均值因而不等于对所有对照均有清晰区分。
+
+% Role: external learned baselines. Evidence: E2; avoid assigning implementation gains to literature.
+Hybrid相对FSP-AE和RANF的全域及对侧$25^\circ$ ERB配对区间均低于零，但FSP-AE的对侧高频误差更小：Hybrid高出$0.290557$\,dB，区间为$[+0.089797,+0.413038]$\,dB。相对RANF的高频差值为$-0.014772$\,dB，区间含零；相对这两个方法的水平面ILD区间也均含零。故本文将Hybrid定位为具有特定频谱优势的残差细化方案，而非替代全部方法的无代价最优解。
+
+% Role: selected secondary endpoint results and ranking limits. Evidence: E1w.
+\subsection{局部频谱结构与频带ILD}
+Hybrid在三项局部频谱端点上取得十方法最低均值。高频一阶差分、二阶差分和多尺度凹口深度误差分别为0.3997\,dB/bin、0.2146\,dB/bin$^2$和0.4877\,dB（表\ref{tab:spectral-results}）。它们反映相邻频点变化与局部凹口深度的重建情况，和高频绝对幅度误差不是同一个评价问题。因此，Hybrid在这些指标上均值领先，与FSP-AE在主要对侧高频误差上占优并不矛盾。
+
+\input{tables/spectral_results}
+
+% Role: required secondary emphasis without equivalence inflation. Evidence: E1w.
+全域ERB与频带ILD可作为另外两个重点观察项，但都不是最优均值。Hybrid的频带ILD为1.6205\,dB，次于Bounded的1.5734\,dB；与全域ERB一起，两者相对各自最优均值分别高2.95\%与3.00\%，不能按1\%容差合并为最佳。频带ILD的相对位置也不能抵消严格水平面ILD的代价。三项局部指标仍属于补充描述，现有结果未提供本文所需的直接Hybrid中心次要端点配对区间，不宣称其对每个方法都显著更优。主凹口位置、检出情况或感知定位也不能由这些均值推出。
+
+% Role: component evidence separated from test and isolated ablation. Evidence: E4a/E4p.
+\subsection{频谱细化器的验证集表现}
+在同一44名验证被试及767方向上，Hybrid相对FiLM E130集成的三项主要频谱误差均降低（表\ref{tab:component-results}）。全域ERB、对侧$25^\circ$ ERB和对侧高频分别降低0.023122、0.016183和0.200758\,dB，配对区间均低于零，对应改善人数为44、43和44人。水平面ILD差为$-0.000787$\,dB，区间跨零。这与追加频谱细化后的谱误差改善一致，但不说明已消除测试集中的ILD代价。
+
+\input{tables/component_results}
+
+两侧都是三成员集成，差异不仅包含新增CNN结构，还包含该模块的额外训练与复合目标优化。该比较属于开发证据，不是对CNN结构、各损失项或集成效应的逐项因果隔离，也不与测试集均值混合报告。
+
+% Role: input sensitivity with a common validation evaluation domain. Evidence: E8a/E8p.
+\subsection{观测方向数量敏感性}
+冻结的Q26模型对观测数量变化并不表现为单调收益。在共同743个评价方向上，Q14相对Q26的四项误差均增加，配对区间均高于零；前三项频谱指标在44名被试上全部退化（表\ref{tab:q-results}）。Q50的全域与对侧$25^\circ$ ERB分别增加0.016283和0.051087\,dB，区间分别为$[+0.008783,+0.023196]$和$[+0.038154,+0.064047]$\,dB。高频与ILD的均值变化则分别为$+0.008602$和$+0.021770$\,dB，区间均含零。
+
+\input{tables/direction_sensitivity}
+
+这些结果仅刻画Q26训练并冻结后的模型对不同输入集的响应，不证明更多测量方向一般有害，也不说明重新训练的Q50模型会产生同样变化。该表的Q26全域ERB为0.8008\,dB，来自验证集共同743方向，与组件表的0.8044\,dB及测试表的0.8175\,dB具有不同统计范围。
+
+% Role: individual heterogeneity and retained failure case. Evidence: E2/E1s.
+\subsection{个体差异与失败案例}
+均值变化并不能替代个体表现。相对MCAR，Hybrid在全域ERB及对侧$25^\circ$ ERB均有39/44人改善，但前者总体配对区间仍含零；水平面ILD仅20/44人改善。测试被试P0339的Hybrid水平面ILD误差为6.0497\,dB，而同一被试的MCA和MCAR误差分别为0.7107与1.8838\,dB。该事后观察案例保留在原44人的统计中，不作剔除、修补或重测。它提示后续讨论须同时解释局部频谱收益和双耳线索风险，不能仅依据最优均值概括模型表现。

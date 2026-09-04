@@ -1,3 +1,6 @@
 # 官方来源快照必须保留原始字节，避免自动换行转换破坏已记录的SHA-256。
 # 快照自带的空白不是本文维护的格式，不对其执行空白修复。
 data_provenance/sonicom/** -text -whitespace
+
+# 作者模板的第三方参考文献样式原样入库，保留源文件哈希。
+CSMT_2026/gbt-7714-2015-numerical.bst -text -whitespace

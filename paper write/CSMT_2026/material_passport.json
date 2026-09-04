@@ -1,0 +1,277 @@
+{
+  "status": "partial_material_passport_for_scoped_drafting_not_certification",
+  "scope": "CSMT 2026 Chinese internal draft: Introduction, Related Work, Method, Experimental Setup, Results and Discussion",
+  "literature_update_sidecar": "../literature/LITERATURE_MAP_20260904.md; original literature_corpus below is the historical first-draft snapshot, not the current read-status ledger",
+  "argument_status": "argument inferred from PAPER_OUTLINE_ARS.md and author answers",
+  "criteria_binding": "criteria_binding_unavailable",
+  "author_decisions": {
+    "method_name": "FiLM-SIREN双耳频谱细化模型",
+    "short_name": "Hybrid",
+    "budget_label": "E190",
+    "author_placeholder": "Young",
+    "narrative": "MCA residual compensation first; learned comparators second",
+    "contribution_attribution": "FiLM/SIREN from papers; CNN, integration and objective designed within this project, author confirmed",
+    "release_intent": "author confirmed: final Hybrid training configurations and weights only, tentative; no upload or release authorized",
+    "new_experiments": false,
+    "compilation_environment": "TeX Live 2026 and LaTeX Workshop availability verified in MATERIAL_INTAKE_20260904.md; build status is recorded separately",
+    "future_work_priority": "author confirmed on 2026-09-04: prioritize horizontal ILD and individual failure cases; writing direction only, no new experiments"
+  },
+  "literature_corpus": [
+    {
+      "citation_key": "R1",
+      "year": 2023,
+      "title": "Magnitude-Corrected and Time-Aligned Interpolation of Head-Related Transfer Functions",
+      "source": "https://arxiv.org/abs/2303.09966",
+      "locator": "Abstract",
+      "read_scope": "abstract and journal-reference metadata; not full text"
+    },
+    {
+      "citation_key": "R7",
+      "year": 2018,
+      "title": "FiLM: Visual Reasoning with a General Conditioning Layer",
+      "source": "https://ojs.aaai.org/index.php/AAAI/article/view/11671",
+      "locator": "Abstract",
+      "read_scope": "publisher abstract and metadata; not full text"
+    },
+    {
+      "citation_key": "R11",
+      "year": 2020,
+      "title": "Implicit Neural Representations with Periodic Activation Functions",
+      "source": "https://proceedings.neurips.cc/paper/2020/hash/53c04118df112c13a8c34b38343b9c10-Abstract.html",
+      "locator": "Abstract",
+      "read_scope": "publisher abstract and metadata; not full text"
+    },
+    {
+      "citation_key": "R6",
+      "year": 2023,
+      "title": "The SONICOM HRTF Dataset",
+      "source": "https://www.aes.org/e-lib/download.cfm/22128.pdf?ID=22128",
+      "locator": null,
+      "read_scope": "identity checked previously; full text unavailable this turn; generic dataset attribution only, citation locator unresolved"
+    }
+  ],
+  "claim_intent_manifests": [
+    {
+      "manifest_version": "1.0",
+      "manifest_id": "M-CSMT-20260904-intro-related-v1",
+      "emitted_by": "draft_writer_agent_inline",
+      "emitted_at": "2026-09-04T18:27:00+08:00",
+      "claims": [
+        {"claim_id":"I01","claim_text":"Sparse HRTF reconstruction estimates unobserved directions from individual sparse measurements; measurement burden motivates this task, which differs from anthropometry-only prediction and end-to-end binaural rendering.","intended_evidence_kind":"definitional","planned_refs":["R1","R6","R13","R15","R16"]},
+        {"claim_id":"I02","claim_text":"Time alignment and directional equalization ease spatial interpolation; MCA adds auditory-smoothed magnitude correction. This project tests learned compensation of the remaining magnitude residual, not a claim that MCA is ineffective.","intended_evidence_kind":"definitional","planned_refs":["R1","R2S","R3"]},
+        {"claim_id":"I03","claim_text":"Hybrid freezes a subject-conditioned FiLM-SIREN base and learns a direction-conditioned binaural frequency-convolution increment using magnitude, spectral and binaural constraints; inherited phase, zero output initialization and finite searches bound the design contribution.","intended_evidence_kind":"definitional","planned_refs":["R7","R11"]},
+        {"claim_id":"I04","claim_text":"Historical SONICOM comparisons support three spectral-error reductions versus MCA and metric-specific advantages with horizontal ILD costs versus MCAR; validation component comparisons and Q sensitivity do not establish isolated causality or unseen confirmation.","intended_evidence_kind":"empirical","planned_refs":[]},
+        {"claim_id":"I05","claim_text":"FSP-AE uses source-position/frequency-conditioned autoencoding; RANF combines retrieval, frequency sequence modeling and subject-specific fine-tuning with optional panning inputs. Hybrid is distinguished by its MCA-residual refinement and feed-forward observation conditioning, not by inventing neural fields or frequency modeling.","intended_evidence_kind":"definitional","planned_refs":["R4","R5","R7","R11"]},
+        {"claim_id":"I06","claim_text":"Objective spatial or spectral errors do not by themselves establish perceptual benefits; the spatial-loss review is contextual, not a source of this project's exact loss coefficients.","intended_evidence_kind":"definitional","planned_refs":["R18"]},
+        {"claim_id":"I07","claim_text":"The SONICOM paper describes the dataset and preprocessing; the 350-subject project cohort and metadata hashes are supported by archived provenance, not the paper's original 120-subject release.","intended_evidence_kind":"empirical","planned_refs":["R6","R8"]}
+      ],
+      "manifest_negative_constraints": [
+        {"constraint_id":"I-NC1","rule":"No first-ever, all-metric superiority, six-best, statistical equivalence, causal ablation, measured efficiency or listening-benefit claims."},
+        {"constraint_id":"I-NC2","rule":"No new experiment, raw test access, new bootstrap, model promotion, upload or release. Do not conflate author-designed components with literature-wide novelty."},
+        {"constraint_id":"I-NC3","rule":"Preserve historical test exposure and result-informed narrative selection. Do not mix published baseline scores with repository evaluations or PDF filenames with publication dates."},
+        {"constraint_id":"I-NC4","rule":"17 PDF files do not mean 17 full human reads; structural PASS is not content certification. Use section locators for non-PASS PDFs and preserve version/source warnings."}
+      ]
+    },
+    {
+      "manifest_version": "1.0",
+      "manifest_id": "M-CSMT-20260903-method-setup-v1",
+      "emitted_by": "draft_writer_agent_inline",
+      "emitted_at": "2026-09-03T20:24:00+08:00",
+      "claims": [
+        {
+          "claim_id": "M01",
+          "claim_text": "The task learns magnitude residuals on MCA interpolation; MCA uses time alignment and magnitude correction.",
+          "intended_evidence_kind": "definitional",
+          "planned_refs": [
+            "R1"
+          ]
+        },
+        {
+          "claim_id": "M02",
+          "claim_text": "Hybrid combines a frozen subject-conditioned FiLM-SIREN with a direction-conditioned binaural spectral CNN; inputs, modulation and normalization follow repository code.",
+          "intended_evidence_kind": "definitional",
+          "planned_refs": [
+            "R7",
+            "R11"
+          ]
+        },
+        {
+          "claim_id": "M03",
+          "claim_text": "Zero output initialization reproduces the supplied FiLM parent; residual-dB ensemble averages three fixed members; phase and outside-bin values inherit MCA.",
+          "intended_evidence_kind": "definitional",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "M04",
+          "claim_text": "Training uses normalized SmoothL1 plus seven fixed weighted auditory/spectral objectives, with independent global and horizontal samples.",
+          "intended_evidence_kind": "definitional",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "M05",
+          "claim_text": "Existing staged architecture and conditioning searches justify the chosen configuration only within their search space, and fixed E130/E190 budgets are distinct from evaluation claims.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "M06",
+          "claim_text": "The local SONICOM cohort uses 350 subjects split 262/44/44, Q26 from a 793-direction measured domain, and a dated outlier snapshot; original archive provenance still needs retrieval.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": [
+            "R6"
+          ]
+        },
+        {
+          "claim_id": "M07",
+          "claim_text": "Ten frozen method results use four primary and sixteen supplementary/descriptive endpoints, subject-level statistics and disclosed historical test access.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "M08",
+          "claim_text": "Existing FiLM/Hybrid component comparisons and validation Q14/Q26/Q50 sensitivity have restricted causal and generalization scope, with method-specific RANF adaptation.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        }
+      ],
+      "manifest_negative_constraints": [
+        {
+          "constraint_id": "NC1",
+          "rule": "No first-ever, globally optimal, six-best, universal superiority, statistical equivalence, proven lightweight or perceptual improvement claims."
+        },
+        {
+          "constraint_id": "NC2",
+          "rule": "No new experiment, raw test access, checkpoint selection, fabricated result or retroactive preregistration."
+        },
+        {
+          "constraint_id": "NC3",
+          "rule": "Do not conflate proxy training ERB with strict HRIR-based ERB, frequency coordinates with CNN log-frequency, or measured domain with a complete sphere."
+        },
+        {
+          "constraint_id": "NC4",
+          "rule": "Do not describe code publication intent, manuscript completeness, compilation or venue compliance as accomplished."
+        }
+      ]
+    },
+    {
+      "manifest_version": "1.0",
+      "manifest_id": "M-CSMT-20260903-results-v1",
+      "emitted_by": "draft_writer_agent_inline",
+      "emitted_at": "2026-09-03T21:00:35+08:00",
+      "claims": [
+        {
+          "claim_id": "R01",
+          "claim_text": "Against MCA, Hybrid lowers three primary spectral errors with negative paired intervals; horizontal ILD has a lower mean but its interval includes zero.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "R02",
+          "claim_text": "The ten-method primary comparison shows metric-specific trade-offs: Hybrid improves contralateral ERB and high-frequency error against MCAR but worsens horizontal ILD; comparator-specific intervals must be retained.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "R03",
+          "claim_text": "Hybrid has the lowest observed means for contralateral-25 ERB and three selected local spectral metrics; FullSphereERB and ERBBandILDMean remain second-best, not equivalent-best. Secondary ranks are descriptive.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "R04",
+          "claim_text": "The validation comparison of FiLM E130 ensemble with Hybrid E190 ensemble supports changes in three spectral metrics, but not a detected ILD difference or isolated causal attribution.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "R05",
+          "claim_text": "On 743 shared validation directions, Q14 worsens all four primary metrics; Q50 worsens Full and Contra25 with positive intervals, whereas HF and ILD intervals include zero.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "R06",
+          "claim_text": "Subject-level win counts and the retained P0339 ILD case reveal heterogeneous effects; they do not authorize exclusions or result-dependent repairs.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        }
+      ],
+      "manifest_negative_constraints": [
+        {
+          "constraint_id": "RNC1",
+          "rule": "No new experiments, raw test reads, bootstrap runs, model promotion, or retrospective preregistration."
+        },
+        {
+          "constraint_id": "RNC2",
+          "rule": "No six-best, overall superiority, statistical equivalence, corrected-significance, perceptual or efficiency claims."
+        },
+        {
+          "constraint_id": "RNC3",
+          "rule": "Do not mix 44-test/767-direction results with 44-validation/767 or 743-direction results."
+        },
+        {
+          "constraint_id": "RNC4",
+          "rule": "Do not relabel Bounded-centered secondary comparisons as Hybrid-centered comparisons; preserve all retained subjects."
+        }
+      ]
+    },
+    {
+      "manifest_version": "1.0",
+      "manifest_id": "M-CSMT-20260904-discussion-v1",
+      "emitted_by": "draft_writer_agent_inline",
+      "emitted_at": "2026-09-04T09:29:00+08:00",
+      "claims": [
+        {
+          "claim_id": "D01",
+          "claim_text": "Existing historical-test comparisons support spectral residual compensation over MCA, with comparator-dependent spectral and ILD trade-offs rather than universal superiority.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "D02",
+          "claim_text": "Local spectral structure, absolute spectral error, band ILD and strict horizontal ILD quantify different aspects; favorable secondary means are not proof of independent perceptual benefit or equivalence.",
+          "intended_evidence_kind": "definitional",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "D03",
+          "claim_text": "The frozen conditional base and direction-conditioned binaural spectral CNN provide a design rationale, while component validation combines architecture, objective and training-budget changes and does not isolate causal effects.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "D04",
+          "claim_text": "Zero output initialization guarantees the initial parent function only; full-model efficiency and deployment superiority have not been demonstrated.",
+          "intended_evidence_kind": "definitional",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "D05",
+          "claim_text": "Q sensitivity is limited to the fixed-Q26 model and common validation domain; single-dataset historical-test selection and uncorrected multiple comparisons bound generalization and confirmation.",
+          "intended_evidence_kind": "empirical",
+          "planned_refs": []
+        },
+        {
+          "claim_id": "D06",
+          "claim_text": "Individual ILD failures motivate further investigation; independent confirmation, isolated ablations, efficiency and listening evaluations remain future work without execution commitments.",
+          "intended_evidence_kind": "normative",
+          "planned_refs": []
+        }
+      ],
+      "manifest_negative_constraints": [
+        {
+          "constraint_id": "D-MNC1",
+          "rule": "No new training, test inference, bootstrap, raw test reads, installer control, upload or release."
+        },
+        {
+          "constraint_id": "D-MNC2",
+          "rule": "Preserve four lowest means and two specified second-ranked endpoints; no six-best, statistical equivalence, proven causal mechanism or measured efficiency/perception claim."
+        },
+        {
+          "constraint_id": "D-MNC3",
+          "rule": "Do not erase historical test exposure, result-informed writing selection, differing validation domains, or the retained P0339 case."
+        }
+      ]
+    }
+  ]
+}

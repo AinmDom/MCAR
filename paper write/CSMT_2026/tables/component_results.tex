@@ -1,0 +1,18 @@
+% E4a/E4p: matched three-member ensembles on validation, not test.
+\begin{table}[htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\bicaption[tab:component-results]{表}{FiLM与Hybrid的验证集比较（44名被试，767方向；单位dB）}{Tab.}{Validation comparison of FiLM and Hybrid (44 subjects, 767 directions; dB)}
+\begin{tabular}{lrrrr}
+\toprule
+指标$\downarrow$ & FiLM E130 & Hybrid E190 & 均值差 & 95\%配对区间\\
+\midrule
+全域ERB & 0.8275 & 0.8044 & $-0.023122$ & $[-0.025642,-0.020640]$ \\
+对侧$25^\circ$ ERB & 1.2308 & 1.2146 & $-0.016183$ & $[-0.019667,-0.012974]$ \\
+对侧高频 & 3.7028 & 3.5020 & $-0.200758$ & $[-0.216183,-0.185650]$ \\
+水平面ILD & 0.6306 & 0.6298 & $-0.000787$ & $[-0.002977,+0.001443]$ \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize 两种模型均为三个成员的等权集成。差值为Hybrid$-$FiLM；区间采用既有10000次被试配对bootstrap、种子20260828，未校正多重比较。}
+\end{table}

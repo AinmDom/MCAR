@@ -1,0 +1,96 @@
+% Evidence identifiers refer to WRITING_NOTES_ARS.md.
+\section{实验设置}
+\label{sec:setup}
+
+% Role: dataset provenance and fixed observation geometry. Evidence: S6,R6.
+\subsection{数据划分与访问历史}
+实验使用SONICOM的测量HRTF数据\cite{R6}，% <!--ref:R6--><!--anchor:section:5 FEATURES SUMMARY AND RELEASE-->
+以空间声学定向格式（Spatially Oriented Format for Acoustics，SOFA）保存\cite{R8}。% <!--ref:R8--><!--anchor:section:Abstract-->
+原数据集论文介绍的是发表时的120人版本，下述350人队列依据项目实际下载的后续元数据快照确定，不从原论文人数推断。
+所用文件变体为\texttt{FreeFieldCompMinPhase\_44kHz}，采样率44.1\,kHz，每个被试包含793个方向的双耳256点HRIR。此处的最小相位指自由场补偿滤波器，并非将HRTF整体约束为最小相位。项目下载流程依据官方元数据及日期固定的\texttt{Outliers\_2026-05-06.csv}，保留HRTF可用、未列为官方HRTF异常且自由场均衡文件未损坏的被试，形成350人队列。
+% Provenance: paper write/data_provenance/SONICOM_PROVENANCE_CHECK.md and archived seven source files.
+项目归档的372条元数据经筛选后纳入350人、排除22人。选择manifest记录的四份元数据文件SHA256与归档快照一致，纳入名单与冻结被试划分一致。该核对限定于来源文件和清单，不构成对原始SOFA的重新验证。
+\draftnote{来源快照和元数据哈希已核对；SONICOM数据许可条款仍待确认，不由数据公开可下载推断再分发权限。}
+
+被试按自由场均衡文件分层，并以固定种子20260731划分为262名训练、44名验证和44名测试被试，同一被试不跨集合。归一化统计仅由训练数据计算。表\ref{tab:protocol}列出主要设置。参考方向的仰角范围为$-45^\circ$至$90^\circ$，因此本文的“全域”指数据实际提供的测量域，不包括缺失的下方球冠。
+
+\begin{table}[htbp]
+\centering\small
+\bicaption[tab:protocol]{表}{数据与正式操作点}{Tab.}{Data and the fixed operating point}
+\begin{tabular}{p{0.29\linewidth}p{0.61\linewidth}}
+\toprule
+项目 & 设置\\
+\midrule
+被试划分 & 训练262／验证44／测试44\\
+稀疏观测 & Q26，左右对称；观测方向不计入插值评价\\
+参考及评价方向 & 793个参考方向；767个非观测方向；其中72个水平面方向\\
+学习频点 & 463点，86.1328125--19982.8125\,Hz\\
+时域重建 & 1024点IFFT后保留256点HRIR，采样率44.1\,kHz\\
+正式主模型 & Hybrid，三个E190末点成员，dB残差等权集成\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Q26是在已有测量网格上构造的26方向子集，不视作精确Lebedev网格。选择过程固定北极与一个中矢状面方向，再选择12对左右对称方向，以扩大最小大圆间距，并用正则化三阶球谐设计的对数行列式处理并列。观测方向从评价中排除，所有学习方法只使用相应稀疏输入提供的个体信息。
+
+% Role: honest chronology; preserves historical selection boundary. Evidence: S8,S10,S11.
+本研究使用开发阶段与历史工程测试两个证据层次。架构、训练目标与预算在相应训练／验证阶段确定，Hybrid的三个正式成员及等权集成随后冻结。测试集在项目历史中已被先前工程评价使用；2026年8月31日对冻结Hybrid补充一次推断，9月2日继续使用既有预测补全其他端点。选择Hybrid作为本文主方法及围绕其优势组织论文，发生在这些结果已知之后。因此，本文将结果作为同一历史测试队列上的方法比较与补充表征，不声称它们构成此前未见的独立确认，也不据此重新调参。
+
+% Role: baseline grouping and fair but not identical reconstruction paths. Evidence: S7,S8.
+\subsection{对照方法与重建口径}
+比较共包含十种方法：SH only、SUpDEq SH、SUpDEq Natural Neighbor、SUpDEq Barycentric、MCA、MCAR v3.5.1、FSP-AE、RANF、Hybrid与Bounded E25。结果叙述先回答在MCA之后学习残差的补偿价值，再比较Hybrid与其他学习方法的差异。MCAR v3.5.1保留为项目工程主模型与强基线，Bounded E25是另一条校正路线，不将两者的结构或效果归入Hybrid。
+
+传统重建采用既有SUpDEq／MCA实现；球谐（Spherical Harmonics，SH）相关设置为三阶，头半径0.09\,m，所用SH正则参数为0.01，自然邻域和重心插值保持各自冻结定义。十方法使用相同测试被试、Q26观测和插值评价掩码，但不强行改写为相同的训练或推断机制。
+
+对Hybrid等只输出MCA幅度残差的方法，严格评价使用第\ref{sec:method}节的MCA相位及未预测频点复用链路。对直接生成HRIR的方法，保留其原生输出并映射至统一表示和评价频点，不强制替换为MCA相位。补充评价的统一导出需复现既有四项主要指标，接受阈值为逐被试最大绝对差不超过$10^{-9}$\,dB。既有完整性报告记录十方法、44名被试、20端点共8800个逐被试值均为有限数，既有主要指标来源复核误差为0；本文引用这些已完成产物，不重新生成测试预测。
+\draftnote{对照方法及工具的R2、R4、R5、R12等文献已在总框架登记，待相邻工作全文核对后补入本节最终引用；不将项目复现配置等同各原论文的全部设置。}
+
+% Role: endpoint definitions before statistical interpretation. Evidence: S3,S7,S8.
+\subsection{评价指标与配对统计}
+四项主要指标均以dB报告，值越低越好。全域ERB误差（FullSphereERB）将重建和参考HRIR输入\texttt{AKerbError}，分析范围为50\,Hz至奈奎斯特频率22.05\,kHz，对频带绝对误差及双耳平均，并对767个插值方向按固体角加权。对侧$25^\circ$ ERB误差（Contralateral25ERB）沿用相同HRIR域误差，分别限制在左耳对侧中心$(270^\circ,0^\circ)$、右耳对侧中心$(90^\circ,0^\circ)$的大圆半径$25^\circ$区域，并在每个区域重新归一化方向权重。严格ERB评价使用完整重建HRIR，与式\eqref{eq:training-loss}中的选定频点三角滤波代理不同。
+
+对侧高频误差（ContralateralHighFrequency）统计对侧半空间内高于10\,kHz且不超过20\,kHz的选定频点幅度绝对误差，方向按固体角加权，双耳分别归一化后平均。水平面ILD平均绝对误差（HorizontalILDMAE）采用
+\begin{equation}
+\operatorname{ILD}(\mathbf q)=10\log_{10}
+\frac{\sum_{n=0}^{255}|h_L(\mathbf q,n)|^2}
+     {\sum_{n=0}^{255}|h_R(\mathbf q,n)|^2},
+\end{equation}
+并在72个水平面插值方向上算术平均预测与参考ILD的绝对差。该指标不同于直接对选定频带幅度积分所得的频带ILD，不能用后者替代。
+
+另有九项次要指标及七项探索性／描述性端点，分类见表\ref{tab:endpoints}。高频一／二阶差分和多尺度凹口深度沿用训练定义，但作为独立报告端点保留单位；频带ILD报告的是200--18000\,Hz内35个代理ERB频带的ILD绝对误差均值，而非训练使用的SmoothL1值。空间分组LSD按查询方向到最近Q26观测方向的大圆距离分组。所有空间子集均重新归一化其方向权重。
+
+\begin{table}[htbp]
+\centering\small
+\bicaption[tab:endpoints]{表}{二十个端点的分层及用途}{Tab.}{Roles of the twenty endpoints}
+\begin{tabular}{p{0.18\linewidth}p{0.65\linewidth}r}
+\toprule
+层级 & 内容 & 数量\\
+\midrule
+主要 & 全域ERB、对侧$25^\circ$ ERB、对侧高频幅度误差、水平面ILD误差 & 4\\
+次要 & 全域对数谱失真（LSD）、高频一／二阶差分、多尺度凹口深度、频带ILD、四档观测距离分组LSD & 9\\
+探索／描述 & 主凹口惩罚位置误差、匹配位置误差、漏检率、误检率、参考凹口比例、ITD加权平均与最大绝对误差 & 7\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+耳间时间差（Interaural Time Difference，ITD）端点在本研究中主要用于重建合理性检查，不能据此声称模型学习了相位。参考凹口比例为方法无关的描述量，各端点也并非相互独立。完整表保留全部端点，不通过跨量纲相加或胜出项计数构造总分。
+
+统计独立单位为被试。对每个方法和端点报告44人的均值、样本标准差和既有被试级95\%百分位bootstrap区间。Hybrid主要指标的直接配对比较使用10000次重采样，种子为20260831，以
+\begin{equation}
+\Delta_i=E_i^{\mathrm{Hybrid}}-E_i^{\mathrm{baseline}}
+\end{equation}
+为配对差值；负值代表Hybrid误差较小。直接对照包含MCA、MCAR v3.5.1、FSP-AE、RANF和Bounded E25。方向和频点不作为独立被试扩充样本量，三个训练成员也不作为三个独立测试样本。测试被试全部保留，不按误差剔除离群个体。
+
+补充端点既有统计使用种子20260902及其确定性派生种子；其中完整配对表以Bounded为中心，不能重新标记成Hybrid中心的显著性结果。本文对缺少直接Hybrid配对区间的端点只报告描述性位置。分析没有多重比较校正，也没有预先设定统计等效界限，区间含零不解释为等效，接近的均值亦不直接合并为“并列最优”。
+
+% Role: selection provenance and limits, not new experiments. Evidence: S4,S5,S9,S10.
+\subsection{选型记录、组件比较与方向敏感性}
+FiLM-SIREN的结构参数来自已有分阶段搜索，而非直接采用原论文默认配置。SIREN阶段先在五名训练被试上比较频率映射及首层频率系数，再顺序比较深度、宽度和隐藏层频率系数；随后在32名未参与该轮选择的训练被试上进行配置确认。最终采用线性／ERB双频率、六层、宽度256、首层与隐藏层频率系数均为20的骨干。该确认属于训练被试内的表示和方向留出检查，不是最终模型的测试泛化证据，也不是全参数笛卡尔积搜索。
+
+条件结构阶段比较潜变量维度、调制形式、调制层位置以及全局／局部MCA输入，最终采用128维条件、完整调制、全部正弦层调制和全局加局部MCA输入。全层与隐藏层调制的五种子比较差异较小，配对区间含零；因此“全层”是按冻结均值规则选定的实现，而非已证明具有稳定显著优势的结构。后续目标和优化设置在相应开发阶段确定，E130父模型及E190细化预算分别冻结。
+
+已有组件比较在同一44人验证集上比较三个E130 FiLM成员的等权集成与三个E190 Hybrid成员的等权集成，用于观察加入并训练频谱细化器后的变化。它不单独隔离CNN架构、额外优化预算和各损失项，也不构成单模型与集成收益的严格消融；这些限制将在讨论中保留。
+
+观测方向敏感性使用嵌套的$Q14\subset Q26\subset Q50$，并统一在排除全部Q50观测后的743个方向上评价，只使用44名验证被试。MCAR v3.5.1、FSP-AE、Hybrid和Bounded保持网络参数冻结，传统方法按当前观测集重建；RANF遵循其原生路径，从同一冻结预训练参数出发，在Q14与Q50分别进行1000个epoch、batch size为3的适配，Q26复用既有适配产物。故该比较是方法各自既定路径的输入敏感性，而不是十方法全部不适配的统一实验。
+
+方向效应报告$Q14-Q26$与$Q50-Q26$的被试配对差及既有10000次bootstrap区间，种子为20260902。由于评价方向与主要Q26比较的767方向不同，不能把两种表的Q26均值直接混用。本文不增加训练、听音或效率实验，也不以这些敏感性结果重新选择正式操作点。

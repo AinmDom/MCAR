@@ -1,0 +1,26 @@
+% Scoped draft. Claim intent: M-CSMT-20260904-intro-related-v1.
+\section{引言}
+\label{sec:introduction}
+
+% Role I-P1: task, motivation and input boundary. Sources R6/R13.
+稀疏头相关传输函数重建旨在由个体的少量已测方向估计未测方向的双耳声学响应。头相关传输函数（Head-Related Transfer Function，HRTF）描述声源至两耳的方向相关滤波，包含耳间时间差、耳间声级差及单耳频谱线索，是耳机双耳重放的基础\cite{R6}。% <!--ref:R6--><!--anchor:section:0 INTRODUCTION-->
+高密度个体测量需要专门设备和采集时间，因而从稀疏测量恢复较密方向网格具有实际意义\cite{R13}。% <!--ref:R13--><!--anchor:section:1. Introduction-->
+本文关注离线空间重建：输入包含目标个体的稀疏双耳测量，输出为同一测量域内其他方向的HRTF，不涉及仅凭人体尺寸生成HRTF或直接合成双耳音频。
+
+% Role I-P2: nearest traditional work and the bounded extension question.
+时间对齐和幅度校正为稀疏重建提供了可解释的信号处理基础。时间对齐在插值前移除随方向变化的传播延迟，降低快速相位变化带来的困难，但幅度响应仍可能随方向快速变化，尤其在对侧区域和高频范围\cite{R1,R3}。% <!--ref:R1--><!--anchor:section:I. INTRODUCTION--> <!--ref:R3--><!--anchor:section:0 INTRODUCTION-->
+幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）进一步利用频率平滑幅度表示构造校正滤波器\cite{R1}。% <!--ref:R1--><!--anchor:section:II. METHOD-->
+本文沿这一思路研究后续补偿：在保留MCA重建链路的条件下，学习剩余幅度误差能否改善重建，以及改善是否同时覆盖局部谱结构和双耳线索。
+
+% Role I-P3: mechanism and project-specific contribution, not priority claim.
+本研究构建FiLM-SIREN双耳频谱细化模型，简称Hybrid。模型借鉴特征级线性调制（FiLM）\cite{R7}与正弦表示网络（SIREN）\cite{R11}，% <!--ref:R7--><!--anchor:section:2.1 Feature-wise Linear Modulation--> <!--ref:R11--><!--anchor:section:Abstract-->
+将稀疏观测编码为个体条件，结合查询方向、频率及MCA幅度预测残差基场。在此基础上冻结基场，追加方向条件化的双耳频谱卷积网络，联合处理左右耳整谱并预测附加增量。输出层零初始化使训练起点与父模型一致；复合目标同时约束幅度、局部频谱变化和双耳能量关系。这一设计显式提供跨频点与双耳信息，其独立因果贡献仍需与额外训练和损失变化区分。
+
+% Role I-P4: research questions, preserved verbatim from the approved framework.
+本文围绕三个问题展开：Hybrid相对MCA、MCAR、Bounded、FSP-AE、RANF的优势与代价是什么？在冻结FiLM-SIREN上追加CNN后，哪些误差发生变化，结构与训练开销如何界定？Q26训练并冻结的Hybrid对Q14/Q50观测如何响应？这些问题分别对应历史测试队列比较、验证集组件比较和输入方向敏感性分析。
+
+% Role I-P5: contributions tied to actual artifacts and evaluation scope.
+本文的工作包括MCA幅度残差的条件建模与双耳频谱细化结构，以及沿统一重建链路开展的多指标比较。结构参数依据项目内有限扫描确定，不声称全局最优；FiLM和SIREN本身也不属于本文原创。评价区分主要与补充端点、验证与历史测试范围，并保留个体失败案例。这样的报告方式用于判断残差补偿的收益出现在哪些误差维度，而非仅以最小均值概括方法优劣。
+
+% Role I-P6: balanced result preview; exact numbers remain in Results.
+SONICOM历史测试队列的结果显示，Hybrid相对MCA降低了三项主要频谱误差，并在对侧ERB及三项局部谱结构指标上取得所比较方法中的最低均值。然而，相对MCAR的水平面耳间声级差误差增大，输入方向增加也未带来一致收益。本文据此将Hybrid定位为具有特定频谱收益的残差细化方案，不由客观指标推断听感改善。第\ref{sec:setup}节说明历史测试访问与事后写作选择，第\ref{sec:results}节报告完整比较及其限制。

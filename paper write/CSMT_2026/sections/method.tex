@@ -1,0 +1,135 @@
+% Section draft; role/evidence annotations are editorial and do not typeset.
+\section{FiLM-SIREN双耳频谱细化方法}
+\label{sec:method}
+
+% Role: task and design rationale. Evidence: author confirmation, R1, S1--S4.
+\subsection{MCA残差学习与条件隐式基场}
+本研究以幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）为基础，学习其头相关传输函数（Head-Related Transfer Function，HRTF）重建中的剩余幅度误差。MCA在时间对齐插值之外引入基于频率平滑表示的幅度校正\cite{R1}。% <!--ref:R1--><!--anchor:section:Abstract-->
+本文将这一传统重建结果保留为基线，利用稀疏观测提供的个体信息预测附加残差，而非直接回归完整复数HRTF。所用模型称为FiLM-SIREN双耳频谱细化模型，简称Hybrid。
+
+% Role: notation and input/target separation. Evidence: S1,S3,S6.
+记被试为$s$，查询方向单位向量为$\mathbf q=(x,y,z)$，耳侧为$e\in\{L,R\}$，频率为$f$。被试的$Q$个观测方向构成集合$\mathcal O_s$。设参考幅度和MCA幅度的dB表示分别为$M^\star_{s,e}(\mathbf q,f)$与$M^{\mathrm{MCA}}_{s,e}(\mathbf q,f)$，监督目标定义为
+\begin{equation}
+r^\star_{s,e}=M^\star_{s,e}-M^{\mathrm{MCA}}_{s,e},\qquad
+\widetilde r^\star_{s,e}=\frac{r^\star_{s,e}-\mu_r}{\sigma_r}.
+\label{eq:residual-target}
+\end{equation}
+其中$\mu_r,\sigma_r$仅由训练集统计量确定。观测参考幅度只在$\mathcal O_s$内作为条件输入，非观测方向的参考幅度用于训练监督或既有评价，不作为推断输入。MCA幅度及其原有幅度校正特征也只由对应的稀疏观测构造。
+
+% Role: set encoder and coordinate features. Evidence: S1,S4.
+条件编码器对每个观测方向的归一化双耳频谱使用两层一维卷积，拼接该方向的$\mathbf q$并投影为128维特征；随后按有效方向掩码求均值，再线性映射为个体条件向量$\mathbf z_s\in\mathbb R^{128}$。查询输入为七维向量
+\begin{equation}
+\mathbf u_{s,\mathbf q,f}=
+[x,y,z,\nu_{\mathrm{lin}}(f),\nu_{\mathrm{ERB}}(f),
+ \widetilde M^{\mathrm{MCA}}_{s,L},\widetilde M^{\mathrm{MCA}}_{s,R}]^\top .
+\end{equation}
+这里$\nu_{\mathrm{lin}}$和$\nu_{\mathrm{ERB}}$分别将线性频率及等效矩形带宽（Equivalent Rectangular Bandwidth，ERB）频率坐标映射至$[-1,1]$；波浪号MCA幅度采用独立的训练集均值和标准差归一化。全局观测条件与查询位置的MCA幅度由此通过不同入口进入基场。
+
+% Role: attribution followed by project-specific implementation. Evidence: R7,R11,S1,S4.
+基场借鉴逐特征线性调制（Feature-wise Linear Modulation，FiLM）的条件控制思想\cite{R7}，% <!--ref:R7--><!--anchor:section:Abstract-->
+并采用正弦表示网络（Sinusoidal Representation Network，SIREN）的周期激活形式\cite{R11}。% <!--ref:R11--><!--anchor:section:Abstract-->
+本项目具体实现为六层、每层256个隐单元，条件调制作用于全部正弦层：
+\begin{align}
+\mathbf h_\ell&=\mathbf a_\ell(\mathbf z_s)\odot
+\sin\!\left[
+\omega_\ell\boldsymbol\gamma_\ell(\mathbf z_s)\odot
+(\mathbf W_\ell\mathbf h_{\ell-1}+\mathbf b_\ell)
++\boldsymbol\beta_\ell(\mathbf z_s)\right],\\
+\boldsymbol\gamma_\ell&=1+0.5\tanh(\mathbf g_\ell),\quad
+\boldsymbol\beta_\ell=\pi\tanh(\mathbf b'_\ell),\quad
+\mathbf a_\ell=1+0.5\tanh(\mathbf a'_\ell).
+\label{eq:film-siren}
+\end{align}
+其中$\mathbf h_0=\mathbf u$，$\odot$为逐元素乘法，$\mathbf g_\ell,\mathbf b'_\ell,\mathbf a'_\ell$由条件调制器生成，所有$\omega_\ell=20$。末端线性层输出左右耳的归一化残差$\widetilde{\mathbf r}_F=F_\phi(\mathbf u,\mathbf z_s)$。这些调制边界和结构参数属于本项目的具体实现，不是对FiLM原始公式的直接照搬。
+
+% Role: spectral module implementation before motivation. Evidence: S2,S4.
+\subsection{方向条件化的双耳频谱细化}
+频谱细化器在每个查询方向上联合处理左右耳的完整目标频带。输入矩阵$X_s(\mathbf q)\in\mathbb R^{7\times F}$依次包含左耳MCA幅度、左耳MCA幅度校正特征、左耳FiLM残差、右耳对应的三项，以及归一化对数频率。MCA幅度校正特征记为$\widetilde C^{\mathrm{MCA}}$，与网络学习的新残差增量并非同一变量。输入顺序为
+\begin{equation}
+X_s(\mathbf q)=
+[\widetilde M_L^{\mathrm{MCA}},
+ \widetilde C_L^{\mathrm{MCA}},\widetilde r_{F,L},
+ \widetilde M_R^{\mathrm{MCA}},
+ \widetilde C_R^{\mathrm{MCA}},\widetilde r_{F,R},
+ \nu_{\log}]^\top .
+\label{eq:cnn-input}
+\end{equation}
+式中每项均是长度为$F$的频率序列。$\nu_{\log}$服务于CNN输入，不替代基场的线性／ERB双频率坐标。
+
+% Role: mechanism and motivation. Evidence: S2. No isolated efficacy claim.
+双耳频谱卷积神经网络（Convolutional Neural Network，CNN）首先将七通道输入映射至48通道，再经过四个扩张深度卷积残差块。卷积核长度为7，扩张率依次为$1,2,4,8$；块内通过逐点卷积将通道扩展至96，再投影回48，结合组归一化和SiLU激活。方向向量$\mathbf q$经两层64维映射后，为各块提供特征缩放与平移。末端$1\times1$卷积输出左右耳的频谱增量。该设计向基场之后显式加入相邻频点和双耳频谱信息，用于残差细化；其独立效果仍需与训练目标及额外训练预算的作用区分。
+
+\begin{figure}[htbp]
+\centering
+\small
+\fbox{\parbox{0.89\linewidth}{\centering 稀疏双耳观测$\mathcal O_s$\\
+集合编码$\rightarrow\mathbf z_s$；MCA插值$\rightarrow$幅度、校正特征、相位及未预测频点}}
+\\[3pt]$\downarrow$\\[3pt]
+\fbox{\parbox{0.89\linewidth}{\centering 查询方向＋双频率坐标＋双耳MCA幅度＋$\mathbf z_s$\\
+冻结FiLM-SIREN$\rightarrow\widetilde{\mathbf r}_F$}}
+\\[3pt]$\downarrow$\\[3pt]
+\fbox{\parbox{0.89\linewidth}{\centering 七通道整谱＋方向$\mathbf q$\\
+可训练双耳CNN$\rightarrow\Delta\widetilde{\mathbf r}_\theta$；
+$\widetilde{\mathbf r}_H=\widetilde{\mathbf r}_F+\Delta\widetilde{\mathbf r}_\theta$}}
+\\[3pt]$\downarrow$\\[3pt]
+\fbox{\parbox{0.89\linewidth}{\centering 三成员反归一化dB残差等权平均＋MCA幅度\\
+恢复MCA相位及未预测频点$\rightarrow$IFFT$\rightarrow$截取256点HRIR}}
+\bicaption[fig:hybrid-pipeline]{图}{Hybrid的残差细化与严格重建流程}{Fig.}{Residual refinement and strict reconstruction in Hybrid}
+\end{figure}
+
+% Role: exact initialization and reconstruction, not performance promise. Evidence: S2,S3,S5.
+\subsection{零输出初始化、集成与严格重建}
+在Hybrid训练阶段，FiLM-SIREN及条件编码器全部冻结，只优化新增的频谱CNN。CNN输出卷积的权重和偏置初始化为零，因此初始增量$\Delta\widetilde{\mathbf r}_\theta$恒为零，Hybrid初始函数与载入的FiLM父模型一致。这里的零初始化针对输出层，不是把整个CNN的权重全部置零，也不意味着初始输出等于MCA或MCAR。
+
+单成员预测及其dB转换为
+\begin{equation}
+\widetilde{\mathbf r}_H=\widetilde{\mathbf r}_F+
+C_\theta(X_s(\mathbf q),\mathbf q),\qquad
+\mathbf r_H^{\mathrm{dB}}=\sigma_r\widetilde{\mathbf r}_H+\mu_r.
+\end{equation}
+因此CNN单独增量的dB值为$\sigma_r\Delta\widetilde{\mathbf r}_\theta$，不重复加上$\mu_r$。正式模型采用三个冻结成员的等权平均：
+\begin{equation}
+\overline{\mathbf r}_H^{\mathrm{dB}}=\frac{1}{3}
+\sum_{k=1}^{3}\mathbf r_{H,k}^{\mathrm{dB}},\qquad
+\widehat{\mathbf M}=\mathbf M^{\mathrm{MCA}}+
+\overline{\mathbf r}_H^{\mathrm{dB}}.
+\label{eq:ensemble}
+\end{equation}
+权重不根据测试表现重设，均值在dB残差域计算，而非在线性幅度域计算。
+
+为恢复时域头相关脉冲响应（Head-Related Impulse Response，HRIR），在选定频点采用$10^{\widehat M/20}$和对应MCA相位构造复数频谱，其余频点直接沿用MCA复数值。经共轭对称扩展、1024点逆快速傅里叶变换（Inverse Fast Fourier Transform，IFFT）后，保留前256点HRIR。模型不学习相位，所有基于HRIR的双耳线索评价必须经过这一完整重建链路。
+
+% Role: training definitions, terms are not strict reporting endpoints. Evidence: S3,S4.
+\subsection{训练目标与固定预算}
+训练总目标由归一化残差SmoothL1损失与七个辅助项组成：
+\begin{align}
+\mathcal L={}&\mathcal L_{\mathrm{res}}+
+\frac{1}{\sigma_r}\big(
+0.75\mathcal L_{\mathrm{ERB\text{-}proxy}}+
+0.25\mathcal L_{\mathrm{contraHF}}+
+0.75\mathcal L_{\mathrm{strictILD}}\notag\\
+&\qquad+
+0.05\mathcal L_{\mathrm{bandILD}}+
+0.25\mathcal L_{\Delta f}+
+0.15\mathcal L_{\Delta^2 f}+
+0.30\mathcal L_{\mathrm{notch}}\big).
+\label{eq:training-loss}
+\end{align}
+$\mathcal L_{\mathrm{res}}$的SmoothL1阈值为归一化单位下的1。其他项按实现除以训练残差标准差$\sigma_r$，并在各自方向子集内重新归一化固体角权重，再对耳侧及相应频点或频带平均。
+
+ERB代理项在50--20000\,Hz对应的ERB轴上均匀设置41个中心，用三角权重对选定频点的线性功率积分，再比较频带能量的dB差。$\mathcal L_{\mathrm{contraHF}}$为对侧半空间中高于10\,kHz频点的幅度绝对误差。两个项分别约束频带能量和高频绝对幅度，但前者不是最终报告的严格HRIR域ERB评价。
+
+局部频谱结构项使用4\,kHz及以上的相邻频点差分。记幅度误差序列$\epsilon_f=\widehat M_f-M^\star_f$，一阶和二阶项分别平均$|\epsilon_{f+1}-\epsilon_f|$与$|\epsilon_{f+2}-2\epsilon_{f+1}+\epsilon_f|$。差分模板全部频点都须位于所选频段，其单位分别记为dB/bin和dB/bin$^2$，不写成对连续频率的导数。多尺度谱凹口项比较
+\begin{equation}
+D_r(M)_f=\tau\log\!\left[
+1+\exp\!\left(
+\frac{(M_{f-r}+M_{f+r})/2-M_f-\eta}{\tau}
+\right)\right],
+\end{equation}
+其中半径$r\in\{4,8,16\}$个频点，中心频率位于4--18\,kHz，$\eta=1$\,dB、$\tau=0.5$\,dB；对各半径的深度图绝对差求均值。该项不等于离散主凹口位置误差。
+
+双耳项在独立水平面采样上计算。严格耳间声级差（Interaural Level Difference，ILD）损失使用重建HRIR的左右耳能量比，频带ILD损失则使用中心频率200--18000\,Hz内的ERB代理频带左右耳功率差，并采用阈值0.5\,dB的SmoothL1。使用独立采样保证每步都有水平面方向参与双耳项；这些约束不构成各项测试误差必然下降的保证。
+
+正式训练的每个cycle遍历262名训练被试，每名被试执行一步更新，分别不放回抽取16个全测量域插值方向与16个独立水平面插值方向。采用AdamW，学习率和权重衰减均为$10^{-4}$，梯度裁剪阈值为5，使用FP32。学习率预热2个cycle，余下按总时域200个cycle的余弦计划衰减。
+
+E190表示新增CNN的固定训练预算。开发运行三个种子的最优cycle为190、190、170，按预定中位数规则确定正式预算190。正式成员从同种子的E130 FiLM父模型和重新初始化的CNN开始，三个随机种子为20260821、20260822、20260823；保持调度总时域200不变，仅使用第190个cycle的末点参数进行式\eqref{eq:ensemble}的集成。开发最优参数只用于确定预算，不替换正式末点。

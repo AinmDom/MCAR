@@ -1,0 +1,25 @@
+% E1w: secondary test means; no Hybrid-centered secondary significance test.
+\begin{table}[htbp]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\bicaption[tab:spectral-results]{表}{局部频谱与频带ILD的补充比较（44名测试被试，Q26）}{Tab.}{Supplementary local-spectral and band-ILD comparison (44 test subjects, Q26)}
+\begin{tabular}{lrrrr}
+\toprule
+方法 & 高频一阶差分 & 高频二阶差分 & 凹口深度 & 频带ILD\\
+ & dB/bin$\downarrow$ & dB/bin$^2\downarrow$ & dB$\downarrow$ & dB$\downarrow$\\
+\midrule
+SH only & 0.6135 & 0.2990 & 0.8679 & 4.5959 \\
+SUpDEq SH & 0.6163 & 0.3230 & 0.8034 & 2.9904 \\
+SUpDEq NN & 0.5769 & 0.3106 & 0.7399 & 2.5197 \\
+SUpDEq Bary. & 0.5765 & 0.3092 & 0.7411 & 2.5630 \\
+MCA & 0.6033 & 0.3231 & 0.7778 & 2.0562 \\
+MCAR v3.5.1 & 0.4251 & 0.2501 & 0.4977 & 1.6231 \\
+FSP-AE & 0.4050 & 0.2153 & 0.4987 & 1.6994 \\
+RANF & 0.4051 & 0.2172 & 0.4893 & 1.7360 \\
+Hybrid & \textbf{0.3997} & \textbf{0.2146} & \textbf{0.4877} & 1.6205 \\
+Bounded E25 & 0.4231 & 0.2365 & 0.5056 & \textbf{1.5734} \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize 均为被试均值，加粗仅表示最低均值。高频差分与凹口深度使用767个插值方向，频带ILD使用72个水平面插值方向；本表为补充描述，不提升为独立确认性证据。}
+\end{table}

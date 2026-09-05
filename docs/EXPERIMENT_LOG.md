@@ -1,5 +1,42 @@
 # 项目实验日志
 
+## 2026-09-05：Hybrid LSD B validation比较完成
+
+- 使用冻结ensemble identity `D1611128A86118ACE0EFD471A4F99456F1267B10D1C39C68AD769239FB589CE6`
+  从三个E190 `last.pt`以1/3 residual-dB平均，仅推理44名validation；44/44预测均shape
+  `[2,793,463]`且finite，`test_subjects_read=0`。输出：
+  `artifacts/reconstruction/sonicom_hybrid_lsd_b_e190_ensemble_validation/`。
+- 新旧Hybrid的FullSphereLSD为`3.522658134565499`与`3.5489256190074472 dB`；
+  candidate-old=`-0.026267484441947323 dB`，相对降低`0.7401531410313007%`。
+  44人配对bootstrap（10,000次、seed20260904）95%区间
+  `[-0.029413178596792797,-0.023110671650463797] dB`，win/tie/loss=`43/0/1`；
+  最大退化`+0.0030848768436446683 dB`（P0113）。
+- 空间上，距Q26的0--10/10--20/20--30度分箱均值差为
+  `-0.03671992540414542/-0.02634195261223161/-0.019643460354326514 dB`，区间均小于0；
+  30--180度为`-0.003498631694016369 dB`，区间
+  `[-0.01535449968429978,0.009002081559052919]`，无法确认改善，且P0166最大退化
+  `+0.10160025649015836 dB`。说明整体收益主要靠近输入方向，远区有尾部风险。
+- 相对旧Hybrid的权衡：FullSphereERB `+0.006262305233118432 dB`
+  （95%CI `[0.005347437741850103,0.0071898296881079335]`，43/44退化）；
+  Contra25ERB `+0.01635809484387329 dB`（`[0.01244823377522675,0.02023573630197221]`，40/44退化）；
+  ContraHF `+0.0004634001250298074 dB`（区间跨0）；严格Horizontal ILD
+  `-0.0017787096177044213 dB`（`[-0.0036125545997007795,-0.000016538471795259764]`）。
+  HF一/二阶差分分别`+0.0020616847005757418 dB/bin`与`+0.006357118148695339 dB/bin²`，
+  均44/44退化且区间大于0；notch深度`+0.00040992146188562566 dB`；ERB-band ILD
+  `+0.0023401650515469637 dB`且区间跨0。
+- 完整报告：`reports/HYBRID_LSD_B_VALIDATION_COMPARISON_20260905.md/.json`；严格指标目录
+  `results/sonicom_hybrid_lsd_b_vs_old_hybrid_validation/`；secondary目录
+  `results/sonicom_hybrid_lsd_b_secondary_validation/`，quality passed/all_finite。
+  secondary manifest identity=`041FB8EFEAF15BE56D9DF41CDB07E11956031FA8BCD19435D79805C34FCD2999`。
+  大型279136行逐方向LSD表仅本地保留并有manifest hash/复现脚本，不入Git。
+- 运行记录：MATLAB首次在沙箱内因filesystem startup错误退出，沙箱外同一命令44/44完成；
+  secondary首次产物计算口径正确但summary硬编码旧bootstrap seed，发现后修复为读取manifest并
+  删除/重建整个结果目录，最终summary明确seed20260904。汇总脚本首次因primary均值未合并而
+  中止，产生的自有JSON已删除，修复后完整重建。上述故障未改数据、模型、预注册比较或最终数值。
+- 决策：B作为validation候选得到小而一致的LSD收益，同时出现小幅ERB和频谱平滑代价；
+  不提升论文/工程主模型，不访问已消费test，也不把本实验解释成MCA内部ERB校正的因果消融。
+  若继续，优先研究LSD权重/频段或远方向加权，但必须另建validation协议；独立确认需要新holdout。
+
 ## 2026-09-05：Hybrid LSD B三seed训练完成并通过完整性核验
 
 - attempt2三个进程均exit0，结束于`2026-09-05T01:44:31+08:00`。

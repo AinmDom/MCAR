@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-05",
+  "purpose": "Pre-registered validation comparison of Hybrid LSD-B against existing Hybrid and frozen context methods",
+  "protocol": {
+    "path": "experiments/film_siren/STAGE_D_HYBRID_LSD_B_E190_PROTOCOL.md",
+    "sha256": "97F1BC995DAF6DC448B0A1AE9E01F9356F3B17F1978FF6771F9261883D1D5D05",
+    "hierarchy": "exploratory_validation_development"
+  },
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "val",
+    "subject_count": 44,
+    "direction_count": 793,
+    "q26_direction_count": 26,
+    "interpolation_direction_count": 767,
+    "horizontal_interpolation_direction_count": 72,
+    "frequency_bin_count": 463,
+    "resources": [
+      {
+        "path": "configs/data/sonicom_preparation_report_v1.json",
+        "sha256": "A5B861A0ADB87146A283502EFB3FE748A9B8FF9EB68539D38E9E36FEA17C7A35"
+      },
+      {
+        "path": "configs/data/sonicom_subject_split_v1.csv",
+        "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132"
+      },
+      {
+        "path": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+        "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287"
+      },
+      {
+        "path": "data/processed/sonicom_residual_q26_v1/training_statistics.json",
+        "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A"
+      }
+    ]
+  },
+  "methods": {
+    "BOUNDED": {
+      "label": "Hybrid LSD B E190 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_hybrid_lsd_b_e190_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_hybrid_lsd_b_e190_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "E88CA073F0FD03E9BB419C6EF835BDE5375E9E276F66537FDEB64B8DEC1B4E55",
+      "prediction_inventory_sha256": "07A1A0C4F627ED4BE08955B39055846E042D5C207FDD191669900647089AF452",
+      "identity": "D1611128A86118ACE0EFD471A4F99456F1267B10D1C39C68AD769239FB589CE6"
+    },
+    "HYBRID": {
+      "label": "Original Hybrid E190 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "836E8BB9CDCBA3AA95ABBE30AB519F4935E0E27A8C89452FA19024BE376D5412",
+      "prediction_inventory_sha256": "A586C77658E4612DA7870193546DE0470772D4B981FD34DB419EE9E3F3ACE255",
+      "identity": "A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE"
+    },
+    "FILMENS": {
+      "label": "FiLM-SIREN corrected E130 ensemble",
+      "prediction_root": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation",
+      "inference_report": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_e130_ensemble_validation/inference_report.json",
+      "inference_report_sha256": "1B402D678B0BC82E082C29C8025DE8981660D42503B78CD9CEF3BF7A7956483C",
+      "prediction_inventory_sha256": "E185CFC4AEF7F53E23F6F977A9227315DA607998B9A2B4C6B8B3A10714A97B55",
+      "identity": "1CE74CF0AEC21D29FDE22B952FBB038EDBA8600938037855028ECE84B06936BE"
+    },
+    "MCAR": {
+      "label": "MCAR v3.5.1",
+      "prediction_root": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70",
+      "inference_report": "artifacts/reconstruction/sonicom_q26_validation_v351_previous30_b70/inference_report.json",
+      "inference_report_sha256": "0B96D30A39D14122A944F896E78BC0136AC8CBED22FDD83F547DA4D6B081B3BA",
+      "prediction_inventory_sha256": "D14CFC56E2667E8D6D93EAA9193068E8A3DE1A11243BFBD4BF05C1AA28BF971D",
+      "identity": "v3.5.1-candidate"
+    }
+  },
+  "method_alias": {
+    "BOUNDED": "HYBRID_LSD_B candidate",
+    "HYBRID": "existing HYBRID baseline"
+  },
+  "primary_metrics": {
+    "metric_long_csv": "results/sonicom_hybrid_lsd_b_vs_old_hybrid_validation/metric_long.csv",
+    "sha256": "1C061A63C3BD9C4BA7214CD050397DAA885D9F9FD7E4D6E95788B2B90EEA5089",
+    "use": "paired tail statistics; generated on the same validation predictions",
+    "method_mapping": {
+      "HYBRID": "BOUNDED",
+      "PARENT": "HYBRID",
+      "FILMENS": "FILMENS",
+      "MCAR": "MCAR"
+    }
+  },
+  "implementation": {
+    "git_commit": "4d487b0bd032a8ec8391c66738b4479757d1973c",
+    "git_dirty_at_freeze": true,
+    "implementation_hash_locked": true,
+    "python_executable": "D:/miniconda3/envs/ml/python.exe",
+    "runtime_versions": {
+      "python": "3.9.23",
+      "numpy": "1.26.4",
+      "h5py": "3.14.0",
+      "torch": "2.8.0+cu128"
+    },
+    "bootstrap_generator": "numpy.random.default_rng PCG64",
+    "resources": [
+      {
+        "path": "scripts/evaluate_film_secondary_metrics_validation.py",
+        "sha256": "8924790AF6E08B9C26A21287F3DC09003F37F5B97A837304DE7ABBDD37571591"
+      },
+      {
+        "path": "src/mcar/evaluation/secondary_metrics.py",
+        "sha256": "C1DA0A232E0D29790D31168FB9A87AB4D2A46001F16EB3695BEA1CB90EDA63C9"
+      },
+      {
+        "path": "src/mcar/losses.py",
+        "sha256": "E5470D122D6CB45D5648AC67D355522A82F46C5DE673CA1EE9C407C6A6D7707E"
+      },
+      {
+        "path": "src/mcar/training/train_mlp_v2.py",
+        "sha256": "32AEEFD745DB500FF505D9281C065622B34E31E666178486D171C5A8A76347FE"
+      },
+      {
+        "path": "src/mcar/training/train_film_siren.py",
+        "sha256": "C0479BE9677DBB018EF9B094B2A2F778DAF26E75F384CEB7847F7CABE42B0471"
+      },
+      {
+        "path": "src/mcar/training/train_film_siren_stage_c.py",
+        "sha256": "E932A86E515E2274020EE588B78C9FDF5A47BC461A926D2B74122C835931F8BA"
+      },
+      {
+        "path": "tests/test_secondary_metrics.py",
+        "sha256": "9EA01CEDD9C67DC4BBD745457C4A75980DE1722EE09851B3E94F9C2E598210F9"
+      }
+    ]
+  },
+  "registered_tranche": {
+    "scalar_endpoints": [
+      "FullSphereLSD",
+      "HFFirstDifferenceMAE",
+      "HFSecondDifferenceMAE",
+      "MultiScaleNotchDepthMAE",
+      "ERBBandILDMean"
+    ],
+    "profiles": [
+      "ERB-band horizontal ILD absolute-error profile",
+      "LSD by fixed distance-to-Q26 bin",
+      "subject and direction LSD maps"
+    ],
+    "paired_tail_risk": "all five scalar endpoints, four primary endpoints, and four distance-bin endpoints",
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260904,
+    "tie_tolerance": 1e-12,
+    "worst_decile_subject_count": 5
+  },
+  "deferred_unqualified_endpoints": [
+    "model_based_localization",
+    "ITD_sanity",
+    "gate_and_correction_behavior",
+    "efficiency_and_deployability",
+    "discrete_notch_location"
+  ],
+  "output_root": "results/sonicom_hybrid_lsd_b_secondary_validation",
+  "test_policy": "Validation only. The entry point rejects non-val sources and records test_subject_count_read=0.",
+  "identity_sha256": "041FB8EFEAF15BE56D9DF41CDB07E11956031FA8BCD19435D79805C34FCD2999"
+}

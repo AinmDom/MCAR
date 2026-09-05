@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "split": "val",
+  "subject_count": 44,
+  "test_subject_count_read": 0,
+  "method_count": 4,
+  "direction_count": 793,
+  "q26_direction_count": 26,
+  "interpolation_direction_count": 767,
+  "horizontal_interpolation_direction_count": 72,
+  "frequency_bin_count": 463,
+  "band_count_200_to_18000_hz": 35,
+  "all_finite": true,
+  "manifest_identity_sha256": "041FB8EFEAF15BE56D9DF41CDB07E11956031FA8BCD19435D79805C34FCD2999"
+}

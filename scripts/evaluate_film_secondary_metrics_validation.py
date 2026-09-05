@@ -179,6 +179,9 @@ def main() -> None:
     )
     common_grid: dict[str, np.ndarray] | None = None
     method_labels = {method: spec["label"] for method, spec in method_specs.items()}
+    bootstrap_replicates = int(payload["registered_tranche"]["bootstrap_replicates"])
+    bootstrap_seed = int(payload["registered_tranche"]["bootstrap_seed"])
+    tie_tolerance = float(payload["registered_tranche"]["tie_tolerance"])
     units = {
         "FullSphereLSD": "dB",
         "HFFirstDifferenceMAE": "dB/bin",
@@ -332,7 +335,9 @@ def main() -> None:
     for endpoint, methods in scalar_values.items():
         for method, subject_values in methods.items():
             values = [subject_values[label] for label in subject_labels]
-            mean, lower, upper = bootstrap_mean_interval(values)
+            mean, lower, upper = bootstrap_mean_interval(
+                values, replicates=bootstrap_replicates, seed=bootstrap_seed
+            )
             aggregate_rows.append(
                 {
                     "Method": method,
@@ -352,7 +357,9 @@ def main() -> None:
         units[endpoint] = "dB"
         for method, subject_values in methods.items():
             values = [subject_values[label] for label in subject_labels]
-            mean, lower, upper = bootstrap_mean_interval(values)
+            mean, lower, upper = bootstrap_mean_interval(
+                values, replicates=bootstrap_replicates, seed=bootstrap_seed
+            )
             spatial_subject_rows.append(
                 {
                     "RecordType": "aggregate",
@@ -369,7 +376,9 @@ def main() -> None:
     for method in method_specs:
         profiles = np.stack(band_values[method], axis=0)
         for band_index, center in enumerate(band_centers):
-            mean, lower, upper = bootstrap_mean_interval(profiles[:, band_index])
+            mean, lower, upper = bootstrap_mean_interval(
+                profiles[:, band_index], replicates=bootstrap_replicates, seed=bootstrap_seed
+            )
             band_subject_rows.append(
                 {
                     "RecordType": "aggregate",
@@ -392,7 +401,12 @@ def main() -> None:
             raise ValueError(f"Incomplete methods for tail endpoint {endpoint}")
         unit = "dB" if endpoint in primary else units[endpoint]
         for baseline in ("HYBRID", "FILMENS", "MCAR"):
-            statistics = paired_tail_statistics(methods["BOUNDED"], methods[baseline])
+            statistics = paired_tail_statistics(
+                methods["BOUNDED"], methods[baseline],
+                tie_tolerance=tie_tolerance,
+                replicates=bootstrap_replicates,
+                seed=bootstrap_seed,
+            )
             tail_rows.append(
                 {
                     "Endpoint": endpoint,
@@ -465,15 +479,9 @@ def main() -> None:
         "methods": list(method_specs),
         "secondary_scalar_endpoints": list(units),
         "primary_endpoints_used_for_tail_analysis": list(primary),
-        "bootstrap_replicates": 10000,
-        "bootstrap_seed": 20260829,
-        "deferred_unqualified_endpoints": [
-            "model_based_localization",
-            "ITD_sanity",
-            "gate_and_correction_behavior",
-            "efficiency_and_deployability",
-            "discrete_notch_location",
-        ],
+        "bootstrap_replicates": bootstrap_replicates,
+        "bootstrap_seed": bootstrap_seed,
+        "deferred_unqualified_endpoints": payload["deferred_unqualified_endpoints"],
         "files": sorted(
             [path.name for path in partial_root.iterdir()] + ["summary.json"]
         ),

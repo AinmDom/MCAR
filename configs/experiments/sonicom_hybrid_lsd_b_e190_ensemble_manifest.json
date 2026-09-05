@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-05",
+  "model_version": "film-siren-spectral-cnn-lsd-b-e190-ensemble-v1",
+  "model_family": "FiLM-SIREN spectral-CNN residual ensemble with LSD loss",
+  "e_final": 190,
+  "scheduler_horizon_cycles": 200,
+  "ensemble": {
+    "type": "residual_db_mean",
+    "member_count": 3,
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "checkpoint_policy": "cycle-190 last.pt only"
+  },
+  "members": [
+    {
+      "member_index": 1,
+      "seed": 20260821,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190.json",
+      "config_sha256": "40A692B7BCB3CC20DED1F005EDD49D2796FC3CBEF3C2C599168FF267B2D49F35",
+      "checkpoint": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190/last.pt",
+      "checkpoint_sha256": "19327D4EFA73F98DB545BE8EA24267536657A6DB874070FDFD2CCB501E4F4F9D",
+      "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260821_e190/training_report.json",
+      "training_report_sha256": "43F6F44656551C6A9E81892BB41144F444EE92C2290CFE1843A05DB37E37815A",
+      "training_git_commit": "bd00151f7fc717fc748454e5419fc16d3f65d06e",
+      "training_git_dirty": false
+    },
+    {
+      "member_index": 2,
+      "seed": 20260822,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260822_e190.json",
+      "config_sha256": "EB07D1C449527B1F63596DA61D2ECEA0D5695FA32F57F17D849B4FD62FE40166",
+      "checkpoint": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260822_e190/last.pt",
+      "checkpoint_sha256": "81852E9A7E0BBF43CBCC044FBBDFB8FFD1BD684152D89A31287D73B096478D53",
+      "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260822_e190/training_report.json",
+      "training_report_sha256": "FABFBAF79DE733D036B1074E6BC3A19B9F30726BC35F61525E2B4F5E538EDA0D",
+      "training_git_commit": "bd00151f7fc717fc748454e5419fc16d3f65d06e",
+      "training_git_dirty": false
+    },
+    {
+      "member_index": 3,
+      "seed": 20260823,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_film_siren_spectral_cnn_lsd_b_seed20260823_e190.json",
+      "config_sha256": "9E73493D6607514AD3E490C93694597E9C008D8E405E6FD11ADB1BA0B26FDBB7",
+      "checkpoint": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260823_e190/last.pt",
+      "checkpoint_sha256": "66FC80A2442088A6B94AF2D8222F2FB2B91B8083C5D36247C1AC72EB7D2A8469",
+      "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_lsd_b_seed20260823_e190/training_report.json",
+      "training_report_sha256": "2425C2E1F3F6E9B04AB077A4B78767046AE6D30BB3BB39E2694F65DB0A97DDC0",
+      "training_git_commit": "bd00151f7fc717fc748454e5419fc16d3f65d06e",
+      "training_git_dirty": false
+    }
+  ],
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "q26_normalization": "configs/data/siren_b_q26_normalization_v1.json",
+    "split": "val",
+    "subject_count": 44,
+    "tensor_layout": "ear,direction,frequency"
+  },
+  "comparison": {
+    "candidate": "HYBRID_LSD_B",
+    "baseline": "HYBRID",
+    "primary_endpoint": "FullSphereLSD",
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260904,
+    "tie_tolerance_db": 1e-12,
+    "difference": "candidate minus baseline; negative favors candidate"
+  },
+  "training_verification": {
+    "path": "reports/HYBRID_LSD_B_TRAINING_VERIFICATION_20260905.json",
+    "sha256": "E0072A1A45AEC1E5B795BD68F78119CE64DD9A8EE70FCBB7A3C9041967788D67"
+  },
+  "test_policy": "Validation only; test paths are never constructed or read.",
+  "identity_sha256": "D1611128A86118ACE0EFD471A4F99456F1267B10D1C39C68AD769239FB589CE6"
+}

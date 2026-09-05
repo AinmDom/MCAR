@@ -1,5 +1,24 @@
 # 项目实验日志
 
+## 2026-09-05：Hybrid LSD B三seed训练完成并通过完整性核验
+
+- attempt2三个进程均exit0，结束于`2026-09-05T01:44:31+08:00`。
+  `reports/HYBRID_LSD_B_TRAINING_VERIFICATION_20260905.json`独立核验3/3 run均为
+  completed、E190、49,780步（合计149,340步）、38次五cycle间隔validation、
+  `FIXED_CYCLE_COMPLETE`，权威checkpoint为E190 `last.pt`。
+- 三份history和ledger的全部数值有限，三个`last.pt`全部model_state张量有限，实际SHA256
+  与training_report完全一致；训练Git均clean `bd00151`、FiLM frozen=true、train/val=262/44、
+  `test_subjects_read=0`。stderr为空。best cycle=185/190/170，但只作总objective诊断，
+  不改变预注册E190末点选择。
+- E190单模型validation FullSphereLSD按ledger命名字段为seed20260821/22/23：
+  `3.5702218142422764 / 3.5682887760075657 / 3.56688669052991 dB`。
+  早先交接中把history末行约`2.48`的另一列误读为LSD，已在后续交接明确更正；正式数字以
+  verification JSON和ledger字段为准。
+- 已冻结三份`last.pt`的1/3 residual-dB ensemble manifest：
+  `configs/experiments/sonicom_hybrid_lsd_b_e190_ensemble_manifest.json`，identity
+  `D1611128A86118ACE0EFD471A4F99456F1267B10D1C39C68AD769239FB589CE6`。
+  下一步只在44 validation被试生成新预测并与旧Hybrid配对比较，不读取test。
+
 ## 2026-09-04：Hybrid LSD B三seed并发训练已启动（未完成）
 
 - attempt2于`2026-09-04T23:38:47+08:00`启动；controller PID47352，

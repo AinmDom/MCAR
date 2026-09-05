@@ -79,7 +79,7 @@ $\widetilde{\mathbf r}_H=\widetilde{\mathbf r}_F+\Delta\widetilde{\mathbf r}_\th
 
 % Role: exact initialization and reconstruction, not performance promise. Evidence: S2,S3,S5.
 \subsection{零输出初始化、集成与严格重建}
-在Hybrid训练阶段，FiLM-SIREN及条件编码器全部冻结，只优化新增的频谱CNN。CNN输出卷积的权重和偏置初始化为零，因此初始增量$\Delta\widetilde{\mathbf r}_\theta$恒为零，Hybrid初始函数与载入的FiLM父模型一致。这里的零初始化针对输出层，不是把整个CNN的权重全部置零，也不意味着初始输出等于MCA或MCAR。
+在Hybrid训练阶段，FiLM-SIREN及条件编码器全部冻结，只优化新增的频谱CNN。CNN输出卷积的权重和偏置初始化为零，因此初始增量$\Delta\widetilde{\mathbf r}_\theta$恒为零，Hybrid初始函数与载入的FiLM父模型一致。这里的零初始化针对输出层，不是把整个CNN的权重全部置零，也不意味着初始输出等于MCA。
 
 单成员预测及其dB转换为
 \begin{equation}

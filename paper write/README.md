@@ -5,7 +5,11 @@
 ## 入口
 
 - [SUpDEq原始期刊论文补录（R2缺项已解除）](literature/R2_INTAKE_20260904.md)
-- [最新六章审阅PDF（13页，非投稿版）](CSMT_2026/build_intro_related/main.pdf)
+- [最新MCA主线审阅PDF（14页，非投稿版）](CSMT_2026/build_mca_reframe/main.pdf)
+- [作者问题清单](AUTHOR_ISSUES.md)
+- [MCA主线与比较角色修订记录](REVISION_MCA_SCOPE_20260904.md)
+- [本轮数值及编译核对](CSMT_2026/MCA_REFRAME_CHECK_20260904.json)
+- [上一版六章PDF（13页，历史预览）](CSMT_2026/build_intro_related/main.pdf)
 - [引言与相关工作写作记录](CSMT_2026/INTRO_RELATED_WRITING_NOTES_ARS.md)
 - [17份文献身份、核读范围与用途映射](literature/LITERATURE_MAP_20260904.md)
 - [本轮编译与保留性检查](CSMT_2026/INTRO_RELATED_CHECK_20260904.json)
@@ -21,6 +25,8 @@
 - [迁移核验与旧路径映射](MIGRATION_CHECK.json)
 
 CSMT_2026/内保留sections/、tables/、references.bib、参考文献样式、材料记录和分章写作记录。现有引言、相关工作、方法、设置、结果和讨论六章；下一步补结论、双语摘要，再进行全文统一审阅。全部写作继续放在该目录树中，避免出现平行稿件。
+
+2026-09-04作者最新决定已落实：题目突出MCA残差补偿；横向主表只保留7个外部方法与Hybrid；MCAR、Bounded只在5.4“消融与内部变体分析”中出现。其原数值和不利结果保留，明确不是严格单因素消融。外部八方法的加粗不代表原十配置归档排名或统计显著。
 
 ## 路径与证据约定
 
@@ -43,11 +49,11 @@ CSMT_2026/内保留sections/、tables/、references.bib、参考文献样式、�
 
 ```powershell
 Set-Location 'D:\course\CUC_2\CSMT\MCAR\paper write\CSMT_2026'
-latexmk -xelatex -interaction=nonstopmode -file-line-error -halt-on-error -outdir=build_intro_related main.tex
+latexmk -xelatex -interaction=nonstopmode -file-line-error -halt-on-error -outdir=build_mca_reframe main.tex
 ```
 
-2026-09-04文献与分章写作阶段已用上述命令成功编译，build_intro_related/main.pdf为13页，正文实际引用13条文献；最终日志没有未解析引用、交叉引用、缺字或溢出警告。已渲染并逐页检查13页，没有发现遮挡、裁切或空白页。仍有中文粗体替代、题注包采用默认配置提示，尚未完成官方模板和书目格式验收。结论、双语摘要未写，不能因已达到13页就视为完整投稿稿。
+2026-09-04本轮已用上述命令成功编译，build_mca_reframe/main.pdf为14页、292942 bytes，正文仍引用13条文献。各页已渲染并目视检查，未见遮挡、裁切或空白页；最终日志无未解析引用/交叉引用、缺字、Overfull或Underfull。仍有中文粗体替代（含新增三级标题的楷体）和caption默认配置提示；尚未完成正式格式验收。132个移表/主表数值匹配原稿及冻结CSV，组件表和方向敏感性表未改。结论、双语摘要未写，14页仍是部分稿。
 
-根目录原main.pdf及其编译产物保持原样，属于较早11页部分稿，不是最新预览。SOURCE_CHECK.json、迁移检查与材料接收记录保留历史含义；当前状态以本页链接的INTRO_RELATED_CHECK_20260904.json为准。
+根目录原main.pdf（11页）及build_intro_related/main.pdf（13页）均保持原样，为历史预览。SOURCE_CHECK.json、INTRO_RELATED_CHECK_20260904.json、迁移及材料接收记录保留历史含义；当前修订检查见MCA_REFRAME_CHECK_20260904.json，问题状态见AUTHOR_ISSUES.md。
 
 当前配置：采用作者指定中文模板，参考文献与附录计入不少于12页目标；实验设置先保留详细版。文献放在ref/；暂仅计划公开最终Hybrid主模型的训练配置和权重，尚未发布。

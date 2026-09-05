@@ -4,17 +4,17 @@
 
 \subsection{频谱细化与双耳线索的折衷}
 % Role: interpretation of residual compensation. Evidence: E2 and Table primary-results.
-MCA之后的残差学习在本研究中具有明确的频谱补偿价值。表\ref{tab:primary-results}及其配对结果显示，Hybrid降低了MCA的全域、对侧区域和对侧高频误差。这支持利用稀疏观测学习传统插值未消除的幅度残差。相对强学习基线，收益则更具选择性：Hybrid相对MCAR改善对侧频谱，但水平面ILD更差；相对Bounded的高频改善也伴随全域ERB与水平面ILD的不足。本文据此讨论不同误差目标间的取舍，不以领先项数量判定总体优劣。
+MCA之后的残差学习在本研究中具有明确的频谱补偿价值。表\ref{tab:primary-results}及其配对结果显示，Hybrid降低了MCA的全域、对侧区域和对侧高频误差。这支持利用稀疏观测学习传统插值未消除的幅度残差。相对外部学习方法，收益则更具选择性：Hybrid在全域及对侧ERB上优于FSP-AE和RANF，但FSP-AE的对侧高频误差更低；相对MCA的水平面ILD收益也未获得配对区间支持。本文据此讨论不同误差目标间的取舍，不以领先项数量判定总体优劣。
 
 % Role: endpoint interpretation and objective alignment; not a proven causal mechanism. Evidence: method/setup definitions, E1.
-局部谱形与双耳能量关系反映不同的重建要求。一、二阶差分及多尺度凹口深度约束局部频谱变化，绝对幅度误差和ERB误差则评价其他尺度的偏离。Hybrid在三个局部端点上的最低均值，与FSP-AE的对侧高频优势可以同时成立。这些局部端点与训练辅助项定义相近，其改善说明模型在所约束的目标上表现较好，但不足以证明一般听觉收益。全域ERB和频带ILD的次优位置也不能抵消严格水平面ILD代价，后者基于完整重建HRIR的双耳能量比。联合输入双耳信息并设置ILD损失，并不保证该误差在每名被试上下降。
+局部谱形与双耳能量关系反映不同的重建要求。一、二阶差分及多尺度凹口深度约束局部频谱变化，绝对幅度误差和ERB误差则评价其他尺度的偏离。Hybrid在三个局部端点上的最低均值，与FSP-AE的对侧高频优势可以同时成立。这些局部端点与训练辅助项定义相近，其改善说明模型在所约束的目标上表现较好，但不足以证明一般听觉收益。全域ERB和频带ILD在外部主比较中的最低均值，也不能保证严格水平面ILD的稳定收益；后者基于完整重建HRIR的双耳能量比。联合输入双耳信息并设置ILD损失，并不保证该误差在每名被试上下降。
 
 \subsection{结构机制与模型容量}
 % Role: design rationale versus isolated causal evidence. Evidence: S1/S2 and E4.
 Hybrid将个体条件基场与方向条件化频谱卷积串联，使逐查询残差预测后仍可利用跨频率邻域及双耳信息进行修正。验证集组件比较中，追加并训练细化器后，三项主要频谱误差降低，而ILD差值区间含零（表\ref{tab:component-results}）。该观察支持完整细化方案的开发效果。由于比较同时引入CNN、额外训练和复合目标，尚不能把收益分别归因于卷积结构、某一损失项或集成。与训练目标一致的结构动机，应与已被隔离验证的机制区分。
 
 % Role: initialization and efficiency boundary. Evidence: S1/S2, author-confirmed missing efficiency evaluation.
-零输出初始化仅保证Hybrid的初始函数等于载入的FiLM父模型，不保证训练后的误差单调下降。冻结骨干减少了本阶段需要优化的参数，但完整推断仍包含骨干、CNN及三成员集成。因此，仅凭新增模块规模不能认定部署轻量或效率领先，Bounded的参数与效率结果也不能代替Hybrid的测量。
+零输出初始化仅保证Hybrid的初始函数等于载入的FiLM父模型，不保证训练后的误差单调下降。冻结骨干减少了本阶段需要优化的参数，但完整推断仍包含骨干、CNN及三成员集成。因此，仅凭新增模块规模不能认定部署轻量或效率领先，其他内部变体的参数与效率结果也不能代替Hybrid的测量。
 
 \subsection{泛化范围与研究局限}
 % Role: scope of observation sensitivity. Evidence: E8 and Table q-results.

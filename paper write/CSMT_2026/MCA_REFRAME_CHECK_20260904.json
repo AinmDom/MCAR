@@ -1,0 +1,81 @@
+{
+  "primary_results": {
+    "main_rows": 8,
+    "internal_rows": 3,
+    "bold_minima": {
+      "ContralateralHighFrequency": "FSP-AE",
+      "HorizontalILDMAE": "FSP-AE",
+      "FullSphereERB": "Hybrid",
+      "Contralateral25ERB": "Hybrid"
+    },
+    "original_rows_preserved": true,
+    "frozen_csv_match": true
+  },
+  "spectral_results": {
+    "main_rows": 8,
+    "internal_rows": 3,
+    "bold_minima": {
+      "HFFirstDifferenceMAE": "Hybrid",
+      "HFSecondDifferenceMAE": "Hybrid",
+      "MultiScaleNotchDepthMAE": "Hybrid",
+      "ERBBandILDMean": "Hybrid"
+    },
+    "original_rows_preserved": true,
+    "frozen_csv_match": true
+  },
+  "component_results": {
+    "unchanged": true
+  },
+  "direction_sensitivity": {
+    "unchanged": true
+  },
+  "old_claim_intents_preserved": true,
+  "original_result_decimal_values_retained": true,
+  "frozen_sources_unchanged": true,
+  "pdf": {
+    "pages": 14,
+    "bytes": 292942,
+    "sha256": "3c71f9f3248adcae74cba3cf83455df246143445727780c7630117c5a87abfb5",
+    "text_nonempty_all_pages": true,
+    "internal_model_pages": [
+      11
+    ],
+    "visual_review": "See manual_review; not inferred from text extraction",
+    "underfull_count": 0,
+    "font_shape_warning": true,
+    "caption_default_warning": true
+  },
+  "main_and_internal_table_numeric_entries_checked": 132,
+  "test_subjects_read": 0,
+  "new_statistics": false,
+  "full_ARS_or_submission_certification": false,
+  "source_sha256": {
+    "results/sonicom_complete_ten_method_test_v1/aggregate_metrics.csv": "bce111e2ef2f5925565dded0c2133fe7b3a8ebda9982b73bc4e6e29def64d1d7"
+  },
+  "manual_review": {
+    "reviewer": "Codex single-agent self-review, not independent peer review",
+    "pages_inspected": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "result": "No observed clipping, overlap or blank pages. Internal tables are confined to subsection 5.4. Long intervals typeset on separate aligned lines.",
+    "residuals": [
+      "Chinese bold font substitution including KaiTi",
+      "caption default class configuration",
+      "Partial draft; conclusion and bilingual abstracts missing",
+      "Formal venue and bibliography conformance not certified"
+    ]
+  }
+}

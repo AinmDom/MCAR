@@ -16,11 +16,11 @@
 本研究构建FiLM-SIREN双耳频谱细化模型，简称Hybrid。模型借鉴特征级线性调制（FiLM）\cite{R7}与正弦表示网络（SIREN）\cite{R11}，% <!--ref:R7--><!--anchor:section:2.1 Feature-wise Linear Modulation--> <!--ref:R11--><!--anchor:section:Abstract-->
 将稀疏观测编码为个体条件，结合查询方向、频率及MCA幅度预测残差基场。在此基础上冻结基场，追加方向条件化的双耳频谱卷积网络，联合处理左右耳整谱并预测附加增量。输出层零初始化使训练起点与父模型一致；复合目标同时约束幅度、局部频谱变化和双耳能量关系。这一设计显式提供跨频点与双耳信息，其独立因果贡献仍需与额外训练和损失变化区分。
 
-% Role I-P4: research questions, preserved verbatim from the approved framework.
-本文围绕三个问题展开：Hybrid相对MCA、MCAR、Bounded、FSP-AE、RANF的优势与代价是什么？在冻结FiLM-SIREN上追加CNN后，哪些误差发生变化，结构与训练开销如何界定？Q26训练并冻结的Hybrid对Q14/Q50观测如何响应？这些问题分别对应历史测试队列比较、验证集组件比较和输入方向敏感性分析。
+% Role I-P4: research questions; comparator roles revised by the author.
+本文围绕三个问题展开：在MCA之后学习幅度残差带来哪些改善，相对FSP-AE、RANF等外部学习方法又有哪些优势与代价？在冻结FiLM-SIREN上追加CNN后，哪些误差发生变化，结构与训练开销如何界定？Q26训练并冻结的Hybrid对Q14/Q50观测如何响应？这些问题分别对应历史测试队列上的外部方法比较、验证集组件比较和输入方向敏感性分析；项目内部变体另在消融相关部分讨论。
 
 % Role I-P5: contributions tied to actual artifacts and evaluation scope.
 本文的工作包括MCA幅度残差的条件建模与双耳频谱细化结构，以及沿统一重建链路开展的多指标比较。结构参数依据项目内有限扫描确定，不声称全局最优；FiLM和SIREN本身也不属于本文原创。评价区分主要与补充端点、验证与历史测试范围，并保留个体失败案例。这样的报告方式用于判断残差补偿的收益出现在哪些误差维度，而非仅以最小均值概括方法优劣。
 
 % Role I-P6: balanced result preview; exact numbers remain in Results.
-SONICOM历史测试队列的结果显示，Hybrid相对MCA降低了三项主要频谱误差，并在对侧ERB及三项局部谱结构指标上取得所比较方法中的最低均值。然而，相对MCAR的水平面耳间声级差误差增大，输入方向增加也未带来一致收益。本文据此将Hybrid定位为具有特定频谱收益的残差细化方案，不由客观指标推断听感改善。第\ref{sec:setup}节说明历史测试访问与事后写作选择，第\ref{sec:results}节报告完整比较及其限制。
+SONICOM历史测试队列的结果显示，Hybrid相对MCA降低了三项主要频谱误差。在七个外部方法与Hybrid组成的主比较集合中，Hybrid的全域及对侧ERB、三项局部谱结构误差和频带ILD均值最低。然而，其对侧高频误差仍高于FSP-AE，相对MCA的水平面ILD配对区间包含零，且存在个体失败案例；输入方向增加也未带来一致收益。本文据此将Hybrid定位为具有特定频谱收益的残差细化方案，不由客观指标推断听感改善。第\ref{sec:setup}节说明历史测试访问与事后写作选择，第\ref{sec:results}节分开报告外部比较、内部变体及其限制。

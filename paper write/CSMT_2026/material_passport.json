@@ -2,6 +2,7 @@
   "status": "partial_material_passport_for_scoped_drafting_not_certification",
   "scope": "CSMT 2026 Chinese internal draft: Introduction, Related Work, Method, Experimental Setup, Results and Discussion",
   "literature_update_sidecar": "../literature/LITERATURE_MAP_20260904.md; original literature_corpus below is the historical first-draft snapshot, not the current read-status ledger",
+  "revision_scope_sidecar": "../REVISION_MCA_SCOPE_20260904.md",
   "argument_status": "argument inferred from PAPER_OUTLINE_ARS.md and author answers",
   "criteria_binding": "criteria_binding_unavailable",
   "author_decisions": {
@@ -51,6 +52,22 @@
     }
   ],
   "claim_intent_manifests": [
+    {
+      "manifest_version": "1.0",
+      "manifest_id": "M-CSMT-20260904-mca-reframe-v1",
+      "emitted_by": "draft_writer_agent",
+      "emitted_at": "2026-09-04T23:24:13+08:00",
+      "claims": [
+        {"claim_id": "MCA-R1", "claim_text": "Hybrid补偿MCA剩余幅度误差；三项主要频谱指标改善，但ILD区间含零。", "intended_evidence_kind": "empirical", "planned_refs": []},
+        {"claim_id": "MCA-R2", "claim_text": "外部主比较为7个外部方法加Hybrid；最小均值描述仅限该集合，不宣称全面最优或统计等效。", "intended_evidence_kind": "empirical", "planned_refs": []},
+        {"claim_id": "MCA-R3", "claim_text": "MCAR与Bounded为内部中间模型，仅在消融相关部分报告；不利结果保留，历史测试比较不等同单因素消融。", "intended_evidence_kind": "empirical", "planned_refs": []}
+      ],
+      "manifest_negative_constraints": [
+        {"constraint_id": "MCA-N1", "rule": "不得修改结果数值、删除不利证据或把历史test改称独立确认。"},
+        {"constraint_id": "MCA-N2", "rule": "不得把内部中间模型列为外部基线，或将局部均值最优扩写为显著全面优势。"},
+        {"constraint_id": "MCA-N3", "rule": "不新增实验、统计或未经支持的感知及效率结论；旧意图登记保持不变。"}
+      ]
+    },
     {
       "manifest_version": "1.0",
       "manifest_id": "M-CSMT-20260904-intro-related-v1",

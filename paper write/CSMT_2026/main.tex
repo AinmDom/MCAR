@@ -6,6 +6,7 @@
 \usepackage[sort&compress,numbers]{natbib}
 \usepackage{ccaption}
 \usepackage{booktabs}
+\usepackage{placeins}
 \usepackage{geometry}
 \usepackage{titlesec}
 \usepackage{amsmath,amssymb}
@@ -18,18 +19,16 @@
 \titleformat*{\section}{\songti\zihao{4}\bfseries}
 \titleformat*{\subsection}{\heiti\zihao{5}\bfseries}
 \titleformat*{\subsubsection}{\kaishu\zihao{5}\bfseries}
-\newcommand{\draftnote}[1]{\par{\small\color{red!65!black}【内部待核：#1】}\par}
 \setlength{\emergencystretch}{2em}
 \begin{document}
 \begin{center}
-{\heiti\zihao{3}基于FiLM-SIREN与双耳频谱卷积的\\稀疏头相关传输函数重建\par}
+{\heiti\zihao{3}面向稀疏头相关传输函数重建的\\MCA残差补偿与双耳频谱细化\par}
 \vspace{1em}
 {\kaishu\zihao{5}\textbf{Young}\par}
 \vspace{0.6em}
-{\small 内部初稿：引言至讨论六章，2026年9月4日\par}
+{\small 作者审阅稿，2026年9月4日\par}
 \end{center}
-\noindent 本文档包含全文计划中的第1至6节，结论和双语摘要尚未纳入。
-完整稿按不少于12页准备；当前为作者审阅稿，不用于直接投稿。红色文字为需处理的内部资料标记，编译及排版检查状态另见写作记录。
+% Editorial issues and completion status: ../AUTHOR_ISSUES.md.
 
 \input{sections/introduction}
 \input{sections/related_work}

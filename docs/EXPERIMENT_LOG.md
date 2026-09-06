@@ -1,5 +1,23 @@
 # 项目实验日志
 
+## 2026-09-06：FSC/Hybrid E190正文五项指标统一配对bootstrap完成
+
+- 时间/agent：2026-09-06T16:02:00+08:00，CODEX。仅从已完成冻结test结果做结果级派生，未训练、未推理、未读取原始SOFA/HDF5；输出写入新目录`results/sonicom_fsc_hybrid_e190_five_metric_paired_bootstrap_v1/`，未覆盖已有正式结果目录。
+- 来源：`results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv`提供`FullSphereERB`、`Contralateral25ERB`；`results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv`提供`ERBBandILDMean`（Secondary test）和`ITDWeightedMAE_us`（Deferred test）；最新已完成冻结LAP目录`results/lap2024_test_metrics_v1/`的`lap2024_test_per_subject_metrics.csv`提供`LAP2024LSD_dB`（locked-test descriptive evaluation）。
+- 统计：FSC/Hybrid E190（方法键`HYBRID`）分别与`MCA`、`FSPAE`、`RANF`计算subject-level`FSC−baseline`；复用`src/mcar/evaluation/secondary_metrics.py::paired_tail_statistics`，NumPy `default_rng`、linear quantile、`bootstrap_replicates=10000`、固定`bootstrap_seed=20260906`；全部指标按lower-is-better，负值表示FSC更好。
+- 关键结果（均值；95% CI）：`FullSphereERB`对MCA=`-0.26465416822608306` `[-0.3159808524724948,-0.17822185215900846]`、FSP-AE=`-0.36694880406417635` `[-0.39061342696717566,-0.34497569209205586]`、RANF=`-0.2456915369613723` `[-0.2982516569619094,-0.15596848468163518]`；`Contralateral25ERB`分别=`-0.545358634802452` `[-0.5956442218963495,-0.49276552343119384]`、`-0.7084757519581125` `[-0.9266929105686453,-0.5852670530219164]`、`-0.356926001060428` `[-0.40727034327755207,-0.3090159442310332]`；`ERBBandILDMean`分别=`-0.43561534177173267` `[-0.5422040807252579,-0.2576863498172977]`、`-0.07885605638677423` `[-0.1045981494540518,-0.052195231413299396]`、`-0.1154378733851693` `[-0.22756073759360748,0.07002394348382948]`；`ITDWeightedMAE_us`分别=`-0.35403325960613397` `[-0.5824987500534866,0.02831030142894098]`、`-0.3126363069465405` `[-1.172415842650602,0.49651199430628895]`、`-5.538339586512557` `[-11.533280783946807,-2.1705067958547715]`；`LAP2024LSD_dB`分别=`-1.1424124401567208` `[-1.2333165365547831,-1.0103132360007785]`、`0.5437363185566256` `[0.5119555579504526,0.5752462843794504]`、`0.39078961387225325` `[0.3140618443808509,0.5228570538535667]`。
+- 完整性：`15/15` pair×metric单元完成；每单元`subject_count=44`，三来源listener集合完全一致（同一44名test listeners），全部数值finite；输出`paired_bootstrap.csv`=`15`行、`paper_summary_table.csv`=`5`行、`listener_set.csv`=`44`行；`summary.json`记录`listener_set_match=true`、`all_finite=true`、`test_subject_count_read_during_derivation=0`、`training_or_inference_performed=false`。原evidence tier均保留，未改写为预注册Primary。
+- 证据与复现：`results/sonicom_fsc_hybrid_e190_five_metric_paired_bootstrap_v1/paired_bootstrap.csv`、`paper_summary_table.csv`、`README.md`、`summary.json`、`listener_set.csv`；复现命令为`D:\\miniconda3\\envs\\ml\\python.exe scripts/compute_fsc_hybrid_five_metric_paired_bootstrap.py`。统计脚本为`scripts/compute_fsc_hybrid_five_metric_paired_bootstrap.py`。Git保留并行训练/恢复任务已有未提交修改及本次新增脚本/结果目录，未执行提交。
+- 下一步：可直接将`paper_summary_table.csv`用于正文配对统计表；无需重新训练或推理。阻塞项：无。
+
+## 2026-09-06：正文五项指标配对统计来源与44名test listener集合冻结
+
+- 时间/agent：2026-09-06T15:58:00+08:00，CODEX。按作者更新后的正文指标定义冻结五项结果级统计边界；仅使用既有正式test CSV，不训练、不推理、不读取原始SOFA/HDF5。
+- 来源与endpoint：`results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv`中的`FullSphereERB`；`results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv`中的`ERBBandILDMean`（Secondary test）和`ITDWeightedMAE_us`（Deferred test）；`results/lap2024_test_metrics_v1/lap2024_test_per_subject_metrics.csv`中的`LAP2024LSD_dB`（LAP locked-test descriptive evaluation）。
+- 方法边界：中心方法`HYBRID`/FSC与`MCA`、`FSPAE`、`RANF`逐listener配对；输出差值统一为`FSC−baseline`，五项均按lower-is-better解释。原有evidence tier保留，不将Secondary、Deferred或LAP指标改写为预注册Primary。
+- 完整性：四个来源的listener键均为相同44名test subjects（`P0003`至`P0371`的冻结test集合）；四项方法×指标单元均44行且数值finite；正式bootstrap尚未运行，replicates/seed=N/A，`test_subject_count_read=0`（本步仅读既有结果）。
+- 下一步：运行独立结果级paired bootstrap，复用`src/mcar/evaluation/secondary_metrics.py::paired_tail_statistics`的NumPy PCG64/linear-quantile实现，10,000 replicates、固定seed，输出统一CSV、论文汇总表、README和完整性摘要。阻塞项：无。
+
 ## 2026-09-06：FSC matched-density 六个 E130 队列已后台接管
 
 - 时间/agent：2026-09-06T15:52:00+08:00，CODEX。Q14 seed20260821 的 E130 正式 run 已在前台启动，后台队列 PID=30160 将等待该 run 完成后按固定顺序执行其余五个 Q14/Q50 seed。

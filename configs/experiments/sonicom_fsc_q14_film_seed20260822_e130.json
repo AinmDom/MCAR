@@ -85,7 +85,7 @@
   "require_cuda": true,
   "require_clean_git": false,
   "test_policy": "Only the 262 train and 44 validation rows are resolved. Test paths are never constructed or opened.",
-  "run_name": "sonicom_fsc_q14_film_seed20260822_e130",
+  "run_name": "sonicom_fsc_q14_film_seed20260822_e130_retry1",
   "protocol_amendment": "experiments/film_siren/STAGE_C_GLOBAL_LOCAL_MCA_REVALIDATION_PROTOCOL.md",
   "conditioning_scope": "global_plus_local_mca",
   "local_mca_policy": "append_binaural_query_mca_logmag_db_normalized_by_train_only_statistics",

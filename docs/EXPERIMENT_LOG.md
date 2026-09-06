@@ -1,5 +1,19 @@
 # 项目实验日志
 
+## 2026-09-06：Q14 seed20260822 retry1 已重新启动
+
+- 时间/agent：2026-09-06T19:13:00+08:00，CODEX。发现首次 retry 启动因配置文件名误用而立即 `FileNotFoundError`，未创建训练产物；已使用原配置 `configs/experiments/sonicom_fsc_q14_film_seed20260822_e130.json`（其中 `run_name` 为 retry1）重新启动。
+- 动作：retry1 正式 E130 进程 PID=`36276`，输出目录 `artifacts/training/sonicom_fsc_q14_film_seed20260822_e130_retry1/`；后台 CNN orchestrator PID=`38200` 继续等待该目录完成。
+- 完整性：错误启动未读取数据、未读取 test；正式 retry 当前已生成 configuration，训练尚未达到 cycle=1，`test_subject_count_read=0` 预注册。其余五个 E130 仍为 completed cycle=130。
+- 下一步：等待 retry1 完成后由 orchestrator 核验 hash 并并行启动六个 E190。阻塞项：无。
+
+## 2026-09-06：Q14 seed20260822 E130 重跑并安排 E190 并行接续
+
+- 时间/agent：2026-09-06T17:05:00+08:00，CODEX。核验结果为 5/6 个 FiLM-SIREN E130 已完成 cycle=130；Q14 seed20260822 在 cycle=27 中断，仅保留 partial/best，无 `last.pt`/完成报告。
+- 动作：将该 seed 改用独立输出名 `sonicom_fsc_q14_film_seed20260822_e130_retry1`，按相同配置从头重跑，PID=`38104`，不覆盖 partial 目录。后台 orchestrator PID=`38200` 等待六个 E130 完成后核对 test=0 和 checkpoint SHA-256，自动写入 CNN 配置并并行启动六个 E190。
+- 完整性：已完成五个 E130 的 `training_report.json` 均标记 `completed`、`cycles=130`、`test_subjects_read=0`、authoritative `last.pt` 存在且 finite；retry run 尚未完成。Q26 冻结结果不变，CNN 尚未启动。
+- 下一步：等待 retry1 完成；orchestrator 将运行 `scripts/finalize_fsc_cnn_configs.py` 更新实际 FiLM hash，然后并行启动 Q14/Q50 各三 seed E190。阻塞项：无。
+
 ## 2026-09-06：FSC matched-density 剩余四个 E130 改为并行启动
 
 - 时间/agent：2026-09-06T16:05:00+08:00，CODEX。按作者指示取消等待串行队列，保留正在运行的 Q14 seed20260822，并并行启动 Q14 seed20260823 与 Q50 seed20260821/22/23。

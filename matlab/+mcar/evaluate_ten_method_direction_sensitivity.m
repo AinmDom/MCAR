@@ -40,8 +40,7 @@ exportClassical = ~isempty(classicalPredictionOutputName);
 if exportClassical
     classicalPredictionRoot = fullfile(projectRoot, 'artifacts', 'reconstruction', ...
         char(classicalPredictionOutputName));
-    assert(~isfolder(classicalPredictionRoot), 'Refusing to overwrite %s', classicalPredictionRoot);
-    mkdir(classicalPredictionRoot);
+    if ~isfolder(classicalPredictionRoot), mkdir(classicalPredictionRoot); end
 end
 boundedReport = jsondecode(fileread(fullfile(inputRoot, 'inference_report.json')));
 fastReports = ["inference_hybrid_mcar_report.json", "inference_fspae_report.json"];

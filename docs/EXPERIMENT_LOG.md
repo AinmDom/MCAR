@@ -1,5 +1,14 @@
 # 项目实验日志
 
+## 2026-09-07：FSC matched-density Q14/Q26/Q50 对角线评价完成
+
+- 时间/agent：2026-09-07T02:10:00+08:00，CODEX。MATLAB 严格 evaluator 已在受限权限外成功完成 44 validation listeners × 3 densities，复用公共 Q50-excluded 743-direction mask、10,000 bootstrap、seed=20260828；Q26 直接复用正式冻结 ensemble。
+- 动作：Q14/Q50 使用新训练的 current-Q residual ensemble prediction，Q26 使用既有正式 Hybrid E190 validation prediction；提取 `HYBRID` 对角线 `FSC-Q14@Q14`、`FSC-Q26@Q26`、`FSC-Q50@Q50`，未做 cross-density 输入评价。
+- 关键结果（mean ± sample SD, dB）：FullSphereERB Q14=`0.908440±0.182610`、Q26=`0.800820±0.161386`、Q50=`0.751903±0.151368`；Contralateral25ERB=`1.338252±0.229431`、`1.212325±0.189457`、`1.217338±0.193232`；ContralateralHighFrequency=`3.661772±0.340375`、`3.492042±0.276136`、`3.409274±0.270743`；HorizontalILDMAE=`0.642731±0.182582`、`0.623230±0.177304`、`0.548873±0.144029`。
+- 证据：`results/sonicom_fsc_matched_density_direction_sensitivity_v1/metric_long.csv`（5280 rows, all finite）、`aggregate_metrics.csv`、`summary.json`；论文汇总 `results/sonicom_fsc_matched_density_v1/paper_observation_density_table.csv`、`summary_mean_std.csv`、`subject_level.csv`。
+- 完整性：44 subjects/cell、3 densities、4 primary metrics 全部完成；`test_subject_count_read=0`，未覆盖 Q26 checkpoint/result；MATLAB 首次沙箱启动失败已通过受限权限外运行解决。
+- 下一步：可直接将 `paper_observation_density_table.csv` 用于 Observation-density/Sparsity Experiment 表格或曲线。阻塞项：无。
+
 ## 2026-09-07：FSC E190 与 Q14/Q50 ensemble validation 完成；严格指标 evaluator 暂时阻塞
 
 - 时间/agent：2026-09-07T01:10:00+08:00，CODEX。六个 Q14/Q50 spectral-CNN E190 均完成 cycle=190，生成 `last.pt` 和 completed report；六个 report 的 `test_subjects_read=0`，Q50 seed20260823 的 best_cycle=170 但按预注册固定末点使用 cycle-190 `last.pt`。

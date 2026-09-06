@@ -1,5 +1,12 @@
 # 项目实验日志
 
+## 2026-09-06：FSC matched-density 剩余四个 E130 改为并行启动
+
+- 时间/agent：2026-09-06T16:05:00+08:00，CODEX。按作者指示取消等待串行队列，保留正在运行的 Q14 seed20260822，并并行启动 Q14 seed20260823 与 Q50 seed20260821/22/23。
+- 动作：四个独立进程分别使用固定 E130 配置；PID 依次为 Q14-s23=`35160`、Q50-s21=`35048`、Q50-s22=`35320`、Q50-s23=`22056`，标准输出/错误写入各自 `artifacts/training/*.parallel.{out,err}.log`。已完成的 Q14-s21 不重复启动。
+- 完整性：启动时均为 train/validation-only、`test_subject_count_read=0` 预注册；Q14-s22 原实例仍在运行；为避免重复，原后台队列 PID=30160 已停止，不覆盖已完成 checkpoint。CNN E190 尚未启动。
+- 下一步：并行核验五个未完成 E130 的 cycle=130、finite 与 checkpoint hash；随后为每个 Q/seed 更新实际 FiLM hash 并并行启动 CNN E190。阻塞项：无。
+
 ## 2026-09-06：FSC/Hybrid E190正文五项指标统一配对bootstrap完成
 
 - 时间/agent：2026-09-06T16:02:00+08:00，CODEX。仅从已完成冻结test结果做结果级派生，未训练、未推理、未读取原始SOFA/HDF5；输出写入新目录`results/sonicom_fsc_hybrid_e190_five_metric_paired_bootstrap_v1/`，未覆盖已有正式结果目录。

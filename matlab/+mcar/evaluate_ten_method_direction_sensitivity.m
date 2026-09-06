@@ -1,12 +1,14 @@
-function evaluate_ten_method_direction_sensitivity(subjectLimit, outputName)
+function evaluate_ten_method_direction_sensitivity(subjectLimit, outputName, classicalPredictionOutputName)
 %EVALUATE_TEN_METHOD_DIRECTION_SENSITIVITY Strict Q14/Q26/Q50 comparison.
 
 if nargin < 1 || isempty(subjectLimit), subjectLimit = inf; end
 if nargin < 2 || isempty(outputName)
     outputName = 'sonicom_ten_method_direction_sensitivity_v1';
 end
+if nargin < 3, classicalPredictionOutputName = ''; end
 validateattributes(subjectLimit, {'numeric'}, {'scalar', 'positive'});
 validateattributes(outputName, {'char', 'string'}, {'scalartext'});
+validateattributes(classicalPredictionOutputName, {'char', 'string'}, {'scalartext'});
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -32,6 +34,13 @@ assert(sum(fixedMask) == 743, 'Fixed Q50-excluded mask changed.');
 
 inputRoot = fullfile(projectRoot, config.dataset.prepared_input_root);
 predictionRoot = fullfile(projectRoot, 'artifacts', 'sparsity', config.output_name);
+exportClassical = ~isempty(classicalPredictionOutputName);
+if exportClassical
+    classicalPredictionRoot = fullfile(projectRoot, 'artifacts', 'reconstruction', ...
+        char(classicalPredictionOutputName));
+    assert(~isfolder(classicalPredictionRoot), 'Refusing to overwrite %s', classicalPredictionRoot);
+    mkdir(classicalPredictionRoot);
+end
 boundedReport = jsondecode(fileread(fullfile(inputRoot, 'inference_report.json')));
 fastReports = ["inference_hybrid_mcar_report.json", "inference_fspae_report.json"];
 for reportName = fastReports
@@ -150,6 +159,11 @@ for subjectIndex = 1:height(subjects)
         [dbValues{10}, hrirValues{10}] = load_residual( ...
             fullfile(inputLevel, 'bounded_prediction.h5'), cache);
         for methodIndex = 1:numel(methodIds)
+            if exportClassical && methodIndex <= 5
+                write_secondary_prediction(classicalPredictionRoot, subjectLabel, count, ...
+                    methodIds(methodIndex), dbValues{methodIndex}, hrirValues{methodIndex}, ...
+                    frequencyHz);
+            end
             values = strict_metrics(dbValues{methodIndex}, ...
                 hrirValues{methodIndex}, referenceDb, referenceHrir, ...
                 referenceIld, features, fixedMask, frequencyHz, samplingRateHz);
@@ -219,6 +233,25 @@ summary = struct('schema_version', '1.0', 'status', 'completed', ...
     'bounded_interactions', table2struct(interactions));
 write_json(fullfile(outputRoot, 'summary.json'), summary);
 fprintf('Ten-method direction sensitivity complete: %s\n', outputRoot);
+end
+
+function write_secondary_prediction(root, subjectLabel, count, method, selectedDb, hrir, frequencyHz)
+path = fullfile(root, 'subjects', char(subjectLabel), sprintf('q%d', count), ...
+    char(method), 'prediction.h5');
+folder = fileparts(path); if ~isfolder(folder), mkdir(folder); end
+assert(~isfile(path), 'Refusing to overwrite %s', path);
+assert(isequal(size(selectedDb), [463, 793, 2]) && isequal(size(hrir), [256, 793, 2]));
+h5create(path, '/predicted_magnitude_db', size(selectedDb), 'Datatype', 'single');
+h5write(path, '/predicted_magnitude_db', single(selectedDb));
+rawHrir = permute(hrir, [1, 3, 2]);
+h5create(path, '/predicted_hrir', size(rawHrir), 'Datatype', 'single');
+h5write(path, '/predicted_hrir', single(rawHrir));
+h5create(path, '/frequency_hz', size(frequencyHz), 'Datatype', 'double');
+h5write(path, '/frequency_hz', double(frequencyHz));
+h5writeatt(path, '/', 'split', 'val');
+h5writeatt(path, '/', 'subject_label', char(subjectLabel));
+h5writeatt(path, '/', 'sparse_direction_count', count);
+h5writeatt(path, '/', 'method', char(method));
 end
 
 function environment = initialize_worker(supdeqDir, compatibilityRoot)

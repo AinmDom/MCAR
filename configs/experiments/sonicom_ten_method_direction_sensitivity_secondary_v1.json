@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "experiment_id": "SONICOM-TEN-METHOD-DIRECTION-SENSITIVITY-SECONDARY-V1",
+  "protocol": "experiments/film_siren/STAGE_E_TEN_METHOD_DIRECTION_SENSITIVITY_SECONDARY_PROTOCOL.md",
+  "parent_config": "configs/experiments/sonicom_ten_method_direction_sensitivity_v1.json",
+  "split": "val",
+  "subject_count": 44,
+  "direction_counts": [14, 26, 50],
+  "fixed_evaluation_direction_count": 743,
+  "endpoints": 16,
+  "bootstrap_replicates": 10000,
+  "bootstrap_base_seed": 20260906,
+  "test_access_allowed": false,
+  "classical_prediction_root": "artifacts/reconstruction/sonicom_ten_method_direction_sensitivity_secondary_classical_v1",
+  "output_root": "results/sonicom_ten_method_direction_sensitivity_secondary_v1"
+}

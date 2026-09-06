@@ -1,5 +1,23 @@
 # 项目实验日志
 
+## 2026-09-06：Q14/Q26/Q50十方法次要指标传统基线恢复准备
+
+- 时间/agent：2026-09-06T11:05:00+08:00，CODEX。用户报告传统基线重建已结束后，核验实际
+  artifact，发现只存在`610/660`个标准化传统基线HDF5；缺失单元为P0341/Q50及
+  P0354、P0360、P0369的Q14/Q26/Q50，共10个listener-Q单元（50个方法文件）。
+- 动作：在任何次要/deferred端点计算前，对已冻结导出函数增加仅恢复控制：可从validation
+  split的第41个listener开始、跳过已有且不覆盖的prediction HDF5。恢复将仅补上述缺失文件，
+  使用原冻结SUpDEq/MCA定义；不训练、不改checkpoint、不访问test。
+- 证据：`matlab/+mcar/evaluate_ten_method_direction_sensitivity.m`；
+  `artifacts/reconstruction/sonicom_ten_method_direction_sensitivity_secondary_classical_v1/`；
+  `configs/experiments/sonicom_ten_method_direction_sensitivity_secondary_v1.json`。
+- 完整性：原MATLAB PID6604及launcher23348均已退出；已有610个文件不覆盖，补齐目标660。
+  次要指标行、finite、汇总=N/A（尚未运行）；`test_subject_count_read=0`；训练/best/末点=N/A。
+  Git基准`bdcb52a`，恢复修正待提交。
+- 下一步：提交恢复修正，启动P0341--P0369的4 listener补齐；核验660文件后运行冻结Python
+  evaluator并检查21,120/480/320/288的行数。
+- 阻塞项：无；唯一异常为已记录的不完整传统基线导出，未产生或查看任何补充指标结果。
+
 ## 2026-09-06：作者取消 AI_HANDOFF 交接机制，开工改为读实验日志前三条
 
 - 时间/agent：2026-09-06T10:01:50+08:00，COPILOT。作者认为 `docs/AI_HANDOFF.md` 过长、

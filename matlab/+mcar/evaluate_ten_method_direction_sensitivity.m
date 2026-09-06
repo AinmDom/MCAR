@@ -1,4 +1,4 @@
-function evaluate_ten_method_direction_sensitivity(subjectLimit, outputName, classicalPredictionOutputName)
+function evaluate_ten_method_direction_sensitivity(subjectLimit, outputName, classicalPredictionOutputName, subjectStartIndex)
 %EVALUATE_TEN_METHOD_DIRECTION_SENSITIVITY Strict Q14/Q26/Q50 comparison.
 
 if nargin < 1 || isempty(subjectLimit), subjectLimit = inf; end
@@ -6,9 +6,11 @@ if nargin < 2 || isempty(outputName)
     outputName = 'sonicom_ten_method_direction_sensitivity_v1';
 end
 if nargin < 3, classicalPredictionOutputName = ''; end
+if nargin < 4 || isempty(subjectStartIndex), subjectStartIndex = 1; end
 validateattributes(subjectLimit, {'numeric'}, {'scalar', 'positive'});
 validateattributes(outputName, {'char', 'string'}, {'scalartext'});
 validateattributes(classicalPredictionOutputName, {'char', 'string'}, {'scalartext'});
+validateattributes(subjectStartIndex, {'numeric'}, {'scalar', 'integer', 'positive'});
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -22,7 +24,7 @@ splitTable = readtable(fullfile(projectRoot, config.dataset.split_file), ...
     'TextType', 'string');
 subjects = splitTable(splitTable.split == "val", :);
 assert(height(subjects) == 44, 'Expected 44 validation listeners.');
-subjects = subjects(1:min(height(subjects), floor(subjectLimit)), :);
+subjects = subjects(subjectStartIndex:min(height(subjects), subjectStartIndex + floor(subjectLimit) - 1), :);
 counts = double(config.dataset.direction_counts(:).');
 assert(isequal(counts, [14, 26, 50]), 'Frozen direction counts changed.');
 gridTable = readtable(fullfile(projectRoot, config.dataset.sparse_grid_file), ...
@@ -206,8 +208,10 @@ seed = double(config.statistics.bootstrap_seed);
 aggregate = aggregate_metrics(metricLong, methodIds, metricIds, counts, replicates, seed);
 effects = direction_effects(metricLong, methodIds, metricIds, replicates, seed);
 interactions = bounded_interactions(metricLong, methodIds, metricIds, replicates, seed);
-assert(height(aggregate) == 120 && height(effects) == 80 && ...
-    height(interactions) == 72, 'Frozen result-table cardinality failed.');
+if height(subjects) == 44
+    assert(height(aggregate) == 120 && height(effects) == 80 && ...
+        height(interactions) == 72, 'Frozen result-table cardinality failed.');
+end
 outputRoot = fullfile(projectRoot, 'results', char(outputName));
 assert(~isfolder(outputRoot), 'Refusing to overwrite %s', outputRoot);
 mkdir(outputRoot); figuresRoot = fullfile(outputRoot, 'figures'); mkdir(figuresRoot);
@@ -239,7 +243,9 @@ function write_secondary_prediction(root, subjectLabel, count, method, selectedD
 path = fullfile(root, 'subjects', char(subjectLabel), sprintf('q%d', count), ...
     char(method), 'prediction.h5');
 folder = fileparts(path); if ~isfolder(folder), mkdir(folder); end
-assert(~isfile(path), 'Refusing to overwrite %s', path);
+if isfile(path)
+    return; % Resume only preserves an existing immutable per-method prediction.
+end
 assert(isequal(size(selectedDb), [463, 793, 2]) && isequal(size(hrir), [256, 793, 2]));
 h5create(path, '/predicted_magnitude_db', size(selectedDb), 'Datatype', 'single');
 h5write(path, '/predicted_magnitude_db', single(selectedDb));

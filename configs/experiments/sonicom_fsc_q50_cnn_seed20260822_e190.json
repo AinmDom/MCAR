@@ -11,7 +11,7 @@
   "q26_csv": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
   "q26_normalization": "configs/data/sonicom_fsc_q50_magnitude_normalization_v1.json",
   "initial_film_checkpoint": "artifacts/training/sonicom_fsc_q50_film_seed20260822_e130/last.pt",
-  "initial_film_checkpoint_sha256": "5463CFE9FA618F5CEA0ADF7415E7CEAC978D071C24FB2038772A968519808A1D",
+  "initial_film_checkpoint_sha256": "427A35F8A55C3CE0D751F5B6514302FD64C416BB4510AEF4537B46F49805128E",
   "freeze_film_siren": true,
   "direction_protocol": "global_767_interpolation_plus_independent_horizontal_72_interpolation",
   "frequency_mapping": {

@@ -1,5 +1,12 @@
 # 项目实验日志
 
+## 2026-09-06：FSC matched-density 六个 CNN E190 并行启动
+
+- 时间/agent：2026-09-06T20:15:00+08:00，CODEX。Q14/Q50 六个 FiLM-SIREN E130 均已完成 cycle=130；Q14 seed20260822 使用 retry1 输出，实际 checkpoint SHA 已核对并写入 CNN 配置。
+- 动作：并行启动六个 frozen-FiLM spectral CNN E190：Q14 seeds 20260821/22/23、Q50 seeds 20260821/22/23，PID=`37636, 9748, 37264, 26996, 36688, 28704`；每个输出目录独立，Q26 结果不触碰。
+- 完整性：六个 E190 目录已创建，训练进程已进入初始化；均固定 190 epochs、冻结对应 E130 backbone、`test_subjects_read=0` 预注册。当前尚未有 E190 完成报告或 ensemble 结果。
+- 下一步：核验六个 E190 的 cycle=190、finite、test=0；生成三 seed residual-dB ensemble，使用公共 743-direction mask 做 Q14/Q26/Q50 对角线评价。阻塞项：无。
+
 ## 2026-09-06：Q14 seed20260822 retry1 已重新启动
 
 - 时间/agent：2026-09-06T19:13:00+08:00，CODEX。发现首次 retry 启动因配置文件名误用而立即 `FileNotFoundError`，未创建训练产物；已使用原配置 `configs/experiments/sonicom_fsc_q14_film_seed20260822_e130.json`（其中 `run_name` 为 retry1）重新启动。

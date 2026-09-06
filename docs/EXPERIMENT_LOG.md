@@ -1,6 +1,56 @@
 # 项目实验日志
 
-## 2026-09-05：Hybrid LSD B validation比较完成
+## 2026-09-06：作者取消 AI_HANDOFF 交接机制，开工改为读实验日志前三条
+
+- 时间/agent：2026-09-06T10:01:50+08:00，COPILOT。作者认为 `docs/AI_HANDOFF.md` 过长、
+  交接冗余，要求在 `AGENTS.md` 中取消交接规则，改为开工前只读 `docs/EXPERIMENT_LOG.md`
+  顶部最近三条记录确认进度、最新结论、运行中任务与阻塞项。
+- 动作：改写 `AGENTS.md`——移除 `Baton`/当前接力状态/交接页维护/“哪些时点必须交接”，
+  把“开始工作前”改为查看日志前三条 + `git status --short` + 分支/HEAD；合并出“记录规则”
+  一节，所有可验证步骤统一收敛到 `docs/EXPERIMENT_LOG.md` 顶部（时间倒序，无需另设
+  交接页）；保留“目标/任务模式训练启动”“数据与实验边界”“论文写作工作区”及作者
+  2026-09-06 的 LaTeX 编译约定。未改动其他文件，既有未提交 AGENTS.md 修改（训练启动
+  精简、LaTeX 约定）原样保留。
+- 证据：`AGENTS.md`。原 `docs/AI_HANDOFF.md` 已归档至 `docs/archive/AI_HANDOFF.md`
+  （作者要求归档，保留历史；文件原被 `.gitignore` 忽略，归档路径同样不入版本库），
+  不再按协作规则维护，其 Baton 状态已失效。
+- 完整性：本条为协作约定变更，不涉及训练/评价、checkpoint 或 test 访问；
+  `test_subject_count_read=0`，训练/末点预算判据=N/A。Git：AGENTS.md、
+  docs/EXPERIMENT_LOG.md、.gitignore 均未提交。
+- 下一步：无（归档已完成）。
+- 阻塞项：无。
+
+## 2026-09-03：作者指定Hybrid E190为当前论文主模型（写作决策，无新实验）
+
+- 时间/agent：2026-09-03T17:11:40+08:00，CODEX。作者明确要求将Hybrid E190作为主模型并修改
+  `reports/PAPER_OUTLINE_ARS.md`。本次更新论文呈现角色：Hybrid E190+Q26为主方法，
+  Bounded E25为对照，MCAR v3.5.1仍为工程主模型；既有结果已知后作出的作者选择不得回写成
+  test前预注册选型，原训练、评价和历史模型决策不重写。
+- 冻结模型保持identity `A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE`：
+  三个seed20260821/22/23的cycle190 last.pt、residual-dB权重1/3；冻结FiLM E130，仅训练新增
+  双耳频谱CNN。开发best cycles190/190/170、中位数E190、调度horizon200均按既有协议引用，
+  不修改配置或checkpoint。证据：`experiments/film_siren/STAGE_D_FILM_SIREN_SPECTRAL_CNN_FORMAL_E190_FREEZE.md`
+  及 `configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json`。
+- 已核验并保留的44人engineering-test、Q26/767方向四primary均值为
+  `0.8175440242629026/1.2003965313140803/3.454911258906816/0.7794497051040513 dB`。
+  直接Hybrid−MCAR统计来自
+  `results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/paired_bootstrap.csv`
+  （10000次被试配对bootstrap，seed20260831）：Contra25差−0.07409270078644113 dB，
+  HF差−0.053569703946212764 dB，二者CI均小于0；Full差−0.00039302453397463915 dB，
+  CI[−0.030995271684337845,+0.055464770777911954]；ILD差+0.13474061344812602 dB，
+  CI[+0.012705474934938392,+0.34484925204924877]。框架保留ILD代价及P0339失败案例，不声称全指标支配。
+- 方向敏感性使用现有44人validation/743方向结果：Hybrid的Q14四指标退化；Q50的Full/Contra25
+  退化、HF/ILD的CI含零。Bounded门控及效率材料未移植为Hybrid证据；CNN可训练参数按现有代码
+  维度计数为74402/成员，完整Hybrid效率证据仍待补。
+- 完整性与范围：原始 `test_subjects_read=0`；仅读取已生成test CSV、配置、代码和日志，
+  未训练、未加载checkpoint、未推理、未运行评价器或新bootstrap。既有primary summary为
+  completed/all_finite=true、1760行，20端点verification为8800行且finite、源值误差0；
+  不把这些历史验证说成本轮重新验证checkpoint。训练/best/末点预算判据=N/A。
+- Git：基准 `codex/project-structure-refactor` / `ae71552da02f0b4e0292e72696c2aba554fe123a`；
+  接续上一轮未跟踪框架并修改，增量更新交接页及本条，无提交。下一步为Hybrid正文写作与
+  原始文献核验；旧Baton仍UNKNOWN，不启动有重叠风险的实验。
+  
+  ## 2026-09-05：Hybrid LSD B validation比较完成
 
 - 使用冻结ensemble identity `D1611128A86118ACE0EFD471A4F99456F1267B10D1C39C68AD769239FB589CE6`
   从三个E190 `last.pt`以1/3 residual-dB平均，仅推理44名validation；44/44预测均shape
@@ -101,8 +151,8 @@
 - 当前状态为已准备、尚未训练；启动前将本轮代码/配置/证据提交，require_clean_git=true。
   正式run启动和PID以后续交接及`outputs/hybrid_lsd_b_e190/launch.json`为准。
   新test_subjects_read=0；正式训练finite/best/完成性待运行后核验。禁止复用已消费test做独立确认。
-
-## 2026-09-03：十方法完整20指标test评价完成
+  
+  ## 2026-09-03：十方法完整20指标test评价完成
 
 - 在用户明确授权后，按结果盲预注册协议
   `experiments/film_siren/STAGE_E_COMPLETE_TEN_METHOD_SECONDARY_DEFERRED_TEST_PROTOCOL.md`

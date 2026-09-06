@@ -321,6 +321,7 @@ class FilmSirenSpectralCNNPredictor:
         allow_test: bool = False,
         condition_source_indices: np.ndarray | None = None,
         condition_dataset_root: Path | None = None,
+        condition_filename: str = "q26.h5",
     ) -> None:
         self.device = device or torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -370,6 +371,7 @@ class FilmSirenSpectralCNNPredictor:
             else np.asarray(condition_source_indices, dtype=np.int64).reshape(-1)
         )
         self.condition_dataset_root = condition_dataset_root
+        self.condition_filename = str(condition_filename)
 
     @torch.no_grad()
     def predict_residual_db(self, source_h5: Path) -> np.ndarray:
@@ -395,6 +397,7 @@ class FilmSirenSpectralCNNPredictor:
                 subject_id,
                 self.condition_source_indices,
                 allow_test=self.allow_test,
+                filename=self.condition_filename,
             )
         normalized_condition = self.condition_normalization.normalize(
             condition.binaural_magnitude_db

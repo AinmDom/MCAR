@@ -1,5 +1,20 @@
 # 项目实验日志
 
+## 2026-09-07：FSC E190 与 Q14/Q50 ensemble validation 完成；严格指标 evaluator 暂时阻塞
+
+- 时间/agent：2026-09-07T01:10:00+08:00，CODEX。六个 Q14/Q50 spectral-CNN E190 均完成 cycle=190，生成 `last.pt` 和 completed report；六个 report 的 `test_subjects_read=0`，Q50 seed20260823 的 best_cycle=170 但按预注册固定末点使用 cycle-190 `last.pt`。
+- 动作：Q14/Q50 三 seed residual-dB 等权 ensemble validation inference 均完成，每套 44 subjects，预测全部 finite；输出 `artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_validation/` 与 `...q50.../`，manifest identity 已锁定。
+- 结果：尚未生成最终四项主指标表；调用 MATLAB 严格 evaluator 时 MATLAB 在启动阶段报 `System Error: File system inconsistency`，连最小 `disp('ping')` 也失败，因此未读取新 evaluation 数据、未写入半成品指标结果。
+- 完整性：E130/E190 训练与 validation inference 均不读取 test；Q26 继续复用正式冻结 validation ensemble；当前 evaluator 失败不改变任何 checkpoint/result。
+- 下一步：修复 MATLAB runtime 启动问题后，使用公共 743-direction mask 运行 Q14/Q26/Q50 对角线严格 evaluator，输出 subject-level、mean/std 和 observation-density 汇总。阻塞项：MATLAB runtime 当前不可启动。
+
+## 2026-09-07：FSC Q14/Q50 E190 ensemble validation 推理启动
+
+- 时间/agent：2026-09-07T00:40:00+08:00，CODEX。六个 Q14/Q50 E190 均已完成并通过固定 cycle=190、finite checkpoint、`test_subjects_read=0` 核验；生成 Q14/Q50 三 seed residual-dB 等权 manifest。
+- 动作：并行启动 validation-only ensemble inference，Q14 PID=`43712` 输出 `artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_validation/`，Q50 PID=`43380` 输出 `artifacts/reconstruction/sonicom_fsc_q50_e190_ensemble_validation/`；每套目标为 44 validation subjects。
+- 完整性：manifest identity 已生成并锁定；预测脚本已参数化 observation_count，Q14/Q50 分别读取 q14/q50 current-Q HDF5；test 路径不构造、不读取。
+- 下一步：核验两套 inference report 后，复用公共 743-direction evaluation mask 计算 FSC-Q14@Q14、现有 Q26@Q26、FSC-Q50@Q50 的 subject-level primary metrics、mean/std 与汇总表。阻塞项：无。
+
 ## 2026-09-06：FSC matched-density 六个 CNN E190 并行启动
 
 - 时间/agent：2026-09-06T20:15:00+08:00，CODEX。Q14/Q50 六个 FiLM-SIREN E130 均已完成 cycle=130；Q14 seed20260822 使用 retry1 输出，实际 checkpoint SHA 已核对并写入 CNN 配置。

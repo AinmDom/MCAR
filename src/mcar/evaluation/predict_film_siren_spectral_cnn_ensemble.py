@@ -14,6 +14,7 @@ import torch
 from mcar.evaluation.predict_film_siren_spectral_cnn import write_prediction
 from mcar.paths import project_root
 from mcar.predictors import FilmSirenSpectralCNNPredictor
+from mcar.q26_condition import sparse_source_indices
 from mcar.training.train_film_siren import file_sha256, split_subject_paths
 
 
@@ -63,6 +64,8 @@ def main() -> None:
     split_csv = (root / manifest["dataset"]["split_csv"]).resolve()
     q26_csv = (root / manifest["dataset"]["q26_csv"]).resolve()
     q26_normalization = (root / manifest["dataset"]["q26_normalization"]).resolve()
+    observation_count = int(manifest["dataset"].get("observation_count", 26))
+    condition_indices = sparse_source_indices(q26_csv, observation_count)
     predictors = []
     for member in manifest["members"]:
         config_path = root / member["config"]
@@ -80,10 +83,13 @@ def main() -> None:
                 device=torch.device("cuda"),
                 directions_per_block=arguments.directions_per_block,
                 allow_test=False,
+                condition_source_indices=condition_indices,
+                condition_dataset_root=dataset_root,
+                condition_filename=f"q{observation_count}.h5",
             )
         )
 
-    subject_rows = split_subject_paths(dataset_root, split_csv, "val")
+    subject_rows = split_subject_paths(dataset_root, split_csv, "val", observation_count)
     if arguments.subject_limit is not None:
         subject_rows = subject_rows[: arguments.subject_limit]
     output_root = root / "artifacts" / "reconstruction" / arguments.run_name

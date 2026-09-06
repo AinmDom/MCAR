@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-07",
+  "model_version": "fsc-q50-e190-ensemble-v1",
+  "model_family": "FiLM-SIREN spectral-CNN residual ensemble",
+  "e_final": 190,
+  "ensemble": {
+    "type": "residual_db_mean",
+    "member_count": 3,
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "checkpoint_policy": "cycle-190 last.pt only"
+  },
+  "members": [
+    {
+      "member_index": 1,
+      "seed": 20260821,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_fsc_q50_cnn_seed20260821_e190.json",
+      "config_sha256": "F837E5B3407162D88AFC55BAF146C875992B673C0F405A64BD564ED902BAD8AF",
+      "checkpoint": "artifacts/training/sonicom_fsc_q50_cnn_seed20260821_e190/last.pt",
+      "checkpoint_sha256": "2CE1228C53C42E0816B4387B615645CDD91C02BC0A5E67AD26E86AD44C692F24",
+      "training_report": "artifacts/training/sonicom_fsc_q50_cnn_seed20260821_e190/training_report.json",
+      "training_git_commit": "78d78fd9883f7d9ba9c4a9534cd3d1d8124e2981",
+      "training_git_dirty": true
+    },
+    {
+      "member_index": 2,
+      "seed": 20260822,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_fsc_q50_cnn_seed20260822_e190.json",
+      "config_sha256": "8889E17B2B8A301C11F272E20B15539DF2DC337F31DACBA5EA056B797091C621",
+      "checkpoint": "artifacts/training/sonicom_fsc_q50_cnn_seed20260822_e190/last.pt",
+      "checkpoint_sha256": "E952AFA892EE0767ADC4DBA5C7D2E960F2BEA2F84953786E50C8A0C10273C40D",
+      "training_report": "artifacts/training/sonicom_fsc_q50_cnn_seed20260822_e190/training_report.json",
+      "training_git_commit": "78d78fd9883f7d9ba9c4a9534cd3d1d8124e2981",
+      "training_git_dirty": true
+    },
+    {
+      "member_index": 3,
+      "seed": 20260823,
+      "weight": 0.3333333333333333,
+      "config": "configs/experiments/sonicom_fsc_q50_cnn_seed20260823_e190.json",
+      "config_sha256": "5907C7BC09612E17FA09A4B82AB960ACA8AD9F6904F6BC0746B56DB2D2F803B4",
+      "checkpoint": "artifacts/training/sonicom_fsc_q50_cnn_seed20260823_e190/last.pt",
+      "checkpoint_sha256": "5E29B8F1AE97905DB954D04D8766626FD3E2FC6AAECAFB992DFB51C2DC21F393",
+      "training_report": "artifacts/training/sonicom_fsc_q50_cnn_seed20260823_e190/training_report.json",
+      "training_git_commit": "78d78fd9883f7d9ba9c4a9534cd3d1d8124e2981",
+      "training_git_dirty": true
+    }
+  ],
+  "dataset": {
+    "root": "data/processed/sonicom_fsc_q50_residual_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "q26_csv": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+    "q26_normalization": "configs/data/sonicom_fsc_q50_magnitude_normalization_v1.json",
+    "observation_count": 50,
+    "split": "val",
+    "subject_count": 44,
+    "tensor_layout": "ear,direction,frequency"
+  },
+  "test_policy": "Validation only; test paths are never constructed or read.",
+  "identity_sha256": "988CC0082F0E78497C4AB86D9283D5B5FC4F3F332E6B33DA099BF64BB41728B2"
+}

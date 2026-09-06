@@ -1,5 +1,24 @@
 # 项目实验日志
 
+## 2026-09-06：LAP 2024 Task 2三指标locked test评价完成
+
+- 时间/agent：2026-09-06T14:12:52+08:00，CODEX。兼容性通过后运行`scripts/evaluate_lap2024_metrics.py`，配置为`split=test`、`allow_test=true`，读取十方法冻结prediction与measured SONICOM SOFA。
+- 动作：44/44 test subjects、10/10 methods、每subject全部793 matched directions（26 Q26+767 interpolation）完成；Q26纳入，未使用interpolation mask，未排除Q26，未使用solid-angle weighting；复用当前MCAR/Hybrid/Bounded strict reconstruction，未训练、调参或修改checkpoint。
+- 结果：LAP2024LSD均值/排名（dB）：FSP-AE`3.0691787853`(1)、RANF`3.2221254900`(2)、HYBRID`3.6129151039`(3)、BOUNDED`3.6373847261`(4)、MCARv351`3.6442025408`(5)、MCA`4.7553275440`(6)、SUpDEqBary`5.4608023958`(7)、SUpDEqNN`5.5890947954`(8)、SUpDEqSH`6.3776273999`(9)、SHOnly`7.9176623798`(10)。LAP2024ILDMAE均值/排名（dB）：MCARv351`0.6647408239`(1)、BOUNDED`0.6772102443`(2)、FSP-AE`0.7051547745`(3)、RANF`0.7160032649`(4)、HYBRID`0.7610472156`(5)、MCA`0.8996645551`(6)、SUpDEqBary`1.3142603433`(7)、SUpDEqNN`1.3223231597`(8)、SUpDEqSH`1.9112023034`(9)、SHOnly`4.0523424745`(10)。LAP2024ITDMAE均值/排名（us）：SUpDEqNN`17.4838172496`(1)、RANF`17.5994965222`(2)、SUpDEqBary`17.8484019233`(3)、FSP-AE`24.0775357871`(4)、SUpDEqSH`26.7459576593`(5)、MCA`26.9116779655`(6)、MCARv351`28.2972297024`(7)、BOUNDED`28.9477631398`(8)、HYBRID`29.5865986732`(9)、SHOnly`112.5663303649`(10)。
+- 完整性：输出逐subject`440`行、aggregate`30`行，10×3单元各44 subjects；全部finite，独立复核aggregate与逐subject均值最大误差`0`；`test_subject_count_read=44`。阈值仅描述：LSD<7.4 dB、ILD<4.4 dB、ITD<100 us；均值层面SHOnly未通过LSD/ITD，其余方法三项均低于阈值。
+- 证据：`results/lap2024_test_metrics_v1/lap2024_test_per_subject_metrics.csv`、`lap2024_test_aggregate_metrics.csv`、`lap2024_test_summary.json`、`lap2024_sam_compatibility.json`；新增冻结配置`configs/experiments/lap2024_test_metrics_v1.json`。现有`FullSphereLSD`、`HorizontalILDMAE`、`ERBBandILDMean`、`ITDWeightedMAE_us`未修改。
+- 下一步：可直接引用LAP2024三项独立结果；与旧指标相比，LAP LSD改为20–20000 Hz、全793方向/两耳普通平均，ILD改为全带宽HRIR RMS ILD，ITD改为SAM 0.0.8的3 kHz/10阶/Hilbert MAXIACCe、原采样率、官方lag offset。
+- 阻塞项：无；官方SAM 0.0.8的`itd_samps/fs` list类型错误已在summary中明确记录，仅作`np.asarray`类型兼容，不改变算法或indexing。Git保留既有validation恢复相关未提交修改，未覆盖或纳入本次结果。
+
+## 2026-09-06：LAP 2024 Task 2 / SAM 0.0.8兼容性验证通过，test运行待启动
+
+- 时间/agent：2026-09-06T14:10:18+08:00，CODEX。新增冻结配置`configs/experiments/lap2024_test_metrics_v1.json`和评价脚本`scripts/evaluate_lap2024_metrics.py`，目标为locked test、44 subjects、十方法、全793 matched directions。
+- 动作：使用官方PyPI `spatialaudiometrics==0.0.8` wheel（SHA256=`1BEF9BBCE1CCEFA0520C416DB3D6E3A665F50E64E9996CA2C916688400149B7B`）在synthetic fixture `[5,2,64]`上核对`calculate_lsd_across_locations`、`calculate_ild_difference`和`itd_estimator_maxiacce`核心行为；LAP test尚未读取。
+- 结果：LSD/ILD绝对误差均`0`；ITD samples、MAXIACCe、seconds和ITD MAE绝对误差均`0`。兼容性状态为`passed_with_official_v0.0.8_type_shim`：官方0.0.8最后执行Python list除法`itd_samps/fs`会抛`TypeError`，仅以`np.asarray`完成类型转换，未改动低通、Hilbert、correlate或`idx_lag - hrir_length`。
+- 完整性：test `test_subject_count_read=0`；未训练、未调参、未加载test checkpoint推理；现有FullSphereLSD、HorizontalILDMAE、ERBBandILDMean、ITDWeightedMAE_us未改。训练/best/末点=N/A。
+- 下一步：兼容性通过后运行一次性LAP test评价，输出独立`results/lap2024_test_metrics_v1/`并核验44×10×793和finite。
+- 阻塞项：无；`.tmp/lap_sam_0_0_8/`为本地官方wheel核对暂存，不作为结果证据目录。
+
 ## 2026-09-06：Q14/Q26/Q50次要指标首次运行在缓存表示转换处中止
 
 - 时间/agent：2026-09-06T12:15:00+08:00，CODEX。660/660传统基线文件和MATLAB退出已核验后，

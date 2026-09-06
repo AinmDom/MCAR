@@ -1,0 +1,28 @@
+{
+  "status": "passed_with_official_v0.0.8_type_shim",
+  "wheel_sha256": "1BEF9BBCE1CCEFA0520C416DB3D6E3A665F50E64E9996CA2C916688400149B7B",
+  "source_python_hashes": {
+    "spatialaudiometrics/__init__.py": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "spatialaudiometrics/angular_metrics.py": "E3F9FB71204D9B17E524BFE73A1B7BF899230BDA3835435C60057EADADA7546B",
+    "spatialaudiometrics/hrtf_metrics.py": "A528B31C640A9A32D0DF7747BCBE40FF5BD1384D5239C14E39F8C76EA4C08CD2",
+    "spatialaudiometrics/lap_challenge.py": "BE18A2942773ABEC46938E5E3953B50806B1F3F307CBB8643B3FBFD0CE0F1142",
+    "spatialaudiometrics/load_data.py": "B3DC40541D9EBCC5BA6B9EBECC285448CCD7428234028A699C81D8EA55948419",
+    "spatialaudiometrics/localisation_metrics.py": "EAE3C250FB983DC25C1420F61F0F48D1F2E9463914380A2A82FB732DF50AAE0E",
+    "spatialaudiometrics/signal_processing.py": "D64091A36AF649179A6609AD1086004F466693A646DA50C3DAE593857B44AE03",
+    "spatialaudiometrics/statistics.py": "11E19EE071AE88EBF9F1EC5871516CAA597B0EFB1334E6E85D5F8B304F17AB62",
+    "spatialaudiometrics/visualisation.py": "5BC0302489D262AA780ED535A43494F96621AD1FF6130C43F94F73539ED7F231"
+  },
+  "fixture_shape": [
+    5,
+    2,
+    64
+  ],
+  "fixture_sampling_rate_hz": 44100.0,
+  "lsd_abs_error": 0.0,
+  "ild_abs_error": 0.0,
+  "itd_samples_exact": true,
+  "itd_maxiacc_exact": true,
+  "itd_seconds_abs_error": 0.0,
+  "itd_mae_abs_error_us": 0.0,
+  "official_runtime_issue": "SAM 0.0.8 executes list / fs and raises TypeError; np.asarray is the only applied type shim."
+}

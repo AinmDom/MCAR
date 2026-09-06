@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "protocol": "LAP Challenge 2024 Task 2 / Spatial Audio Metrics 0.0.8",
+  "split": "test",
+  "allow_test": true,
+  "subject_count": 44,
+  "directions": 793,
+  "q26_directions": 26,
+  "interpolation_directions": 767,
+  "matched_direction_policy": "all 793 directions; include Q26; do not use interpolation mask",
+  "direction_weighting": "ordinary arithmetic mean; no solid-angle weighting",
+  "methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA",
+    "MCARv351",
+    "FSPAE",
+    "RANF",
+    "HYBRID",
+    "BOUNDED"
+  ],
+  "reference_sofa_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects",
+  "processed_test_root": "data/processed/sonicom_residual_q26_v1",
+  "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+  "standardized_prediction_root": "artifacts/reconstruction/sonicom_complete_ten_method_secondary_test_inputs_v1",
+  "source_manifest": "configs/experiments/sonicom_complete_ten_method_secondary_deferred_test_v1_manifest.json",
+  "strict_reconstruction": "predicted magnitude + inherited MCA selected phase + MCA outside-band complex bins -> IFFT; reuse existing strict reconstruction",
+  "sampling_rate_hz": 44100.0,
+  "sam_reference": {
+    "package": "spatialaudiometrics",
+    "version": "0.0.8",
+    "wheel_sha256": "1BEF9BBCE1CCEFA0520C416DB3D6E3A665F50E64E9996CA2C916688400149B7B",
+    "functions": [
+      "calculate_lsd_across_locations",
+      "calculate_ild_difference",
+      "itd_estimator_maxiacce"
+    ],
+    "official_itd_runtime_note": "The 0.0.8 source returns a Python list and then evaluates list / fs; evaluator applies np.asarray to that list only to make the official numeric intent executable, without changing the official lag index or signal operations."
+  },
+  "metrics": {
+    "LAP2024LSD_dB": {
+      "frequency_low_hz": 20.0,
+      "frequency_high_hz": 20000.0,
+      "threshold": 7.4,
+      "unit": "dB",
+      "direction": "lower_is_better"
+    },
+    "LAP2024ILDMAE_dB": {
+      "formula": "mean(abs(ILD_est - ILD_ref)); ILD=20*log10(RMS_left)-20*log10(RMS_right)",
+      "threshold": 4.4,
+      "unit": "dB",
+      "direction": "lower_is_better"
+    },
+    "LAP2024ITDMAE_us": {
+      "filter_order": 10,
+      "lowpass_hz": 3000.0,
+      "lag_offset": "idx_lag - hrir_length",
+      "upsampling": false,
+      "threshold": 100.0,
+      "unit": "us",
+      "direction": "lower_is_better"
+    }
+  },
+  "outputs": {
+    "root": "results/lap2024_test_metrics_v1",
+    "per_subject": "lap2024_test_per_subject_metrics.csv",
+    "aggregate": "lap2024_test_aggregate_metrics.csv",
+    "summary": "lap2024_test_summary.json",
+    "compatibility": "lap2024_sam_compatibility.json"
+  },
+  "test_policy": "Read exactly the locked 44-subject test cohort after SAM compatibility passes; no training, tuning, checkpoint changes, interpolation-mask exclusion, or model selection."
+}

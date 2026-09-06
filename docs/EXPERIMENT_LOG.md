@@ -1,5 +1,20 @@
 # 项目实验日志
 
+## 2026-09-06：Q14/Q26/Q50次要指标首次运行在缓存表示转换处中止
+
+- 时间/agent：2026-09-06T12:15:00+08:00，CODEX。660/660传统基线文件和MATLAB退出已核验后，
+  启动冻结Python evaluator；它在P0001、首个残差方法加载时因v7.3 cache的复数MCA频谱直接与
+  residual dB相加而中止（`UFuncNoLoopError`）。
+- 动作：在加载cache时将reference/MCA复数频谱按既有MATLAB定义转换为
+  `20*log10(max(abs(spectrum),1e-10))`；不改变预测、端点、掩码、统计或数据边界。
+- 证据：`scripts/evaluate_ten_method_direction_sensitivity_secondary.py`；失败堆栈定位
+  `residual()`的MCA+residual操作；源缓存为
+  `artifacts/sparsity/sonicom_bounded_e25_input_direction_sensitivity_v1/.../cache.mat`。
+- 完整性：失败发生在首个listener、首个方法，未写入任何endpoint CSV或最终结果目录；
+  `test_subject_count_read=0`，训练/best/末点=N/A，660个输入HDF5未改；脚本更正待提交。
+- 下一步：提交该结果盲表示修正，重新执行完整validation evaluator；要求21,120/480/320/288且全finite。
+- 阻塞项：无；首次运行未生成可解读的数值结果。
+
 ## 2026-09-06：Q26 test八方法ITD补充表完成（结果级派生）
 
 - 时间/agent：2026-09-06T12:07:24+08:00，CODEX。按用户要求整理Q26/test的ITD指标；为满足“八个方法”，方法固定为SH only、SUpDEq SH、SUpDEq NN、SUpDEq Barycentric、MCA、FSP-AE、RANF和Hybrid E190，明确排除MCAR v3.5.1与Bounded E25。

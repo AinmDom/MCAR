@@ -24,8 +24,8 @@ def boot(x,n,s):
 def read_cache(path):
     with h5py.File(path) as h:
         c=h["cache"]; grid=np.asarray(c["referenceGrid"]).T; mask=np.asarray(c["frequencyMask"]).reshape(-1).astype(bool)
-        ref=np.stack([np.asarray(c["referenceLeft"])[mask].T,np.asarray(c["referenceRight"])[mask].T])
-        mca=np.stack([np.asarray(c["mcaLeft"])[mask].T,np.asarray(c["mcaRight"])[mask].T])
+        ref=20*np.log10(np.maximum(np.abs(np.stack([np.asarray(c["referenceLeft"])[mask].T,np.asarray(c["referenceRight"])[mask].T])),1e-10))
+        mca=20*np.log10(np.maximum(np.abs(np.stack([np.asarray(c["mcaLeft"])[mask].T,np.asarray(c["mcaRight"])[mask].T])),1e-10))
         refhr=np.asarray(c["referenceHrir"]).transpose(1,0,2); freq=np.asarray(c["frequencyHz"]).reshape(-1)[mask]
     return grid,mask,ref,mca,refhr,freq
 def hrir_from_db(db,mca,mask):

@@ -32,6 +32,7 @@ from mcar.paths import project_root
 from mcar.q26_condition import (
     Q26MagnitudeNormalization,
     build_q26_condition,
+    build_sparse_condition_from_csv,
     normalize_split,
 )
 from mcar.training.train_siren import frequency_coordinates
@@ -113,6 +114,7 @@ def split_subject_paths(
     dataset_root: Path,
     split_csv: Path,
     split: str,
+    direction_count: int = 26,
 ) -> list[tuple[int, str, Path]]:
     split = normalize_split(split)
     if split == "test":
@@ -132,7 +134,7 @@ def split_subject_paths(
         if not label.startswith("P") or not label[1:].isdigit():
             raise ValueError(f"Invalid subject label {label!r}")
         subject_id = int(label[1:])
-        path = dataset_root / "subjects" / label / "q26.h5"
+        path = dataset_root / "subjects" / label / f"q{int(direction_count)}.h5"
         if not path.is_file():
             raise FileNotFoundError(path)
         output.append((subject_id, label, path))
@@ -148,14 +150,16 @@ def load_condition_cache(
     q26_csv: Path,
     normalization: Q26MagnitudeNormalization,
     split: str,
+    direction_count: int = 26,
 ) -> list[SubjectCondition]:
     cache: list[SubjectCondition] = []
     for subject_id, label, path in subject_paths:
-        condition = build_q26_condition(
+        condition = build_sparse_condition_from_csv(
             dataset_root,
             split_csv,
             subject_id,
             q26_csv,
+            direction_count,
         )
         cache.append(
             SubjectCondition(

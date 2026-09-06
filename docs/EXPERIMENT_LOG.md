@@ -1,5 +1,54 @@
 # 项目实验日志
 
+## 2026-09-06：FSC matched-density Q14/Q50 数据与最小 preflight 通过
+
+- 时间/agent：2026-09-06T15:45:00+08:00，CODEX。核验 Q14/Q50 current-Q residual 数据集均已完成：各 306 个 train+validation subject（262 train、44 val），未读取 test。
+- 动作：检查 `data/processed/sonicom_fsc_q14_residual_v1/` 与 `data/processed/sonicom_fsc_q50_residual_v1/` 的 HDF5 观测索引和有限性；按各自 14/50 个 current-Q 观测方向重新计算 train-only magnitude normalization；运行两套 Stage-C 单 subject CUDA forward/backward smoke。
+- 结果：Q14/Q50 observed direction count 分别为 14/50；reference、MCA、residual、direction/frequency 输入均 finite；normalization training_subject_count=262；两套 smoke 均 `status=passed`、loss finite、`validation_subjects_read=0`、`test_subjects_read=0`。
+- 证据：`data/processed/sonicom_fsc_q14_residual_v1/training_statistics.json`、`data/processed/sonicom_fsc_q50_residual_v1/training_statistics.json`、`configs/data/sonicom_fsc_q14_magnitude_normalization_v1.json`、`configs/data/sonicom_fsc_q50_magnitude_normalization_v1.json`；命令 `python scripts/smoke_film_siren_stage_c.py configs/experiments/sonicom_fsc_q{14,50}_film_seed20260821_e130.json`。
+- 完整性：Q14/Q50 residual export、statistics、normalization 与 preflight 完成；正式 E130/E190 尚未启动；Q26 冻结结果未修改；Git 当前仍有本任务代码/config 与既有 staging 修改，尚未满足正式训练的 clean-worktree 要求。
+- 下一步：修正并冻结 Q14/Q50 配置与参数化代码，提交 clean commit 后启动 Q14/Q50 各三 seed FiLM-SIREN E130；E130 完成并核对 checkpoint hash 后再冻结 CNN E190 配置并训练。阻塞项：无。
+
+## 2026-09-06：论文五项主要指标统一配对统计因主结果仅含四项而阻塞
+
+- 时间/agent：2026-09-06T15:36:26+08:00，CODEX。按用户要求核对当前论文主结果表、Hybrid E190中心模型及主要基线的逐被试来源；未训练、未推理、未读取新test、未创建结果目录。
+- 动作：以`results/sonicom_complete_ten_method_test_v1/paper_complete_test_wide.csv`为当前可核验论文主结果表，以`results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv`为Hybrid E190/十方法逐被试长表，并核对`summary.json`。
+- 结果：该主结果表的`EvidenceTier=Primary frozen engineering test`只有4项：`FullSphereERB`、`Contralateral25ERB`、`ContralateralHighFrequency`、`HorizontalILDMAE`；对应逐被试长表为`44×10×4=1760`行、四项各`440`行，全部finite。要求的第五项无法从当前主结果表定义得到。
+- 统计边界：`ERBBandILDMean`虽在`results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv`中有`44×10`条逐被试记录，但该文件明确将其标为`Secondary test`，不能在“不重新定义指标”条件下擅自并入主结果；因此未计算FSC−MCA/FSP-AE/RANF配对bootstrap，也未生成CSV/汇总表/README。
+- 完整性：当前上游主结果仍为44名test listeners、10 methods、4 primary metrics且全部finite；`test_subject_count_read=0`（本次仅读既有CSV/JSON）；bootstrap replicates/seed=N/A（统计未启动）；训练/best/末点=N/A。Git保留本次开始前及并行任务已有修改，未覆盖正式结果目录。
+- 下一步：需作者确认第五项主指标及其已冻结逐被试来源；确认后在独立结果目录按同一listener集合执行10,000次固定seed paired bootstrap。阻塞项：当前可核验论文主结果表与Hybrid E190主结果来源缺少第五项。
+
+## 2026-09-06：FSC matched-density Q14 residual export完成，Q50启动
+
+- 时间/agent：2026-09-06T15:05:00+08:00，CODEX。核验Q14 current-Q导出已成功完成，
+  `data/processed/sonicom_fsc_q14_residual_v1/`含306/306 train+validation subjects及
+  `export_status.csv`/`run_configuration.mat`，每个文件为Q14观测方向；全部finite检查待统计脚本。
+- 动作：使用同一`export_sonicom_residual_dataset(...,directionCount=50)`启动Q50 current-Q
+  MCA和`GroundTruth-MCA_Q`导出，train+val=306 subjects、4 workers；不读取test，不改Q26。
+- 证据：`matlab/+mcar/export_sonicom_residual_dataset.m`；输出目标
+  `data/processed/sonicom_fsc_q50_residual_v1/`；Q14来源目录作为已完成对照保留。
+- 完整性：Q14 export `test_subject_count_read=0`；Q50正式导出运行中，训练/best/末点=N/A，
+  normalization/preflight/模型训练尚未开始。
+- 下一步：等待Q50完成并核验306个Q50 HDF5、observed count=50；生成两套train-only statistics，
+  提交参数化代码后执行最小forward/backward preflight，再启动Q14/Q50各3 seed E130/E190。
+- 阻塞项：无；不做cross-density输入实验，不覆盖已有Q26 checkpoint/result。
+
+## 2026-09-06：FSC matched-density Q14 current-Q residual export started
+
+- 时间/agent：2026-09-06T14:30:00+08:00，CODEX。已冻结参数化入口和Q14/Q50配置生成器，
+  并启动MATLAB current-Q MCA/residual export：Q14、train+val共306 subjects、4 workers，
+  PID由MATLAB launcher管理，输出`data/processed/sonicom_fsc_q14_residual_v1/`。
+- 动作：使用nested Q14 grid和原正式SUpDEq order-3/MCA定义计算
+  `Residual_Q = GroundTruth - MCA_Q`，严格排除44名test；Q26不触碰。后续将对Q50执行相同命令。
+- 证据：`matlab/+mcar/export_sonicom_residual_dataset.m`（新增directionCount参数）；
+  `configs/experiments/sonicom_fsc_q14_preparation_train_v1.json`等Q配置；
+  `scripts/generate_fsc_matched_density_configs.py`。
+- 完整性：导出运行中，尚未声称成功；`test_subject_count_read=0`，训练/best/末点=N/A；
+  完成后需核验306个Q14 HDF5、finite、observed count=14，再生成train-only normalization。
+- 下一步：等待Q14 export完成并核验，执行Q50 export；随后生成数据统计、最小 forward/backward
+  preflight，最后才启动Q14/Q50三seed正式E130/E190训练。
+- 阻塞项：无；不进行cross-density输入实验，不覆盖Q26结果。
+
 ## 2026-09-06：LAP 2024 Task 2三指标locked test评价完成
 
 - 时间/agent：2026-09-06T14:12:52+08:00，CODEX。兼容性通过后运行`scripts/evaluate_lap2024_metrics.py`，配置为`split=test`、`allow_test=true`，读取十方法冻结prediction与measured SONICOM SOFA。

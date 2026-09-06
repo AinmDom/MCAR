@@ -128,6 +128,7 @@ def build_sparse_condition(
     source_indices: np.ndarray,
     *,
     allow_test: bool = False,
+    filename: str = "q26.h5",
 ) -> SparseCondition:
     """Load only the requested measured directions from a subject HDF5."""
     label, csv_split = verify_split_access(
@@ -143,7 +144,7 @@ def build_sparse_condition(
     if np.any(indices < 0) or np.any(indices >= SONICOM_DIRECTION_COUNT):
         raise ValueError("Sparse source indices lie outside the reference grid")
 
-    path = dataset_root / "subjects" / label / "q26.h5"
+    path = dataset_root / "subjects" / label / filename
     if not path.is_file():
         raise FileNotFoundError(path)
     with h5py.File(path, "r") as handle:
@@ -266,6 +267,38 @@ def build_q26_condition(
     )
     condition.validate()
     return condition
+
+
+def sparse_source_indices(sparse_csv: Path, direction_count: int) -> np.ndarray:
+    """Read the frozen nested sparse-grid indices for an arbitrary Q count."""
+    rows = []
+    with sparse_csv.open("r", encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            if int(row.get("direction_count", -1)) == int(direction_count):
+                rows.append(int(row["source_index_zero_based"]))
+    values = np.asarray(rows, dtype=np.int64)
+    if values.size != int(direction_count) or np.any(np.diff(values) <= 0):
+        raise ValueError(f"Invalid frozen Q{direction_count} sparse grid")
+    return values
+
+
+def build_sparse_condition_from_csv(
+    dataset_root: Path,
+    split_csv: Path,
+    subject_id: int,
+    sparse_csv: Path,
+    direction_count: int,
+    *,
+    allow_test: bool = False,
+) -> SparseCondition:
+    return build_sparse_condition(
+        dataset_root,
+        split_csv,
+        subject_id,
+        sparse_source_indices(sparse_csv, direction_count),
+        allow_test=allow_test,
+        filename=f"q{int(direction_count)}.h5",
+    )
 
 
 @dataclass(frozen=True)

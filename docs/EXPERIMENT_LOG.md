@@ -1,5 +1,25 @@
 # 项目实验日志
 
+## 2026-09-06：作者取消 AI_HANDOFF 交接机制，开工改为读实验日志前三条
+
+- 时间/agent：2026-09-06T10:01:50+08:00，COPILOT。作者认为 `docs/AI_HANDOFF.md` 过长、
+  交接冗余，要求在 `AGENTS.md` 中取消交接规则，改为开工前只读 `docs/EXPERIMENT_LOG.md`
+  顶部最近三条记录确认进度、最新结论、运行中任务与阻塞项。
+- 动作：改写 `AGENTS.md`——移除 `Baton`/当前接力状态/交接页维护/“哪些时点必须交接”，
+  把“开始工作前”改为查看日志前三条 + `git status --short` + 分支/HEAD；合并出“记录规则”
+  一节，所有可验证步骤统一收敛到 `docs/EXPERIMENT_LOG.md` 顶部（时间倒序，无需另设
+  交接页）；保留“目标/任务模式训练启动”“数据与实验边界”“论文写作工作区”及作者
+  2026-09-06 的 LaTeX 编译约定。未改动其他文件，既有未提交 AGENTS.md 修改（训练启动
+  精简、LaTeX 约定）原样保留。
+- 证据：`AGENTS.md`。原 `docs/AI_HANDOFF.md` 已归档至 `docs/archive/AI_HANDOFF.md`
+  （作者要求归档，保留历史；文件原被 `.gitignore` 忽略，归档路径同样不入版本库），
+  不再按协作规则维护，其 Baton 状态已失效。
+- 完整性：本条为协作约定变更，不涉及训练/评价、checkpoint 或 test 访问；
+  `test_subject_count_read=0`，训练/末点预算判据=N/A。Git：AGENTS.md、
+  docs/EXPERIMENT_LOG.md、.gitignore 均未提交。
+- 下一步：无（归档已完成）。
+- 阻塞项：无。
+
 ## 2026-09-03：作者指定Hybrid E190为当前论文主模型（写作决策，无新实验）
 
 - 时间/agent：2026-09-03T17:11:40+08:00，CODEX。作者明确要求将Hybrid E190作为主模型并修改

@@ -117,7 +117,8 @@ wandb_state/
 # Runtime state from the automatic validation postprocessor (final status JSON is tracked).
 /results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/automatic_postprocess.lock
 /results/sonicom_validation_v351_ranf_fsp_mca_subject_hrtf/automatic_postprocess.log
-docs/AI_HANDOFF.md
+# 已退役的 AI_HANDOFF 交接页归档（保留历史，不入版本库）
+docs/archive/AI_HANDOFF.md
 
 # 写作区
 /paper write

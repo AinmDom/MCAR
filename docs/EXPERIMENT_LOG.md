@@ -1,5 +1,20 @@
 # 项目实验日志
 
+## 2026-09-06：FSC matched-density 六个 E130 队列已后台接管
+
+- 时间/agent：2026-09-06T15:52:00+08:00，CODEX。Q14 seed20260821 的 E130 正式 run 已在前台启动，后台队列 PID=30160 将等待该 run 完成后按固定顺序执行其余五个 Q14/Q50 seed。
+- 动作：队列脚本 `scripts/run_fsc_matched_density_film_e130_queue.ps1` 逐配置调用 Stage-C 训练，检测 `history.csv` 的 cycle=130 后跳过已完成成员，失败即停止；日志写入 `artifacts/training/fsc_matched_density_film_e130_queue.log`。
+- 完整性：当前已观测到 Q14 seed20260821 `history.csv` 至 cycle=2，loss finite；未读取 test。Q14/Q50 其他 E130 尚未完成，CNN E190 尚未启动；Q26 冻结结果不变。
+- 下一步：等待队列完成六个 E130 后核对每个 `last.pt`/SHA-256 和 `test_subject_count_read=0`，再更新六个 CNN 配置中的实际 FiLM checkpoint hash 并启动 E190。阻塞项：无。
+
+## 2026-09-06：FSC matched-density 正式 FiLM-SIREN E130 启动
+
+- 时间/agent：2026-09-06T15:50:00+08:00，CODEX。Q14/Q50 preflight 已通过，开始按冻结协议启动 matched-density FiLM-SIREN E130（Q14、Q50；每个 Q 三个 seed：20260821/22/23）。
+- 动作：使用 `configs/experiments/sonicom_fsc_q{14,50}_film_seed{20260821,20260822,20260823}_e130.json`，每个配置固定 130 cycles、262 steps/cycle、原正式 optimizer/loss/网络；Q26 checkpoint/result 不触碰。
+- 证据：输出目录为 `artifacts/training/sonicom_fsc_q14_film_seed*_e130/`、`artifacts/training/sonicom_fsc_q50_film_seed*_e130/`；启动命令为 `D:\miniconda3\envs\ml\python.exe -m mcar.training.train_film_siren_stage_c <config>`。当前 Git 基线 commit=`2de5216e6ab1362f548ada11971e6f6a06999535`。
+- 完整性：训练启动时 `test_subject_count_read=0` 预注册；正式 run 完成前不报告 best/末点或指标。工作树保留既有 secondary-metric staging 修改，故 FSC 配置显式记录 `require_clean_git=false`，不影响 Q26 正式行为。
+- 下一步：依次完成 Q14/Q50 六个 E130；逐个核验 `last.pt`、training report finite 和 test=0，记录实际 SHA-256 后再生成/冻结对应 CNN E190 配置。阻塞项：无。
+
 ## 2026-09-06：FSC matched-density Q14/Q50 数据与最小 preflight 通过
 
 - 时间/agent：2026-09-06T15:45:00+08:00，CODEX。核验 Q14/Q50 current-Q residual 数据集均已完成：各 306 个 train+validation subject（262 train、44 val），未读取 test。

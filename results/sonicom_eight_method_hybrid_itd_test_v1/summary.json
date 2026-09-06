@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "test",
+  "condition": "SONICOM-Q26-v1",
+  "subject_count": 44,
+  "method_count": 8,
+  "methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA",
+    "FSPAE",
+    "RANF",
+    "HYBRID"
+  ],
+  "method_labels": [
+    "SH only",
+    "SUpDEq SH",
+    "SUpDEq NN",
+    "SUpDEq Barycentric",
+    "MCA",
+    "FSP-AE",
+    "RANF",
+    "Hybrid E190"
+  ],
+  "endpoint_count": 2,
+  "endpoints": [
+    "ITDWeightedMAE_us",
+    "ITDMaximumAbsoluteError_us"
+  ],
+  "per_subject_rows": 704,
+  "aggregate_rows": 16,
+  "all_finite": true,
+  "source_result_root": "results/sonicom_complete_ten_method_secondary_deferred_test_v1",
+  "source_manifest_identity_sha256": "E9403269543B6C135871BD8008809B488F2E29977601C95E3FF2BD491FDB229E",
+  "source_test_subject_count_read": 44,
+  "new_test_subject_count_read_during_derivation": 0,
+  "source_sha256": {
+    "per_subject_metrics.csv": "5DD62A04EB467CABC8E5A0DC1A163790177E1E07A9A4DB2A0B028F81A4B663A9",
+    "aggregate_metrics.csv": "DBAF70A7B5760AC7CE7E2B7C606654B35D099C7F9C133E224AA5EDA961BE1543"
+  },
+  "method_selection_note": "MCA is included as the eighth method to match the requested count; MCARv351 and BOUNDED are excluded.",
+  "claim_boundary": "Result-level extraction from the completed post-lock supplementary test characterization; no new inference, tuning, or test-data read."
+}

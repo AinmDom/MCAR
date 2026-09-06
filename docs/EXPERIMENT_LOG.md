@@ -1,5 +1,29 @@
 # 项目实验日志
 
+## 2026-09-06：Q26 test八方法ITD补充表完成（结果级派生）
+
+- 时间/agent：2026-09-06T12:07:24+08:00，CODEX。按用户要求整理Q26/test的ITD指标；为满足“八个方法”，方法固定为SH only、SUpDEq SH、SUpDEq NN、SUpDEq Barycentric、MCA、FSP-AE、RANF和Hybrid E190，明确排除MCAR v3.5.1与Bounded E25。
+- 动作：从已完成的十方法补充结果`results/sonicom_complete_ten_method_secondary_deferred_test_v1/`按键提取两个已注册ITD端点`ITDWeightedMAE_us`和`ITDMaximumAbsoluteError_us`，生成`results/sonicom_eight_method_hybrid_itd_test_v1/`；新增派生脚本`scripts/build_eight_method_itd_test_supplement.py`。未重新读取原始test subject/prediction，未训练、推理、调参或选择模型。
+- 证据：`results/sonicom_eight_method_hybrid_itd_test_v1/summary.json`、`metric_long.csv`、`aggregate_metrics.csv`、`paper_itd_wide.csv`、`README.md`；源manifest identity=`E9403269543B6C135871BD8008809B488F2E29977601C95E3FF2BD491FDB229E`。
+- 完整性：44名test、8方法、2端点，逐被试`704`行、汇总`16`行，16个method×endpoint单元各44人；全部numeric finite；派生表相对源逐键最大绝对误差`0.0 us`；`source_test_subject_count_read=44`（源结果历史评价），`new_test_subject_count_read_during_derivation=0`；训练/best/末点=N/A。
+- 关键结果（均值，us；lower is better）：ITD weighted MAE为SH`50.3169912016`、SUpDEq SH`15.9970410049`、NN`15.1370557204`、Bary`15.4320967292`、MCA`18.3996845274`、FSP-AE`18.3582875747`、RANF`23.5839908543`、HYBRID`18.0456512678`；ITD maximum absolute error为SH`280.2438383779`、SUpDEq SH`143.8210241428`、NN`144.7088090407`、Bary`145.1822909902`、MCA`141.3944136485`、FSP-AE`123.6387278451`、RANF`195.4308668659`、HYBRID`151.2784113980`。
+- 下一步：可直接引用该八方法ITD补充包；如需论文表格，使用`paper_itd_wide.csv`。当前validation恢复任务仍按既有日志处理，本步未访问或覆盖其目录。
+- 阻塞项：无。
+
+## 2026-09-06：Q14/Q26/Q50传统基线恢复正式运行中
+
+- 时间/agent：2026-09-06T11:14:00+08:00，CODEX。目录级恢复更正提交`e2eeb8f`后，已启动
+  MATLAB恢复进程PID22392（launcher27280），从validation split第41名P0341至第44名P0369运行。
+- 动作：逐文件保留610个原有HDF5，已存在prediction直接跳过；仅重建/写入原先缺失的Q单元。
+  当前文件数630/660，P0341/Q50已补齐，后续listener继续运行。
+- 证据：`matlab/+mcar/evaluate_ten_method_direction_sensitivity.m`；
+  `artifacts/reconstruction/sonicom_ten_method_direction_sensitivity_secondary_classical_v1/`；恢复命令：
+  `mcar.evaluate_ten_method_direction_sensitivity(4, ..., ..., 41)`。
+- 完整性：运行中，不将中间文件或指标视为完成；只读44人validation、固定Q50排除mask，
+  `test_subject_count_read=0`；训练/best/末点=N/A；次要指标finite/汇总待运行后核验。
+- 下一步：等待PID退出并核验660个预测，随后运行冻结的Python evaluator，检查21,120/480/320/288。
+- 阻塞项：无；不得并行覆盖同一导出或结果目录。
+
 ## 2026-09-06：Q14/Q26/Q50传统基线恢复首次启动在目录保护处中止
 
 - 时间/agent：2026-09-06T11:12:00+08:00，CODEX。恢复MATLAB命令在启动时因导出根目录已存在

@@ -1,0 +1,705 @@
+SubjectLabel,SubjectID,Split,EvidenceTier,Method,MethodLabel,Endpoint,Unit,Value
+P0003,3,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,52.820060723522694
+P0007,7,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,50.734866855000263
+P0009,9,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,54.452847532507448
+P0017,17,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,55.254015340906221
+P0029,29,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,53.052445075176252
+P0030,30,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,40.307651805337592
+P0036,36,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,53.622382116495075
+P0056,56,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,47.534912214493524
+P0059,59,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,40.06783224556952
+P0060,60,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,55.493602978578423
+P0074,74,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,51.053946408644535
+P0080,80,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,52.608855331187236
+P0081,81,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,51.149959392044074
+P0090,90,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,57.072704154559815
+P0091,91,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,58.969431652812062
+P0094,94,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,47.609323481573725
+P0104,104,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,51.541935240710828
+P0114,114,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,60.563449387907745
+P0117,117,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,48.162209460887155
+P0118,118,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,46.680322232872697
+P0122,122,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,48.646759930032395
+P0129,129,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,57.026520379121237
+P0134,134,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,40.101319406858579
+P0147,147,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,53.375600079978156
+P0163,163,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,42.48490256293907
+P0177,177,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,59.496901954894476
+P0231,231,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,54.271622554507985
+P0234,234,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,41.643464665399165
+P0237,237,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,55.795098682710126
+P0240,240,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,64.668289959993146
+P0260,260,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,51.459363488255832
+P0261,261,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,54.864034843321207
+P0291,291,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,41.362226535785766
+P0293,293,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,42.828360268716402
+P0304,304,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,53.940360926576304
+P0309,309,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,47.758432776533866
+P0324,324,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,47.418405945712877
+P0325,325,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,38.133346140609106
+P0327,327,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,42.763068556299373
+P0331,331,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,49.916282364403422
+P0339,339,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,51.69419072866468
+P0349,349,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,52.754249683802257
+P0364,364,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,38.643666111746057
+P0371,371,test,Deferred test,SHOnly,SH only,ITDWeightedMAE_us,us,54.148390690879722
+P0003,3,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.009883125922968
+P0007,7,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,16.637123356477343
+P0009,9,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.613391560002707
+P0017,17,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,15.284462454825945
+P0029,29,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.248500243927392
+P0030,30,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,9.8429034641685877
+P0036,36,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.636927932859933
+P0056,56,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,11.392249407480696
+P0059,59,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.54995831262173
+P0060,60,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.045592270864011
+P0074,74,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,16.701584962795941
+P0080,80,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.237938232593811
+P0081,81,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.966054306949342
+P0090,90,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,15.528458828870564
+P0091,91,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.265835781299081
+P0094,94,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.888910488312424
+P0104,104,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,11.598774479244319
+P0114,114,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,17.615022604309374
+P0117,117,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.356982665661224
+P0118,118,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.88739558047191
+P0122,122,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.335512291707589
+P0129,129,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.300608915901671
+P0134,134,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.680437976053888
+P0147,147,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.532418358740729
+P0163,163,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.982014841036211
+P0177,177,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,16.921332769685748
+P0231,231,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.088467075257011
+P0234,234,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,17.834287933995476
+P0237,237,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.219483092630806
+P0240,240,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.556327579788398
+P0260,260,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,11.272453327004184
+P0261,261,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,21.374587632084946
+P0291,291,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,12.567459185798214
+P0293,293,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.587946320592671
+P0304,304,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,11.84494714128266
+P0309,309,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,10.459154691163302
+P0324,324,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.498662985477605
+P0325,325,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,10.346963208854058
+P0327,327,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.97607549393781
+P0331,331,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.351814609049509
+P0339,339,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,107.82261348059596
+P0349,349,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,14.414372985022379
+P0364,364,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,13.198145614677617
+P0371,371,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDWeightedMAE_us,us,15.395766644534433
+P0003,3,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.656740928074493
+P0007,7,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,16.364904416979847
+P0009,9,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,13.797352983477349
+P0017,17,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,15.8783573495048
+P0029,29,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.921293914851622
+P0030,30,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,9.9413377661131292
+P0036,36,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.429390912763466
+P0056,56,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,10.467111263156113
+P0059,59,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.455984292874312
+P0060,60,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.382209393781491
+P0074,74,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,14.514641391368219
+P0080,80,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,13.72335811434842
+P0081,81,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.990051798356358
+P0090,90,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,15.330512292656433
+P0091,91,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,13.537611354441047
+P0094,94,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,16.557636302081136
+P0104,104,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.421343327562344
+P0114,114,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,15.848472012146086
+P0117,117,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.351192326480692
+P0118,118,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.842009376133651
+P0122,122,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.986902042457128
+P0129,129,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.787926921818855
+P0134,134,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.285094893625535
+P0147,147,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.963218327230416
+P0163,163,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.555949789206664
+P0177,177,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,14.164096579511622
+P0231,231,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.629255047858807
+P0234,234,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,16.943829554172808
+P0237,237,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,15.033675333724549
+P0240,240,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,14.066433395749542
+P0260,260,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.631790395900204
+P0261,261,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,21.461757912866876
+P0291,291,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.751128804813648
+P0293,293,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.715812105534908
+P0304,304,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.782063882318676
+P0309,309,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,11.826891194225661
+P0324,324,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,13.523241285865563
+P0325,325,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,10.288211578323693
+P0327,327,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,14.936275961495472
+P0331,331,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,13.548655926421224
+P0339,339,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,91.469691925671242
+P0349,349,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,12.688984821302061
+P0364,364,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,13.022227554865101
+P0371,371,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDWeightedMAE_us,us,15.555824945922557
+P0003,3,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.620699269797672
+P0007,7,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,17.067872742598162
+P0009,9,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.751528086158842
+P0017,17,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,16.556301786698697
+P0029,29,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.275591189223814
+P0030,30,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,10.326515451491677
+P0036,36,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,11.658662578142771
+P0056,56,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,11.25734350191388
+P0059,59,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.570561509925348
+P0060,60,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.517652285685749
+P0074,74,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,15.491699349083639
+P0080,80,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.985159212214725
+P0081,81,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.952025823453491
+P0090,90,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,15.350825104719608
+P0091,91,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,14.305043172512702
+P0094,94,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,16.972612096385753
+P0104,104,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.150343011345381
+P0114,114,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,17.133494185738982
+P0117,117,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.618645762577035
+P0118,118,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.336087330958435
+P0122,122,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.541173936598225
+P0129,129,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,11.973514594615384
+P0134,134,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.283070215984825
+P0147,147,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,11.561949677634978
+P0163,163,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.170074004422236
+P0177,177,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,14.432501498779279
+P0231,231,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.230391223500561
+P0234,234,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,17.472845790678818
+P0237,237,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,15.582832234712541
+P0240,240,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,14.444085002342247
+P0260,260,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.965389463386284
+P0261,261,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,22.065761682400257
+P0291,291,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,11.561233831030929
+P0293,293,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.941371299643713
+P0304,304,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.087744859777265
+P0309,309,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,12.437389290641292
+P0324,324,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.751292356299089
+P0325,325,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,10.681027627963035
+P0327,327,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,14.994304918037271
+P0331,331,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.642768518324448
+P0339,339,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,87.762007109001701
+P0349,349,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.06270186568948
+P0364,364,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,13.312074543829628
+P0371,371,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDWeightedMAE_us,us,16.15608709002495
+P0003,3,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.325370471980717
+P0007,7,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,17.472895872897062
+P0009,9,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,16.1161743588722
+P0017,17,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.218545018451859
+P0029,29,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.232200684075067
+P0030,30,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,12.728455701943972
+P0036,36,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.420094305434176
+P0056,56,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,12.485619061638264
+P0059,59,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,13.242640633057034
+P0060,60,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,13.288131911475691
+P0074,74,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,18.070283255099977
+P0080,80,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.993887922093272
+P0081,81,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.216127429865152
+P0090,90,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.969444901014311
+P0091,91,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.909814806463448
+P0094,94,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,17.650048580954319
+P0104,104,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,12.970330401511966
+P0114,114,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,23.5382021008413
+P0117,117,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.640885066394564
+P0118,118,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,16.1800180927887
+P0122,122,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.992906655542367
+P0129,129,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.826474662552169
+P0134,134,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.989232199966889
+P0147,147,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.568451361511352
+P0163,163,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,19.000411916899537
+P0177,177,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,20.338185507960123
+P0231,231,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.970674719132344
+P0234,234,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,19.025170157577399
+P0237,237,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,16.190049299472953
+P0240,240,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,16.466647944583521
+P0260,260,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.027394781851626
+P0261,261,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,26.98279957487949
+P0291,291,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,12.351670052812839
+P0293,293,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,16.579588073153779
+P0304,304,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.770141341391973
+P0309,309,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,13.412973060537832
+P0324,324,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.185741328512748
+P0325,325,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.901269881319624
+P0327,327,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.436202219027381
+P0331,331,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,17.333275495571328
+P0339,339,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,118.31108266758739
+P0349,349,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,19.414074758743297
+P0364,364,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,15.708424484382125
+P0371,371,test,Deferred test,MCA,MCA,ITDWeightedMAE_us,us,14.134106483827544
+P0003,3,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,11.744607378751329
+P0007,7,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,19.40443215906393
+P0009,9,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.295626722484297
+P0017,17,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,22.171458304273536
+P0029,29,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.717356494975485
+P0030,30,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.671480465014373
+P0036,36,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.490530861931681
+P0056,56,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,15.142481125803521
+P0059,59,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.229704991690749
+P0060,60,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,10.012562810647882
+P0074,74,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,22.289107330978737
+P0080,80,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.944829123545745
+P0081,81,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,15.06915221859534
+P0090,90,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.80338016042705
+P0091,91,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,16.137602360670893
+P0094,94,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,18.685007673505275
+P0104,104,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,10.453858318098842
+P0114,114,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,28.414256806707911
+P0117,117,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.051476999537815
+P0118,118,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,16.39366506473317
+P0122,122,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,16.402045745723537
+P0129,129,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,12.875989571026771
+P0134,134,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.848830183040391
+P0147,147,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.683727844458048
+P0163,163,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,17.501890595896604
+P0177,177,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,19.248665263323495
+P0231,231,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,12.294846163960816
+P0234,234,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,23.363366728452167
+P0237,237,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,15.62530194397144
+P0240,240,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,16.917101141256552
+P0260,260,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,12.937394900621964
+P0261,261,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,24.698219191397339
+P0291,291,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.098381999882534
+P0293,293,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.826871607248709
+P0304,304,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,13.753681625176091
+P0309,309,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,11.572081080185221
+P0324,324,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.10075004962998
+P0325,325,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,14.227611419825624
+P0327,327,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,16.218521611353165
+P0331,331,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,12.927142092059887
+P0339,339,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,119.11458066344538
+P0349,349,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,17.990811174934805
+P0364,364,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,24.116732978317117
+P0371,371,test,Deferred test,FSPAE,FSP-AE,ITDWeightedMAE_us,us,17.297530342003366
+P0003,3,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.673602518830943
+P0007,7,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,24.209258471697982
+P0009,9,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,12.388004625526218
+P0017,17,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.40827148126554
+P0029,29,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,13.726597645605921
+P0030,30,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.072541298170584
+P0036,36,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.07427183582077
+P0056,56,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,17.456626488855996
+P0059,59,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.596173380591921
+P0060,60,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,17.216774954259321
+P0074,74,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,20.918311040256079
+P0080,80,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.148288993256646
+P0081,81,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.862686948981608
+P0090,90,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,15.999642744598187
+P0091,91,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.937971907632331
+P0094,94,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,21.437498731228356
+P0104,104,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,14.867270996604514
+P0114,114,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,26.043253411482333
+P0117,117,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.221173831764112
+P0118,118,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.194121143179181
+P0122,122,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.055825922054048
+P0129,129,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,12.769000326819171
+P0134,134,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,17.866651396608049
+P0147,147,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,14.088128614436936
+P0163,163,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.714668471589192
+P0177,177,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,20.101985869652026
+P0231,231,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,23.499406362905546
+P0234,234,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,22.791893688350552
+P0237,237,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,19.445102607986996
+P0240,240,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.973442236906841
+P0260,260,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.005774942145408
+P0261,261,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,32.215445901953132
+P0291,291,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,17.177622255640049
+P0293,293,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.736456849478834
+P0304,304,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,13.548910943421555
+P0309,309,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.565432031989911
+P0324,324,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,19.640891582832186
+P0325,325,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,15.14211553798323
+P0327,327,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,15.568992682519221
+P0331,331,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,18.233688761412374
+P0339,339,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,248.97424668921462
+P0349,349,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,16.672010475986397
+P0364,364,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,24.450909323277255
+P0371,371,test,Deferred test,RANF,RANF,ITDWeightedMAE_us,us,20.004651664761212
+P0003,3,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.71490469794599
+P0007,7,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,16.712275359592404
+P0009,9,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.52518013840286
+P0017,17,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.669725168695074
+P0029,29,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.795736765827611
+P0030,30,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,12.081219229824995
+P0036,36,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.283497805112614
+P0056,56,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,11.76723689912669
+P0059,59,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,12.801260962039294
+P0060,60,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,12.965805675777444
+P0074,74,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,17.888329310329667
+P0080,80,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.072365514688045
+P0081,81,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.71879512467769
+P0090,90,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.578496850623061
+P0091,91,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.561402650684652
+P0094,94,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,16.694092093897581
+P0104,104,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,12.640781790282356
+P0114,114,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,23.271735144296255
+P0117,117,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.465065084652347
+P0118,118,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.489962959250306
+P0122,122,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.567627616724867
+P0129,129,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,13.961624276208356
+P0134,134,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.554717909895789
+P0147,147,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.469607685441639
+P0163,163,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,17.99705367116055
+P0177,177,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,20.298236577123852
+P0231,231,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.626436815060615
+P0234,234,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,18.723720748329029
+P0237,237,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.587252126364401
+P0240,240,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,16.226076712150313
+P0260,260,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,13.234739462848086
+P0261,261,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,26.696891135077038
+P0291,291,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,11.467065181912908
+P0293,293,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.29710610137756
+P0304,304,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.20229029956846
+P0309,309,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,12.945564198615635
+P0324,324,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.390676813164067
+P0325,325,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,14.290744861963452
+P0327,327,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.010478096364553
+P0331,331,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,16.848016392744171
+P0339,339,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,125.18320253224441
+P0349,349,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,18.675597636161285
+P0364,364,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,15.458304189630827
+P0371,371,test,Deferred test,HYBRID,Hybrid E190,ITDWeightedMAE_us,us,13.597755517121989
+P0003,3,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,367.18748742714524
+P0007,7,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,229.1666460223496
+P0009,9,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,234.37500931322575
+P0017,17,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,406.25000838190317
+P0029,29,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,226.56249348074198
+P0030,30,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,252.60413531213999
+P0036,36,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,385.4166716337204
+P0056,56,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,226.56252258457243
+P0059,59,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,322.91666138917208
+P0060,60,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,348.95833232440054
+P0074,74,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,231.77085677161813
+P0080,80,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,364.58333488553762
+P0081,81,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,302.0833246409893
+P0090,90,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,333.33332976326346
+P0091,91,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,281.24998789280653
+P0094,94,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,382.81248998828232
+P0104,104,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,265.62495622783899
+P0114,114,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,276.04168280959129
+P0117,117,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,192.70832126494497
+P0118,118,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,263.02080368623137
+P0122,122,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,286.45835118368268
+P0129,129,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,236.97913275100291
+P0134,134,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,343.74999813735485
+P0147,147,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,260.41665114462376
+P0163,163,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,268.22913787327707
+P0177,177,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,328.12499557621777
+P0231,231,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,257.81246949918568
+P0234,234,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,177.08330415189266
+P0237,237,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,317.70832720212638
+P0240,240,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,252.60416441597044
+P0260,260,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,312.49999301508069
+P0261,261,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,265.62498533166945
+P0291,291,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,247.39585933275521
+P0293,293,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,221.35418839752674
+P0304,304,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,273.43747206032276
+P0309,309,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,343.74999813735485
+P0324,324,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,354.16669561527669
+P0325,325,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,200.52079344168305
+P0327,327,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,367.18748742714524
+P0331,331,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,208.33333837799728
+P0339,339,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,255.20831695757806
+P0349,349,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,283.85419864207506
+P0364,364,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0371,371,test,Deferred test,SHOnly,SH only,ITDMaximumAbsoluteError_us,us,244.79164858348668
+P0003,3,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,138.02081230096519
+P0007,7,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,190.10418327525258
+P0009,9,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,106.77083628252149
+P0017,17,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,190.10418327525258
+P0029,29,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,117.18747555278242
+P0030,30,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,85.937499534338713
+P0036,36,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0056,56,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,75.520831160247326
+P0059,59,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0060,60,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,174.47915161028504
+P0074,74,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,132.81253632158041
+P0080,80,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,182.29166744276881
+P0081,81,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0090,90,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,148.43748067505658
+P0091,91,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,151.04169142432511
+P0094,94,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,114.5833230111748
+P0104,104,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0114,114,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,184.89581998437643
+P0117,117,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,119.79168630205095
+P0118,118,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,106.77083628252149
+P0122,122,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,122.39583884365857
+P0129,129,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0134,134,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,119.79165719822049
+P0147,147,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,169.27084652706981
+P0163,163,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,101.56253119930625
+P0177,177,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,156.24999650754035
+P0231,231,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,124.99996228143573
+P0234,234,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0237,237,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,122.39580973982811
+P0240,240,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,190.10415417142212
+P0260,260,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0261,261,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,210.93752002343535
+P0291,291,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0293,293,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,135.41665975935757
+P0304,304,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,143.22917559184134
+P0309,309,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,119.79168630205095
+P0324,324,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,132.81253632158041
+P0325,325,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0327,327,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,153.64581486210227
+P0331,331,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0339,339,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,468.75000407453626
+P0349,349,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,177.08330415189266
+P0364,364,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,93.750015366822481
+P0371,371,test,Deferred test,SUpDEqSH,SUpDEq SH,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0003,3,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0007,7,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,161.45833069458604
+P0009,9,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0017,17,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,182.29169654659927
+P0029,29,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,117.18747555278242
+P0030,30,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,75.520831160247326
+P0036,36,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,135.41668886318803
+P0056,56,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,67.708344431594014
+P0059,59,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,98.958320450037718
+P0060,60,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,171.87499906867743
+P0074,74,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,169.27084652706981
+P0080,80,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,203.12500419095159
+P0081,81,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0090,90,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,148.43748067505658
+P0091,91,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,151.04169142432511
+P0094,94,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0104,104,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,122.39580973982811
+P0114,114,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,169.27081742323935
+P0117,117,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,104.16668374091387
+P0118,118,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0122,122,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0129,129,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,138.02081230096519
+P0134,134,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,98.958320450037718
+P0147,147,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,166.66669398546219
+P0163,163,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0177,177,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,153.64581486210227
+P0231,231,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,127.6041439268738
+P0234,234,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,148.43750977888703
+P0237,237,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,127.60420213453472
+P0240,240,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,174.4791807141155
+P0260,260,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,143.22917559184134
+P0261,261,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,182.29166744276881
+P0291,291,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0293,293,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,132.81253632158041
+P0304,304,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,148.43750977888703
+P0309,309,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0324,324,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0325,325,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0327,327,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,164.06248323619366
+P0331,331,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0339,339,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,414.06249511055648
+P0349,349,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,192.7083358168602
+P0364,364,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,138.02081230096519
+P0371,371,test,Deferred test,SUpDEqNN,SUpDEq NN,ITDMaximumAbsoluteError_us,us,145.83332813344896
+P0003,3,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0007,7,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,151.04169142432511
+P0009,9,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0017,17,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,184.89584908820689
+P0029,29,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,117.18747555278242
+P0030,30,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,75.520831160247326
+P0036,36,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0056,56,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,67.708344431594014
+P0059,59,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,98.958320450037718
+P0060,60,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,174.47915161028504
+P0074,74,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,169.27084652706981
+P0080,80,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,205.7291567325592
+P0081,81,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0090,90,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,148.43750977888703
+P0091,91,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,153.64584396593273
+P0094,94,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0104,104,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,122.39583884365857
+P0114,114,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,174.47915161028504
+P0117,117,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,104.16668374091387
+P0118,118,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,143.22914648801088
+P0122,122,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,119.79168630205095
+P0129,129,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,138.02081230096519
+P0134,134,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,98.958320450037718
+P0147,147,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,169.27084652706981
+P0163,163,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,111.97919957339764
+P0177,177,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,156.24999650754035
+P0231,231,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,127.6041439268738
+P0234,234,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,166.66663577780128
+P0237,237,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,130.20835467614233
+P0240,240,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,174.4791807141155
+P0260,260,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,145.83332813344896
+P0261,261,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,182.29166744276881
+P0291,291,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0293,293,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,132.8124781139195
+P0304,304,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,148.43750977888703
+P0309,309,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0324,324,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0325,325,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0327,327,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,164.06248323619366
+P0331,331,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,135.41665975935757
+P0339,339,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,393.22917291428894
+P0349,349,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,197.91664090007544
+P0364,364,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,135.41665975935757
+P0371,371,test,Deferred test,SUpDEqBary,SUpDEq Barycentric,ITDMaximumAbsoluteError_us,us,145.83332813344896
+P0003,3,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,117.18747555278242
+P0007,7,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,156.24996740370989
+P0009,9,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,88.541681179776788
+P0017,17,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,184.89584908820689
+P0029,29,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,117.18747555278242
+P0030,30,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,70.312496973201632
+P0036,36,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,130.20835467614233
+P0056,56,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,62.500010244548321
+P0059,59,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,93.750015366822481
+P0060,60,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,158.85417815297842
+P0074,74,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,190.10418327525258
+P0080,80,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,203.12500419095159
+P0081,81,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,135.41668886318803
+P0090,90,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,140.62502305023372
+P0091,91,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0094,94,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,143.22914648801088
+P0104,104,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,111.97914136573672
+P0114,114,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,158.85414904914796
+P0117,117,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,109.37501792795956
+P0118,118,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0122,122,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,109.37501792795956
+P0129,129,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0134,134,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,104.16665463708341
+P0147,147,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,182.29169654659927
+P0163,163,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0177,177,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,148.43745157122612
+P0231,231,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,93.749986262992024
+P0234,234,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,130.20838377997279
+P0237,237,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0240,240,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,174.4791807141155
+P0260,260,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,153.64581486210227
+P0261,261,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,205.7291567325592
+P0291,291,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,93.750015366822481
+P0293,293,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,151.04169142432511
+P0304,304,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0309,309,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,122.39583884365857
+P0324,324,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0325,325,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,111.97914136573672
+P0327,327,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,187.49997252598405
+P0331,331,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,117.18753376044333
+P0339,339,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,382.81250817817636
+P0349,349,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,208.33330927416682
+P0364,364,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,114.5833230111748
+P0371,371,test,Deferred test,MCA,MCA,ITDMaximumAbsoluteError_us,us,114.5833230111748
+P0003,3,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,67.708315327763557
+P0007,7,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,221.35418839752674
+P0009,9,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,65.104162786155939
+P0017,17,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,182.29166744276881
+P0029,29,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,65.104162786155939
+P0030,30,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,65.104162786155939
+P0036,36,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0056,56,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,67.708373535424471
+P0059,59,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,49.479189328849316
+P0060,60,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,106.77083628252149
+P0074,74,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,179.68745669350028
+P0080,80,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,177.08330415189266
+P0081,81,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,153.64587306976318
+P0090,90,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,106.77083628252149
+P0091,91,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,145.8332990296185
+P0094,94,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,132.8124781139195
+P0104,104,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,46.875036787241697
+P0114,114,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,190.10418327525258
+P0117,117,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,67.708315327763557
+P0118,118,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,151.04166232049465
+P0122,122,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0129,129,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,57.291705161333084
+P0134,134,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,70.312467869371176
+P0147,147,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0163,163,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0177,177,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,252.60413531213999
+P0231,231,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,80.729194451123476
+P0234,234,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,229.1666460223496
+P0237,237,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,80.729194451123476
+P0240,240,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,83.333288785070181
+P0260,260,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,122.39586794748902
+P0261,261,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,197.91664090007544
+P0291,291,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,57.291646953672171
+P0293,293,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,124.99996228143573
+P0304,304,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,49.479131121188402
+P0309,309,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,65.104162786155939
+P0324,324,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0325,325,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,119.79165719822049
+P0327,327,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,166.66663577780128
+P0331,331,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,62.500010244548321
+P0339,339,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,445.31250023283064
+P0349,349,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,104.16662553325295
+P0364,364,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,101.56253119930625
+P0371,371,test,Deferred test,FSPAE,FSP-AE,ITDMaximumAbsoluteError_us,us,83.333288785070181
+P0003,3,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0007,7,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,250.00004097819328
+P0009,9,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,91.145804617553949
+P0017,17,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,263.02086189389229
+P0029,29,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,132.8124781139195
+P0030,30,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,91.145804617553949
+P0036,36,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,164.06248323619366
+P0056,56,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,104.16662553325295
+P0059,59,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,96.354167908430099
+P0060,60,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,158.85417815297842
+P0074,74,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,197.91669910773635
+P0080,80,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,200.52079344168305
+P0081,81,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,124.99999138526618
+P0090,90,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,169.27078831940889
+P0091,91,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,174.47915161028504
+P0094,94,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,216.14582510665059
+P0104,104,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,111.97919957339764
+P0114,114,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,143.22914648801088
+P0117,117,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,195.31248835846782
+P0118,118,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,231.77079856395721
+P0122,122,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,140.62499394640326
+P0129,129,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,158.85417815297842
+P0134,134,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,184.89581998437643
+P0147,147,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,151.04166232049465
+P0163,163,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,166.66669398546219
+P0177,177,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,182.29166744276881
+P0231,231,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,184.89581998437643
+P0234,234,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,278.64583535119891
+P0237,237,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,111.97914136573672
+P0240,240,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,91.145804617553949
+P0260,260,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,130.20838377997279
+P0261,261,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,369.79166907258332
+P0291,291,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,132.8124781139195
+P0293,293,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,132.81253632158041
+P0304,304,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,117.18750465661287
+P0309,309,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0324,324,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,145.83335723727942
+P0325,325,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,101.56253119930625
+P0327,327,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,190.10412506759167
+P0331,331,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0339,339,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,1434.8957920446992
+P0349,349,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,192.7083358168602
+P0364,364,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,335.937540512532
+P0371,371,test,Deferred test,RANF,RANF,ITDMaximumAbsoluteError_us,us,197.91664090007544
+P0003,3,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,106.77080717869103
+P0007,7,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,156.24996740370989
+P0009,9,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,78.125012805685401
+P0017,17,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,177.08336235955358
+P0029,29,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0030,30,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,59.895828599110246
+P0036,36,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0056,56,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,52.083341870456934
+P0059,59,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,85.937499534338713
+P0060,60,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,148.43750977888703
+P0074,74,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,208.33336748182774
+P0080,80,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,200.52079344168305
+P0081,81,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,122.39586794748902
+P0090,90,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,140.62502305023372
+P0091,91,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,138.02084140479565
+P0094,94,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,132.81253632158041
+P0104,104,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,104.16665463708341
+P0114,114,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,143.22914648801088
+P0117,117,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,96.354167908430099
+P0118,118,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,109.3749888241291
+P0122,122,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,98.958349553868175
+P0129,129,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0134,134,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,91.145833721384406
+P0147,147,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,177.08336235955358
+P0163,163,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,106.77083628252149
+P0177,177,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,148.43745157122612
+P0231,231,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,83.333317888900638
+P0234,234,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,119.79168630205095
+P0237,237,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0240,240,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,164.06251234002411
+P0260,260,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,140.62496484257281
+P0261,261,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,205.7291567325592
+P0291,291,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,78.125012805685401
+P0293,293,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,135.41668886318803
+P0304,304,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,130.20832557231188
+P0309,309,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,114.58335211500525
+P0324,324,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,125.00002048909664
+P0325,325,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,106.77083628252149
+P0327,327,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,184.89581998437643
+P0331,331,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,111.97919957339764
+P0339,339,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,1171.8749883584678
+P0349,349,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,203.12500419095159
+P0364,364,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,96.354167908430099
+P0371,371,test,Deferred test,HYBRID,Hybrid E190,ITDMaximumAbsoluteError_us,us,111.97914136573672

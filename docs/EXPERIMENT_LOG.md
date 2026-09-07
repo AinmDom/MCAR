@@ -1,5 +1,35 @@
 # 项目实验日志
 
+## 2026-09-07：FSC 七指标合并表字段单位校正完成
+
+- 时间/agent：2026-09-07T09:05:00+08:00，CODEX。复核发现合并表原先沿用 primary 的 `_dB` 列名会误导 ITD 单位，已将 `paper_observation_density_all_metrics.csv` 改为显式 `Unit`/`EvidenceTier` 和无单位后缀的 Q14/Q26/Q50 均值、SD列。
+- 动作：更新 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py` 的合并表生成逻辑并重写同一派生 CSV；原四指标 CSV、subject-level 和九个汇总单元未改。
+- 完整性：合并表7行、字段含 `Unit`，ITD 行单位=`us`、其余六行=`dB`；补充 subject-level 396行、aggregate 9行、全部 finite，`test_subject_count_read=0`。
+- 下一步：提交本次新增脚本、配置、结果和日志；保留既有 secondary recovery staging 修改不动。阻塞项：无。
+
+## 2026-09-07：FSC matched-density 三项补充指标评价完成
+
+- 时间/agent：2026-09-07T09:02:00+08:00，CODEX。FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 三个对角线的 validation-only 补充评价完成；Q26 复用既有正式冻结 ensemble，未重训或覆盖任何 Q26 产物。
+- 动作：在同一公共 Q50-excluded 743-direction evaluation mask 上计算 `ERBBandILDMean`（公共 mask∩水平面）、`ITDWeightedMAE_us`（公共 mask、方向面积权重）和 `LAP2024LSD_dB`（公共 mask、官方 20–20000 Hz 公式）；10,000 次 bootstrap，base seed=`20260907`。
+- 关键结果（mean ± sample SD）：ERBBandILDMean Q14=`1.581505±0.183525` dB、Q26=`1.492281±0.149900` dB、Q50=`1.397779±0.138264` dB；ITDWeightedMAE Q14=`20.765052±4.121988` us、Q26=`15.378645±2.334343` us、Q50=`15.558095±2.547471` us；LAP2024LSD Q14=`3.787314±0.303858` dB、Q26=`3.584290±0.273252` dB、Q50=`3.474476±0.257791` dB。
+- 证据：`results/sonicom_fsc_matched_density_supplemental_metrics_v1/supplemental_subject_level.csv`（396=44×3×3）、`supplemental_summary_mean_std.csv`（9 cells）、`paper_observation_density_secondary_table.csv`、`paper_observation_density_all_metrics.csv`；配置 `configs/experiments/sonicom_fsc_matched_density_supplemental_metrics_v1.json`，脚本 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py`。
+- 完整性：每个 endpoint×Q 单元均44名 validation subjects，全部 finite；公共方向=743，ERB-band 水平面公共方向=68；`summary.json`=`status: completed`、`test_subject_count_read=0`、`all_finite=true`。原四项 primary 表未覆盖，仅在独立目录提供三项补充和七指标合并表；evidence tier 保留为 Secondary/Deferred/LAP descriptive validation supplement。
+- 下一步：论文 Observation-density/Sparsity Experiment 可使用 `paper_observation_density_all_metrics.csv`；如需严格正文主指标叙述，继续将这三项标为补充证据，不改写原四项 Primary frozen engineering test 定义。阻塞项：无。
+
+## 2026-09-07：FSC 补充指标启动首尝试因脚本导入路径中止
+
+- 时间/agent：2026-09-07T08:58:00+08:00，CODEX。正式补充评价尚未读取任何 listener，进程在 import 阶段因直接脚本执行时 `scripts` 包路径缺失而退出。
+- 动作：已在 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py` 增加仓库根目录导入路径；未创建结果目录，未读取 test，未改动 checkpoint/result。
+- 完整性：失败发生在数据访问前，`test_subject_count_read=0`，训练/best/末点=N/A；配置和输出边界保持冻结。
+- 下一步：重启同一 validation-only 命令并核验 44×3×3 结果。阻塞项：无（导入路径已修复）。
+
+## 2026-09-07：FSC matched-density 三项补充指标正式评价启动
+
+- 时间/agent：2026-09-07T08:56:00+08:00，CODEX。单 listener/Q14 preflight 已通过，启动 validation-only 补充评价，范围为 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 三个对角线。
+- 动作：使用独立脚本 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py` 与冻结配置 `configs/experiments/sonicom_fsc_matched_density_supplemental_metrics_v1.json`，复用 44 名 validation listeners、current-Q cache、各自已冻结 ensemble residual、公共 Q50-excluded 743-direction mask；新增 ERBBandILDMean、ITDWeightedMAE_us、LAP2024LSD_dB。输出写入 `results/sonicom_fsc_matched_density_supplemental_metrics_v1/`，不覆盖现有四指标目录或 Q26 checkpoint/result。
+- 完整性：preflight 已确认 Q14 cache observed count=14、463 selected frequency bins、HRIR `(793,2,256)`、公共方向=743、公共水平面方向=68，三项数值均 finite；正式运行仍仅读 validation，`test_subject_count_read=0`，训练/best/末点=N/A。
+- 下一步：完成 44×3 对角线计算、10,000 次 bootstrap、合并七指标论文表，并检查逐被试 cardinality/finite 与 Git 状态。阻塞项：无。
+
 ## 2026-09-07：FSC matched-density Q14/Q26/Q50 对角线评价完成
 
 - 时间/agent：2026-09-07T02:10:00+08:00，CODEX。MATLAB 严格 evaluator 已在受限权限外成功完成 44 validation listeners × 3 densities，复用公共 Q50-excluded 743-direction mask、10,000 bootstrap、seed=20260828；Q26 直接复用正式冻结 ensemble。

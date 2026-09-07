@@ -1,5 +1,14 @@
 # 项目实验日志
 
+## 2026-09-07：FSC 完整模型参数量与推断效率 benchmark 完成
+
+- 时间/agent：2026-09-07T09:08:38+08:00，CODEX。首次 ensemble 计时因 benchmark 脚本未关闭 autograd 而发生 CUDA OOM，未生成正式结果；修正为 `torch.no_grad()` 后按冻结配置完成 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的 validation-only benchmark。
+- 动作：FP32、batch size=1、NVIDIA GeForce RTX 5060、driver=`595.79`、CUDA=`12.8`、PyTorch=`2.8.0+cu128`、Python=`3.9.23`、CPU threads=1；纯模型 latency 为 5 次 warm-up 后 30 次计时，前后 CUDA synchronize，排除 checkpoint loading、输入磁盘 I/O 和输出序列化；另以 5 次重复测量包含输入加载与 `prediction.h5` 序列化的 ensemble end-to-end latency。
+- 关键结果：每个 FSC 单成员总参数量=`1,518,884`，其中冻结 FiLM-SIREN=`1,444,482`、可训练 spectral-CNN=`74,402`；三成员 ensemble 可训练=`223,206`、冻结=`4,333,446`、部署总参数=`4,556,652`，成员 checkpoint 独立，未做参数共享。纯模型 median/P95（ms，单成员/三成员 ensemble）分别为 Q14=`110.550800/110.903115`、`331.342550/331.788655`；Q26=`110.446950/110.947360`、`331.488950/332.104870`；Q50=`110.674700/110.988140`、`331.803200/332.433855`。ensemble end-to-end median/P95（ms）为 Q14=`506.747500/521.131540`、Q26=`513.243800/514.704400`、Q50=`509.676600/514.632900`。
+- 证据：`results/sonicom_fsc_efficiency_v1/efficiency_summary.csv`、`efficiency_details.json`、`protocol_snapshot.json`、`README.md`；配置=`configs/experiments/sonicom_fsc_efficiency_v1.json`，复现命令=`D:\miniconda3\envs\ml\python.exe scripts/benchmark_fsc_efficiency.py configs/experiments/sonicom_fsc_efficiency_v1.json`，脚本=`scripts/benchmark_fsc_efficiency.py`。
+- 完整性：3 个 density×2 个 deployment 行全部生成，latency、显存和输出 finite；benchmark `split=val`、`test_subject_count_read=0`，输入 subject=`P0001`，输出 shape=`(2,793,463)`；训练 provenance 中 6 个 FSC E190 member 均 `test_subjects_read=0`、cycle=`190`、参数计数一致。本次配置/脚本/结果已完成定向提交，其他智能体修改未纳入本提交。
+- 下一步：论文可将 `TotalParameters`/`UniqueDeployedParameters` 与纯模型 `MedianLatency_ms`/`P95Latency_ms` 作为主效率字段；若需报告实际部署路径，再单列 `EndToEndMedianLatency_ms`，不得将其与纯模型 latency 混写。阻塞项：当前仓库不存在作者指定的 `paper write/` 正文目录，未擅自新建或修改论文正文。
+
 ## 2026-09-07：FSC 七指标合并表字段单位校正完成
 
 - 时间/agent：2026-09-07T09:05:00+08:00，CODEX。复核发现合并表原先沿用 primary 的 `_dB` 列名会误导 ITD 单位，已将 `paper_observation_density_all_metrics.csv` 改为显式 `Unit`/`EvidenceTier` 和无单位后缀的 Q14/Q26/Q50 均值、SD列。

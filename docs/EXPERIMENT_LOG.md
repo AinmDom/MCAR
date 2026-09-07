@@ -1,5 +1,55 @@
 # 项目实验日志
 
+## 2026-09-07：FSC matched-density test 全部七项指标汇总完成
+
+- 时间/agent：2026-09-07T15:33:00+08:00，CODEX。FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 均完成 44 名 test listeners 的对角线评价；Q14/Q50 使用新导出的 current-Q residual 与 E190 三 seed ensemble，Q26 复用既有冻结 test ensemble。
+- 关键结果（mean±sample SD）：FullSphereERB=`0.933971±0.467284 / 0.813223±0.341044 / 0.770249±0.361317` dB；Contralateral25ERB=`0.913557±0.455288 / 0.837750±0.335869 / 0.796977±0.383472` dB；ContralateralHighFrequency=`3.651406±0.389124 / 3.444842±0.259115 / 3.396044±0.275331` dB；HorizontalILDMAE=`0.810628±1.058546 / 0.771901±0.815672 / 0.704563±0.775056` dB（顺序均为 Q14/Q26/Q50）。ERBBandILDMean=`1.679592±0.808466 / 1.610352±0.656939 / 1.504842±0.665775` dB；ITDWeightedMAE=`24.393645±30.445681 / 17.910568±16.776958 / 18.355224±21.447715` us；LAP2024LSD=`3.833434±0.645807 / 3.609403±0.549293 / 3.517969±0.541524` dB。
+- 证据：`results/sonicom_fsc_matched_density_all_metrics_test_v1/primary_subject_level.csv`（528=44×3×4）、`supplemental_subject_level.csv`（396=44×3×3）、`primary_summary_mean_std.csv`、`supplemental_summary_mean_std.csv`、`all_metrics_summary_mean_std.csv`（21=7×3）和 `paper_observation_density_all_metrics_test.csv`（7行）；`summary.json`=`status: completed`、`split=test`、`test_subject_count_read=44`、`fixed_evaluation_direction_count=743`、`all_finite=true`。
+- 完整性：MATLAB primary 使用冻结 `AKerbError`、对侧 HF、水平 ILD 定义；补充指标保持已注册 ERB-band/ITD/LAP2024 定义；统一公共 mask、未改 Q26 checkpoint/result、未调参、未做 cross-density。证据层级保留 Primary frozen engineering test、Secondary/Deferred/LAP descriptive locked-test。
+- 下一步：论文可直接使用 `paper_observation_density_all_metrics_test.csv` 制作 Observation-density/Sparsity 表或曲线；如需正文写作，仅引用相应 evidence tier。阻塞项：无。
+
+## 2026-09-07：FSC Q14/Q50 test 三 seed E190 ensemble 推理完成
+
+- 时间/agent：2026-09-07T09:45:00+08:00，CODEX。并行推理 PID=`47212`（Q14）与 `41528`（Q50）均正常结束；Q14/Q50 各生成44名 test listener 的 cycle-190 三 seed residual-dB 等权 ensemble prediction。
+- 证据：`artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_test/inference_report.json` 与 `...q50.../inference_report.json` 均为 `status=completed`、`split=test`、`subject_count=44`、`test_subject_count_read=44`、`all_finite=true`；每名 prediction shape=`(2,793,463)`，输出文件各44个。
+- 完整性：checkpoint/manifest identity 已核对；未改 validation、Q26 checkpoint/result 或训练配置，未做 cross-density 输入评价。
+- 下一步：使用同一公共 Q50-excluded 743-direction mask 计算 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的四项 primary 与三项已注册补充指标。阻塞项：无。
+
+## 2026-09-07：FSC Q14/Q50 test 三 seed E190 ensemble 推理启动
+
+- 时间/agent：2026-09-07T09:40:00+08:00，CODEX。按固定 cycle-190、三 seed residual-dB 等权协议并行启动 Q14 与 Q50 test inference；PID=`47212`（Q14）、`41528`（Q50）。
+- 动作：使用独立脚本 `scripts/predict_fsc_matched_density_test.py --allow-test`，Q14/Q50 分别读取新导出的 test residual roots，输出 `artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_test/` 与 `...q50.../`；不改 validation prediction、checkpoint 或 Q26 test ensemble。
+- 完整性：每个目标44名 test listeners、observed direction count=14/50；模型 checkpoint hash 与 manifest 已核对，显式 `allow_test=true`。当前推理运行中，尚未生成完整 report；指标尚未计算。
+- 下一步：核验两个 inference report 的 `test_subject_count_read=44`、shape/finite 后，执行七项 test metrics。阻塞项：无。
+
+## 2026-09-07：FSC matched-density Q50 test 导出与 Q14 test 推理 preflight 完成
+
+- 时间/agent：2026-09-07T09:37:00+08:00，CODEX。Q50 test current-Q MCA/residual 导出完成；Q14/Q50 均为44/44 test subjects、split=`test`、HDF5 target shape=`(2,793,463)`且 finite。
+- 动作：使用独立 test roots `data/processed/sonicom_fsc_q14_residual_test_v1/` 与 `...q50.../`；对 Q14 seed20260821 cycle-190 checkpoint 做显式 `allow_test=true` 单 listener inference preflight，结果 shape=`(2,793,463)`、observed count=14、finite。
+- 完整性：test residual 导出未覆盖 train/validation/Q26；未调参、未训练。正式 test ensemble prediction 尚未开始，指标尚未计算。
+- 下一步：分别运行 Q14/Q50 三 seed E190 等权 test ensemble prediction，然后执行七项 test metrics。阻塞项：无。
+
+## 2026-09-07：FSC matched-density Q14 test current-Q residual 导出完成
+
+- 时间/agent：2026-09-07T09:28:00+08:00，CODEX。Q14 test current-Q MCA/residual 已完成，44/44 test subjects 成功，输出 `data/processed/sonicom_fsc_q14_residual_test_v1/`。
+- 动作：按冻结 SUpDEq order-3/MCA、Tikhonov epsilon=`0.01`、463 selected frequency bins 和 `GroundTruth−MCA_Q` 重新导出；使用 `allowTest=true` 仅访问锁定 test split。
+- 完整性：`export_status.csv` 为44行、44 success、split=`test`；样本 HDF5 shape=`(2,793,463)`、target residual finite；Q14 validation/训练数据和 Q26 产物未改。
+- 下一步：用相同协议导出 Q50 test residual，再做 Q14/Q50 test ensemble inference。阻塞项：无。
+
+## 2026-09-07：FSC test Q14 导出首次启动被 MATLAB runtime 拒绝
+
+- 时间/agent：2026-09-07T09:21:00+08:00，CODEX。Q14 test residual 导出 PID=`11048` 在 MATLAB startup 阶段报 `System Error: File system inconsistency`，未进入 `export_sonicom_residual_dataset`，未读取任何 test subject。
+- 动作：输出仅写入 `artifacts/training/fsc_q14_test_export.{out,err}.log`；未创建 Q14 test residual 结果目录，Q26/validation 产物未改。
+- 完整性：失败发生在 MATLAB 初始化，`test_subject_count_read=0`；保持现有两个未知 MATLAB 进程不终止。下一步改用受限权限外启动同一 Q14 命令并重新核验。
+- 阻塞项：普通沙箱 MATLAB 启动不稳定；受限权限外重试是唯一待执行修复。
+
+## 2026-09-07：FSC matched-density test 集全指标流程启动
+
+- 时间/agent：2026-09-07T09:20:00+08:00，CODEX。按作者明确授权，开始 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的 test-only 对角线全指标评价；这一步将首次读取锁定的 44 名 test listeners。
+- 动作：Q14/Q50 先用 `mcar.export_sonicom_residual_dataset(...,allowTest=true,directionCount=14/50)` 独立重算 current-Q MCA/residual，输出到新的 `data/processed/sonicom_fsc_q14_residual_test_v1/` 与 `...q50.../`；Q26 复用现有冻结 test residual。随后用 cycle-190 三 seed ensemble 推理，再计算四项 Primary + ERBBandILDMean + ITDWeightedMAE_us + LAP2024LSD_dB。
+- 完整性：不训练、不调参、不覆盖 validation/Q26 checkpoint/result；输出目录和 test manifest 均独立。当前 test 数据导出尚未完成，`test_subject_count_read` 将在正式 test 访问记录中明确为44；无交叉密度输入实验。
+- 下一步：完成 Q14/Q50 test residual、最小 test preflight 与 ensemble prediction 后，再执行统一公共 mask 的七指标 test 汇总。阻塞项：现有两个 MATLAB 进程来源未知，保持不终止并观察资源冲突。
+
 ## 2026-09-07：FSC 完整模型参数量与推断效率 benchmark 完成
 
 - 时间/agent：2026-09-07T09:08:38+08:00，CODEX。首次 ensemble 计时因 benchmark 脚本未关闭 autograd 而发生 CUDA OOM，未生成正式结果；修正为 `torch.no_grad()` 后按冻结配置完成 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的 validation-only benchmark。

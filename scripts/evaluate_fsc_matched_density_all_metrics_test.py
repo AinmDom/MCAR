@@ -63,7 +63,9 @@ def main() -> None:
     common = np.ones(793, dtype=bool); common[q50] = False
     if common.sum() != 743: raise ValueError("Common mask must contain 743 directions")
     roots = {14: ROOT / "data/processed/sonicom_fsc_q14_residual_test_v1", 26: ROOT / "data/processed/sonicom_residual_q26_v1", 50: ROOT / "data/processed/sonicom_fsc_q50_residual_test_v1"}
-    pred_roots = {14: ROOT / "artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_test", 26: ROOT / "artifacts/reconstruction/sonicom_film_siren_spectral_cnn_final_e190_ensemble_test", 50: ROOT / "artifacts/reconstruction/sonicom_fsc_q50_e190_ensemble_test"}
+    default_prediction_roots = {14: "sonicom_fsc_q14_e190_ensemble_test", 26: "sonicom_film_siren_spectral_cnn_final_e190_ensemble_test", 50: "sonicom_fsc_q50_e190_ensemble_test"}
+    configured_prediction_roots = cfg.get("prediction_roots", default_prediction_roots)
+    pred_roots = {q: ROOT / "artifacts" / "reconstruction" / configured_prediction_roots[str(q)] if str(q) in configured_prediction_roots else ROOT / "artifacts" / "reconstruction" / configured_prediction_roots[q] for q in COUNTS}
     sofa_root = ROOT / "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects"
     rows, values, bands = [], {(e, q): [] for e in SUPPLEMENTAL for q in COUNTS}, []
     for si, subject in enumerate(subjects, 1):

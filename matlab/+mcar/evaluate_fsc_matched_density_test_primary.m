@@ -1,10 +1,13 @@
-function evaluate_fsc_matched_density_test_primary(outputRootOverride)
+function evaluate_fsc_matched_density_test_primary(outputRootOverride, predictionRootOverrides)
 % Evaluate the four frozen FSC primary metrics on the authorized test split.
 % This is a locked-test, diagonal-only evaluator for Q14/Q26/Q50.
 
 if nargin < 1 || isempty(outputRootOverride)
     outputRootOverride = fullfile(fileparts(fileparts(fileparts(mfilename('fullpath')))), ...
         'results', 'sonicom_fsc_matched_density_all_metrics_test_v1');
+end
+if nargin < 2
+    predictionRootOverrides = {};
 end
 validateattributes(outputRootOverride, {'char','string'}, {'scalartext'});
 outputRoot = char(outputRootOverride);
@@ -31,6 +34,12 @@ predictionRoots = { ...
     fullfile(projectRoot, 'artifacts', 'reconstruction', 'sonicom_fsc_q14_e190_ensemble_test'), ...
     fullfile(projectRoot, 'artifacts', 'reconstruction', 'sonicom_film_siren_spectral_cnn_final_e190_ensemble_test'), ...
     fullfile(projectRoot, 'artifacts', 'reconstruction', 'sonicom_fsc_q50_e190_ensemble_test')};
+if ~isempty(predictionRootOverrides)
+    assert(iscell(predictionRootOverrides) && numel(predictionRootOverrides) == 3, ...
+        'predictionRootOverrides must be a three-element cell array of reconstruction directory names');
+    predictionRoots = cellfun(@(name) fullfile(projectRoot, 'artifacts', 'reconstruction', char(name)), ...
+        predictionRootOverrides, 'UniformOutput', false);
+end
 predictionNames = {"FSC-Q14@Q14", "FSC-Q26@Q26", "FSC-Q50@Q50"};
 sofaRoot = fullfile(projectRoot, 'data', 'HRTF', 'sonicom_measured_ffcmp_minphase_44k1', 'subjects');
 

@@ -5,7 +5,6 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "results/sonicom_fsc_matched_density_all_metrics_test_v1"
 COUNTS = (14, 26, 50)
 LABELS = {14: "FSC-Q14@Q14", 26: "FSC-Q26@Q26", 50: "FSC-Q50@Q50"}
 UNITS = {"FullSphereERB":"dB", "Contralateral25ERB":"dB", "ContralateralHighFrequency":"dB", "HorizontalILDMAE":"dB", "ERBBandILDMean":"dB", "ITDWeightedMAE_us":"us", "LAP2024LSD_dB":"dB"}
@@ -20,7 +19,11 @@ def boot(a, reps, seed):
     a=np.asarray(a,float); rng=np.random.default_rng(seed); means=a[rng.integers(0,len(a),(reps,len(a)))].mean(1); lo,hi=np.quantile(means,[.025,.975],method="linear"); return float(a.mean()),float(a.std(ddof=1)),float(lo),float(hi)
 
 def main():
-    cfg=json.loads((ROOT/"configs/experiments/sonicom_fsc_matched_density_all_metrics_test_v1.json").read_text())
+    import argparse
+    parser=argparse.ArgumentParser(); parser.add_argument("configuration", type=Path); args=parser.parse_args()
+    cfg=json.loads(args.configuration.read_text(encoding="utf-8"))
+    if cfg.get("status") != "frozen" or cfg.get("split") != "test": raise PermissionError("frozen test configuration required")
+    OUT = ROOT / cfg["output_root"]
     primary=read(OUT/"primary_subject_level.csv"); supplemental=read(OUT/"supplemental_subject_level.csv")
     values={}
     for row in primary+supplemental:

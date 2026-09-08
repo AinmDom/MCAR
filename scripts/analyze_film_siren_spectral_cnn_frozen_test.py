@@ -38,6 +38,11 @@ def main() -> None:
     parser.add_argument("raw_metric_long", type=Path)
     parser.add_argument("frozen_nine_metric_long", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument(
+        "--candidate-label",
+        default="FiLM-SIREN + spectral CNN Hybrid E190 1/3 ensemble",
+        help="Display label for the newly evaluated MCARv32 candidate.",
+    )
     arguments = parser.parse_args()
 
     raw = read(arguments.raw_metric_long)
@@ -46,7 +51,7 @@ def main() -> None:
         dict(
             row,
             Method="HYBRID",
-            MethodLabel="FiLM-SIREN + spectral CNN Hybrid E190 1/3 ensemble",
+            MethodLabel=arguments.candidate_label,
         )
         for row in raw
         if row["Method"] == "MCARv32"
@@ -161,4 +166,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

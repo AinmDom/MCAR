@@ -1,5 +1,47 @@
 # 项目实验日志
 
+## 2026-09-08：FSC 单成员完整测试与论文核心表替换完成
+
+- 时间/agent：2026-09-08T20:12:00+08:00，CODEX。单成员Q26 complete secondary/deferred test完成，`results/sonicom_fsc_single_seed20260822_secondary_deferred_test_v1/summary.json`为completed、44名test subjects、10方法、all finite；matched-density七指标结果`results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/summary.json`为completed、21汇总行、all finite。
+- 关键结果：Q26单成员完整指标为FullSphereERB=`0.8360203679±0.3200164516` dB、Contralateral25ERB=`1.2279586426±0.1144308327` dB、ERBBandILDMean=`1.6513817879±0.6529599795` dB、ITDWeightedMAE=`18.8480333587±21.9543579003` us、FullSphereLSD=`3.6028890918±0.5190915186` dB。matched-density FullSphereERB Q14/Q26/Q50=`0.9535479010/0.8318450503/0.7931244481` dB。
+- 动作/论文：更新作者提供的`CSMT_2026_updated_0907_r2_tex/`中正文单成员部署说明、`tables/primary_results.tex`、`learning_results.tex`、`secondary_global_results.tex`及`main.tex`的matched-density表。未运行LaTeX编译、渲染或版面检查，遵循作者既有要求。
+- 完整性：所有测试访问均使用冻结44名cohort；没有训练、调参、checkpoint再选择或覆盖既有ensemble证据。下一步：继续逐段清除正文剩余的ensemble历史措辞，并由作者编译检查版面。阻塞项：无。
+
+## 2026-09-08：FSC 单成员 Q26 验证复核与锁定十方法测试主表完成
+
+- 时间/agent：2026-09-08T20:02:18+08:00，CODEX。Q26 validation 严格复核完成：单成员`MCARv32`的FullSphereERB=`0.8256624003±0.1610054975` dB、Contralateral25ERB=`1.2407362224±0.1880952585` dB、ContralateralHighFrequency=`3.5495668653±0.2884552809` dB、HorizontalILDMAE=`0.6413460165±0.1783474605` dB（44名，`test_subject_count_read=0`）。三组锁定test推理均为44/44、finite；Q26严格test复核和与冻结九方法的合并均完成。
+- 动作：test raw evidence=`results/sonicom_fsc_single_seed20260822_q26_test_raw/`（`summary.json` completed，44名，four endpoints）；十方法主表=`results/sonicom_fsc_single_seed20260822_q26_test_ten_method/`，含1760=44×10×4行、`all_finite=true`、共享baseline复现最大误差=`0.0` dB。候选显示名固定为`FSC single member E190 (selected checkpoint)`，不再使用ensemble表述。
+- 完整性：正式选择未因validation/test结果改变；test推理报告为`artifacts/reconstruction/sonicom_fsc_q{14,26,50}_e190_single_seed20260822_test/inference_report.json`，每份`test_subject_count_read=44`、all finite。所有新结果均为独立目录，未覆盖既有ensemble或baseline。
+- 下一步：运行Q14/Q26/Q50单成员matched-density七指标评价，并对Q26生成完整secondary/deferred和paired统计，最后以这些lock结果替换论文表格和正文；不运行LaTeX编译。阻塞项：无。
+
+## 2026-09-08：FSC 单成员锁定 test 推理启动
+
+- 时间/agent：2026-09-08T19:37:50+08:00，CODEX。正式单成员选择和三个checkpoint SHA此前已冻结，作者已明确授权替换论文正式结果；Q14/Q26/Q50 validation 推理均已44/44完成且finite。Q26 validation 的严格基线复核仍在已知MATLAB PID=`28456`/worker PID=`45644`中运行，尚无结果，test 启动不依赖其数值、不会用于再选择或调参。
+- 动作：开始对冻结的三个E190 checkpoint各一次性预测44名 test listeners，依次输出到`artifacts/reconstruction/sonicom_fsc_q{14,26,50}_e190_single_seed20260822_test/`；显式传入`--allow-test`。之后将以独立目录计算Q26十方法指标、完整secondary/deferred指标、matched-density七项指标和单成员效率，所有结果均无条件纳入论文。
+- 完整性：不训练、不选择、不覆盖既有ensemble、baseline或validation产物；每个inference report须记录`test_subject_count_read=44`、shape和finite。论文TeX仅在全部数值和完整性证据完成后编辑；不运行LaTeX编译（作者未要求）。
+- 下一步：核验三个test prediction report；完成Q26严格评估、ten-method merge及matched-density评价。阻塞项：无。
+
+## 2026-09-08：Q26 单成员 validation 严格主指标评价启动
+
+- 时间/agent：2026-09-08T19:31:29+08:00，CODEX。Q14/Q26/Q50单成员 validation prediction 已分别完成44/44、shape=`(2,793,463)`、all finite、`test_subject_count_read=0`。启动Q26单成员在既有严格 MATLAB/SUpDEq evaluator 下的主指标复核。
+- 动作：运行`mcar.evaluate_sonicom_interpolation_baselines(inf,'sonicom_fsc_single_seed20260822_q26_validation_primary',true,'val','sonicom_fsc_q26_e190_single_seed20260822_validation',false)`；输出目标为`results/sonicom_fsc_single_seed20260822_q26_validation_primary/`。普通沙箱MATLAB在启动前报文件系统一致性错误；受限环境外重启后，已知MATLAB PID=`28456`/worker PID=`45644`仍在运行。
+- 完整性：范围仅44名validation subjects；不传`allowTest`，无test路径读取或构造。未覆盖ensemble prediction、既有结果或基线。完成前不宣称任何指标结果。
+- 下一步：等待`summary.json`和`metric_long.csv`生成后核验44×8×4行及finite，再决定是否按冻结单成员协议启动test。阻塞项：MATLAB运行中。
+
+## 2026-09-08：FSC 单成员协议的Q14/Q50 provenance 更正
+
+- 时间/agent：2026-09-08T19:29:05+08:00，CODEX。Q26单成员seed20260822 validation prediction已完成44/44、finite、`test_subject_count_read=0`。启动Q14/Q50 validation前，provenance guard发现其`*_seed20260822_*`运行名虽对应seed20260822 FiLM初始化，但两份CNN配置及training report的实际RNG `seed`均为20260821。
+- 动作：在`configs/experiments/sonicom_fsc_single_seed20260822_v1.json`中将Q14/Q50选择定义更正为可验证的member-2 checkpoint identity（保留对应seed20260822 FiLM初始化），并在预测器中分别核验每个checkpoint的真实`training_rng_seed`；不再声称三个density具有同一CNN RNG seed。
+- 证据/完整性：Q14 member-2=`artifacts/training/sonicom_fsc_q14_cnn_seed20260822_e190/last.pt`，Q50 member-2=`.../sonicom_fsc_q50_cnn_seed20260822_e190/last.pt`，均`test_subjects_read=0`且checkpoint/config SHA已冻结。两次失败发生在provenance读取阶段，未读取validation/test样本、未写prediction目录。
+- 下一步：在更正后的checkpoint identity下完成Q14/Q50 validation；只有所有validation产物完整后才启动一次性单成员test推理。阻塞项：无。
+
+## 2026-09-08：FSC 单成员正式部署协议冻结
+
+- 时间/agent：2026-09-08T19:26:24+08:00，CODEX。作者明确授权将论文正式FSC由三成员均值切换为单个既有E190成员，并补跑所需评价与替换论文数据；冻结正式选择为`seed=20260822`、固定`cycle-190 last.pt`，不重训。
+- 动作：新增冻结配置`configs/experiments/sonicom_fsc_single_seed20260822_v1.json`及独立预测器`scripts/predict_fsc_single_member.py`。选择仅依据既有Q26 cycle-190 validation total：seed20260821=`0.7246045510877263`、20260822=`0.7207740897482092`、20260823=`0.7216977260329507`；为保持matched-density可比性，Q14/Q26/Q50统一复用seed20260822。
+- 证据/完整性：三个待用checkpoint均为已完成训练、`authoritative_checkpoint=last.pt`、`test_subjects_read=0`；路径和SHA256已锁入配置。新预测、评价和论文输出均写入独立目录或作者提供的`CSMT_2026_updated_0907_r2_tex/`，不覆盖既有ensemble或基线结果。当前test尚未由本协议读取。
+- 下一步：先完成Q14/Q26/Q50 validation单成员预测及Q26组件核验；通过后对固定单成员一次性运行44名test listener的Q14/Q26/Q50推理与全指标评价。阻塞项：无。
+
 ## 2026-09-07：FSC matched-density test 全部七项指标汇总完成
 
 - 时间/agent：2026-09-07T15:33:00+08:00，CODEX。FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 均完成 44 名 test listeners 的对角线评价；Q14/Q50 使用新导出的 current-Q residual 与 E190 三 seed ensemble，Q26 复用既有冻结 test ensemble。

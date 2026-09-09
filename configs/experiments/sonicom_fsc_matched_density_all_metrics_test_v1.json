@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "experiment_id": "SONICOM-FSC-MATCHED-DENSITY-ALL-METRICS-TEST-V1",
+  "split": "test",
+  "subject_count": 44,
+  "direction_counts": [14, 26, 50],
+  "test_access_allowed": true,
+  "authorization": "User explicitly authorized locked-test evaluation in the current task on 2026-09-07.",
+  "common_evaluation_mask": "Q50 source directions excluded from the 793-direction grid; 743 directions retained for every diagonal.",
+  "output_root": "results/sonicom_fsc_matched_density_all_metrics_test_v1",
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20260907,
+  "torchaudio_site_packages": "D:/miniconda3/envs/asd/Lib/site-packages",
+  "evidence_tiers": {
+    "FullSphereERB": "Primary frozen engineering test",
+    "Contralateral25ERB": "Primary frozen engineering test",
+    "ContralateralHighFrequency": "Primary frozen engineering test",
+    "HorizontalILDMAE": "Primary frozen engineering test",
+    "ERBBandILDMean": "Secondary locked-test supplement",
+    "ITDWeightedMAE_us": "Deferred locked-test supplement",
+    "LAP2024LSD_dB": "LAP2024 descriptive locked-test evaluation"
+  }
+}

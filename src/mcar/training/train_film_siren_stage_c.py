@@ -647,26 +647,27 @@ def run(configuration: dict[str, Any], root: Path, config_path: Path) -> None:
 
     dataset_root = (root / configuration["dataset_root"]).resolve()
     split_csv = (root / configuration["subject_split_csv"]).resolve()
-    q26_csv = (root / configuration["q26_csv"]).resolve()
-    q26_normalization_path = (root / configuration["q26_normalization"]).resolve()
+    observation_count = int(configuration.get("observation_count", 26))
+    q26_csv = (root / configuration.get("q_csv", configuration["q26_csv"])).resolve()
+    q26_normalization_path = (root / configuration.get("q_normalization", configuration["q26_normalization"])).resolve()
     target_normalization_path = dataset_root / "training_statistics.json"
     normalization = Normalization.from_json(target_normalization_path)
     q26_normalization = Q26MagnitudeNormalization.from_json(q26_normalization_path)
     train_subjects = load_condition_cache(
-        split_subject_paths(dataset_root, split_csv, "train"),
+        split_subject_paths(dataset_root, split_csv, "train", observation_count),
         dataset_root,
         split_csv,
         q26_csv,
         q26_normalization,
-        "train",
+        "train", observation_count,
     )
     validation_subjects = load_condition_cache(
-        split_subject_paths(dataset_root, split_csv, "val"),
+        split_subject_paths(dataset_root, split_csv, "val", observation_count),
         dataset_root,
         split_csv,
         q26_csv,
         q26_normalization,
-        "val",
+        "val", observation_count,
     )
     directions, frequency, interpolation_mask, direction_weights = read_common_grid(
         train_subjects[0].path

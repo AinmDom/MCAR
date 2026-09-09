@@ -1,0 +1,31 @@
+{
+  "status": "completed",
+  "split": "val",
+  "subject_count": 44,
+  "method": "HYBRID",
+  "diagonal_counts": [
+    14,
+    26,
+    50
+  ],
+  "metrics": [
+    "ERBBandILDMean",
+    "ITDWeightedMAE_us",
+    "LAP2024LSD_dB"
+  ],
+  "fixed_evaluation_direction_count": 743,
+  "band_ild_direction_definition": "common_mask AND horizontal plane",
+  "itd_direction_definition": "common_mask with direction-area weights",
+  "lap2024_lsd_direction_definition": "common_mask, official 20-20000 Hz formula",
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed_base": 20260907,
+  "subject_row_count": 396,
+  "aggregate_row_count": 9,
+  "all_finite": true,
+  "test_subject_count_read": 0,
+  "evidence_tiers": {
+    "ERBBandILDMean": "Secondary validation supplement",
+    "ITDWeightedMAE_us": "Deferred validation supplement",
+    "LAP2024LSD_dB": "LAP2024 descriptive validation supplement"
+  }
+}

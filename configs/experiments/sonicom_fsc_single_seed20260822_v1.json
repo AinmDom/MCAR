@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-08",
+  "experiment_id": "SONICOM-FSC-SINGLE-SEED-20260822-V1",
+  "purpose": "Replace the deployed three-member FSC ensemble with one pre-existing E190 member without retraining.",
+  "selection": {
+    "selected_q26_seed": 20260822,
+    "checkpoint_policy": "cycle-190 last.pt only",
+    "rule": "Select Q26 seed 20260822 from the lowest cycle-190 Q26 validation_total. For Q14/Q50, use the pre-existing member-2 checkpoints paired with the seed-20260822 FiLM initialization; their CNN configuration files record RNG seed 20260821, so they are identified by checkpoint identity rather than a false common RNG-seed claim.",
+    "test_result_used_for_selection": false,
+    "q26_cycle_190_validation_total": {
+      "20260821": 0.7246045510877263,
+      "20260822": 0.7207740897482092,
+      "20260823": 0.7216977260329507
+    }
+  },
+  "authorization": {
+    "user_text": "我已把该文件夹放进工作区，你可以开始执行，然后替换数据",
+    "recorded_at_local": "2026-09-08T19:00:00+08:00",
+    "test_access_allowed": true
+  },
+  "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+  "runs": [
+    {
+      "label": "FSC-Q14@Q14 single seed 20260822",
+      "direction_count": 14,
+      "dataset_root_trainval": "data/processed/sonicom_fsc_q14_residual_v1",
+      "dataset_root_test": "data/processed/sonicom_fsc_q14_residual_test_v1",
+      "sparse_grid_csv": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+      "normalization": "configs/data/sonicom_fsc_q14_magnitude_normalization_v1.json",
+      "config": "configs/experiments/sonicom_fsc_q14_cnn_seed20260822_e190.json",
+      "config_sha256": "CCFFAB725657343E572680E80680F17FEDD9658663BCFF7C3253C016A1492A7D",
+      "checkpoint": "artifacts/training/sonicom_fsc_q14_cnn_seed20260822_e190/last.pt",
+      "checkpoint_sha256": "FAECABE0E5A56AB5D69C8EFB0F77360F7BFCB712482829373E489E45FAA3462A",
+      "training_report": "artifacts/training/sonicom_fsc_q14_cnn_seed20260822_e190/training_report.json",
+      "member_identity": "named_seed20260822_with_seed20260822_film_initialization_retry1",
+      "training_rng_seed": 20260821,
+      "output_validation": "sonicom_fsc_q14_e190_single_seed20260822_validation",
+      "output_test": "sonicom_fsc_q14_e190_single_seed20260822_test"
+    },
+    {
+      "label": "FSC-Q26@Q26 single seed 20260822",
+      "direction_count": 26,
+      "dataset_root_trainval": "data/processed/sonicom_residual_q26_v1",
+      "dataset_root_test": "data/processed/sonicom_residual_q26_v1",
+      "sparse_grid_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+      "normalization": "configs/data/siren_b_q26_normalization_v1.json",
+      "config": "configs/experiments/sonicom_film_siren_spectral_cnn_final_seed20260822_e190.json",
+      "config_sha256": "53585DF74C0CBE5A288DA8FC757B8AFD8DDE702E095E25A7B43EFFFCD567EB97",
+      "checkpoint": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260822_e190/last.pt",
+      "checkpoint_sha256": "C89CCF90BA48382756C15B15FC3A789E7D4710AE44DC82A0E530A97F30FEC789",
+      "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260822_e190/training_report.json",
+      "member_identity": "seed20260822",
+      "training_rng_seed": 20260822,
+      "output_validation": "sonicom_fsc_q26_e190_single_seed20260822_validation",
+      "output_test": "sonicom_fsc_q26_e190_single_seed20260822_test"
+    },
+    {
+      "label": "FSC-Q50@Q50 single seed 20260822",
+      "direction_count": 50,
+      "dataset_root_trainval": "data/processed/sonicom_fsc_q50_residual_v1",
+      "dataset_root_test": "data/processed/sonicom_fsc_q50_residual_test_v1",
+      "sparse_grid_csv": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+      "normalization": "configs/data/sonicom_fsc_q50_magnitude_normalization_v1.json",
+      "config": "configs/experiments/sonicom_fsc_q50_cnn_seed20260822_e190.json",
+      "config_sha256": "8889E17B2B8A301C11F272E20B15539DF2DC337F31DACBA5EA056B797091C621",
+      "checkpoint": "artifacts/training/sonicom_fsc_q50_cnn_seed20260822_e190/last.pt",
+      "checkpoint_sha256": "E952AFA892EE0767ADC4DBA5C7D2E960F2BEA2F84953786E50C8A0C10273C40D",
+      "training_report": "artifacts/training/sonicom_fsc_q50_cnn_seed20260822_e190/training_report.json",
+      "member_identity": "named_seed20260822_with_seed20260822_film_initialization",
+      "training_rng_seed": 20260821,
+      "output_validation": "sonicom_fsc_q50_e190_single_seed20260822_validation",
+      "output_test": "sonicom_fsc_q50_e190_single_seed20260822_test"
+    }
+  ]
+}

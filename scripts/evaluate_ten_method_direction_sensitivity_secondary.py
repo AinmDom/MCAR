@@ -24,10 +24,14 @@ def boot(x,n,s):
 def read_cache(path):
     with h5py.File(path) as h:
         c=h["cache"]; grid=np.asarray(c["referenceGrid"]).T; mask=np.asarray(c["frequencyMask"]).reshape(-1).astype(bool)
-        ref=20*np.log10(np.maximum(np.abs(np.stack([np.asarray(c["referenceLeft"])[mask].T,np.asarray(c["referenceRight"])[mask].T])),1e-10))
-        mca=20*np.log10(np.maximum(np.abs(np.stack([np.asarray(c["mcaLeft"])[mask].T,np.asarray(c["mcaRight"])[mask].T])),1e-10))
+        reference=np.stack([complex_h5(np.asarray(c["referenceLeft"])),complex_h5(np.asarray(c["referenceRight"]))])
+        mca_complex=np.stack([complex_h5(np.asarray(c["mcaLeft"])),complex_h5(np.asarray(c["mcaRight"]))])
+        ref=20*np.log10(np.maximum(np.abs(reference[:,mask,:].transpose(0,2,1)),1e-10))
+        mca=20*np.log10(np.maximum(np.abs(mca_complex[:,mask,:].transpose(0,2,1)),1e-10))
         refhr=np.asarray(c["referenceHrir"]).transpose(1,0,2); freq=np.asarray(c["frequencyHz"]).reshape(-1)[mask]
     return grid,mask,ref,mca,refhr,freq
+def complex_h5(values):
+    return np.asarray(values["real"],np.float32)+1j*np.asarray(values["imag"],np.float32)
 def hrir_from_db(db,mca,mask):
     base=np.asarray(mca); allv=np.empty((2,793,513),complex); allv[:,:,mask]=10**(db/20)*np.exp(1j*np.angle(base))
     # mca supplied selected only; reconstruct outside values from cache separately is required
@@ -35,7 +39,7 @@ def hrir_from_db(db,mca,mask):
 def cache_full_mca(path):
     with h5py.File(path) as h:
         c=h["cache"]; mask=np.asarray(c["frequencyMask"]).reshape(-1).astype(bool)
-        allv=np.stack([np.asarray(c["mcaLeft"]).T,np.asarray(c["mcaRight"]).T])
+        allv=np.stack([complex_h5(np.asarray(c["mcaLeft"])).T,complex_h5(np.asarray(c["mcaRight"])).T])
     return allv,mask
 def strict_hrir(db,full,mask):
     v=full.copy(); v[:,:,mask]=10**(db/20)*np.exp(1j*np.angle(v[:,:,mask])); return np.fft.irfft(v,n=1024,axis=-1)[:,:,:256].transpose(1,0,2).astype("float32")

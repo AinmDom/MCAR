@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 from pathlib import Path
 
 import numpy as np
@@ -32,26 +33,25 @@ from mcar.training.train_siren import frequency_coordinates
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("config", type=Path)
+    args = parser.parse_args()
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required for the Stage C smoke test")
     root = project_root()
-    config_path = (
-        root
-        / "configs"
-        / "experiments"
-        / "sonicom_film_siren_gl_c1_lr1e4_adam_seed20260821_e150.json"
-    )
+    config_path = (root / args.config).resolve()
     configuration = json.loads(config_path.read_text(encoding="utf-8"))
     seed = int(configuration["seed"])
     set_seed(seed)
     device = torch.device("cuda")
     dataset_root = root / configuration["dataset_root"]
     split_csv = root / configuration["subject_split_csv"]
-    q26_csv = root / configuration["q26_csv"]
+    observation_count = int(configuration.get("observation_count", 26))
+    q26_csv = root / configuration.get("q_csv", configuration["q26_csv"])
     q26_normalization = Q26MagnitudeNormalization.from_json(
         root / configuration["q26_normalization"]
     )
-    train_path = split_subject_paths(dataset_root, split_csv, "train")[0]
+    train_path = split_subject_paths(dataset_root, split_csv, "train", observation_count)[0]
     subjects = load_condition_cache(
         [train_path],
         dataset_root,
@@ -59,6 +59,7 @@ def main() -> None:
         q26_csv,
         q26_normalization,
         "train",
+        observation_count,
     )
     subject = subjects[0]
     normalization = Normalization.from_json(dataset_root / "training_statistics.json")

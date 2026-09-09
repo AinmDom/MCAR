@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "source": "results/sonicom_fsc_matched_density_direction_sensitivity_v1",
+  "method": "HYBRID",
+  "diagonal_counts": [
+    14,
+    26,
+    50
+  ],
+  "subject_count_per_cell": 44,
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE"
+  ],
+  "mask": "common Q50-excluded 743-direction mask",
+  "test_subject_count_read": 0,
+  "all_finite": true
+}

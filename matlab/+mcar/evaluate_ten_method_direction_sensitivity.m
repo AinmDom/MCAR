@@ -1,4 +1,4 @@
-function evaluate_ten_method_direction_sensitivity(subjectLimit, outputName, classicalPredictionOutputName, subjectStartIndex)
+function evaluate_ten_method_direction_sensitivity(subjectLimit, outputName, classicalPredictionOutputName, subjectStartIndex, hybridPredictionRoots)
 %EVALUATE_TEN_METHOD_DIRECTION_SENSITIVITY Strict Q14/Q26/Q50 comparison.
 
 if nargin < 1 || isempty(subjectLimit), subjectLimit = inf; end
@@ -7,10 +7,15 @@ if nargin < 2 || isempty(outputName)
 end
 if nargin < 3, classicalPredictionOutputName = ''; end
 if nargin < 4 || isempty(subjectStartIndex), subjectStartIndex = 1; end
+if nargin < 5 || isempty(hybridPredictionRoots), hybridPredictionRoots = {}; end
 validateattributes(subjectLimit, {'numeric'}, {'scalar', 'positive'});
 validateattributes(outputName, {'char', 'string'}, {'scalartext'});
 validateattributes(classicalPredictionOutputName, {'char', 'string'}, {'scalartext'});
 validateattributes(subjectStartIndex, {'numeric'}, {'scalar', 'integer', 'positive'});
+if ~isempty(hybridPredictionRoots)
+    assert(iscell(hybridPredictionRoots) && numel(hybridPredictionRoots) == 3, ...
+        'hybridPredictionRoots must be a three-element cell array.');
+end
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -155,8 +160,12 @@ for subjectIndex = 1:height(subjects)
             fullfile(ranfRoots(num2str(count)), 'subjects', ...
             char(subjectLabel), 'prediction.sofa'), cache.referenceGrid, ...
             frequencyMask);
-        [dbValues{9}, hrirValues{9}] = load_residual( ...
-            fullfile(predictionLevel, 'hybrid_e190_prediction.h5'), cache);
+        hybridPath = fullfile(predictionLevel, 'hybrid_e190_prediction.h5');
+        if ~isempty(hybridPredictionRoots)
+            hybridPath = fullfile(hybridPredictionRoots{countIndex}, 'subjects', ...
+                char(subjectLabel), 'prediction.h5');
+        end
+        [dbValues{9}, hrirValues{9}] = load_residual(hybridPath, cache);
         [dbValues{10}, hrirValues{10}] = load_residual( ...
             fullfile(inputLevel, 'bounded_prediction.h5'), cache);
         for methodIndex = 1:numel(methodIds)

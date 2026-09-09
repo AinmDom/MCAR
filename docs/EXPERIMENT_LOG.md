@@ -1,5 +1,4 @@
 # 项目实验日志
-
 ## 2026-09-09：Hybrid E190 单成员五区结构图完成（Nature figure / Python）
 
 - 时间/agent：2026-09-09T21:35:54+08:00，CODEX；状态：图稿已完成并核验。
@@ -9,6 +8,290 @@
 - 完整性：最终PDF碰撞检查0 FAIL/0 WARN；最小字形8.1 pt，112个text runs均≥5 pt；源码检查20 PASS/1 WARN/0 FAIL（WARN仅为有意保留全部细节的406.4 mm大幅母图）；5区域与整图均已视觉核验，绘图区对齐N/A（单axes），4个区域间距均70绘图单位。`test_subjects_read=0`，finite/训练/best/末点预算=N/A；未运行训练、评价或数据汇总，未更改.tex。Git：开工干净，图稿目录受既有 `/paper write` 规则忽略，保持本地未暂存；本条日志待提交，无commit/push。
 - 下一步：作者可直接使用高分辨率PNG或在SVG/PDF上继续排版；若缩为期刊双栏宽度，先精简文字再检查实际字号。
 - 阻塞项：无。沙箱初始化故障以已授权的沙箱外执行完成绘图；原日志所列实验恢复任务未接管、未覆盖。
+
+## 2026-09-08：FSC 单成员完整测试与论文核心表替换完成
+
+- 时间/agent：2026-09-08T20:12:00+08:00，CODEX。单成员Q26 complete secondary/deferred test完成，`results/sonicom_fsc_single_seed20260822_secondary_deferred_test_v1/summary.json`为completed、44名test subjects、10方法、all finite；matched-density七指标结果`results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/summary.json`为completed、21汇总行、all finite。
+- 关键结果：Q26单成员完整指标为FullSphereERB=`0.8360203679±0.3200164516` dB、Contralateral25ERB=`1.2279586426±0.1144308327` dB、ERBBandILDMean=`1.6513817879±0.6529599795` dB、ITDWeightedMAE=`18.8480333587±21.9543579003` us、FullSphereLSD=`3.6028890918±0.5190915186` dB。matched-density FullSphereERB Q14/Q26/Q50=`0.9535479010/0.8318450503/0.7931244481` dB。
+- 动作/论文：更新作者提供的`CSMT_2026_updated_0907_r2_tex/`中正文单成员部署说明、`tables/primary_results.tex`、`learning_results.tex`、`secondary_global_results.tex`及`main.tex`的matched-density表。未运行LaTeX编译、渲染或版面检查，遵循作者既有要求。
+- 完整性：所有测试访问均使用冻结44名cohort；没有训练、调参、checkpoint再选择或覆盖既有ensemble证据。下一步：继续逐段清除正文剩余的ensemble历史措辞，并由作者编译检查版面。阻塞项：无。
+
+## 2026-09-08：FSC 单成员 Q26 验证复核与锁定十方法测试主表完成
+
+- 时间/agent：2026-09-08T20:02:18+08:00，CODEX。Q26 validation 严格复核完成：单成员`MCARv32`的FullSphereERB=`0.8256624003±0.1610054975` dB、Contralateral25ERB=`1.2407362224±0.1880952585` dB、ContralateralHighFrequency=`3.5495668653±0.2884552809` dB、HorizontalILDMAE=`0.6413460165±0.1783474605` dB（44名，`test_subject_count_read=0`）。三组锁定test推理均为44/44、finite；Q26严格test复核和与冻结九方法的合并均完成。
+- 动作：test raw evidence=`results/sonicom_fsc_single_seed20260822_q26_test_raw/`（`summary.json` completed，44名，four endpoints）；十方法主表=`results/sonicom_fsc_single_seed20260822_q26_test_ten_method/`，含1760=44×10×4行、`all_finite=true`、共享baseline复现最大误差=`0.0` dB。候选显示名固定为`FSC single member E190 (selected checkpoint)`，不再使用ensemble表述。
+- 完整性：正式选择未因validation/test结果改变；test推理报告为`artifacts/reconstruction/sonicom_fsc_q{14,26,50}_e190_single_seed20260822_test/inference_report.json`，每份`test_subject_count_read=44`、all finite。所有新结果均为独立目录，未覆盖既有ensemble或baseline。
+- 下一步：运行Q14/Q26/Q50单成员matched-density七指标评价，并对Q26生成完整secondary/deferred和paired统计，最后以这些lock结果替换论文表格和正文；不运行LaTeX编译。阻塞项：无。
+
+## 2026-09-08：FSC 单成员锁定 test 推理启动
+
+- 时间/agent：2026-09-08T19:37:50+08:00，CODEX。正式单成员选择和三个checkpoint SHA此前已冻结，作者已明确授权替换论文正式结果；Q14/Q26/Q50 validation 推理均已44/44完成且finite。Q26 validation 的严格基线复核仍在已知MATLAB PID=`28456`/worker PID=`45644`中运行，尚无结果，test 启动不依赖其数值、不会用于再选择或调参。
+- 动作：开始对冻结的三个E190 checkpoint各一次性预测44名 test listeners，依次输出到`artifacts/reconstruction/sonicom_fsc_q{14,26,50}_e190_single_seed20260822_test/`；显式传入`--allow-test`。之后将以独立目录计算Q26十方法指标、完整secondary/deferred指标、matched-density七项指标和单成员效率，所有结果均无条件纳入论文。
+- 完整性：不训练、不选择、不覆盖既有ensemble、baseline或validation产物；每个inference report须记录`test_subject_count_read=44`、shape和finite。论文TeX仅在全部数值和完整性证据完成后编辑；不运行LaTeX编译（作者未要求）。
+- 下一步：核验三个test prediction report；完成Q26严格评估、ten-method merge及matched-density评价。阻塞项：无。
+
+## 2026-09-08：Q26 单成员 validation 严格主指标评价启动
+
+- 时间/agent：2026-09-08T19:31:29+08:00，CODEX。Q14/Q26/Q50单成员 validation prediction 已分别完成44/44、shape=`(2,793,463)`、all finite、`test_subject_count_read=0`。启动Q26单成员在既有严格 MATLAB/SUpDEq evaluator 下的主指标复核。
+- 动作：运行`mcar.evaluate_sonicom_interpolation_baselines(inf,'sonicom_fsc_single_seed20260822_q26_validation_primary',true,'val','sonicom_fsc_q26_e190_single_seed20260822_validation',false)`；输出目标为`results/sonicom_fsc_single_seed20260822_q26_validation_primary/`。普通沙箱MATLAB在启动前报文件系统一致性错误；受限环境外重启后，已知MATLAB PID=`28456`/worker PID=`45644`仍在运行。
+- 完整性：范围仅44名validation subjects；不传`allowTest`，无test路径读取或构造。未覆盖ensemble prediction、既有结果或基线。完成前不宣称任何指标结果。
+- 下一步：等待`summary.json`和`metric_long.csv`生成后核验44×8×4行及finite，再决定是否按冻结单成员协议启动test。阻塞项：MATLAB运行中。
+
+## 2026-09-08：FSC 单成员协议的Q14/Q50 provenance 更正
+
+- 时间/agent：2026-09-08T19:29:05+08:00，CODEX。Q26单成员seed20260822 validation prediction已完成44/44、finite、`test_subject_count_read=0`。启动Q14/Q50 validation前，provenance guard发现其`*_seed20260822_*`运行名虽对应seed20260822 FiLM初始化，但两份CNN配置及training report的实际RNG `seed`均为20260821。
+- 动作：在`configs/experiments/sonicom_fsc_single_seed20260822_v1.json`中将Q14/Q50选择定义更正为可验证的member-2 checkpoint identity（保留对应seed20260822 FiLM初始化），并在预测器中分别核验每个checkpoint的真实`training_rng_seed`；不再声称三个density具有同一CNN RNG seed。
+- 证据/完整性：Q14 member-2=`artifacts/training/sonicom_fsc_q14_cnn_seed20260822_e190/last.pt`，Q50 member-2=`.../sonicom_fsc_q50_cnn_seed20260822_e190/last.pt`，均`test_subjects_read=0`且checkpoint/config SHA已冻结。两次失败发生在provenance读取阶段，未读取validation/test样本、未写prediction目录。
+- 下一步：在更正后的checkpoint identity下完成Q14/Q50 validation；只有所有validation产物完整后才启动一次性单成员test推理。阻塞项：无。
+
+## 2026-09-08：FSC 单成员正式部署协议冻结
+
+- 时间/agent：2026-09-08T19:26:24+08:00，CODEX。作者明确授权将论文正式FSC由三成员均值切换为单个既有E190成员，并补跑所需评价与替换论文数据；冻结正式选择为`seed=20260822`、固定`cycle-190 last.pt`，不重训。
+- 动作：新增冻结配置`configs/experiments/sonicom_fsc_single_seed20260822_v1.json`及独立预测器`scripts/predict_fsc_single_member.py`。选择仅依据既有Q26 cycle-190 validation total：seed20260821=`0.7246045510877263`、20260822=`0.7207740897482092`、20260823=`0.7216977260329507`；为保持matched-density可比性，Q14/Q26/Q50统一复用seed20260822。
+- 证据/完整性：三个待用checkpoint均为已完成训练、`authoritative_checkpoint=last.pt`、`test_subjects_read=0`；路径和SHA256已锁入配置。新预测、评价和论文输出均写入独立目录或作者提供的`CSMT_2026_updated_0907_r2_tex/`，不覆盖既有ensemble或基线结果。当前test尚未由本协议读取。
+- 下一步：先完成Q14/Q26/Q50 validation单成员预测及Q26组件核验；通过后对固定单成员一次性运行44名test listener的Q14/Q26/Q50推理与全指标评价。阻塞项：无。
+
+## 2026-09-07：FSC matched-density test 全部七项指标汇总完成
+
+- 时间/agent：2026-09-07T15:33:00+08:00，CODEX。FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 均完成 44 名 test listeners 的对角线评价；Q14/Q50 使用新导出的 current-Q residual 与 E190 三 seed ensemble，Q26 复用既有冻结 test ensemble。
+- 关键结果（mean±sample SD）：FullSphereERB=`0.933971±0.467284 / 0.813223±0.341044 / 0.770249±0.361317` dB；Contralateral25ERB=`0.913557±0.455288 / 0.837750±0.335869 / 0.796977±0.383472` dB；ContralateralHighFrequency=`3.651406±0.389124 / 3.444842±0.259115 / 3.396044±0.275331` dB；HorizontalILDMAE=`0.810628±1.058546 / 0.771901±0.815672 / 0.704563±0.775056` dB（顺序均为 Q14/Q26/Q50）。ERBBandILDMean=`1.679592±0.808466 / 1.610352±0.656939 / 1.504842±0.665775` dB；ITDWeightedMAE=`24.393645±30.445681 / 17.910568±16.776958 / 18.355224±21.447715` us；LAP2024LSD=`3.833434±0.645807 / 3.609403±0.549293 / 3.517969±0.541524` dB。
+- 证据：`results/sonicom_fsc_matched_density_all_metrics_test_v1/primary_subject_level.csv`（528=44×3×4）、`supplemental_subject_level.csv`（396=44×3×3）、`primary_summary_mean_std.csv`、`supplemental_summary_mean_std.csv`、`all_metrics_summary_mean_std.csv`（21=7×3）和 `paper_observation_density_all_metrics_test.csv`（7行）；`summary.json`=`status: completed`、`split=test`、`test_subject_count_read=44`、`fixed_evaluation_direction_count=743`、`all_finite=true`。
+- 完整性：MATLAB primary 使用冻结 `AKerbError`、对侧 HF、水平 ILD 定义；补充指标保持已注册 ERB-band/ITD/LAP2024 定义；统一公共 mask、未改 Q26 checkpoint/result、未调参、未做 cross-density。证据层级保留 Primary frozen engineering test、Secondary/Deferred/LAP descriptive locked-test。
+- 下一步：论文可直接使用 `paper_observation_density_all_metrics_test.csv` 制作 Observation-density/Sparsity 表或曲线；如需正文写作，仅引用相应 evidence tier。阻塞项：无。
+
+## 2026-09-07：FSC Q14/Q50 test 三 seed E190 ensemble 推理完成
+
+- 时间/agent：2026-09-07T09:45:00+08:00，CODEX。并行推理 PID=`47212`（Q14）与 `41528`（Q50）均正常结束；Q14/Q50 各生成44名 test listener 的 cycle-190 三 seed residual-dB 等权 ensemble prediction。
+- 证据：`artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_test/inference_report.json` 与 `...q50.../inference_report.json` 均为 `status=completed`、`split=test`、`subject_count=44`、`test_subject_count_read=44`、`all_finite=true`；每名 prediction shape=`(2,793,463)`，输出文件各44个。
+- 完整性：checkpoint/manifest identity 已核对；未改 validation、Q26 checkpoint/result 或训练配置，未做 cross-density 输入评价。
+- 下一步：使用同一公共 Q50-excluded 743-direction mask 计算 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的四项 primary 与三项已注册补充指标。阻塞项：无。
+
+## 2026-09-07：FSC Q14/Q50 test 三 seed E190 ensemble 推理启动
+
+- 时间/agent：2026-09-07T09:40:00+08:00，CODEX。按固定 cycle-190、三 seed residual-dB 等权协议并行启动 Q14 与 Q50 test inference；PID=`47212`（Q14）、`41528`（Q50）。
+- 动作：使用独立脚本 `scripts/predict_fsc_matched_density_test.py --allow-test`，Q14/Q50 分别读取新导出的 test residual roots，输出 `artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_test/` 与 `...q50.../`；不改 validation prediction、checkpoint 或 Q26 test ensemble。
+- 完整性：每个目标44名 test listeners、observed direction count=14/50；模型 checkpoint hash 与 manifest 已核对，显式 `allow_test=true`。当前推理运行中，尚未生成完整 report；指标尚未计算。
+- 下一步：核验两个 inference report 的 `test_subject_count_read=44`、shape/finite 后，执行七项 test metrics。阻塞项：无。
+
+## 2026-09-07：FSC matched-density Q50 test 导出与 Q14 test 推理 preflight 完成
+
+- 时间/agent：2026-09-07T09:37:00+08:00，CODEX。Q50 test current-Q MCA/residual 导出完成；Q14/Q50 均为44/44 test subjects、split=`test`、HDF5 target shape=`(2,793,463)`且 finite。
+- 动作：使用独立 test roots `data/processed/sonicom_fsc_q14_residual_test_v1/` 与 `...q50.../`；对 Q14 seed20260821 cycle-190 checkpoint 做显式 `allow_test=true` 单 listener inference preflight，结果 shape=`(2,793,463)`、observed count=14、finite。
+- 完整性：test residual 导出未覆盖 train/validation/Q26；未调参、未训练。正式 test ensemble prediction 尚未开始，指标尚未计算。
+- 下一步：分别运行 Q14/Q50 三 seed E190 等权 test ensemble prediction，然后执行七项 test metrics。阻塞项：无。
+
+## 2026-09-07：FSC matched-density Q14 test current-Q residual 导出完成
+
+- 时间/agent：2026-09-07T09:28:00+08:00，CODEX。Q14 test current-Q MCA/residual 已完成，44/44 test subjects 成功，输出 `data/processed/sonicom_fsc_q14_residual_test_v1/`。
+- 动作：按冻结 SUpDEq order-3/MCA、Tikhonov epsilon=`0.01`、463 selected frequency bins 和 `GroundTruth−MCA_Q` 重新导出；使用 `allowTest=true` 仅访问锁定 test split。
+- 完整性：`export_status.csv` 为44行、44 success、split=`test`；样本 HDF5 shape=`(2,793,463)`、target residual finite；Q14 validation/训练数据和 Q26 产物未改。
+- 下一步：用相同协议导出 Q50 test residual，再做 Q14/Q50 test ensemble inference。阻塞项：无。
+
+## 2026-09-07：FSC test Q14 导出首次启动被 MATLAB runtime 拒绝
+
+- 时间/agent：2026-09-07T09:21:00+08:00，CODEX。Q14 test residual 导出 PID=`11048` 在 MATLAB startup 阶段报 `System Error: File system inconsistency`，未进入 `export_sonicom_residual_dataset`，未读取任何 test subject。
+- 动作：输出仅写入 `artifacts/training/fsc_q14_test_export.{out,err}.log`；未创建 Q14 test residual 结果目录，Q26/validation 产物未改。
+- 完整性：失败发生在 MATLAB 初始化，`test_subject_count_read=0`；保持现有两个未知 MATLAB 进程不终止。下一步改用受限权限外启动同一 Q14 命令并重新核验。
+- 阻塞项：普通沙箱 MATLAB 启动不稳定；受限权限外重试是唯一待执行修复。
+
+## 2026-09-07：FSC matched-density test 集全指标流程启动
+
+- 时间/agent：2026-09-07T09:20:00+08:00，CODEX。按作者明确授权，开始 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的 test-only 对角线全指标评价；这一步将首次读取锁定的 44 名 test listeners。
+- 动作：Q14/Q50 先用 `mcar.export_sonicom_residual_dataset(...,allowTest=true,directionCount=14/50)` 独立重算 current-Q MCA/residual，输出到新的 `data/processed/sonicom_fsc_q14_residual_test_v1/` 与 `...q50.../`；Q26 复用现有冻结 test residual。随后用 cycle-190 三 seed ensemble 推理，再计算四项 Primary + ERBBandILDMean + ITDWeightedMAE_us + LAP2024LSD_dB。
+- 完整性：不训练、不调参、不覆盖 validation/Q26 checkpoint/result；输出目录和 test manifest 均独立。当前 test 数据导出尚未完成，`test_subject_count_read` 将在正式 test 访问记录中明确为44；无交叉密度输入实验。
+- 下一步：完成 Q14/Q50 test residual、最小 test preflight 与 ensemble prediction 后，再执行统一公共 mask 的七指标 test 汇总。阻塞项：现有两个 MATLAB 进程来源未知，保持不终止并观察资源冲突。
+
+## 2026-09-07：FSC 完整模型参数量与推断效率 benchmark 完成
+
+- 时间/agent：2026-09-07T09:08:38+08:00，CODEX。首次 ensemble 计时因 benchmark 脚本未关闭 autograd 而发生 CUDA OOM，未生成正式结果；修正为 `torch.no_grad()` 后按冻结配置完成 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 的 validation-only benchmark。
+- 动作：FP32、batch size=1、NVIDIA GeForce RTX 5060、driver=`595.79`、CUDA=`12.8`、PyTorch=`2.8.0+cu128`、Python=`3.9.23`、CPU threads=1；纯模型 latency 为 5 次 warm-up 后 30 次计时，前后 CUDA synchronize，排除 checkpoint loading、输入磁盘 I/O 和输出序列化；另以 5 次重复测量包含输入加载与 `prediction.h5` 序列化的 ensemble end-to-end latency。
+- 关键结果：每个 FSC 单成员总参数量=`1,518,884`，其中冻结 FiLM-SIREN=`1,444,482`、可训练 spectral-CNN=`74,402`；三成员 ensemble 可训练=`223,206`、冻结=`4,333,446`、部署总参数=`4,556,652`，成员 checkpoint 独立，未做参数共享。纯模型 median/P95（ms，单成员/三成员 ensemble）分别为 Q14=`110.550800/110.903115`、`331.342550/331.788655`；Q26=`110.446950/110.947360`、`331.488950/332.104870`；Q50=`110.674700/110.988140`、`331.803200/332.433855`。ensemble end-to-end median/P95（ms）为 Q14=`506.747500/521.131540`、Q26=`513.243800/514.704400`、Q50=`509.676600/514.632900`。
+- 证据：`results/sonicom_fsc_efficiency_v1/efficiency_summary.csv`、`efficiency_details.json`、`protocol_snapshot.json`、`README.md`；配置=`configs/experiments/sonicom_fsc_efficiency_v1.json`，复现命令=`D:\miniconda3\envs\ml\python.exe scripts/benchmark_fsc_efficiency.py configs/experiments/sonicom_fsc_efficiency_v1.json`，脚本=`scripts/benchmark_fsc_efficiency.py`。
+- 完整性：3 个 density×2 个 deployment 行全部生成，latency、显存和输出 finite；benchmark `split=val`、`test_subject_count_read=0`，输入 subject=`P0001`，输出 shape=`(2,793,463)`；训练 provenance 中 6 个 FSC E190 member 均 `test_subjects_read=0`、cycle=`190`、参数计数一致。本次配置/脚本/结果已完成定向提交，其他智能体修改未纳入本提交。
+- 下一步：论文可将 `TotalParameters`/`UniqueDeployedParameters` 与纯模型 `MedianLatency_ms`/`P95Latency_ms` 作为主效率字段；若需报告实际部署路径，再单列 `EndToEndMedianLatency_ms`，不得将其与纯模型 latency 混写。阻塞项：当前仓库不存在作者指定的 `paper write/` 正文目录，未擅自新建或修改论文正文。
+
+## 2026-09-07：FSC 七指标合并表字段单位校正完成
+
+- 时间/agent：2026-09-07T09:05:00+08:00，CODEX。复核发现合并表原先沿用 primary 的 `_dB` 列名会误导 ITD 单位，已将 `paper_observation_density_all_metrics.csv` 改为显式 `Unit`/`EvidenceTier` 和无单位后缀的 Q14/Q26/Q50 均值、SD列。
+- 动作：更新 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py` 的合并表生成逻辑并重写同一派生 CSV；原四指标 CSV、subject-level 和九个汇总单元未改。
+- 完整性：合并表7行、字段含 `Unit`，ITD 行单位=`us`、其余六行=`dB`；补充 subject-level 396行、aggregate 9行、全部 finite，`test_subject_count_read=0`。
+- 下一步：提交本次新增脚本、配置、结果和日志；保留既有 secondary recovery staging 修改不动。阻塞项：无。
+
+## 2026-09-07：FSC matched-density 三项补充指标评价完成
+
+- 时间/agent：2026-09-07T09:02:00+08:00，CODEX。FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 三个对角线的 validation-only 补充评价完成；Q26 复用既有正式冻结 ensemble，未重训或覆盖任何 Q26 产物。
+- 动作：在同一公共 Q50-excluded 743-direction evaluation mask 上计算 `ERBBandILDMean`（公共 mask∩水平面）、`ITDWeightedMAE_us`（公共 mask、方向面积权重）和 `LAP2024LSD_dB`（公共 mask、官方 20–20000 Hz 公式）；10,000 次 bootstrap，base seed=`20260907`。
+- 关键结果（mean ± sample SD）：ERBBandILDMean Q14=`1.581505±0.183525` dB、Q26=`1.492281±0.149900` dB、Q50=`1.397779±0.138264` dB；ITDWeightedMAE Q14=`20.765052±4.121988` us、Q26=`15.378645±2.334343` us、Q50=`15.558095±2.547471` us；LAP2024LSD Q14=`3.787314±0.303858` dB、Q26=`3.584290±0.273252` dB、Q50=`3.474476±0.257791` dB。
+- 证据：`results/sonicom_fsc_matched_density_supplemental_metrics_v1/supplemental_subject_level.csv`（396=44×3×3）、`supplemental_summary_mean_std.csv`（9 cells）、`paper_observation_density_secondary_table.csv`、`paper_observation_density_all_metrics.csv`；配置 `configs/experiments/sonicom_fsc_matched_density_supplemental_metrics_v1.json`，脚本 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py`。
+- 完整性：每个 endpoint×Q 单元均44名 validation subjects，全部 finite；公共方向=743，ERB-band 水平面公共方向=68；`summary.json`=`status: completed`、`test_subject_count_read=0`、`all_finite=true`。原四项 primary 表未覆盖，仅在独立目录提供三项补充和七指标合并表；evidence tier 保留为 Secondary/Deferred/LAP descriptive validation supplement。
+- 下一步：论文 Observation-density/Sparsity Experiment 可使用 `paper_observation_density_all_metrics.csv`；如需严格正文主指标叙述，继续将这三项标为补充证据，不改写原四项 Primary frozen engineering test 定义。阻塞项：无。
+
+## 2026-09-07：FSC 补充指标启动首尝试因脚本导入路径中止
+
+- 时间/agent：2026-09-07T08:58:00+08:00，CODEX。正式补充评价尚未读取任何 listener，进程在 import 阶段因直接脚本执行时 `scripts` 包路径缺失而退出。
+- 动作：已在 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py` 增加仓库根目录导入路径；未创建结果目录，未读取 test，未改动 checkpoint/result。
+- 完整性：失败发生在数据访问前，`test_subject_count_read=0`，训练/best/末点=N/A；配置和输出边界保持冻结。
+- 下一步：重启同一 validation-only 命令并核验 44×3×3 结果。阻塞项：无（导入路径已修复）。
+
+## 2026-09-07：FSC matched-density 三项补充指标正式评价启动
+
+- 时间/agent：2026-09-07T08:56:00+08:00，CODEX。单 listener/Q14 preflight 已通过，启动 validation-only 补充评价，范围为 FSC-Q14@Q14、FSC-Q26@Q26、FSC-Q50@Q50 三个对角线。
+- 动作：使用独立脚本 `scripts/evaluate_fsc_matched_density_supplemental_metrics.py` 与冻结配置 `configs/experiments/sonicom_fsc_matched_density_supplemental_metrics_v1.json`，复用 44 名 validation listeners、current-Q cache、各自已冻结 ensemble residual、公共 Q50-excluded 743-direction mask；新增 ERBBandILDMean、ITDWeightedMAE_us、LAP2024LSD_dB。输出写入 `results/sonicom_fsc_matched_density_supplemental_metrics_v1/`，不覆盖现有四指标目录或 Q26 checkpoint/result。
+- 完整性：preflight 已确认 Q14 cache observed count=14、463 selected frequency bins、HRIR `(793,2,256)`、公共方向=743、公共水平面方向=68，三项数值均 finite；正式运行仍仅读 validation，`test_subject_count_read=0`，训练/best/末点=N/A。
+- 下一步：完成 44×3 对角线计算、10,000 次 bootstrap、合并七指标论文表，并检查逐被试 cardinality/finite 与 Git 状态。阻塞项：无。
+
+## 2026-09-07：FSC matched-density Q14/Q26/Q50 对角线评价完成
+
+- 时间/agent：2026-09-07T02:10:00+08:00，CODEX。MATLAB 严格 evaluator 已在受限权限外成功完成 44 validation listeners × 3 densities，复用公共 Q50-excluded 743-direction mask、10,000 bootstrap、seed=20260828；Q26 直接复用正式冻结 ensemble。
+- 动作：Q14/Q50 使用新训练的 current-Q residual ensemble prediction，Q26 使用既有正式 Hybrid E190 validation prediction；提取 `HYBRID` 对角线 `FSC-Q14@Q14`、`FSC-Q26@Q26`、`FSC-Q50@Q50`，未做 cross-density 输入评价。
+- 关键结果（mean ± sample SD, dB）：FullSphereERB Q14=`0.908440±0.182610`、Q26=`0.800820±0.161386`、Q50=`0.751903±0.151368`；Contralateral25ERB=`1.338252±0.229431`、`1.212325±0.189457`、`1.217338±0.193232`；ContralateralHighFrequency=`3.661772±0.340375`、`3.492042±0.276136`、`3.409274±0.270743`；HorizontalILDMAE=`0.642731±0.182582`、`0.623230±0.177304`、`0.548873±0.144029`。
+- 证据：`results/sonicom_fsc_matched_density_direction_sensitivity_v1/metric_long.csv`（5280 rows, all finite）、`aggregate_metrics.csv`、`summary.json`；论文汇总 `results/sonicom_fsc_matched_density_v1/paper_observation_density_table.csv`、`summary_mean_std.csv`、`subject_level.csv`。
+- 完整性：44 subjects/cell、3 densities、4 primary metrics 全部完成；`test_subject_count_read=0`，未覆盖 Q26 checkpoint/result；MATLAB 首次沙箱启动失败已通过受限权限外运行解决。
+- 下一步：可直接将 `paper_observation_density_table.csv` 用于 Observation-density/Sparsity Experiment 表格或曲线。阻塞项：无。
+
+## 2026-09-07：FSC E190 与 Q14/Q50 ensemble validation 完成；严格指标 evaluator 暂时阻塞
+
+- 时间/agent：2026-09-07T01:10:00+08:00，CODEX。六个 Q14/Q50 spectral-CNN E190 均完成 cycle=190，生成 `last.pt` 和 completed report；六个 report 的 `test_subjects_read=0`，Q50 seed20260823 的 best_cycle=170 但按预注册固定末点使用 cycle-190 `last.pt`。
+- 动作：Q14/Q50 三 seed residual-dB 等权 ensemble validation inference 均完成，每套 44 subjects，预测全部 finite；输出 `artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_validation/` 与 `...q50.../`，manifest identity 已锁定。
+- 结果：尚未生成最终四项主指标表；调用 MATLAB 严格 evaluator 时 MATLAB 在启动阶段报 `System Error: File system inconsistency`，连最小 `disp('ping')` 也失败，因此未读取新 evaluation 数据、未写入半成品指标结果。
+- 完整性：E130/E190 训练与 validation inference 均不读取 test；Q26 继续复用正式冻结 validation ensemble；当前 evaluator 失败不改变任何 checkpoint/result。
+- 下一步：修复 MATLAB runtime 启动问题后，使用公共 743-direction mask 运行 Q14/Q26/Q50 对角线严格 evaluator，输出 subject-level、mean/std 和 observation-density 汇总。阻塞项：MATLAB runtime 当前不可启动。
+
+## 2026-09-07：FSC Q14/Q50 E190 ensemble validation 推理启动
+
+- 时间/agent：2026-09-07T00:40:00+08:00，CODEX。六个 Q14/Q50 E190 均已完成并通过固定 cycle=190、finite checkpoint、`test_subjects_read=0` 核验；生成 Q14/Q50 三 seed residual-dB 等权 manifest。
+- 动作：并行启动 validation-only ensemble inference，Q14 PID=`43712` 输出 `artifacts/reconstruction/sonicom_fsc_q14_e190_ensemble_validation/`，Q50 PID=`43380` 输出 `artifacts/reconstruction/sonicom_fsc_q50_e190_ensemble_validation/`；每套目标为 44 validation subjects。
+- 完整性：manifest identity 已生成并锁定；预测脚本已参数化 observation_count，Q14/Q50 分别读取 q14/q50 current-Q HDF5；test 路径不构造、不读取。
+- 下一步：核验两套 inference report 后，复用公共 743-direction evaluation mask 计算 FSC-Q14@Q14、现有 Q26@Q26、FSC-Q50@Q50 的 subject-level primary metrics、mean/std 与汇总表。阻塞项：无。
+
+## 2026-09-06：FSC matched-density 六个 CNN E190 并行启动
+
+- 时间/agent：2026-09-06T20:15:00+08:00，CODEX。Q14/Q50 六个 FiLM-SIREN E130 均已完成 cycle=130；Q14 seed20260822 使用 retry1 输出，实际 checkpoint SHA 已核对并写入 CNN 配置。
+- 动作：并行启动六个 frozen-FiLM spectral CNN E190：Q14 seeds 20260821/22/23、Q50 seeds 20260821/22/23，PID=`37636, 9748, 37264, 26996, 36688, 28704`；每个输出目录独立，Q26 结果不触碰。
+- 完整性：六个 E190 目录已创建，训练进程已进入初始化；均固定 190 epochs、冻结对应 E130 backbone、`test_subjects_read=0` 预注册。当前尚未有 E190 完成报告或 ensemble 结果。
+- 下一步：核验六个 E190 的 cycle=190、finite、test=0；生成三 seed residual-dB ensemble，使用公共 743-direction mask 做 Q14/Q26/Q50 对角线评价。阻塞项：无。
+
+## 2026-09-06：Q14 seed20260822 retry1 已重新启动
+
+- 时间/agent：2026-09-06T19:13:00+08:00，CODEX。发现首次 retry 启动因配置文件名误用而立即 `FileNotFoundError`，未创建训练产物；已使用原配置 `configs/experiments/sonicom_fsc_q14_film_seed20260822_e130.json`（其中 `run_name` 为 retry1）重新启动。
+- 动作：retry1 正式 E130 进程 PID=`36276`，输出目录 `artifacts/training/sonicom_fsc_q14_film_seed20260822_e130_retry1/`；后台 CNN orchestrator PID=`38200` 继续等待该目录完成。
+- 完整性：错误启动未读取数据、未读取 test；正式 retry 当前已生成 configuration，训练尚未达到 cycle=1，`test_subject_count_read=0` 预注册。其余五个 E130 仍为 completed cycle=130。
+- 下一步：等待 retry1 完成后由 orchestrator 核验 hash 并并行启动六个 E190。阻塞项：无。
+
+## 2026-09-06：Q14 seed20260822 E130 重跑并安排 E190 并行接续
+
+- 时间/agent：2026-09-06T17:05:00+08:00，CODEX。核验结果为 5/6 个 FiLM-SIREN E130 已完成 cycle=130；Q14 seed20260822 在 cycle=27 中断，仅保留 partial/best，无 `last.pt`/完成报告。
+- 动作：将该 seed 改用独立输出名 `sonicom_fsc_q14_film_seed20260822_e130_retry1`，按相同配置从头重跑，PID=`38104`，不覆盖 partial 目录。后台 orchestrator PID=`38200` 等待六个 E130 完成后核对 test=0 和 checkpoint SHA-256，自动写入 CNN 配置并并行启动六个 E190。
+- 完整性：已完成五个 E130 的 `training_report.json` 均标记 `completed`、`cycles=130`、`test_subjects_read=0`、authoritative `last.pt` 存在且 finite；retry run 尚未完成。Q26 冻结结果不变，CNN 尚未启动。
+- 下一步：等待 retry1 完成；orchestrator 将运行 `scripts/finalize_fsc_cnn_configs.py` 更新实际 FiLM hash，然后并行启动 Q14/Q50 各三 seed E190。阻塞项：无。
+
+## 2026-09-06：FSC matched-density 剩余四个 E130 改为并行启动
+
+- 时间/agent：2026-09-06T16:05:00+08:00，CODEX。按作者指示取消等待串行队列，保留正在运行的 Q14 seed20260822，并并行启动 Q14 seed20260823 与 Q50 seed20260821/22/23。
+- 动作：四个独立进程分别使用固定 E130 配置；PID 依次为 Q14-s23=`35160`、Q50-s21=`35048`、Q50-s22=`35320`、Q50-s23=`22056`，标准输出/错误写入各自 `artifacts/training/*.parallel.{out,err}.log`。已完成的 Q14-s21 不重复启动。
+- 完整性：启动时均为 train/validation-only、`test_subject_count_read=0` 预注册；Q14-s22 原实例仍在运行；为避免重复，原后台队列 PID=30160 已停止，不覆盖已完成 checkpoint。CNN E190 尚未启动。
+- 下一步：并行核验五个未完成 E130 的 cycle=130、finite 与 checkpoint hash；随后为每个 Q/seed 更新实际 FiLM hash 并并行启动 CNN E190。阻塞项：无。
+
+## 2026-09-06：FSC/Hybrid E190正文五项指标统一配对bootstrap完成
+
+- 时间/agent：2026-09-06T16:02:00+08:00，CODEX。仅从已完成冻结test结果做结果级派生，未训练、未推理、未读取原始SOFA/HDF5；输出写入新目录`results/sonicom_fsc_hybrid_e190_five_metric_paired_bootstrap_v1/`，未覆盖已有正式结果目录。
+- 来源：`results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv`提供`FullSphereERB`、`Contralateral25ERB`；`results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv`提供`ERBBandILDMean`（Secondary test）和`ITDWeightedMAE_us`（Deferred test）；最新已完成冻结LAP目录`results/lap2024_test_metrics_v1/`的`lap2024_test_per_subject_metrics.csv`提供`LAP2024LSD_dB`（locked-test descriptive evaluation）。
+- 统计：FSC/Hybrid E190（方法键`HYBRID`）分别与`MCA`、`FSPAE`、`RANF`计算subject-level`FSC−baseline`；复用`src/mcar/evaluation/secondary_metrics.py::paired_tail_statistics`，NumPy `default_rng`、linear quantile、`bootstrap_replicates=10000`、固定`bootstrap_seed=20260906`；全部指标按lower-is-better，负值表示FSC更好。
+- 关键结果（均值；95% CI）：`FullSphereERB`对MCA=`-0.26465416822608306` `[-0.3159808524724948,-0.17822185215900846]`、FSP-AE=`-0.36694880406417635` `[-0.39061342696717566,-0.34497569209205586]`、RANF=`-0.2456915369613723` `[-0.2982516569619094,-0.15596848468163518]`；`Contralateral25ERB`分别=`-0.545358634802452` `[-0.5956442218963495,-0.49276552343119384]`、`-0.7084757519581125` `[-0.9266929105686453,-0.5852670530219164]`、`-0.356926001060428` `[-0.40727034327755207,-0.3090159442310332]`；`ERBBandILDMean`分别=`-0.43561534177173267` `[-0.5422040807252579,-0.2576863498172977]`、`-0.07885605638677423` `[-0.1045981494540518,-0.052195231413299396]`、`-0.1154378733851693` `[-0.22756073759360748,0.07002394348382948]`；`ITDWeightedMAE_us`分别=`-0.35403325960613397` `[-0.5824987500534866,0.02831030142894098]`、`-0.3126363069465405` `[-1.172415842650602,0.49651199430628895]`、`-5.538339586512557` `[-11.533280783946807,-2.1705067958547715]`；`LAP2024LSD_dB`分别=`-1.1424124401567208` `[-1.2333165365547831,-1.0103132360007785]`、`0.5437363185566256` `[0.5119555579504526,0.5752462843794504]`、`0.39078961387225325` `[0.3140618443808509,0.5228570538535667]`。
+- 完整性：`15/15` pair×metric单元完成；每单元`subject_count=44`，三来源listener集合完全一致（同一44名test listeners），全部数值finite；输出`paired_bootstrap.csv`=`15`行、`paper_summary_table.csv`=`5`行、`listener_set.csv`=`44`行；`summary.json`记录`listener_set_match=true`、`all_finite=true`、`test_subject_count_read_during_derivation=0`、`training_or_inference_performed=false`。原evidence tier均保留，未改写为预注册Primary。
+- 证据与复现：`results/sonicom_fsc_hybrid_e190_five_metric_paired_bootstrap_v1/paired_bootstrap.csv`、`paper_summary_table.csv`、`README.md`、`summary.json`、`listener_set.csv`；复现命令为`D:\\miniconda3\\envs\\ml\\python.exe scripts/compute_fsc_hybrid_five_metric_paired_bootstrap.py`。统计脚本为`scripts/compute_fsc_hybrid_five_metric_paired_bootstrap.py`。Git保留并行训练/恢复任务已有未提交修改及本次新增脚本/结果目录，未执行提交。
+- 下一步：可直接将`paper_summary_table.csv`用于正文配对统计表；无需重新训练或推理。阻塞项：无。
+
+## 2026-09-06：正文五项指标配对统计来源与44名test listener集合冻结
+
+- 时间/agent：2026-09-06T15:58:00+08:00，CODEX。按作者更新后的正文指标定义冻结五项结果级统计边界；仅使用既有正式test CSV，不训练、不推理、不读取原始SOFA/HDF5。
+- 来源与endpoint：`results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv`中的`FullSphereERB`；`results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv`中的`ERBBandILDMean`（Secondary test）和`ITDWeightedMAE_us`（Deferred test）；`results/lap2024_test_metrics_v1/lap2024_test_per_subject_metrics.csv`中的`LAP2024LSD_dB`（LAP locked-test descriptive evaluation）。
+- 方法边界：中心方法`HYBRID`/FSC与`MCA`、`FSPAE`、`RANF`逐listener配对；输出差值统一为`FSC−baseline`，五项均按lower-is-better解释。原有evidence tier保留，不将Secondary、Deferred或LAP指标改写为预注册Primary。
+- 完整性：四个来源的listener键均为相同44名test subjects（`P0003`至`P0371`的冻结test集合）；四项方法×指标单元均44行且数值finite；正式bootstrap尚未运行，replicates/seed=N/A，`test_subject_count_read=0`（本步仅读既有结果）。
+- 下一步：运行独立结果级paired bootstrap，复用`src/mcar/evaluation/secondary_metrics.py::paired_tail_statistics`的NumPy PCG64/linear-quantile实现，10,000 replicates、固定seed，输出统一CSV、论文汇总表、README和完整性摘要。阻塞项：无。
+
+## 2026-09-06：FSC matched-density 六个 E130 队列已后台接管
+
+- 时间/agent：2026-09-06T15:52:00+08:00，CODEX。Q14 seed20260821 的 E130 正式 run 已在前台启动，后台队列 PID=30160 将等待该 run 完成后按固定顺序执行其余五个 Q14/Q50 seed。
+- 动作：队列脚本 `scripts/run_fsc_matched_density_film_e130_queue.ps1` 逐配置调用 Stage-C 训练，检测 `history.csv` 的 cycle=130 后跳过已完成成员，失败即停止；日志写入 `artifacts/training/fsc_matched_density_film_e130_queue.log`。
+- 完整性：当前已观测到 Q14 seed20260821 `history.csv` 至 cycle=2，loss finite；未读取 test。Q14/Q50 其他 E130 尚未完成，CNN E190 尚未启动；Q26 冻结结果不变。
+- 下一步：等待队列完成六个 E130 后核对每个 `last.pt`/SHA-256 和 `test_subject_count_read=0`，再更新六个 CNN 配置中的实际 FiLM checkpoint hash 并启动 E190。阻塞项：无。
+
+## 2026-09-06：FSC matched-density 正式 FiLM-SIREN E130 启动
+
+- 时间/agent：2026-09-06T15:50:00+08:00，CODEX。Q14/Q50 preflight 已通过，开始按冻结协议启动 matched-density FiLM-SIREN E130（Q14、Q50；每个 Q 三个 seed：20260821/22/23）。
+- 动作：使用 `configs/experiments/sonicom_fsc_q{14,50}_film_seed{20260821,20260822,20260823}_e130.json`，每个配置固定 130 cycles、262 steps/cycle、原正式 optimizer/loss/网络；Q26 checkpoint/result 不触碰。
+- 证据：输出目录为 `artifacts/training/sonicom_fsc_q14_film_seed*_e130/`、`artifacts/training/sonicom_fsc_q50_film_seed*_e130/`；启动命令为 `D:\miniconda3\envs\ml\python.exe -m mcar.training.train_film_siren_stage_c <config>`。当前 Git 基线 commit=`2de5216e6ab1362f548ada11971e6f6a06999535`。
+- 完整性：训练启动时 `test_subject_count_read=0` 预注册；正式 run 完成前不报告 best/末点或指标。工作树保留既有 secondary-metric staging 修改，故 FSC 配置显式记录 `require_clean_git=false`，不影响 Q26 正式行为。
+- 下一步：依次完成 Q14/Q50 六个 E130；逐个核验 `last.pt`、training report finite 和 test=0，记录实际 SHA-256 后再生成/冻结对应 CNN E190 配置。阻塞项：无。
+
+## 2026-09-06：FSC matched-density Q14/Q50 数据与最小 preflight 通过
+
+- 时间/agent：2026-09-06T15:45:00+08:00，CODEX。核验 Q14/Q50 current-Q residual 数据集均已完成：各 306 个 train+validation subject（262 train、44 val），未读取 test。
+- 动作：检查 `data/processed/sonicom_fsc_q14_residual_v1/` 与 `data/processed/sonicom_fsc_q50_residual_v1/` 的 HDF5 观测索引和有限性；按各自 14/50 个 current-Q 观测方向重新计算 train-only magnitude normalization；运行两套 Stage-C 单 subject CUDA forward/backward smoke。
+- 结果：Q14/Q50 observed direction count 分别为 14/50；reference、MCA、residual、direction/frequency 输入均 finite；normalization training_subject_count=262；两套 smoke 均 `status=passed`、loss finite、`validation_subjects_read=0`、`test_subjects_read=0`。
+- 证据：`data/processed/sonicom_fsc_q14_residual_v1/training_statistics.json`、`data/processed/sonicom_fsc_q50_residual_v1/training_statistics.json`、`configs/data/sonicom_fsc_q14_magnitude_normalization_v1.json`、`configs/data/sonicom_fsc_q50_magnitude_normalization_v1.json`；命令 `python scripts/smoke_film_siren_stage_c.py configs/experiments/sonicom_fsc_q{14,50}_film_seed20260821_e130.json`。
+- 完整性：Q14/Q50 residual export、statistics、normalization 与 preflight 完成；正式 E130/E190 尚未启动；Q26 冻结结果未修改；Git 当前仍有本任务代码/config 与既有 staging 修改，尚未满足正式训练的 clean-worktree 要求。
+- 下一步：修正并冻结 Q14/Q50 配置与参数化代码，提交 clean commit 后启动 Q14/Q50 各三 seed FiLM-SIREN E130；E130 完成并核对 checkpoint hash 后再冻结 CNN E190 配置并训练。阻塞项：无。
+
+## 2026-09-06：论文五项主要指标统一配对统计因主结果仅含四项而阻塞
+
+- 时间/agent：2026-09-06T15:36:26+08:00，CODEX。按用户要求核对当前论文主结果表、Hybrid E190中心模型及主要基线的逐被试来源；未训练、未推理、未读取新test、未创建结果目录。
+- 动作：以`results/sonicom_complete_ten_method_test_v1/paper_complete_test_wide.csv`为当前可核验论文主结果表，以`results/sonicom_film_siren_spectral_cnn_final_e190_frozen_test_ten_method/metric_long.csv`为Hybrid E190/十方法逐被试长表，并核对`summary.json`。
+- 结果：该主结果表的`EvidenceTier=Primary frozen engineering test`只有4项：`FullSphereERB`、`Contralateral25ERB`、`ContralateralHighFrequency`、`HorizontalILDMAE`；对应逐被试长表为`44×10×4=1760`行、四项各`440`行，全部finite。要求的第五项无法从当前主结果表定义得到。
+- 统计边界：`ERBBandILDMean`虽在`results/sonicom_complete_ten_method_test_v1/per_subject_metrics.csv`中有`44×10`条逐被试记录，但该文件明确将其标为`Secondary test`，不能在“不重新定义指标”条件下擅自并入主结果；因此未计算FSC−MCA/FSP-AE/RANF配对bootstrap，也未生成CSV/汇总表/README。
+- 完整性：当前上游主结果仍为44名test listeners、10 methods、4 primary metrics且全部finite；`test_subject_count_read=0`（本次仅读既有CSV/JSON）；bootstrap replicates/seed=N/A（统计未启动）；训练/best/末点=N/A。Git保留本次开始前及并行任务已有修改，未覆盖正式结果目录。
+- 下一步：需作者确认第五项主指标及其已冻结逐被试来源；确认后在独立结果目录按同一listener集合执行10,000次固定seed paired bootstrap。阻塞项：当前可核验论文主结果表与Hybrid E190主结果来源缺少第五项。
+
+## 2026-09-06：FSC matched-density Q14 residual export完成，Q50启动
+
+- 时间/agent：2026-09-06T15:05:00+08:00，CODEX。核验Q14 current-Q导出已成功完成，
+  `data/processed/sonicom_fsc_q14_residual_v1/`含306/306 train+validation subjects及
+  `export_status.csv`/`run_configuration.mat`，每个文件为Q14观测方向；全部finite检查待统计脚本。
+- 动作：使用同一`export_sonicom_residual_dataset(...,directionCount=50)`启动Q50 current-Q
+  MCA和`GroundTruth-MCA_Q`导出，train+val=306 subjects、4 workers；不读取test，不改Q26。
+- 证据：`matlab/+mcar/export_sonicom_residual_dataset.m`；输出目标
+  `data/processed/sonicom_fsc_q50_residual_v1/`；Q14来源目录作为已完成对照保留。
+- 完整性：Q14 export `test_subject_count_read=0`；Q50正式导出运行中，训练/best/末点=N/A，
+  normalization/preflight/模型训练尚未开始。
+- 下一步：等待Q50完成并核验306个Q50 HDF5、observed count=50；生成两套train-only statistics，
+  提交参数化代码后执行最小forward/backward preflight，再启动Q14/Q50各3 seed E130/E190。
+- 阻塞项：无；不做cross-density输入实验，不覆盖已有Q26 checkpoint/result。
+
+## 2026-09-06：FSC matched-density Q14 current-Q residual export started
+
+- 时间/agent：2026-09-06T14:30:00+08:00，CODEX。已冻结参数化入口和Q14/Q50配置生成器，
+  并启动MATLAB current-Q MCA/residual export：Q14、train+val共306 subjects、4 workers，
+  PID由MATLAB launcher管理，输出`data/processed/sonicom_fsc_q14_residual_v1/`。
+- 动作：使用nested Q14 grid和原正式SUpDEq order-3/MCA定义计算
+  `Residual_Q = GroundTruth - MCA_Q`，严格排除44名test；Q26不触碰。后续将对Q50执行相同命令。
+- 证据：`matlab/+mcar/export_sonicom_residual_dataset.m`（新增directionCount参数）；
+  `configs/experiments/sonicom_fsc_q14_preparation_train_v1.json`等Q配置；
+  `scripts/generate_fsc_matched_density_configs.py`。
+- 完整性：导出运行中，尚未声称成功；`test_subject_count_read=0`，训练/best/末点=N/A；
+  完成后需核验306个Q14 HDF5、finite、observed count=14，再生成train-only normalization。
+- 下一步：等待Q14 export完成并核验，执行Q50 export；随后生成数据统计、最小 forward/backward
+  preflight，最后才启动Q14/Q50三seed正式E130/E190训练。
+- 阻塞项：无；不进行cross-density输入实验，不覆盖Q26结果。
+
+## 2026-09-06：LAP 2024 Task 2三指标locked test评价完成
+
+- 时间/agent：2026-09-06T14:12:52+08:00，CODEX。兼容性通过后运行`scripts/evaluate_lap2024_metrics.py`，配置为`split=test`、`allow_test=true`，读取十方法冻结prediction与measured SONICOM SOFA。
+- 动作：44/44 test subjects、10/10 methods、每subject全部793 matched directions（26 Q26+767 interpolation）完成；Q26纳入，未使用interpolation mask，未排除Q26，未使用solid-angle weighting；复用当前MCAR/Hybrid/Bounded strict reconstruction，未训练、调参或修改checkpoint。
+- 结果：LAP2024LSD均值/排名（dB）：FSP-AE`3.0691787853`(1)、RANF`3.2221254900`(2)、HYBRID`3.6129151039`(3)、BOUNDED`3.6373847261`(4)、MCARv351`3.6442025408`(5)、MCA`4.7553275440`(6)、SUpDEqBary`5.4608023958`(7)、SUpDEqNN`5.5890947954`(8)、SUpDEqSH`6.3776273999`(9)、SHOnly`7.9176623798`(10)。LAP2024ILDMAE均值/排名（dB）：MCARv351`0.6647408239`(1)、BOUNDED`0.6772102443`(2)、FSP-AE`0.7051547745`(3)、RANF`0.7160032649`(4)、HYBRID`0.7610472156`(5)、MCA`0.8996645551`(6)、SUpDEqBary`1.3142603433`(7)、SUpDEqNN`1.3223231597`(8)、SUpDEqSH`1.9112023034`(9)、SHOnly`4.0523424745`(10)。LAP2024ITDMAE均值/排名（us）：SUpDEqNN`17.4838172496`(1)、RANF`17.5994965222`(2)、SUpDEqBary`17.8484019233`(3)、FSP-AE`24.0775357871`(4)、SUpDEqSH`26.7459576593`(5)、MCA`26.9116779655`(6)、MCARv351`28.2972297024`(7)、BOUNDED`28.9477631398`(8)、HYBRID`29.5865986732`(9)、SHOnly`112.5663303649`(10)。
+- 完整性：输出逐subject`440`行、aggregate`30`行，10×3单元各44 subjects；全部finite，独立复核aggregate与逐subject均值最大误差`0`；`test_subject_count_read=44`。阈值仅描述：LSD<7.4 dB、ILD<4.4 dB、ITD<100 us；均值层面SHOnly未通过LSD/ITD，其余方法三项均低于阈值。
+- 证据：`results/lap2024_test_metrics_v1/lap2024_test_per_subject_metrics.csv`、`lap2024_test_aggregate_metrics.csv`、`lap2024_test_summary.json`、`lap2024_sam_compatibility.json`；新增冻结配置`configs/experiments/lap2024_test_metrics_v1.json`。现有`FullSphereLSD`、`HorizontalILDMAE`、`ERBBandILDMean`、`ITDWeightedMAE_us`未修改。
+- 下一步：可直接引用LAP2024三项独立结果；与旧指标相比，LAP LSD改为20–20000 Hz、全793方向/两耳普通平均，ILD改为全带宽HRIR RMS ILD，ITD改为SAM 0.0.8的3 kHz/10阶/Hilbert MAXIACCe、原采样率、官方lag offset。
+- 阻塞项：无；官方SAM 0.0.8的`itd_samps/fs` list类型错误已在summary中明确记录，仅作`np.asarray`类型兼容，不改变算法或indexing。Git保留既有validation恢复相关未提交修改，未覆盖或纳入本次结果。
+
+## 2026-09-06：LAP 2024 Task 2 / SAM 0.0.8兼容性验证通过，test运行待启动
+
+- 时间/agent：2026-09-06T14:10:18+08:00，CODEX。新增冻结配置`configs/experiments/lap2024_test_metrics_v1.json`和评价脚本`scripts/evaluate_lap2024_metrics.py`，目标为locked test、44 subjects、十方法、全793 matched directions。
+- 动作：使用官方PyPI `spatialaudiometrics==0.0.8` wheel（SHA256=`1BEF9BBCE1CCEFA0520C416DB3D6E3A665F50E64E9996CA2C916688400149B7B`）在synthetic fixture `[5,2,64]`上核对`calculate_lsd_across_locations`、`calculate_ild_difference`和`itd_estimator_maxiacce`核心行为；LAP test尚未读取。
+- 结果：LSD/ILD绝对误差均`0`；ITD samples、MAXIACCe、seconds和ITD MAE绝对误差均`0`。兼容性状态为`passed_with_official_v0.0.8_type_shim`：官方0.0.8最后执行Python list除法`itd_samps/fs`会抛`TypeError`，仅以`np.asarray`完成类型转换，未改动低通、Hilbert、correlate或`idx_lag - hrir_length`。
+- 完整性：test `test_subject_count_read=0`；未训练、未调参、未加载test checkpoint推理；现有FullSphereLSD、HorizontalILDMAE、ERBBandILDMean、ITDWeightedMAE_us未改。训练/best/末点=N/A。
+- 下一步：兼容性通过后运行一次性LAP test评价，输出独立`results/lap2024_test_metrics_v1/`并核验44×10×793和finite。
+- 阻塞项：无；`.tmp/lap_sam_0_0_8/`为本地官方wheel核对暂存，不作为结果证据目录。
 
 ## 2026-09-06：Q14/Q26/Q50次要指标首次运行在缓存表示转换处中止
 

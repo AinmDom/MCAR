@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-07",
+  "experiment_id": "SONICOM-FSC-EFFICIENCY-V1",
+  "purpose": "Validation-only parameter and latency benchmark for the deployed FSC models.",
+  "model_manifests": [
+    {
+      "label": "FSC-Q14@Q14",
+      "manifest": "configs/experiments/sonicom_fsc_q14_e190_ensemble_manifest.json",
+      "identity_sha256": "A778A9AE6D81499E7CB9A2935AD7BC52FD475483D0031C648FF51E5C262D4EBD"
+    },
+    {
+      "label": "FSC-Q26@Q26",
+      "manifest": "configs/experiments/sonicom_film_siren_spectral_cnn_final_e190_ensemble_manifest.json",
+      "identity_sha256": "A3CFAC9C206E0A53FD2FA130817673AAFE07B66855322B5D34824E9173BDCCFE"
+    },
+    {
+      "label": "FSC-Q50@Q50",
+      "manifest": "configs/experiments/sonicom_fsc_q50_e190_ensemble_manifest.json",
+      "identity_sha256": "988CC0082F0E78497C4AB86D9283D5B5FC4F3F332E6B33DA099BF64BB41728B2"
+    }
+  ],
+  "benchmark": {
+    "split": "val",
+    "subject_label": "P0001",
+    "directions": 793,
+    "frequency_bins": 463,
+    "directions_per_block": 64,
+    "warmup_runs": 5,
+    "timed_runs": 30,
+    "end_to_end_runs": 5,
+    "cpu_threads": 1,
+    "precision": "FP32",
+    "exclude_checkpoint_loading": true,
+    "exclude_disk_io_from_model_latency": true,
+    "include_input_loading_and_output_serialization_in_end_to_end": true
+  },
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "driver_version": "595.79",
+    "cuda_runtime": "12.8"
+  },
+  "software": {
+    "python": "3.9.23",
+    "torch": "2.8.0+cu128"
+  },
+  "output_root": "results/sonicom_fsc_efficiency_v1"
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "experiment_id": "SONICOM-FSC-MATCHED-DENSITY-SUPPLEMENTAL-METRICS-V1",
+  "split": "val",
+  "subject_count": 44,
+  "direction_counts": [14, 26, 50],
+  "fixed_evaluation_direction_count": 743,
+  "test_access_allowed": false,
+  "sparse_grid_file": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+  "output_root": "results/sonicom_fsc_matched_density_supplemental_metrics_v1",
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20260907,
+  "evidence_tiers": {
+    "ERBBandILDMean": "Secondary validation supplement",
+    "ITDWeightedMAE_us": "Deferred validation supplement",
+    "LAP2024LSD_dB": "LAP2024 descriptive validation supplement"
+  }
+}

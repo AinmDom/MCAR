@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-08",
+  "experiment_id": "SONICOM-FSC-SINGLE-MEMBER-MATCHED-DENSITY-ALL-METRICS-TEST-V1",
+  "split": "test",
+  "subject_count": 44,
+  "direction_counts": [14, 26, 50],
+  "test_access_allowed": true,
+  "authorization": "Author authorized the single-member formal-result replacement on 2026-09-08; fixed checkpoints are listed in sonicom_fsc_single_seed20260822_v1.json.",
+  "common_evaluation_mask": "Q50 source directions excluded from the 793-direction grid; 743 directions retained for every diagonal.",
+  "prediction_roots": {
+    "14": "sonicom_fsc_q14_e190_single_seed20260822_test",
+    "26": "sonicom_fsc_q26_e190_single_seed20260822_test",
+    "50": "sonicom_fsc_q50_e190_single_seed20260822_test"
+  },
+  "output_root": "results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1",
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20260908,
+  "torchaudio_site_packages": "D:/miniconda3/envs/asd/Lib/site-packages",
+  "evidence_tiers": {
+    "FullSphereERB": "Primary frozen engineering test",
+    "Contralateral25ERB": "Primary frozen engineering test",
+    "ContralateralHighFrequency": "Primary frozen engineering test",
+    "HorizontalILDMAE": "Primary frozen engineering test",
+    "ERBBandILDMean": "Secondary locked-test supplement",
+    "ITDWeightedMAE_us": "Deferred locked-test supplement",
+    "LAP2024LSD_dB": "LAP2024 descriptive locked-test evaluation"
+  }
+}

@@ -1,5 +1,32 @@
 # 项目实验日志
 
+## 2026-09-10：正式结果证据补充提交完成
+
+- 时间/agent：2026-09-10T15:27:40+08:00，Codex。已将上一条核验的五个正式结果目录、目录级写作区忽略规则和实验日志定向补入上一提交，保留 commit message `add formal FSC spectral CNN ablation`；原提交 `3247202ba289e1db18e256e22e69474de0ca3a64` 已被 amend 后的新 HEAD 取代。
+- 完整性：最终提交包含 matched-density 7 指标的 44×3 被试级证据及单成员 Q26 validation/test、十方法合并、secondary/deferred 正式结果；不包含论文正文、checkpoint、prediction HDF5、缓存或日志。可见工作区 clean，`CSMT_2026_updated_0907_r2_tex/` 与 `CSMT_2026_visualized_tex/` 均按作者要求保持 ignored。训练/评价/test 访问=N/A（本步仅归档既有结果）；下一步=N/A；阻塞项：无。
+
+## 2026-09-10：正式单成员与 matched-density 结果证据补充归档
+
+- 时间/agent：2026-09-10T15:25:12+08:00，Codex。复核上一提交后工作区剩余内容：除作者新增的写作目录忽略规则外，仅有五个未跟踪正式结果目录；其中 `results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/` 是 Q14/Q26/Q50 单成员 matched-density 稀疏度实验核心证据，其余四个是同一正式单成员替换流程的 Q26 validation/test 主指标、十方法合并和 secondary/deferred 证据，并非缓存或失败产物。
+- 完整性：五个 `summary.json` 均为 `completed`、44 subjects；matched-density 与 secondary/deferred 汇总显式 `all_finite=true`，Q26 raw/validation 的逐被试与汇总产物完整。test 访问口径保持既有正式记录：validation=`test_subjects_read=0`，正式 test/matched-density=`44`；训练/best/末点=N/A，本步不训练、不推理、不评价、不改数值。
+- 动作/证据：将五个完整结果目录（约 2.3 MB，CSV/JSON/README及两张小型诊断图）作为正文数值的可追溯证据补入上一提交；不加入 checkpoint、prediction HDF5、训练日志或临时文件。将 `.gitignore` 中逐文件写作目录规则整理为 `/CSMT_2026_updated_0907_r2_tex/` 与 `/CSMT_2026_visualized_tex/` 两条目录级规则，确保后续新增稿件文件继续被忽略。
+- Git/下一步/阻塞：待定向暂存上述五个结果目录、`.gitignore` 与本日志，并以 `--amend --no-edit` 补入 commit `3247202ba289e1db18e256e22e69474de0ca3a64`；不改变提交消息。下一步核验 staged scope 后 amend。阻塞项：无。
+
+## 2026-09-09：FSC spectral-CNN 正式 Q26 消融完成
+
+- 时间/agent：2026-09-09T23:21:25+08:00，Codex。正式 validation-only 消融完成；未重训，复用三个已冻结 E130/E190 `last.pt` 配对，仅补生成四组缺失 validation prediction，已有 seed20260821 E130 与 seed20260822 E190 prediction 原样复用。普通沙箱 MATLAB 在数据访问前报既知 `System Error: File system inconsistency`，相同冻结命令在受限环境外成功完成。
+- 结果/统计：`results/sonicom_fsc_cnn_ablation_q26_v1/subject_level.csv` 为严格 `3×44×2×8=2112` 个唯一 seed×subject×variant×metric 行；`seed_summary_mean_std.csv` 为 48 个 mean±sample SD 单元；`paired_bootstrap.csv` 为 24 个逐 seed 单元，均复用 `paired_tail_statistics`、10,000 replicates、seed=`20260909`，差值为 `FSC E190−FiLM-SIREN E130`，未把三个 seed 合并成 132 样本。
+- 配对 Δ（seed 20260821/22/23）：FullSphereERB=`-0.024984805/-0.024390084/-0.021047895` dB；Contralateral25ERB=`-0.016697819/-0.020821722/-0.014226206` dB；ERBBandILDMean=`-0.075753247/-0.079098829/-0.073266758` dB；ITDWeightedMAE=`-0.027140168/-0.010120893/-0.028406326` us；FullSphereLSD=`-0.251712167/-0.242938643/-0.257557084` dB；HF first difference=`-0.080218719/-0.078107635/-0.075669663` dB/bin；HF second difference=`-0.072181311/-0.068899840/-0.064942386` dB/bin²；multi-scale notch depth=`-0.074612028/-0.072762550/-0.071319089` dB。全部 24 个 95% CI 上界均小于 0；三个局部频谱指标在全部 seeds 一致改善。
+- 完整性/证据：44 validation subjects、三个 seeds、六个 checkpoint/prediction roots 全部存在且 finite；主指标 528 行与既有 seed20260821 E130 frozen-parent 及 seed20260822 E190 single-member 正式结果的最大绝对复现误差均为 `0`。`summary.json` 记录 `all_finite=true`、`strict_pairing=true`、`test_subjects_read=0`、`training_performed=false`、`historical_results_overwritten=false`。训练 best 判据=N/A；正式预算判据为预冻结 cycle-130/cycle-190 `last.pt`，无 checkpoint/epoch/seed/hyperparameter 重选。
+- Git/下一步/阻塞：运行基线为分支 `codex/project-structure-refactor`、HEAD `99f8052078d1713a028f857b338fc5a092c8eb5c`；将仅提交本实验 manifest、评价入口、结果与本日志，保留陌生 `.gitignore` 修改及 `CSMT_2026_visualized_tex/` 未跟踪目录不动。下一步：提交 `add formal FSC spectral CNN ablation`。阻塞项：无。
+
+## 2026-09-09：FSC spectral-CNN 正式消融协议与 manifest 冻结
+
+- 时间/agent：2026-09-09T23:05:37+08:00，Codex。冻结 Q26 validation-only CNN refinement 增量消融：仅比较同 seed 的 FiLM-SIREN E130 `last.pt` 与 FSC E190 `last.pt`，seed=`20260821/20260822/20260823`，不做其他模块或 loss 消融，不按本次结果重选 epoch、seed 或超参数。
+- checkpoint/配对：E130 SHA256 分别为 `E37676D843D608B4DDD7B311EBA8B28A933183A03E7BAA49E1CF20E35F8B4129`、`5463CFE9FA618F5CEA0ADF7415E7CEAC978D071C24FB2038772A968519808A1D`、`DD3C55F6E7FC32A5AC089272978BEF771009BF140768E19A33EDD74E1C704070`；对应 E190 SHA256 为 `0596FD3BC3B03C5C269254CBE5CC96198DD94369901CFBC514293CD3F8F4A6DC`、`C89CCF90BA48382756C15B15FC3A789E7D4710AE44DC82A0E530A97F30FEC789`、`465B24AD7189AE43242D39F47FD8CF036E3EACAD4D0A460058A9CDC817B34BDE`。三个 E190 training report 的 parent 路径/SHA 均与同 seed E130 精确一致，六个 report 均 completed、固定末点、`test_subjects_read=0`。
+- manifest/实现：`configs/experiments/sonicom_fsc_cnn_ablation_q26_v1.json`冻结 44 名 val split、正式 Q26 grid、8 项指标实现、`paired_tail_statistics` 10,000 replicates/seed=`20260909`、差值 `E190−E130`、禁止合并 seeds 与 test 禁止访问。主 ERB 评价入口为 `matlab/+mcar/evaluate_fsc_cnn_ablation_primary.m`，后三项复用 `src/mcar/evaluation/secondary_metrics.py::spectral_shape_metrics`，ITD 复用既有 estimator。
+- 完整性/下一步：正式结果目录固定为 `results/sonicom_fsc_cnn_ablation_q26_v1/`，当前尚未运行评价、`test_subjects_read=0`；复用已有 seed20260821 E130 与 seed20260822 E190 prediction，其余四组写入新的 ablation-specific prediction 目录，不覆盖历史结果。下一步生成四组缺失 validation prediction，运行主/补充评价并核验 2112 行、finite、严格配对。阻塞项：无。
+
 ## 2026-09-08：FSC 单成员完整测试与论文核心表替换完成
 
 - 时间/agent：2026-09-08T20:12:00+08:00，CODEX。单成员Q26 complete secondary/deferred test完成，`results/sonicom_fsc_single_seed20260822_secondary_deferred_test_v1/summary.json`为completed、44名test subjects、10方法、all finite；matched-density七指标结果`results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/summary.json`为completed、21汇总行、all finite。

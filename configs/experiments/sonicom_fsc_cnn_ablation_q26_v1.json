@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_at": "2026-09-09T23:05:37+08:00",
+  "experiment_id": "SONICOM-FSC-CNN-ABLATION-Q26-V1",
+  "purpose": "Formal incremental ablation of the spectral CNN refinement stage only: same-seed FiLM-SIREN E130 last.pt versus FSC E190 last.pt",
+  "output_root": "results/sonicom_fsc_cnn_ablation_q26_v1",
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "reference_sofa_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "val",
+    "subject_count": 44,
+    "q26_csv": "configs/data/sonicom_sparse_grid_q26_v1.csv",
+    "q26_direction_count": 26,
+    "reference_direction_count": 793,
+    "interpolation_direction_count": 767,
+    "frequency_bin_count": 463,
+    "test_access_allowed": false,
+    "required_test_subjects_read": 0
+  },
+  "checkpoint_policy": "Use every pre-frozen same-seed cycle-130/cycle-190 last.pt pair without epoch, seed, or hyperparameter reselection",
+  "checkpoint_pairs": [
+    {
+      "seed": 20260821,
+      "e130": {
+        "path": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130/last.pt",
+        "sha256": "E37676D843D608B4DDD7B311EBA8B28A933183A03E7BAA49E1CF20E35F8B4129",
+        "training_report": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130/training_report.json"
+      },
+      "e190": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260821_e190/last.pt",
+        "sha256": "0596FD3BC3B03C5C269254CBE5CC96198DD94369901CFBC514293CD3F8F4A6DC",
+        "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260821_e190/training_report.json"
+      }
+    },
+    {
+      "seed": 20260822,
+      "e130": {
+        "path": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260822_e130/last.pt",
+        "sha256": "5463CFE9FA618F5CEA0ADF7415E7CEAC978D071C24FB2038772A968519808A1D",
+        "training_report": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260822_e130/training_report.json"
+      },
+      "e190": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260822_e190/last.pt",
+        "sha256": "C89CCF90BA48382756C15B15FC3A789E7D4710AE44DC82A0E530A97F30FEC789",
+        "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260822_e190/training_report.json"
+      }
+    },
+    {
+      "seed": 20260823,
+      "e130": {
+        "path": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260823_e130/last.pt",
+        "sha256": "DD3C55F6E7FC32A5AC089272978BEF771009BF140768E19A33EDD74E1C704070",
+        "training_report": "artifacts/training/sonicom_film_siren_gl_final_d1d2_notch_seed20260823_e130/training_report.json"
+      },
+      "e190": {
+        "path": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260823_e190/last.pt",
+        "sha256": "465B24AD7189AE43242D39F47FD8CF036E3EACAD4D0A460058A9CDC817B34BDE",
+        "training_report": "artifacts/training/sonicom_film_siren_spectral_cnn_final_seed20260823_e190/training_report.json"
+      }
+    }
+  ],
+  "predictions": [
+    {"seed": 20260821, "variant": "FiLM-SIREN E130", "root": "artifacts/reconstruction/sonicom_film_siren_gl_final_d1d2_notch_seed20260821_e130_validation", "reuse": true},
+    {"seed": 20260821, "variant": "FSC E190", "root": "artifacts/reconstruction/sonicom_fsc_cnn_ablation_q26_seed20260821_e190_validation_v1", "reuse": false},
+    {"seed": 20260822, "variant": "FiLM-SIREN E130", "root": "artifacts/reconstruction/sonicom_fsc_cnn_ablation_q26_seed20260822_e130_validation_v1", "reuse": false},
+    {"seed": 20260822, "variant": "FSC E190", "root": "artifacts/reconstruction/sonicom_fsc_q26_e190_single_seed20260822_validation", "reuse": true},
+    {"seed": 20260823, "variant": "FiLM-SIREN E130", "root": "artifacts/reconstruction/sonicom_fsc_cnn_ablation_q26_seed20260823_e130_validation_v1", "reuse": false},
+    {"seed": 20260823, "variant": "FSC E190", "root": "artifacts/reconstruction/sonicom_fsc_cnn_ablation_q26_seed20260823_e190_validation_v1", "reuse": false}
+  ],
+  "metrics": [
+    {"id": "FullSphereERB", "unit": "dB", "implementation": "MATLAB AKerbError with frozen Stage-D strict HRIR reconstruction"},
+    {"id": "Contralateral25ERB", "unit": "dB", "implementation": "MATLAB AKerbError with frozen great-circle 25-degree masks"},
+    {"id": "ERBBandILDMean", "unit": "dB", "implementation": "mcar.evaluation.secondary_metrics.spectral_band_ild_profile"},
+    {"id": "ITDWeightedMAE", "unit": "us", "implementation": "mcar.fsp_ae_signal.estimate_itd_seconds with frozen strict HRIR reconstruction"},
+    {"id": "FullSphereLSD", "unit": "dB", "implementation": "mcar.evaluation.secondary_metrics.full_sphere_lsd"},
+    {"id": "HFFirstDifferenceMAE", "unit": "dB/bin", "implementation": "mcar.evaluation.secondary_metrics.spectral_shape_metrics"},
+    {"id": "HFSecondDifferenceMAE", "unit": "dB/bin^2", "implementation": "mcar.evaluation.secondary_metrics.spectral_shape_metrics"},
+    {"id": "MultiScaleNotchDepthMAE", "unit": "dB", "implementation": "mcar.evaluation.secondary_metrics.spectral_shape_metrics"}
+  ],
+  "bootstrap": {
+    "implementation": "mcar.evaluation.secondary_metrics.paired_tail_statistics",
+    "replicates": 10000,
+    "confidence_level": 0.95,
+    "seed": 20260909,
+    "tie_tolerance": 1e-12,
+    "difference": "FSC E190 - FiLM-SIREN E130",
+    "pool_seeds": false
+  },
+  "itd": {
+    "sampling_rate_hz": 44100.0,
+    "upsampled_rate_hz": 384000.0,
+    "lowpass_hz": 1600.0,
+    "maximum_itd_seconds": 0.001,
+    "direction_batch_size": 64
+  },
+  "runtime": {
+    "python_executable": "D:/miniconda3/envs/ml/python.exe",
+    "torchaudio_site_packages": "D:/miniconda3/envs/asd/Lib/site-packages",
+    "torchaudio_version": "2.8.0+cu128"
+  },
+  "resources": [
+    {"path": "matlab/+mcar/evaluate_fsc_cnn_ablation_primary.m", "sha256": "9D5ECC2E0DC7E76A8E310EC00AEAE4E491E51D9B4888FF5B82B1AD2DD88828BC"},
+    {"path": "scripts/evaluate_fsc_cnn_ablation_q26.py", "sha256": "BB078E440D2D9DE24644CF24870163C8659FFDB0ECD3D6265CD57CC927BD5213"},
+    {"path": "src/mcar/evaluation/secondary_metrics.py", "sha256": "C1DA0A232E0D29790D31168FB9A87AB4D2A46001F16EB3695BEA1CB90EDA63C9"},
+    {"path": "src/mcar/evaluation/deferred_secondary_metrics.py", "sha256": "295F7CBD7D48BE6C41DDD8AA2AAD0338B3F370BBF0FF5544FFA75AE37F83AD51"},
+    {"path": "src/mcar/fsp_ae_signal.py", "sha256": "35A1125995EB2500AC468606CA52CE3B7F5AF0D4C4A944F0A197D1342F71585C"},
+    {"path": "configs/data/sonicom_subject_split_v1.csv", "sha256": "B7CD5D23123A633C7BBC15FD8C56FC348B14D6F6E133AA850D61044E0E324132"},
+    {"path": "configs/data/sonicom_sparse_grid_q26_v1.csv", "sha256": "5EC544EE0B921906594849C7B8A428EAACC60EF03A0EBEDE63E9FA81D48F4287"},
+    {"path": "configs/data/siren_b_q26_normalization_v1.json", "sha256": "E247EFF81CC6FD4E62C123149FFD42F0DA7A429DF4485A48C1A98943D88C3EB8"},
+    {"path": "data/processed/sonicom_residual_q26_v1/training_statistics.json", "sha256": "8DB1B5537B837D94E2B76B5AA09E9034DA251E917221BC3EB38D61117C549A3A"}
+  ],
+  "test_policy": "Validation-only. Test paths must never be resolved, constructed, or opened; final test_subjects_read must equal 0.",
+  "overwrite_policy": "All missing predictions and results use new ablation-specific paths; existing formal artifacts are read-only."
+}

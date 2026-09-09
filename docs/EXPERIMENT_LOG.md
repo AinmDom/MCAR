@@ -1,5 +1,15 @@
 # 项目实验日志
 
+## 2026-09-09：Hybrid E190 单成员五区结构图完成（Nature figure / Python）
+
+- 时间/agent：2026-09-09T21:35:54+08:00，CODEX；状态：图稿已完成并核验。
+- 动作：按作者五区要求绘制横向单成员结构图，核对远程项目分支 `codex/project-structure-refactor` 的提交 `99f8052078d1713a028f857b338fc5a092c8eb5c`。相关模型和正式配置与本地 HEAD `7371f792316b6dd50d4161fe7e4b51a9c01c7cd3` 一致；远程 main 为旧目录布局，不作为本图依据。
+- 证据：`paper write/figures/hybrid_e190_single_member/` 中的 `draw_hybrid_e190.py`、`provenance.json`（5个源文件的blob/hash）、`FIGURE_CONTRACT.md`、`QA_NOTES.md`、`exports.json` 及最终 PNG/SVG/PDF/TIFF。复现：`python "paper write/figures/hybrid_e190_single_member/draw_hybrid_e190.py" --skill-scripts <nature-figure scripts目录>`。
+- 关键结果：保留7通道精确顺序、冻结Q26 FiLM-SIREN、可训练方向条件CNN、4块膨胀率1/2/4/8以及base+delta加法。PNG/TIFF为9600×5106、标称600 dpi；SVG/PDF文字可编辑。图中明确单成员，并按冻结manifest写3成员等权发布脚注；补充每方向N=F与实际grid输出[2,D,F]的形状说明。
+- 完整性：最终PDF碰撞检查0 FAIL/0 WARN；最小字形8.1 pt，112个text runs均≥5 pt；源码检查20 PASS/1 WARN/0 FAIL（WARN仅为有意保留全部细节的406.4 mm大幅母图）；5区域与整图均已视觉核验，绘图区对齐N/A（单axes），4个区域间距均70绘图单位。`test_subjects_read=0`，finite/训练/best/末点预算=N/A；未运行训练、评价或数据汇总，未更改.tex。Git：开工干净，图稿目录受既有 `/paper write` 规则忽略，保持本地未暂存；本条日志待提交，无commit/push。
+- 下一步：作者可直接使用高分辨率PNG或在SVG/PDF上继续排版；若缩为期刊双栏宽度，先精简文字再检查实际字号。
+- 阻塞项：无。沙箱初始化故障以已授权的沙箱外执行完成绘图；原日志所列实验恢复任务未接管、未覆盖。
+
 ## 2026-09-06：Q14/Q26/Q50次要指标首次运行在缓存表示转换处中止
 
 - 时间/agent：2026-09-06T12:15:00+08:00，CODEX。660/660传统基线文件和MATLAB退出已核验后，

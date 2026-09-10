@@ -1,0 +1,25 @@
+% Combined supplementary binaural and local-spectral metrics; all values are means over 44 test subjects.
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\bicaption[tab:secondary-results]{表}{其余双耳指标与局部频谱指标（44名测试被试，Q26）}{Tab.}{Other binaural and local-spectral metrics (44 test subjects, Q26)}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+方法 & 对侧高频 & 水平面ILD & ITD最大误差 & 高频一阶差分 & 高频二阶差分 & 凹口深度 \\
+ & dB$\downarrow$ & dB$\downarrow$ & $\mu$s$\downarrow$ & dB/bin$\downarrow$ & dB/bin$^2\downarrow$ & dB$\downarrow$ \\
+\midrule
+SH only & 9.0669 & 3.5511 & 280.2438 & 0.6135 & 0.2990 & 0.8679 \\
+SUpDEq SH & 5.9936 & 2.0181 & 143.8210 & 0.6163 & 0.3230 & 0.8034 \\
+SUpDEq NN & 5.5954 & 1.6370 & 144.7088 & 0.5769 & 0.3106 & 0.7399 \\
+SUpDEq Bary. & 5.4756 & 1.6151 & 145.1823 & 0.5765 & 0.3092 & 0.7411 \\
+MCA & 4.6986 & 0.8294 & 141.3944 & 0.6033 & 0.3231 & 0.7778 \\
+FSP-AE & \textbf{3.1644} & \textbf{0.7587} & \textbf{123.6387} & 0.4050 & 0.2153 & 0.4987 \\
+RANF & 3.4697 & 0.7755 & 195.4309 & 0.4051 & 0.2172 & 0.4893 \\
+FSC（单成员） & 3.4951 & 0.8047 & 152.3437 & 0.4081 & 0.2307 & 0.4907 \\
+\bottomrule
+\end{tabular}%
+}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize 均为被试均值，加粗仅表示本表八种方法中的最低均值。对侧高频及三项局部频谱指标使用767个插值方向，水平面ILD使用72个水平面插值方向；ITD最大误差使用与正文ITD加权MAE相同的逐方向ITD估计后取最大绝对误差。LAP 2024 LSD移至补充材料。}
+\end{table}

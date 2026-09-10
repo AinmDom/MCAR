@@ -1,4 +1,26 @@
 # 项目实验日志
+## 2026-09-10：正式论文写作区提交与协作入口归档完成
+
+- 时间/agent：2026-09-10T16:39:54+08:00，Codex；状态：Git提交及后续定向amend完成。
+- 动作：将根 `.gitignore` 调整为默认忽略 `paper write/` 下历史目录、仅放行 `paper write/grand_paper/`，并在正式工程内忽略LaTeX临时构建产物及尚未重新编译的旧 `main.pdf`；提交正式论文源码、参考文献、表格、图件及补充材料，commit message=`建立正式论文写作区`。
+- 证据/完整性：初始commit=`78f93bce541d437126d82491de5af6f7522cbc78`，随后按作者要求通过 `--amend --no-edit` 将 `AGENTS.md` 与本日志纳入同一提交；amend会改变对象SHA，最终SHA以分支HEAD和远端记录为准。`paper write/CSMT_2026_visualized_tex/`经 `git check-ignore` 确认为忽略，提交中该旧目录为0文件；除根 `.gitignore`、`grand_paper/`、`AGENTS.md`和本日志外无其他路径进入提交。未运行LaTeX编译、PDF渲染或版面检查。
+- 实验/Git：本步仅版本化写作工程与协作入口，训练、评价、finite、best/末点预算和test访问均为N/A；既有科研事实不变。提交信息保持 `建立正式论文写作区`。下一步：后续正式论文工作在 `paper write/grand_paper/`。阻塞项：无。
+
+## 2026-09-10：正式论文工程迁移至 grand_paper
+
+- 时间/agent：2026-09-10T16:34:46+08:00，Codex；状态：目录迁移完成并核验。
+- 动作：按作者最新决定，将本次合并生成的完整论文工程从 `paper write/CSMT_2026_updated_0907_r2_tex/` 同卷移动至 `paper write/grand_paper/`；保留 `paper write/CSMT_2026_visualized_tex/` 作为历史对照。同步更新 `AGENTS.md`，将后续正式LaTeX入口固定为 `paper write/grand_paper/main.tex`。未执行提交，未运行LaTeX编译、PDF渲染或版面检查。
+- 证据/完整性：移动前后工程均为27个文件、总计7416335 bytes；旧路径已不存在，新路径及 `main.tex` 均存在。关键文件SHA256保持不变：`main.tex=967BCF11753AC6BF8BA8D7FC27B810779CAC1CB5965D4DBEB9734CFCEF5FA137`，`tables/component_results.tex=AE0625395FD9AE9E3B9EA2A88BA0B12502C196425714287F9EE4755066D82922`，稀疏度PDF=`F75DEFC8939D7C2E864030C80B9CF6ACE29E24E6E145ECBCDE99758E1687E83C`，PNG=`8016C1F9CA7F2974A6EC83DE93A9D60185C9D91A63261CDC5F826E5C71200879`。
+- 实验/Git：本步仅迁移写作工程，训练、评价、finite、best/末点预算与test访问均为N/A；既有实验事实不变。`grand_paper/`继续受 `.gitignore:127` 的 `/paper write` 规则保护。当前可见修改为作者/另一端既有 `.gitignore`、本次 `AGENTS.md` 与 `docs/EXPERIMENT_LOG.md`；未暂存、未提交。下一步：后续全部正式正文工作在 `paper write/grand_paper/` 进行。阻塞项：无。
+
+## 2026-09-10：正式论文目录合并并统一单成员、稀疏度与频谱CNN消融口径
+
+- 时间/agent：2026-09-10T16:29:56+08:00，Codex；状态：论文源文件定向合并完成并通过静态一致性检查。
+- 动作：以作者从另一端移入的 `paper write/CSMT_2026_updated_0907_r2_tex/` 为底稿，保留其余正文措辞；从 `paper write/CSMT_2026_visualized_tex/` 定向合并正式单成员 matched-density 稀疏度内容及趋势图，并按作者确认将旧三成员组件比较替换为正式 Q26 频谱CNN消融。主模型口径统一为验证规则冻结选择的单个 E190（Q26 seed 20260822）；未运行LaTeX编译、PDF渲染或版面检查。
+- 证据：正文 `paper write/CSMT_2026_updated_0907_r2_tex/main.tex`；正式消融表 `paper write/CSMT_2026_updated_0907_r2_tex/tables/component_results.tex`；单成员学习方法表注 `paper write/CSMT_2026_updated_0907_r2_tex/tables/learning_results.tex`；稀疏度图 `paper write/CSMT_2026_updated_0907_r2_tex/figure/matched_density_erb_trend.{pdf,png}`。数值分别核对 `results/sonicom_fsc_cnn_ablation_q26_v1/paper_ablation_table.csv` 和 `results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/all_metrics_summary_mean_std.csv`。
+- 关键结果：CNN消融正文报告三个seed分别严格配对、8项指标、每seed×指标 10000次paired bootstrap，`Δ=E190−E130`；24个95%区间上界均小于0，三个局部频谱指标在全部seed一致改善，未把三个seed合并为132个样本。稀疏度表扩为7项冻结指标并保留趋势图；Q14/Q26/Q50单成员 FullSphereERB=`0.9535/0.8318/0.7931` dB，七项均值均随密度增加而下降。
+- 完整性：正式CNN消融仍为44名validation、`test_subjects_read=0`、2112行、all finite、strict pairing、无重训或checkpoint重选；matched-density为44名冻结test队列、共同743方向、7指标、all finite、`test_subject_count_read=44`。静态检查未发现旧ensemble主结果或旧稀疏度数值残留；新增图存在且源/目标SHA256一致；正文与消融表的figure/table/tabular环境计数成对。训练/best/末点预算=N/A（本步仅写作合并）。
+- Git/下一步/阻塞：论文目录由 `.gitignore:127` 的 `/paper write` 规则保护；写入本记录后，`git status --short`显示作者/另一端既有 `.gitignore` 修改及本次 `docs/EXPERIMENT_LOG.md` 修改。本步未暂存、未提交。下一步由作者自行编译检查表格宽度、浮动体顺序与版面。阻塞项：无。
 ## 2026-09-10：正式论文目录纳入 Git 跟踪
 
 - 时间/agent：2026-09-10T15:53:06+08:00，CODEX；状态：目录边界已更新并核验。
@@ -6,7 +28,7 @@
 - 证据：`.gitignore`、`AGENTS.md`、`paper write/CSMT_2026_updated_0907_r2_tex/.gitignore`；`git ls-files --others --exclude-standard` 可见正式目录内18个非缓存文件，包括 `main.tex`、`references.bib`、图表、BST及PDF。
 - 关键结果：`main.tex`、`main.pdf`、`tables/primary_results.tex`及目录级 `.gitignore` 均未被忽略；`main.aux`、`main.log`、`main.xdv`由目录级规则忽略；旧入口 `paper write/CSMT_2026/main.tex` 仍被忽略。
 - 完整性：未修改论文正文，未运行 LaTeX 编译、PDF 渲染、训练、评价或数据汇总；`test_subjects_read=N/A`，finite/best/末点预算=N/A；当前修改和正式论文文件均未暂存、未提交、未推送。
-- 下一步：后续论文修改统一在 `paper write/CSMT_2026_updated_0907_r2_tex/main.tex` 及其子目录中进行；需要时再按作者指令分步骤提交。
+- 下一步：该入口随后被作者最新指定的 `paper write/grand_paper/` 取代；本条保留为历史记录。
 - 阻塞项：无。
 
 ## 2026-09-09：Hybrid E190 单成员五区结构图完成（Nature figure / Python）

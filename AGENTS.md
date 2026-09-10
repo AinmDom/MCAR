@@ -56,8 +56,8 @@
 ## 论文写作工作区
 
 - 作者于2026-09-04指定 `paper write/` 为后续论文写作的唯一工作目录。
-- 作者于2026-09-10指定 `paper write/CSMT_2026_updated_0907_r2_tex/` 为正式论文目录，LaTeX入口为 `paper write/CSMT_2026_updated_0907_r2_tex/main.tex`；后续正式论文修改均以此目录为准。
-- `paper write/` 其余内容默认不纳入版本库；正式论文目录是唯一例外，并由该目录内的 `.gitignore` 继续排除 LaTeX 可再生编译缓存。
+- 当前总框架：`paper write/PAPER_OUTLINE_ARS.md`。作者于2026-09-10指定后续正式论文工程为 `paper write/grand_paper/`，LaTeX入口为 `paper write/grand_paper/main.tex`；其他历史稿仅作对照，不再作为正式写作入口。
+- `paper write/` 其余内容默认不纳入版本库；`grand_paper/` 是唯一例外，并由该目录内的 `.gitignore` 继续排除 LaTeX 可再生编译缓存和未重新编译的旧 `main.pdf`。
 - 新增或修改正文、论文图表、参考文献、写作记录及编译产物均在该目录树内进行，不再向 `reports/` 新建当前稿件文件。
 - 作者于2026-09-06指定：智能体修改 `.tex` 文件后，不自动运行 LaTeX 编译、PDF 渲染或版面检查；由作者自行完成编译与检查。只有作者在后续请求中明确要求时，才执行这些操作。
 - 实验代码、配置、原始数据及冻结结果保持原位，作为写作的只读证据；旧Bounded历史稿暂留原位，不作为当前写作入口。

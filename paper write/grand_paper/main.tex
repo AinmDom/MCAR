@@ -1,0 +1,390 @@
+% !TeX program = xelatex
+\documentclass[UTF8,a4paper]{article}
+\usepackage{ctex}
+% ctex 的 windows fontset 已将 zhsong/zhhei/zhkai 配置为
+% SimSun/SimHei/KaiTi。章节标题直接使用黑体或楷体常规字形，
+% 避免向这些单字重字体请求不存在的粗体字形。
+\xeCJKsetup{AutoFakeBold=true}
+\usepackage[sort&compress,numbers]{natbib}
+\usepackage{ccaption}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[font={small,bf}]{caption}
+\geometry{left=3.18cm,right=3.18cm,top=2.54cm,bottom=2.54cm}
+\pagenumbering{gobble}
+\titleformat*{\section}{\heiti\zihao{4}}
+\titleformat*{\subsection}{\heiti\zihao{5}}
+\titleformat*{\subsubsection}{\kaishu\zihao{5}}
+\setlength{\emergencystretch}{2em}
+\newenvironment{csmtAbstract}{\par\noindent\kaishu\small{\heiti 摘~~要：}}{\par}
+\newenvironment{keywords}{\par\smallskip\noindent\songti\small{\heiti 关键词：}}{\par}
+\newenvironment{eAbstract}{\par\noindent\sffamily\small{\bfseries Abstract: }}{\par}
+\newenvironment{eKeywords}{\par\smallskip\noindent\sffamily\small{\bfseries Key Words: }}{\par}
+\newcommand{\todo}[1]{\textcolor{red}{【待修改：#1】}}
+\begin{document}
+\begin{center}
+{\heiti\zihao{3}基于MCA残差学习与条件隐式表示的稀疏HRTF插值方法\par}
+\vspace{1em}
+{\kaishu\zihao{5}\textbf{Young}\par}
+\vspace{0.6em}
+{\small 审阅稿，2026年9月7日\par}
+\end{center}
+
+\begin{csmtAbstract}
+针对稀疏头相关传输函数（HRTF）插值问题，本文提出一种基于MCA残差学习与条件隐式表示的稀疏HRTF插值方法（FSC）。其中，MCA表示幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation）。FSC不直接回归完整HRTF，而是在MCA重建结果上学习附加幅度残差：稀疏双耳空间观测首先经条件编码器压缩为被试级嵌入表示，并通过FiLM调制SIREN连续方向--频率残差场；双耳频谱CNN进一步细化跨频率与双耳结构，最终复用MCA相位完成HRIR重建。正式结果固定使用验证集预先选定的单个E190 checkpoint。在SONICOM数据集44名测试被试的Q26协议下，FSC的全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE及全域LSD分别为0.8360、1.2280、1.6514\,dB、18.8480\,$\mu$s和3.6029\,dB。相对MCA，FSC在ERB、频带ILD及全域LSD上取得更低均值；FSP-AE在ITD加权MAE和全域LSD上更低，RANF的全域LSD也更低。验证集正式配对消融中，FSC E190相对同seed的FiLM-SIREN E130在八项指标上均改善，24个95\% bootstrap区间均低于零。matched-density稀疏度实验在44名测试被试的共同743个未观测方向上评价Q14、Q26和Q50单成员模型；全域ERB由0.9535降至0.8318和0.7931\,dB，对侧$25^\circ$ ERB由0.9341降至0.8573和0.8206\,dB。结果表明，基于MCA的被试条件残差学习能够有效改善稀疏HRTF的幅度重建，但时间线索、跨数据库泛化和感知收益仍需进一步验证。
+\end{csmtAbstract}
+
+\begin{keywords}
+头相关传输函数；HRTF插值；MCA；残差学习；条件隐式表示；耳间线索
+\end{keywords}
+
+\section{引言}
+\label{sec:introduction}
+
+头相关传输函数（Head-Related Transfer Function，HRTF）描述声源到双耳鼓膜之间的方向相关声学传递特性，是双耳空间音频渲染的基础。其时域形式为头相关冲激响应（Head-Related Impulse Response，HRIR），包含耳间时间差（ITD）、耳间声级差（ILD）以及由耳廓、头部和躯干产生的单耳频谱线索\cite{R6}。由于个体形态差异显著，直接使用非个性化HRTF可能造成双耳线索失配并降低空间感知性能。高密度个体HRTF通常需要在受控声学环境中逐方向测量，采集成本较高，因此利用少量测量方向插值得到密集HRTF成为降低个性化测量负担的重要途径\cite{R13}。
+
+稀疏HRTF插值旨在由有限观测方向估计未测方向的双耳响应。现有方法大致可分为邻近方向加权、函数模型和学习式方法\cite{R15}。前两类方法包括线性／双线性插值、矢量基幅值平移（VBAP）、反距离加权（IDW）、主成分分析、滤波器模型以及球谐展开（SH）等\cite{R2,R3}；学习式方法则通过自编码器、神经场等结构从稀疏观测中推断目标方向的HRTF\cite{R4,R5}。传统方法具有清晰的物理或几何解释，而学习式方法具备更强的非线性表示能力。二者共同面临的难点是：对侧高频响应随方向变化较快，局部谱峰／谱凹口及双耳线索往往比整体低频幅度更难恢复。
+
+时间对齐可以在插值前去除随方向变化的传播时延，从而降低相位快速变化带来的建模难度\cite{R3}。幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）进一步利用频率平滑的幅度表示构造校正滤波器，在传统插值链路中同时处理时延和幅度误差\cite{R1}。然而，MCA仍会保留方向相关的剩余幅度误差，尤其集中于对侧高频和局部频谱结构。与直接从稀疏输入重建完整复数HRTF相比，在MCA结果上学习残差可以保留已有插值链路的相位与低频结构，并将学习目标集中于传统方法尚未消除的误差。
+
+基于这一思路，本文提出基于MCA残差学习与条件隐式表示的FSC插值模型。模型由三个协同模块组成：首先，稀疏双耳空间观测经条件编码器压缩为被试级embedding特征，特征级线性调制（Feature-wise Linear Modulation，FiLM）\cite{R7}据此生成各层调制参数；随后，正弦表示网络（Sinusoidal Representation Network，SIREN）\cite{R11}以方向、频率和MCA幅度为坐标建立连续残差场；最后，双耳频谱卷积网络联合处理左右耳整谱，对跨频率局部结构和双耳关系进行进一步细化。模型仅预测MCA幅度残差，重建阶段沿用MCA相位及未预测频点，从而保持信号处理基线与学习模块之间的明确接口。
+
+本文的主要工作如下：（1）提出一种基于MCA残差学习与条件隐式表示的稀疏HRTF插值框架，将学习目标由“直接重建完整HRTF”转化为“MCA后的幅度残差补偿”，在保留传统插值与重建链路的同时聚焦其剩余误差；（2）将每个被试的稀疏空间双耳观测压缩为固定维度的被试级embedding，并利用FiLM以该嵌入调制SIREN连续残差场，再结合双耳频谱CNN完成跨频率细化；（3）以ERB听觉频带误差作为正文核心评价维度，在训练中引入ERB代理目标，并以严格HRIR域ERB评价检验最终重建；（4）在统一Q26测试协议下与传统及学习式方法比较，并通过Q14/Q26/Q50独立训练的matched-density实验验证模型随观测方向数量变化的行为。实验结果显示，FSC的主要收益集中于ERB和频带ILD等幅度／声级指标，而ITD及全域LSD相对不同外部方法仍存在取舍。
+
+\section{相关工作}
+\label{sec:related}
+
+\subsection{传统HRTF插值}
+球谐展开和邻近方向加权是稀疏HRTF插值中常用的传统路线。时间对齐能够降低球谐表示对空间阶数的需求\cite{R3}；SUpDEq通过插值前的方向均衡与插值后的逆均衡改善空间重建，并进一步研究了不同球面采样方案的影响\cite{R2,R2S}。MCA则在时间对齐插值基础上，以平滑幅度的插值结果为参考构造幅度校正滤波器\cite{R1}。本文不将这些传统方法视为需要完全替代的基线，而是将MCA作为可解释的初始重建，并专门学习其剩余幅度误差。
+
+\subsection{学习式HRTF插值}
+HRTF个性化既可以依赖人体形态信息，也可以依赖稀疏声学测量，两类任务所提供的个体信息并不相同\cite{R15,R16}。本文关注后者，即目标个体已具有少量实测HRTF的稀疏插值问题。FSP-AE将正则化线性回归解释为自编码器，并利用声源方向、频率和输入类型共同处理幅度与ITD\cite{R4}；RANF结合检索HRTF、卷积和双向序列建模，并可在目标个体上进行参数适配\cite{R5}。与这些直接预测目标表示的方法不同，FSC以前置MCA重建为参照，仅学习附加幅度残差，ITD则由复用MCA相位后的完整HRIR重建间接决定。由于不同方法在个体适配、相位恢复和输出表示上存在差异，本文统一评价其最终重建结果，而不将原论文分数与本项目重评价结果直接混排。
+
+\subsection{条件隐式表示与频谱建模}
+FiLM通过条件生成的逐特征缩放和平移对中间特征进行调制\cite{R7}，SIREN则利用周期激活表示连续信号及其高频细节\cite{R11}。本文将二者用于“个体条件下的方向--频率残差场”，并在其后增加双耳频谱CNN，以显式利用邻近频点和左右耳联合信息。本文的贡献不在于首次提出FiLM、SIREN或卷积频谱建模，而在于它们与MCA残差接口、双耳频谱细化及分阶段优化的组合。与此同时，空间音频中的客观误差与主观感知并非一一对应\cite{R18}，因此本文分别报告频谱、ILD和ITD结果，不将单一指标下降直接解释为定位或外化感改善。
+
+\section{MCA残差学习与条件隐式表示方法}
+\label{sec:method}
+
+\subsection{整体框架与学习目标}
+本研究以幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，MCA）为基础，学习其插值结果中尚未消除的HRTF幅度残差。MCA在时间对齐插值之外引入基于频率平滑表示的幅度校正\cite{R1}。
+本文将这一传统重建结果保留为基线，利用稀疏观测提供的个体信息预测附加残差，而非直接回归完整复数HRTF。所用模型简称FSC，其核心是以被试级条件嵌入调制连续MCA残差场，并由FiLM条件调制、SIREN隐式残差表示和CNN双耳频谱细化三个模块构成一体化网络。三者在同一前向链路中依次完成个体条件生成、逐方向逐频率残差表示和跨频率双耳校正；分阶段优化仅是训练策略，不改变完整模型由三个模块共同组成的定义。
+
+记被试为$s$，查询方向单位向量为$\mathbf q=(x,y,z)$，耳侧为$e\in\{L,R\}$，频率为$f$。被试的$Q$个观测方向构成集合$\mathcal O_s$。设参考幅度和MCA幅度的dB表示分别为$M^\star_{s,e}(\mathbf q,f)$与$M^{\mathrm{MCA}}_{s,e}(\mathbf q,f)$，监督目标定义为
+\begin{equation}
+r^\star_{s,e}=M^\star_{s,e}-M^{\mathrm{MCA}}_{s,e},\qquad
+\widetilde r^\star_{s,e}=\frac{r^\star_{s,e}-\mu_r}{\sigma_r}.
+\label{eq:residual-target}
+\end{equation}
+其中$\mu_r,\sigma_r$仅由训练集统计量确定。观测参考幅度只在$\mathcal O_s$内作为条件输入，非观测方向的参考幅度用于训练监督或既有评价，不作为推断输入。MCA幅度及其原有幅度校正特征也只由对应的稀疏观测构造。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{figure/FiLM_SIREN_CNN_architecture.png}
+\bicaption[fig:FSC-architecture]{图}{FSC整体结构。FiLM-SIREN基础场根据稀疏双耳观测、查询方向与MCA幅度生成初始残差；双耳频谱CNN进一步结合MCA校正特征和跨频率双耳信息输出增量残差。正式模型采用验证阶段冻结选择的单个E190成员输出dB残差。}{Fig.}{Overall FSC architecture. The FiLM-SIREN base field predicts an initial residual from sparse binaural observations, query direction, and MCA magnitude; the binaural spectral CNN further refines the residual using MCA correction features and cross-frequency binaural information. The final model uses one E190 member selected under the frozen validation rule.}
+\end{figure}
+\todo{当前结构图仍含工程阶段命名（如“Hybrid E190”）且信息密度较高，投稿前建议重绘为与正文“FSC”一致的简化结构图。}
+
+围绕上述统一前向链路，下面按信息流顺序说明FiLM、SIREN和CNN三个模块的具体结构。三个模块共同产生FSC的最终残差，而不是彼此独立的候选模型。
+
+\subsection{个体条件与连续残差表示}
+FiLM模块首先把一个被试的稀疏空间双耳观测集合压缩为固定维度embedding，并据此调制SIREN的各个正弦层。条件编码器对每个观测方向的归一化双耳频谱使用两层一维卷积，拼接该方向的$\mathbf q$并投影为128维特征；随后按有效方向掩码求均值，再线性映射为被试级条件向量$\mathbf z_s\in\mathbb R^{128}$。因此，不同被试的空间双耳特征被统一编码到同一128维条件空间中，训练阶段可在共享SIREN参数的同时利用$\mathbf z_s$表达个体差异；该集合编码也避免把未观测方向的参考幅度作为输入。
+
+FiLM模块借鉴逐特征线性调制（Feature-wise Linear Modulation，FiLM）的条件控制思想\cite{R7}，
+由共享调制器根据$\mathbf z_s$为第$\ell$个SIREN层生成频率缩放、相位偏移和幅度缩放参数：
+\begin{equation}
+\boldsymbol\gamma_\ell=1+0.5\tanh(\mathbf g_\ell),\quad
+\boldsymbol\beta_\ell=\pi\tanh(\mathbf b'_\ell),\quad
+\mathbf a_\ell=1+0.5\tanh(\mathbf a'_\ell).
+\label{eq:film-modulation}
+\end{equation}
+其中$\mathbf g_\ell,\mathbf b'_\ell,\mathbf a'_\ell$由$\mathbf z_s$经共享隐层和逐层输出头生成。调制作用于全部正弦层，使同一查询坐标在不同被试条件下获得不同的残差表示。上述调制边界及全层配置属于本项目的具体实现，并非对FiLM原始公式的直接照搬。
+
+SIREN模块负责表示方向和频率连续变化的MCA幅度残差。查询输入为七维向量
+\begin{equation}
+\mathbf u_{s,\mathbf q,f}=
+[x,y,z,\nu_{\mathrm{lin}}(f),\nu_{\mathrm{ERB}}(f),
+ \widetilde M^{\mathrm{MCA}}_{s,L},\widetilde M^{\mathrm{MCA}}_{s,R}]^\top .
+\end{equation}
+这里$\nu_{\mathrm{lin}}$和$\nu_{\mathrm{ERB}}$分别将线性频率及等效矩形带宽（Equivalent Rectangular Bandwidth，ERB）频率坐标映射至$[-1,1]$；波浪号MCA幅度采用独立的训练集均值和标准差归一化。FiLM提供的全局个体条件与查询位置的局部MCA幅度由此通过不同入口共同控制残差预测。
+
+本模块采用正弦表示网络（Sinusoidal Representation Network，SIREN）的周期激活形式\cite{R11}。
+具体实现包含六个正弦层，每层256个隐单元，并使用FiLM模块生成的参数调制各层：
+\begin{equation}
+\mathbf h_\ell=\mathbf a_\ell(\mathbf z_s)\odot
+\sin\!\left[
+\omega_\ell\boldsymbol\gamma_\ell(\mathbf z_s)\odot
+(\mathbf W_\ell\mathbf h_{\ell-1}+\mathbf b_\ell)
++\boldsymbol\beta_\ell(\mathbf z_s)\right].
+\label{eq:film-siren}
+\end{equation}
+其中$\mathbf h_0=\mathbf u$，$\odot$为逐元素乘法，所有$\omega_\ell=20$。末端线性层输出左右耳的初始归一化残差$\widetilde{\mathbf r}_F=F_\phi(\mathbf u,\mathbf z_s)$，并作为CNN模块的整谱输入之一。SIREN的连续坐标表示负责建立跨方向和频率的残差函数，CNN则在其输出上进一步建模局部频谱与双耳关系。
+
+\subsection{双耳频谱细化}
+CNN模块在每个查询方向上联合处理左右耳的完整目标频带。输入矩阵$X_s(\mathbf q)\in\mathbb R^{7\times F}$依次包含左耳MCA幅度、左耳MCA幅度校正特征、左耳FiLM调制SIREN残差、右耳对应的三项，以及归一化对数频率。MCA幅度校正特征记为$\widetilde C^{\mathrm{MCA}}$，与网络学习的新残差增量并非同一变量。输入顺序为
+\begin{equation}
+X_s(\mathbf q)=
+[\widetilde M_L^{\mathrm{MCA}},
+ \widetilde C_L^{\mathrm{MCA}},\widetilde r_{F,L},
+ \widetilde M_R^{\mathrm{MCA}},
+ \widetilde C_R^{\mathrm{MCA}},\widetilde r_{F,R},
+ \nu_{\log}]^\top .
+\label{eq:cnn-input}
+\end{equation}
+式中每项均是长度为$F$的频率序列。$\nu_{\log}$服务于CNN输入，不替代SIREN模块的线性／ERB双频率坐标。
+
+双耳频谱卷积神经网络（Convolutional Neural Network，CNN）首先将七通道输入映射至48通道，再经过四个扩张深度卷积残差块。卷积核长度为7，扩张率依次为$1,2,4,8$；块内通过逐点卷积将通道扩展至96，再投影回48，结合组归一化和SiLU激活。方向向量$\mathbf q$经两层64维映射后，为各块提供特征缩放与平移。末端$1\times1$卷积输出左右耳的频谱增量$\Delta\widetilde{\mathbf r}_\theta$。该模块显式利用相邻频点和双耳频谱信息，与FiLM和SIREN模块共同得到最终残差；其独立效果仍需与训练目标及优化预算的作用区分。
+
+\subsection{训练目标与重建流程}
+单成员预测及其dB转换为
+\begin{equation}
+\widetilde{\mathbf r}_H=\widetilde{\mathbf r}_F+
+C_\theta(X_s(\mathbf q),\mathbf q),\qquad
+\mathbf r_H^{\mathrm{dB}}=\sigma_r\widetilde{\mathbf r}_H+\mu_r.
+\end{equation}
+因此CNN模块增量的dB值为$\sigma_r\Delta\widetilde{\mathbf r}_\theta$，不重复加上$\mu_r$。正式模型采用验证集预先选定的单个E190 checkpoint：
+\begin{equation}
+\widehat{\mathbf M}=\mathbf M^{\mathrm{MCA}}+
+\mathbf r_H^{\mathrm{dB}}.
+\end{equation}
+Q26成员由既有验证集E190总目标最低的seed=20260822确定；测试集不参与checkpoint选择。
+
+为恢复时域头相关脉冲响应（Head-Related Impulse Response，HRIR），在选定频点采用$10^{\widehat M/20}$和对应MCA相位构造复数频谱，其余频点直接沿用MCA复数值。经共轭对称扩展、1024点逆快速傅里叶变换（Inverse Fast Fourier Transform，IFFT）后，保留前256点HRIR。模型不学习相位，所有基于HRIR的双耳线索评价必须经过这一完整重建链路。
+
+FSC在推断时始终使用FiLM、SIREN和CNN三个模块，训练时则采用分阶段优化。第一阶段获得FiLM条件调制模块与SIREN残差表示模块的E130参数；第二阶段固定这两个模块及条件编码器，只优化CNN模块。CNN输出卷积的权重和偏置初始化为零，因此第二阶段开始时$\Delta\widetilde{\mathbf r}_\theta$恒为零，完整FSC的初始函数与第一阶段模型一致。这里的零初始化仅针对CNN输出层，不是把整个CNN的权重全部置零，也不意味着初始输出等于MCA。
+
+训练总目标由归一化残差SmoothL1损失与七个辅助项组成：
+\begin{align}
+\mathcal L={}&\mathcal L_{\mathrm{res}}+
+\frac{1}{\sigma_r}\big(
+0.75\mathcal L_{\mathrm{ERB\text{-}proxy}}+
+0.25\mathcal L_{\mathrm{contraHF}}+
+0.75\mathcal L_{\mathrm{strictILD}}\notag\\
+&\qquad+
+0.05\mathcal L_{\mathrm{bandILD}}+
+0.25\mathcal L_{\Delta f}+
+0.15\mathcal L_{\Delta^2 f}+
+0.30\mathcal L_{\mathrm{notch}}\big).
+\label{eq:training-loss}
+\end{align}
+$\mathcal L_{\mathrm{res}}$的SmoothL1阈值为归一化单位下的1。其他项按实现除以训练残差标准差$\sigma_r$，并在各自方向子集内重新归一化固体角权重，再对耳侧及相应频点或频带平均。
+
+ERB代理项是复合目标中的核心频谱项，在50--20000\,Hz对应的ERB轴上均匀设置41个中心，用三角权重对选定频点的线性功率积分，再比较频带能量的dB差。该设计意在使训练优化更贴近本文重点关注的听觉频带误差，而最终结论仍以严格HRIR域ERB评价为准。$\mathcal L_{\mathrm{contraHF}}$为对侧半空间中高于10\,kHz频点的幅度绝对误差。两个项分别约束频带能量和高频绝对幅度，但前者不是最终报告的严格HRIR域ERB评价。
+
+局部频谱结构项使用4\,kHz及以上的相邻频点差分。记幅度误差序列$\epsilon_f=\widehat M_f-M^\star_f$，一阶和二阶项分别平均$|\epsilon_{f+1}-\epsilon_f|$与$|\epsilon_{f+2}-2\epsilon_{f+1}+\epsilon_f|$。差分模板全部频点都须位于所选频段，其单位分别记为dB/bin和dB/bin$^2$，不写成对连续频率的导数。多尺度谱凹口项比较
+\begin{equation}
+D_r(M)_f=\tau\log\!\left[
+1+\exp\!\left(
+\frac{(M_{f-r}+M_{f+r})/2-M_f-\eta}{\tau}
+\right)\right],
+\end{equation}
+其中半径$r\in\{4,8,16\}$个频点，中心频率位于4--18\,kHz，$\eta=1$\,dB、$\tau=0.5$\,dB；对各半径的深度图绝对差求均值。
+
+双耳项在独立水平面采样上计算。严格耳间声级差（Interaural Level Difference，ILD）损失使用重建HRIR的左右耳能量比，频带ILD损失则使用中心频率200--18000\,Hz内的ERB代理频带左右耳功率差，并采用阈值0.5\,dB的SmoothL1。使用独立采样保证每步都有水平面方向参与双耳项；这些约束不构成各项测试误差必然下降的保证。
+
+每个训练轮次遍历262名训练被试，每名被试执行一次参数更新，并分别从全测量域和独立水平面中不放回抽取16个插值方向。优化器采用AdamW，学习率与权重衰减均为$10^{-4}$，梯度裁剪阈值为5，使用FP32训练。学习率在前2轮线性预热，随后按200轮总计划进行余弦衰减。
+
+第二阶段的正式训练预算固定为190轮（E190）。开发阶段三个随机种子的验证最优轮次分别为190、190和170，因此按预先设定的中位数规则将190轮作为统一训练预算。正式结果固定使用验证集选定成员的第190轮末点参数；不进行成员平均或基于测试表现的重设。
+
+\section{实验设置}
+\label{sec:setup}
+
+\subsection{数据集与评价协议}
+实验使用SONICOM测量HRTF数据\cite{R6}，并以空间声学定向格式（Spatially Oriented Format for Acoustics，SOFA）保存\cite{R8}。所用文件变体为\texttt{FreeFieldCompMinPhase\_44kHz}，采样率44.1\,kHz，每个被试包含793个方向的双耳256点HRIR。这里的“MinPhase”对应自由场补偿文件命名，并不表示本文将完整HRTF约束为最小相位。SONICOM原始论文描述的是较早的120人发布版本；本研究依据后续官方元数据快照及异常记录筛选可用数据，共得到350名被试。
+
+被试按自由场均衡文件分层，并以固定种子20260731划分为262名训练、44名验证和44名测试被试，同一被试不跨集合。归一化统计仅由训练数据计算。表\ref{tab:protocol}列出主要设置。参考方向的仰角范围为$-45^\circ$至$90^\circ$，因此本文的“全域”指数据实际提供的测量域，不包括缺失的下方球冠。
+
+\begin{table}[htbp]
+\centering\small
+\bicaption[tab:protocol]{表}{数据与正式操作点}{Tab.}{Data and the fixed operating point}
+\begin{tabular}{p{0.29\linewidth}p{0.61\linewidth}}
+\toprule
+项目 & 设置\\
+\midrule
+被试划分 & 训练262／验证44／测试44\\
+稀疏观测 & Q26，左右对称；观测方向不计入插值评价\\
+参考及评价方向 & 793个参考方向；767个非观测方向；其中72个水平面方向\\
+学习频点 & 463点，86.1328125--19982.8125\,Hz\\
+时域重建 & 1024点IFFT后保留256点HRIR，采样率44.1\,kHz\\
+正式主模型 & FSC，冻结选择的单个E190末点成员（Q26：20260822）\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Q26是在已有测量网格上构造的26方向子集，不视作精确Lebedev网格。选择过程固定北极与一个中矢状面方向，再选择12对左右对称方向，以扩大最小大圆间距，并用正则化三阶球谐设计的对数行列式处理并列。观测方向从评价中排除，所有学习方法只使用相应稀疏输入提供的个体信息。
+
+模型结构、训练目标和正式训练预算均在训练／验证阶段确定；单成员部署规则随后冻结，并仅依据既有Q26验证结果在三个E190末点成员中选定20260822成员。需要说明的是，该测试划分在项目早期工程评估中已被使用，本文围绕FSC组织主要叙事的决定发生在部分测试结果已知之后。因此，本文将测试结果视为同一固定队列上的回顾性方法比较，不将其表述为完全独立的确认性实验，也不依据本文结果重新调整模型参数。
+
+\subsection{对比方法}
+主比较包含七个外部方法与本文FSC：SH only、SUpDEq SH、SUpDEq Natural Neighbor、SUpDEq Barycentric、MCA、FSP-AE和RANF构成外部方法集合。结果叙述首先检验相对MCA的残差补偿效果，再比较外部学习方法。
+
+传统重建采用既有SUpDEq／MCA实现；球谐（Spherical Harmonics，SH）相关设置为三阶，头半径0.09\,m，所用SH正则参数为0.01，自然邻域和重心插值保持各自冻结定义。主比较中的八个方法使用相同测试被试、Q26观测和插值评价掩码，但不强行改写为相同的训练或推断机制。
+
+对于FSC这类仅预测MCA幅度残差的方法，评价时采用第\ref{sec:method}节所述的MCA相位与未预测频点复用链路；对于直接生成HRIR的方法，则保留其原生输出，并映射到统一的评价表示与频点。八种方法使用同一测试被试、Q26观测集合与评价掩码，最终均在完整重建结果上计算本文定义的12项报告指标。比较基于冻结预测完成，不依据本文结果重新训练或调参。
+
+\subsection{评价指标}
+本文正文重点报告五项指标，数值均为越低越好。全域ERB误差（FullSphereERB）将重建和参考HRIR输入\texttt{AKerbError}，分析范围为50\,Hz至奈奎斯特频率22.05\,kHz，对频带绝对误差及双耳平均，并对767个插值方向按固体角加权。对侧$25^\circ$ ERB误差（Contralateral25ERB）沿用相同HRIR域误差，分别限制在左耳对侧中心$(270^\circ,0^\circ)$、右耳对侧中心$(90^\circ,0^\circ)$的大圆半径$25^\circ$区域，并在每个区域重新归一化方向权重。本文将这两项严格HRIR域ERB误差作为核心评价指标，以对应空间听觉相关的频带能量偏差；它们与式\eqref{eq:training-loss}中的ERB代理目标定义不同。频带ILD（ERBBandILDMean）在72个水平面插值方向上计算200--18000\,Hz内35个代理ERB频带的左右耳能量差误差，并对方向及频带取平均。
+
+耳间时间差（Interaural Time Difference，ITD）沿用FSP-AE公开流程的兼容实现\cite{R4}：重建与参考HRIR均先进行1.6\,kHz低通，以384\,kHz重采样后在$\pm1$\,ms范围内通过互相关峰估计ITD，不在峰值索引后继续插值。ITD加权平均绝对误差（ITDWeightedMAE）对767个插值方向的绝对差按固体角加权，以$\mu$s计。第五项为全域对数谱失真（FullSphereLSD）：先在频率维计算重建与参考对数幅度差的均方根，再对双耳平均，并对767个插值方向按固体角加权。
+
+七项补充指标用于描述另一评价域下的宽带谱误差、局部频谱结构和双耳关系。LAP 2024兼容LSD（LAP2024LSD）在全部793个方向上计算，包含Q26观测方向且不使用固体角加权，因此仅在补充材料中报告。ITD最大绝对误差使用与正文ITD加权MAE相同的逐方向ITD估计，并在767个插值方向上取绝对误差最大值。对侧高频幅度误差（ContralateralHighFrequency）统计对侧半空间内高于10\,kHz且不超过20\,kHz的选定频点幅度绝对误差，方向按固体角加权，双耳分别归一化后平均。水平面ILD平均绝对误差（HorizontalILDMAE）采用
+\begin{equation}
+\operatorname{ILD}(\mathbf q)=10\log_{10}
+\frac{\sum_{n=0}^{255}|h_L(\mathbf q,n)|^2}
+     {\sum_{n=0}^{255}|h_R(\mathbf q,n)|^2},
+\end{equation}
+并在72个水平面插值方向上算术平均预测与参考ILD的绝对差。该指标基于完整HRIR的宽带能量比，与主要指标中的频带ILD定义不同，二者不能互相替代。高频一阶与二阶差分误差在4\,kHz以上比较相邻频点变化，多尺度凹口深度误差则在4--18\,kHz内使用半径4、8和16个频点的局部深度图；三者均在767个插值方向上按固体角加权。
+
+\begin{table}[htbp]
+\centering\small
+\bicaption[tab:endpoints]{表}{十二项报告指标的分层}{Tab.}{Hierarchy of the twelve reported metrics}
+\begin{tabular}{p{0.18\linewidth}p{0.65\linewidth}r}
+\toprule
+层级 & 内容 & 数量\\
+\midrule
+正文 & 全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE、全域LSD & 5\\
+补充 & LAP 2024 LSD、ITD最大绝对误差、对侧高频幅度误差、水平面ILD误差、高频一／二阶差分、多尺度凹口深度 & 7\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+十二项指标并非相互独立，本文不通过跨量纲相加或胜出项计数构造总分。
+
+统计独立单位为被试。所有方法均以44名测试被试为统计样本，方向和频点不作为独立样本扩充样本量。正文首先报告各方法的均值$\pm$样本标准差，以保持方法间绝对误差比较的直观性。此前FSC中心的paired bootstrap归档对应三成员集成，正式主模型切换为单成员后不再将该旧归档作为单成员证据。频谱CNN消融则在验证集上按seed分别对相同44名被试进行10000次paired bootstrap，不把三个seed合并为132个独立样本。所有被试均保留，不按误差剔除个体。
+
+\subsection{实现与开发设置}
+FiLM-SIREN结构参数通过训练／验证阶段的分阶段搜索确定。SIREN部分依次比较频率映射、首层频率系数、网络深度与宽度，最终采用线性／ERB双频率坐标、6层、隐藏宽度256以及$\omega=20$。FiLM部分比较条件维度、调制形式、调制层位置以及全局／局部MCA输入，最终采用128维个体条件、全调制并作用于全部正弦层。上述搜索用于确定可复现的正式配置，不声称获得全局最优超参数。
+
+频谱CNN正式消融在44名验证被试上进行，仅比较三个seed各自严格配对的FiLM-SIREN E130末点与FSC E190末点。每个E190均以同seed E130为冻结父checkpoint并加入spectral CNN refinement；checkpoint、epoch、seed和超参数均在评价前固定，不根据本次结果重新选择。正式评价覆盖八项指标，配对差统一定义为$\Delta=E_{\mathrm{FSC\ E190}}-E_{\mathrm{FiLM\text{-}SIREN\ E130}}$，因此$\Delta<0$表示CNN refinement后误差降低。
+
+稀疏度实验采用嵌套集合$Q14\subset Q26\subset Q50$，并对每个观测密度使用matched-density训练。Q14和Q50分别从current-Q MCA残差重新构建训练数据，独立完成FiLM-SIREN E130及冻结骨干后的频谱CNN E190训练；Q26使用正式训练路径。为使三种密度的单成员身份尽量一致，Q14和Q50采用各自既有的member-2 E190末点checkpoint，Q26采用按冻结验证规则选定的20260822成员，不依据测试结果重新选择。需要说明的是，Q14/Q50成员的CNN配置记录的实际训练RNG seed为20260821，因此本文按冻结checkpoint identity而非“共同随机种子”描述其对应关系。训练完成并冻结模型后，三种密度统一在44名测试被试上评价。为保证不同观测密度具有完全一致的评价方向，从793方向网格中统一排除Q50包含的50个观测方向，以剩余743个方向作为公共测试集合。前文Q26在其自身767个未观测方向上评价，而本节采用共同743方向，因此两处Q26数值不要求完全一致。
+
+\section{结果}
+\label{sec:results}
+
+本节首先分析单成员FSC相对MCA的残差补偿效果，随后比较学习式方法，并补充其余双耳／局部频谱、正式频谱CNN消融和matched-density稀疏度结果。主方法比较与matched-density实验均使用44名测试被试；CNN消融仅使用44名验证被试。正文以被试均值和样本标准差为主，CNN消融同时报告逐seed配对差及95\% bootstrap区间。
+
+\subsection{与MCA对比}
+单成员FSC相对MCA的五项正文指标呈现较明确的幅度频谱收益，但时间线索没有同步改善。表\ref{tab:primary-results}中，全域ERB从1.0822降至0.8360\,dB，对侧$25^\circ$ ERB从1.7458降至1.2280\,dB，频带ILD从2.0562降至1.6514\,dB；全域LSD由4.7914降至3.6029\,dB。相比之下，ITD加权MAE由18.3997上升至18.8480\,$\mu$s，因此本文不将单成员FSC解释为ITD改善方法。
+
+\input{tables/primary_results}
+
+正式单成员与外部方法的比较以同一44名测试被试上的绝对误差均值$\pm$样本标准差为主；不沿用此前针对三成员集成生成的FSC中心paired bootstrap归档。LAP 2024 LSD保留为补充材料中的描述性指标。
+
+\subsection{与学习方法对比}
+表\ref{tab:learning-results}单独比较单成员FSC、RANF和FSP-AE。FSC的全域ERB、对侧$25^\circ$ ERB和频带ILD均值最低；ITD加权MAE由FSP-AE最低，FSC次之；全域LSD则由FSP-AE最低，RANF次之，FSC排名第三。
+
+\input{tables/learning_results}
+
+三种学习方法在不同指标上的优势并不一致。因此，本文将FSC定位为在ERB和频带ILD上具有较低均值、但在ITD上略落后于FSP-AE、在全域LSD上仍落后于FSP-AE与RANF的残差细化方案，而非替代全部方法的无代价最优解。
+
+\subsection{次要指标分析}
+\label{sec:secondary-metrics}
+正文之外的双耳与局部频谱指标进一步揭示不同误差类型之间的取舍（表\ref{tab:secondary-results}）。FSP-AE在对侧高频、水平面ILD和ITD最大绝对误差上的均值最低，分别为3.1644\,dB、0.7587\,dB和123.6387\,$\mu$s；单成员FSC对应为3.4951\,dB、0.8047\,dB和152.3437\,$\mu$s。高频一阶差分、二阶差分和多尺度凹口深度方面，单成员FSC分别为0.4081\,dB/bin、0.2307\,dB/bin$^2$和0.4907\,dB；其中凹口深度略高于RANF的0.4893\,dB。该结果说明不同方法可分别在宽带双耳、极端ITD或局部谱形指标上占优。
+
+\input{tables/secondary_global_results}
+
+这些指标均用于补充描述，不由其客观误差直接推出感知定位改善。
+
+\FloatBarrier
+\subsection{频谱CNN正式消融}
+\label{sec:ablation}
+本节仅比较FiLM-SIREN E130（无CNN）与在其冻结骨干上加入spectral CNN refinement后的FSC E190，不进一步消融FiLM、SIREN、条件编码器或损失项。三个seed分别使用严格配对的E130/E190 \texttt{last.pt}，不重新选择epoch、seed或超参数；评价仅访问44名验证被试，测试集读取数为0。
+
+表\ref{tab:component-results}给出各变体的逐seed均值与样本标准差，表\ref{tab:component-paired}给出$\Delta=E_{\mathrm{E190}}-E_{\mathrm{E130}}$及95\% paired-bootstrap区间。三个seed的八项指标均有$\Delta<0$，且全部24个区间的上界均小于0。全域ERB的逐seed下降为0.0250、0.0244和0.0210\,dB，全域LSD下降为0.2517、0.2429和0.2576\,dB。高频一阶差分、高频二阶差分和多尺度凹口深度三项局部频谱指标在三个seed上也均一致改善；ITD加权MAE虽达到负向配对区间，但绝对变化仅为0.0101--0.0284\,$\mu$s，不作实质性时间线索收益解释。
+
+\input{tables/component_results}
+
+paired bootstrap对每个seed独立执行10000次重采样，统计单位始终是被试，没有把三个seed合并成132个独立样本。该实验验证的是完整spectral CNN refinement stage相对其配对冻结父模型的增量收益；由于E190阶段按既定复合目标优化，本文不进一步把结果拆分归因于某一个辅助损失项。
+\FloatBarrier
+
+
+\subsection{Matched-density稀疏度实验}
+\label{sec:sparsity}
+为考察单成员FSC随观测密度变化的行为，Q14、Q26和Q50均使用各自冻结的E190成员，并在同一44名测试被试及共同743个未观测方向上评价。表\ref{tab:q-results}所列七项指标的平均误差均随观测方向数增加而下降。全域ERB由Q14的$0.9535\pm0.4675$\,dB降至Q26的$0.8318\pm0.3190$\,dB，并在Q50进一步降至$0.7931\pm0.3893$\,dB；对侧$25^\circ$ ERB也由$0.9341\pm0.4606$\,dB依次降至$0.8573\pm0.3243$和$0.8206\pm0.4159$\,dB。图\ref{fig:q-results}给出全域ERB均值的直观趋势。由于该matched-density评价统一排除了Q50的50个观测方向，本节Q26使用743方向，而正式Q26主比较使用767个未观测方向，两者评价域不同。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\linewidth]{figure/matched_density_erb_trend.pdf}
+\bicaption[fig:q-results]{图}{单成员FSC matched-density稀疏度实验中的全域ERB均值（44名测试被试，共同743方向）。Q14、Q26和Q50均采用预先冻结的对应E190成员，未依据测试结果重新选模。}{Fig.}{Mean full-sphere ERB in the single-member FSC matched-density experiment (44 test subjects, 743 shared directions). Q14, Q26, and Q50 use their pre-frozen E190 members without test-based reselection.}
+\end{figure}
+
+% Matched-density Q14/Q26/Q50 locked-test results on the shared Q50-excluded 743-direction domain.
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{2.3pt}
+\bicaption[tab:q-results]{表}{FSC matched-density稀疏度实验七项指标（44名测试被试，共同743方向）}{Tab.}{Seven metrics in the matched-density FSC sparsity experiment (44 test subjects, 743 shared directions)}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+观测密度 & 全域ERB & 对侧$25^\circ$ ERB & 频带ILD & ITD加权MAE & 对侧高频 & 水平面ILD & LAP 2024 LSD \\
+ & dB$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ & $\mu$s$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ \\
+\midrule
+Q14 & $0.9535 \pm 0.4675$ & $0.9341 \pm 0.4606$ & $1.7100 \pm 0.8184$ & $25.0873 \pm 34.6257$ & $3.6826 \pm 0.3895$ & $0.8149 \pm 1.0303$ & $3.8704 \pm 0.6481$ \\
+Q26 & $0.8318 \pm 0.3190$ & $0.8573 \pm 0.3243$ & $1.6419 \pm 0.6366$ & $18.6892 \pm 21.8057$ & $3.4854 \pm 0.2655$ & $0.7983 \pm 0.9065$ & $3.6400 \pm 0.5022$ \\
+Q50 & $\mathbf{0.7931} \pm 0.3893$ & $\mathbf{0.8206} \pm 0.4159$ & $\mathbf{1.5446} \pm 0.7385$ & $\mathbf{18.4376} \pm 21.9641$ & $\mathbf{3.4305} \pm 0.2861$ & $\mathbf{0.7324} \pm 0.9098$ & $\mathbf{3.5569} \pm 0.5661$ \\
+\bottomrule
+\end{tabular}%
+}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize 数值为被试均值$\pm$样本标准差。Q14、Q26、Q50分别使用对应观测密度训练并冻结的单成员FSC模型，并统一在排除Q50观测后的743个公共方向上评价44名测试被试。加粗表示三种密度中的最低均值。}
+\end{table}
+
+其余指标呈现一致趋势：频带ILD从Q14的1.7100\,dB降至Q26的1.6419\,dB，并在Q50进一步降至1.5446\,dB；对侧高频幅度误差从3.6826降至3.4854和3.4305\,dB，水平面ILD误差从0.8149降至0.7983和0.7324\,dB。ITD加权MAE由Q14的25.0873\,$\mu$s下降至Q26的18.6892\,$\mu$s和Q50的18.4376\,$\mu$s，主要收益集中在Q14至Q26；LAP 2024 LSD则由3.8704降至3.6400和3.5569\,dB。总体而言，七项冻结指标的均值均随观测密度增加而下降，但这里只描述固定测试队列上的误差趋势，不据此推断感知收益。
+
+\section{讨论}
+\label{sec:discussion}
+
+\subsection{频谱细化与双耳线索的折衷}
+MCA之后的残差学习在本研究中具有明确的幅度频谱补偿价值。表\ref{tab:primary-results}显示，单成员FSC的全域ERB、对侧$25^\circ$ ERB、频带ILD和全域LSD均值均低于MCA，而ITD加权MAE略高于MCA。相对学习式方法，FSC在前三项幅度／声级指标上具有较低均值，但FSP-AE的ITD与全域LSD更低，RANF的全域LSD也更低。这说明FSC更擅长校正MCA残留的听觉频带与双耳声级误差，而宽带LSD和时间线索不会随ERB目标同步达到最优。本文因此不以领先项数量判定总体优劣，也不将客观误差下降直接解释为定位或外化感改善。
+
+局部谱形、双耳能量关系和ITD反映不同的重建要求。一、二阶差分及多尺度凹口深度约束局部频谱变化，绝对幅度误差和ERB误差则评价其他尺度的偏离。FSC在三个局部端点上的最低均值，与FSP-AE的对侧高频和ITD最大绝对误差优势可以同时成立。这些局部端点与训练辅助项定义相近，其改善说明模型在所约束的目标上表现较好，但不足以证明一般听觉收益。全域ERB和频带ILD在外部主比较中的最低均值，也不能保证严格水平面ILD或ITD的稳定收益；前者基于完整重建HRIR的双耳能量比，后者通过低通互相关估计。FSC不直接学习ITD，联合输入双耳信息并设置ILD损失也不保证这些误差在每名被试上下降。
+
+\subsection{结构作用与模型复杂度}
+FSC的FiLM、SIREN和CNN模块分别提供被试级条件、连续残差表示及跨频率双耳细化，并在同一前向链路中共同产生最终残差。与逐被试单独建模不同，条件编码器把每名被试的稀疏空间双耳观测压缩成共享维度的embedding，使一个跨被试模型能够通过FiLM调制表达个体差异；这是本文结构设计中连接“个体声学观测”和“连续神经场”的关键接口。正式验证集消融中，FSC E190相对同seed的FiLM-SIREN E130在八项指标上均取得负的配对差，且24个95\%区间均低于零；三项局部频谱指标在所有seed上一致改善（表\ref{tab:component-paired}）。该结果支持spectral CNN refinement stage的稳定增量收益，但不进一步区分各辅助损失项的独立贡献。
+
+CNN输出层的零初始化仅保证第二阶段开始时完整FSC的函数等于第一阶段FiLM-SIREN配置，不保证训练后的误差单调下降。正式单成员FSC推断始终包含FiLM、SIREN和CNN三个模块。Q26单成员包含1.519M个部署参数，checkpoint约6.45\,MiB；在NVIDIA GeForce RTX 5060、FP32、793方向$\times$463频点设置下，模型推断中位数为110.45\,ms，P95为110.95\,ms（表\ref{tab:efficiency-results}）。该基准仅用于量化FSC自身开销，未在同一实现与硬件条件下测量全部基线，因此不据此提出跨方法效率优势。
+
+\input{tables/efficiency_results}
+
+\subsection{泛化范围与研究局限}
+新的matched-density单成员测试实验表明，在SONICOM的44名测试被试及共同743方向上，七项冻结指标的平均误差均随Q14、Q26、Q50的观测密度增加而下降。其中全域ERB均值由0.9535\,dB降至0.8318\,dB和0.7931\,dB，ITD的主要下降则发生在Q14至Q26，提示额外测量对不同评价维度的边际收益并不一致。该结论仍限于同一固定测试队列、单一SONICOM数据库和当前空间采样方案。
+
+本文的复合目标采用ERB代理作为核心频谱项，并联合高频误差、ILD、频谱差分和凹口深度等约束。其主要贡献在于给出一种面向稀疏HRTF残差细化的听觉频带导向目标设计思路，而不是将某一固定损失形式视为最终答案。后续可在此基础上研究与严格HRIR域ERB更一致的可微目标、自适应多目标平衡及感知损失。
+
+此外，本文仍受到以下限制：数据仅来自单一数据库，因此跨数据库泛化尚未验证；FSC复用MCA相位且不直接预测ITD，因此时间线索能力受前端重建约束；正式单成员包含约1.519M部署参数，且尚未在统一实现与硬件条件下完成与全部基线的效率比较；CNN消融验证完整refinement stage的增量收益，但不提供各辅助损失项的逐项因果归因；测试划分曾用于项目早期工程评估，论文主模型的确定发生在部分结果可见之后，因此测试结果属于回顾性比较而非完全独立确认；最后，当前没有主观听音实验，客观ERB、ILD、ITD或LSD改善不能直接等同于定位准确性、外化感或偏好的提升。
+
+\section{结论}
+\label{sec:conclusion}
+
+本文提出一种基于MCA残差学习与条件隐式表示的稀疏HRTF插值方法FSC，用于补偿MCA插值后仍存在的方向相关幅度残差。模型将每名被试的稀疏空间双耳观测压缩为固定维度embedding，通过FiLM调制SIREN连续残差场，并利用双耳频谱CNN进一步修正跨频率结构；最终复用MCA相位完成HRIR重建。与此同时，本文将严格HRIR域ERB误差作为核心评价维度，并在训练中引入ERB代理目标，使学习重点集中于具有听觉频带意义的幅度误差。
+
+在SONICOM的Q26测试协议下，正式单成员FSC的全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE和全域LSD分别为0.8360、1.2280、1.6514\,dB、18.8480\,$\mu$s和3.6029\,dB。相对MCA，FSC在三项幅度／声级指标和全域LSD上取得更低均值，但ITD加权MAE略高；相对FSP-AE和RANF，FSC在前三项上更低，但FSP-AE的ITD与全域LSD更低，RANF的全域LSD也更低。正式频谱CNN消融的三个seed、八项指标均得到负配对差且95\%区间低于零。进一步的matched-density单成员测试实验表明，在共同743方向上，七项冻结指标的平均误差均随Q14、Q26、Q50逐步下降；全域ERB依次为0.9535、0.8318和0.7931\,dB。
+
+当前方法仍受到单一数据库、MCA相位依赖、单模型推断开销尚缺统一基线比较、损失项尚未逐项消融及缺少听音实验等限制。后续工作将重点研究更一致的ERB／感知目标、跨数据库泛化、损失机制分析和主观空间听觉验证。
+
+\bibliographystyle{gbt-7714-2015-numerical}
+\bibliography{references}
+\clearpage
+% English abstract is placed after references, following the supplied Chinese template.
+\begin{center}
+{\normalsize\bfseries Sparse HRTF Interpolation via MCA Residual Learning and Conditional Implicit Representation\par}
+\smallskip
+{\small Young\par}
+\end{center}
+
+\begin{eAbstract}
+Sparse head-related transfer function (HRTF) interpolation can leave substantial direction-dependent magnitude residuals. This paper proposes FSC, a sparse HRTF interpolation method based on MCA residual learning and conditional implicit representation, combining feature-wise linear modulation (FiLM), a sinusoidal representation network (SIREN), and a binaural spectral CNN. Sparse binaural spatial observations of each subject are compressed into a fixed-dimensional subject embedding, which conditions the shared SIREN residual field through FiLM. The model further refines cross-frequency binaural structure while reusing the phase of magnitude-corrected and time-aligned interpolation (MCA). The deployed model is one pre-existing E190 member selected only by the frozen Q26 validation objective; the test split is not used for member selection. On 44 SONICOM test subjects under Q26, the selected single member achieved full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, weighted ITD MAE, and full-sphere LSD values of 0.8360, 1.2280, 1.6514 dB, 18.8480 $\mu$s, and 3.6029 dB, respectively. FSC reduced the three magnitude/level metrics and full-sphere LSD relative to MCA, while its weighted ITD MAE was slightly higher. A validation-only, per-seed paired ablation showed lower E190 errors on all eight metrics, with all 24 bootstrap intervals below zero. In single-member matched-density experiments evaluated on 44 test subjects over a common 743-direction domain, mean full-sphere ERB decreased from 0.9535 to 0.8318 and 0.7931 dB for Q14, Q26, and Q50. These results support MCA residual learning with subject-conditioned implicit representation for sparse HRTF interpolation, while temporal cues, cross-dataset generalization, and perceptual benefits remain open.
+\end{eAbstract}
+
+\begin{eKeywords}
+head-related transfer function; HRTF interpolation; MCA; residual learning; conditional implicit representation; interaural cues
+\end{eKeywords}
+
+\end{document}

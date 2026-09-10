@@ -1,0 +1,11 @@
+# LaTeX build products; regenerate locally from the tracked sources.
+*.aux
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.xdv
+main.pdf

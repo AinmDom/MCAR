@@ -1,0 +1,107 @@
+\begin{thebibliography}{14}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI: #1}\else
+  \providecommand{\doi}{DOI: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Engel, et~al.(2023)Engel, Daugintis, Vicente, Hogg, Pauwels, Tournier, and Picinali]{R6}
+Engel I, Daugintis R, Vicente T, et~al.
+\newblock The {SONICOM} {HRTF} dataset[J].
+\newblock Journal of the Audio Engineering Society.
+\newblock 2023, 71\penalty0 (5):\penalty0 241--253.
+\newblock \doi{10.17743/jaes.2022.0066}.
+
+\bibitem[Li, et~al.(2020)Li and Peissig]{R13}
+Li S, Peissig J.
+\newblock Measurement of head-related transfer functions: A review[J].
+\newblock Applied Sciences.
+\newblock 2020, 10\penalty0 (14):\penalty0 5014.
+\newblock \doi{10.3390/app10145014}.
+
+\bibitem[Bruschi, et~al.(2024)Bruschi, Grossi, Dourou, Quattrini, Vancheri, Leidi, and Cecchi]{R15}
+Bruschi V, Grossi L, Dourou N A, et~al.
+\newblock A review on head-related transfer function generation for spatial audio[J].
+\newblock Applied Sciences.
+\newblock 2024, 14\penalty0 (23):\penalty0 11242.
+\newblock \doi{10.3390/app142311242}.
+
+\bibitem[P{\"o}rschmann, et~al.(2019)P{\"o}rschmann, Arend, and Brinkmann]{R2}
+P{\"o}rschmann C, Arend J M, Brinkmann F.
+\newblock Directional equalization of sparse head-related transfer function sets for spatial upsampling[J].
+\newblock IEEE/ACM Transactions on Audio, Speech, and Language Processing.
+\newblock 2019, 27\penalty0 (6):\penalty0 1060--1071.
+\newblock \doi{10.1109/TASLP.2019.2908057}.
+
+\bibitem[Arend, et~al.(2021)Arend, Brinkmann, and P{\"o}rschmann]{R3}
+Arend J M, Brinkmann F, P{\"o}rschmann C.
+\newblock Assessing spherical harmonics interpolation of time-aligned head-related transfer functions[J].
+\newblock Journal of the Audio Engineering Society.
+\newblock 2021, 69\penalty0 (1/2):\penalty0 104--117.
+\newblock \doi{10.17743/jaes.2020.0070}.
+
+\bibitem[Ito, et~al.(2025)Ito, Nakamura, Koyama, Sakamoto, and Saruwatari]{R4}
+Ito Y, Nakamura T, Koyama S, et~al.
+\newblock Spatial upsampling of head-related transfer function using neural network conditioned on source position and frequency[J].
+\newblock IEEE Open Journal of Signal Processing.
+\newblock 2025, 6:\penalty0 1109--1123.
+\newblock \doi{10.1109/OJSP.2025.3613132}.
+
+\bibitem[Masuyama, et~al.(2026)Masuyama, Wichern, Germain, Ick, and {Le Roux}]{R5}
+Masuyama Y, Wichern G, Germain F G, et~al.
+\newblock {RANF}: Neural field-based {HRTF} spatial upsampling with retrieval augmentation and parameter efficient fine-tuning[J].
+\newblock IEEE Open Journal of Signal Processing.
+\newblock 2026, 7:\penalty0 32--41.
+\newblock \doi{10.1109/OJSP.2025.3640517}.
+
+\bibitem[Arend, et~al.(2023)Arend, P{\"o}rschmann, Weinzierl, and Brinkmann]{R1}
+Arend J M, P{\"o}rschmann C, Weinzierl S, et~al.
+\newblock Magnitude-corrected and time-aligned interpolation of head-related transfer functions[J].
+\newblock IEEE/ACM Transactions on Audio, Speech, and Language Processing.
+\newblock 2023, 31:\penalty0 3783--3799.
+\newblock \doi{10.1109/TASLP.2023.3313908}.
+
+\bibitem[Perez, et~al.(2018)Perez, Strub, de~Vries, Dumoulin, and Courville]{R7}
+Perez E, Strub F, de~Vries H, et~al.
+\newblock {FiLM}: Visual reasoning with a general conditioning layer[J].
+\newblock Proceedings of the AAAI Conference on Artificial Intelligence.
+\newblock 2018, 32\penalty0 (1).
+\newblock \doi{10.1609/aaai.v32i1.11671}.
+
+\bibitem[Sitzmann, et~al.(2020)Sitzmann, Martel, Bergman, Lindell, and Wetzstein]{R11}
+Sitzmann V, Martel J, Bergman A, et~al.
+\newblock Implicit neural representations with periodic activation functions[C/OL].
+\newblock Advances in Neural Information Processing Systems:
+\newblock volume~33.
+\newblock 2020.
+\newblock \url{https://proceedings.neurips.cc/paper/2020/hash/53c04118df112c13a8c34b38343b9c10-Abstract.html}.
+
+\bibitem[Arend, et~al.(2019)Arend and P{\"o}rschmann]{R2S}
+Arend J M, P{\"o}rschmann C.
+\newblock Spatial upsampling of sparse head-related transfer function sets by directional equalization---influence of the spherical sampling scheme[C/OL].
+\newblock Proceedings of the 23rd International Congress on Acoustics.
+\newblock 2019: 2643--2650.
+\newblock \url{https://audiogroup.web.th-koeln.de/PUBLIKATIONEN/Arend_ICA2019.pdf}.
+
+\bibitem[Fantini, et~al.(2025)Fantini, Geronazzo, Avanzini, and Ntalampiras]{R16}
+Fantini D, Geronazzo M, Avanzini F, et~al.
+\newblock A survey on machine learning techniques for head-related transfer function individualization[J].
+\newblock IEEE Open Journal of Signal Processing.
+\newblock 2025, 6:\penalty0 30--56.
+\newblock \doi{10.1109/OJSP.2025.3528330}.
+
+\bibitem[Rafaely, et~al.(2025)Rafaely, Weinzierl, Berebi, and Brinkmann]{R18}
+Rafaely B, Weinzierl S, Berebi O, et~al.
+\newblock Loss Functions Incorporating Auditory Spatial Perception in Deep Learning---A Review[M/OL].
+\newblock 2025.
+\newblock \url{https://arxiv.org/abs/2506.19404v1}.
+\newblock \doi{10.48550/arXiv.2506.19404}.
+
+\bibitem[Majdak, et~al.(2022)Majdak, Zotter, Brinkmann, {De Muynke}, Mihocic, and Noisternig]{R8}
+Majdak P, Zotter F, Brinkmann F, et~al.
+\newblock Spatially oriented format for acoustics 2.1: Introduction and recent advances[J].
+\newblock Journal of the Audio Engineering Society.
+\newblock 2022, 70\penalty0 (7/8):\penalty0 565--584.
+\newblock \doi{10.17743/jaes.2022.0026}.
+
+\end{thebibliography}

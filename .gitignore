@@ -125,5 +125,5 @@ outputs/hybrid_lsd_b_e190/
 
 # 写作区：默认忽略，仅跟踪正式论文目录
 /paper write/*
-!/paper write/CSMT_2026_updated_0907_r2_tex/
-!/paper write/CSMT_2026_updated_0907_r2_tex/**
+!/paper write/grand_paper/
+!/paper write/grand_paper/**

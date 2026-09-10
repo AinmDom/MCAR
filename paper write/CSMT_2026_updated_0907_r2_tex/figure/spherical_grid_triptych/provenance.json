@@ -1,0 +1,150 @@
+{
+  "figure": "Nested Q14/Q26/Q50 spherical observation-grid triptych",
+  "renderer": "offline web SVG; orthographic projection and fixed view inherited from the project spherical-grid viewer",
+  "source_grid": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv",
+  "geometry_report": "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.json",
+  "source_indices_zero_based": {
+    "Q14": [
+      1,
+      11,
+      94,
+      107,
+      169,
+      271,
+      284,
+      287,
+      528,
+      531,
+      544,
+      646,
+      708,
+      721
+    ],
+    "Q26": [
+      1,
+      11,
+      94,
+      107,
+      141,
+      154,
+      157,
+      169,
+      271,
+      284,
+      287,
+      347,
+      356,
+      388,
+      427,
+      459,
+      468,
+      528,
+      531,
+      544,
+      646,
+      658,
+      661,
+      674,
+      708,
+      721
+    ],
+    "Q50": [
+      1,
+      11,
+      70,
+      82,
+      94,
+      107,
+      111,
+      141,
+      154,
+      157,
+      167,
+      169,
+      216,
+      225,
+      267,
+      271,
+      274,
+      284,
+      287,
+      301,
+      347,
+      352,
+      356,
+      376,
+      381,
+      388,
+      427,
+      434,
+      439,
+      459,
+      463,
+      468,
+      514,
+      528,
+      531,
+      541,
+      544,
+      548,
+      590,
+      599,
+      646,
+      648,
+      658,
+      661,
+      674,
+      704,
+      708,
+      721,
+      733,
+      745
+    ]
+  },
+  "minimum_pairwise_separation_deg": {
+    "Q14": 39.36699615882736,
+    "Q26": 31.915838841829665,
+    "Q50": 20.53677810221674
+  },
+  "nesting": "Q14 subset Q26 subset Q50",
+  "canvas": {
+    "width_px": 4800,
+    "height_px": 1600,
+    "output_dpi": 600,
+    "physical_size_in": [
+      8,
+      2.667
+    ]
+  },
+  "panel_geometry_px": [
+    {
+      "panel": "a",
+      "grid": "Q14",
+      "center": [
+        800,
+        850
+      ],
+      "radius": 530
+    },
+    {
+      "panel": "b",
+      "grid": "Q26",
+      "center": [
+        2400,
+        850
+      ],
+      "radius": 530
+    },
+    {
+      "panel": "c",
+      "grid": "Q50",
+      "center": [
+        4000,
+        850
+      ],
+      "radius": 530
+    }
+  ],
+  "data_exclusions": "None; all frozen directions in each requested Q level are rendered.",
+  "generated_by": "node build_spherical_grid_triptych.js"
+}

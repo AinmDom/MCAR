@@ -1,4 +1,14 @@
 # 项目实验日志
+## 2026-09-10：正式论文目录纳入 Git 跟踪
+
+- 时间/agent：2026-09-10T15:53:06+08:00，CODEX；状态：目录边界已更新并核验。
+- 动作：将 `paper write/CSMT_2026_updated_0907_r2_tex/` 设为后续正式论文唯一入口；根 `.gitignore` 改为默认忽略 `paper write/` 其余内容并显式放行该目录，目录内新增 `.gitignore` 排除 LaTeX 可再生编译缓存；同步更新 `AGENTS.md` 的论文工作区约定。
+- 证据：`.gitignore`、`AGENTS.md`、`paper write/CSMT_2026_updated_0907_r2_tex/.gitignore`；`git ls-files --others --exclude-standard` 可见正式目录内18个非缓存文件，包括 `main.tex`、`references.bib`、图表、BST及PDF。
+- 关键结果：`main.tex`、`main.pdf`、`tables/primary_results.tex`及目录级 `.gitignore` 均未被忽略；`main.aux`、`main.log`、`main.xdv`由目录级规则忽略；旧入口 `paper write/CSMT_2026/main.tex` 仍被忽略。
+- 完整性：未修改论文正文，未运行 LaTeX 编译、PDF 渲染、训练、评价或数据汇总；`test_subjects_read=N/A`，finite/best/末点预算=N/A；当前修改和正式论文文件均未暂存、未提交、未推送。
+- 下一步：后续论文修改统一在 `paper write/CSMT_2026_updated_0907_r2_tex/main.tex` 及其子目录中进行；需要时再按作者指令分步骤提交。
+- 阻塞项：无。
+
 ## 2026-09-09：Hybrid E190 单成员五区结构图完成（Nature figure / Python）
 
 - 时间/agent：2026-09-09T21:35:54+08:00，CODEX；状态：图稿已完成并核验。

@@ -123,5 +123,7 @@ docs/AI_HANDOFF.md
 outputs/hybrid_lsd_b_e190/
 /results/sonicom_hybrid_lsd_b_secondary_validation/per_subject_direction_lsd.csv
 
-# 写作区
-/paper write
+# 写作区：默认忽略，仅跟踪正式论文目录
+/paper write/*
+!/paper write/CSMT_2026_updated_0907_r2_tex/
+!/paper write/CSMT_2026_updated_0907_r2_tex/**

@@ -1,3 +1,13 @@
+## 2026-09-10：正式论文结构图替换与稀疏网格图接入完成
+
+- 时间/agent：2026-09-10T23:40:48+08:00，CODEX；状态：已完成并通过静态核验。
+- 动作：在 paper write/grand_paper/main.tex 中将FSC结构框图替换为 figure/hybrid_e190_single_member.png，保留既有 fig:FSC-architecture 标识；在“稀疏度实验”小节新增 figure/spherical_grid_triptych_q14_q26_q50.png，设置 fig:q-grids 标识并加入正文引用。
+- 证据：paper write/grand_paper/main.tex；两张图均位于 paper write/grand_paper/figure/，结构图为9600×5106、网格图为7300×2400，标称分辨率均约600 dpi。
+- 关键结果：所有插图路径均存在；新增 fig:q-grids 在正文引用和图注中各出现一次，原结构图标识保持不变；未改变实验数值、表格数据、公式或结论。
+- 完整性：仅改动论文图引用、图注及一处引导句；未修改图片文件，未运行LaTeX编译、PDF渲染、训练、评价或数据汇总；test_subjects_read=N/A，finite/best/末点预算=N/A。Git修改未暂存、未提交、未推送。
+- 下一步：由作者在本地编译后检查两张高分辨率横图的分页位置和字号可读性。
+- 阻塞项：无。
+
 ## 2026-09-10：Q14/Q26/Q50 作者导出网格图横向组合完成
 
 - 时间/agent：2026-09-10T16:46:20+08:00，CODEX；状态：已完成并核验。

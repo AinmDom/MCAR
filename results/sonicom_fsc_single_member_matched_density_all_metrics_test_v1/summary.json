@@ -1,0 +1,39 @@
+{
+  "status": "completed",
+  "split": "test",
+  "subject_count": 44,
+  "test_subject_count_read": 44,
+  "diagonal_counts": [
+    14,
+    26,
+    50
+  ],
+  "fixed_evaluation_direction_count": 743,
+  "horizontal_common_direction_count": 68,
+  "supplemental_metric_row_count": 396,
+  "aggregate_row_count": 21,
+  "all_finite": true,
+  "cross_density_evaluation": false,
+  "evidence_tiers": {
+    "FullSphereERB": "Primary frozen engineering test",
+    "Contralateral25ERB": "Primary frozen engineering test",
+    "ContralateralHighFrequency": "Primary frozen engineering test",
+    "HorizontalILDMAE": "Primary frozen engineering test",
+    "ERBBandILDMean": "Secondary locked-test supplement",
+    "ITDWeightedMAE_us": "Deferred locked-test supplement",
+    "LAP2024LSD_dB": "LAP2024 descriptive locked-test evaluation"
+  },
+  "metric_count": 7,
+  "all_metrics_subject_row_count": 924,
+  "all_metrics_aggregate_row_count": 21,
+  "supplemental_aggregate_row_count": 9,
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ContralateralHighFrequency",
+    "HorizontalILDMAE",
+    "ERBBandILDMean",
+    "ITDWeightedMAE_us",
+    "LAP2024LSD_dB"
+  ]
+}

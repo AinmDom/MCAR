@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen",
+  "created_on": "2026-09-08",
+  "purpose": "Locked secondary/deferred characterization for the selected single FSC member",
+  "protocol": {
+    "path": "experiments/film_siren/STAGE_E_COMPLETE_TEN_METHOD_SECONDARY_DEFERRED_TEST_PROTOCOL.md",
+    "hierarchy": "secondary_or_exploratory_only",
+    "untouched_test_confirmation": false
+  },
+  "authorization": {
+    "authorized": true,
+    "user_text": "\u73b0\u5728\u53ef\u4ee5\u5f00\u59cb\u5728test\u96c6\u4e0a\u5b8c\u6210\u5b8c\u6574\u7684\u5341\u65b9\u6cd5\u4e2a\u6307\u6807\u8bc4\u4ef7\u4e86\uff0c\u5df2\u6709\u7684test\u7ed3\u679c\u53ef\u4ee5\u590d\u7528\uff0c\u6ca1\u6709\u7684\u8865\u5145",
+    "recorded_at_local": "2026-09-02T13:57:53+08:00"
+  },
+  "dataset": {
+    "root": "data/processed/sonicom_residual_q26_v1",
+    "split_csv": "configs/data/sonicom_subject_split_v1.csv",
+    "split": "test",
+    "subject_count": 44,
+    "source_inventory_sha256": "1980AF878D283563B640E853CC894BA8580E057BEC0B9CC6F17D31900B8F7285",
+    "reference_sofa_root": "data/HRTF/sonicom_measured_ffcmp_minphase_44k1/subjects",
+    "reference_sofa_inventory_sha256": "404491AEC92A59EB962FE42AA569225BEF7FA8BA09FA37DDB6A93C3C0D66BC46",
+    "directions": 793,
+    "q26_directions": 26,
+    "interpolation_directions": 767,
+    "horizontal_interpolation_directions": 72,
+    "frequency_bins": 463
+  },
+  "methods": {
+    "SHOnly": {
+      "label": "SH only"
+    },
+    "SUpDEqSH": {
+      "label": "SUpDEq SH"
+    },
+    "SUpDEqNN": {
+      "label": "SUpDEq NN"
+    },
+    "SUpDEqBary": {
+      "label": "SUpDEq Barycentric"
+    },
+    "MCA": {
+      "label": "MCA"
+    },
+    "MCARv351": {
+      "label": "MCAR v3.5.1"
+    },
+    "FSPAE": {
+      "label": "FSP-AE"
+    },
+    "RANF": {
+      "label": "RANF"
+    },
+    "HYBRID": {
+      "label": "FSC single member E190 (selected checkpoint)"
+    },
+    "BOUNDED": {
+      "label": "Bounded E25"
+    }
+  },
+  "source_predictions": {
+    "MCARv351": {
+      "root": "artifacts/reconstruction/sonicom_q26_test_v351_previous30_b70",
+      "filename": "prediction.h5",
+      "inventory_sha256": "002C8CCF8FDBA03D1AD6EC03086C5F024256B9FE90015EDDAD41BBFBBCB09D4A"
+    },
+    "FSPAE": {
+      "root": "artifacts/reconstruction/sonicom_fsp_ae_q26_locked_final_test",
+      "filename": "prediction.h5",
+      "inventory_sha256": "7AE7668B8E70EF38B7717253936BED9D48DC548AB8F8BEAA4558B28912528CF5"
+    },
+    "RANF": {
+      "root": "artifacts/reconstruction/sonicom_ranf_q26_final_test",
+      "filename": "prediction.sofa",
+      "inventory_sha256": "1FC4100FDBCC9B92CF2583A407B1F57ABDA3CD0960FC16343E45761EC270DEEA"
+    },
+    "HYBRID": {
+      "root": "artifacts/reconstruction/sonicom_fsc_q26_e190_single_seed20260822_test",
+      "filename": "prediction.h5",
+      "inventory_sha256": "AD7D19700AC9A32A52635D6C3FE8D54516C65082AA11413FD64DE66961081453"
+    },
+    "BOUNDED": {
+      "root": "artifacts/reconstruction/sonicom_bounded_mcar_film_correction_final_e25_ensemble_test",
+      "filename": "prediction.h5",
+      "inventory_sha256": "AEA3B4438010923AA2E79044C4ADA6C13E5B5E4D53F77E66E080084D786D7ED3"
+    }
+  },
+  "primary_metrics": {
+    "metric_long_csv": "results/sonicom_fsc_single_seed20260822_q26_test_ten_method/metric_long.csv",
+    "sha256": "0A85A4FB50E942A40AA85316193311CA69E2969576BCE02B0B431EC63A60F0B9",
+    "subject_rows": 1760,
+    "methods": 10,
+    "endpoints": 4,
+    "policy": "reuse exactly; do not recompute or replace"
+  },
+  "standardized_export": {
+    "prediction_root": "artifacts/reconstruction/sonicom_complete_ten_method_secondary_test_inputs_v1",
+    "evaluation_root": "artifacts/evaluation/sonicom_complete_ten_method_secondary_test_export_v1",
+    "metric_long_csv": "artifacts/evaluation/sonicom_complete_ten_method_secondary_test_export_v1/metric_long.csv",
+    "expected_methods": 8,
+    "expected_prediction_files": 352,
+    "primary_reproduction_tolerance_db": 1e-09,
+    "command": "mcar.export_sonicom_classical_secondary_validation(inf,'sonicom_complete_ten_method_secondary_test_export_v1',false,'test','sonicom_q26_test_v351_previous30_b70',true,'sonicom_fsp_ae_q26_locked_final_test','sonicom_ranf_q26_final_test','sonicom_complete_ten_method_secondary_test_inputs_v1')"
+  },
+  "implementation": {
+    "git_commit": "c0ba7c741e3ece511e5cbe435c52c120cd4c7a45",
+    "git_dirty_at_freeze": false,
+    "python_executable": "D:/miniconda3/envs/ml/python.exe",
+    "runtime_versions": {
+      "python": "3.9.23",
+      "numpy": "1.26.4",
+      "h5py": "3.14.0",
+      "scipy": "1.13.1",
+      "torch": "2.8.0+cu128"
+    },
+    "torchaudio_site_packages": "D:\\miniconda3\\envs\\asd\\Lib\\site-packages",
+    "torchaudio_version": "2.8.0+cu128",
+    "resources": [
+      {
+        "path": "experiments/film_siren/STAGE_E_COMPLETE_TEN_METHOD_SECONDARY_DEFERRED_TEST_PROTOCOL.md",
+        "sha256": "63C6D1607223730EEF8590BC00531DC3B5DB600F776D71B96137700496A31371"
+      },
+      {
+        "path": "matlab/+mcar/export_sonicom_classical_secondary_validation.m",
+        "sha256": "287BF87A099516067F380D30808AD2AB4387CB8C7B3B432FB62371454DB89B68"
+      },
+      {
+        "path": "scripts/evaluate_complete_ten_method_test_metrics.py",
+        "sha256": "B7232E3512D7D4B7B10DB3844A0BA8BC02835096BDE0A0C52FF0D5239F455DEF"
+      },
+      {
+        "path": "scripts/generate_complete_ten_method_test_manifest.py",
+        "sha256": "92FA9E407F102CDF0B088403281212661EFA5BC6326D14680A3B8446B944233F"
+      },
+      {
+        "path": "src/mcar/evaluation/secondary_metrics.py",
+        "sha256": "C1DA0A232E0D29790D31168FB9A87AB4D2A46001F16EB3695BEA1CB90EDA63C9"
+      },
+      {
+        "path": "src/mcar/evaluation/deferred_secondary_metrics.py",
+        "sha256": "295F7CBD7D48BE6C41DDD8AA2AAD0338B3F370BBF0FF5544FFA75AE37F83AD51"
+      },
+      {
+        "path": "src/mcar/fsp_ae_signal.py",
+        "sha256": "35A1125995EB2500AC468606CA52CE3B7F5AF0D4C4A944F0A197D1342F71585C"
+      },
+      {
+        "path": "src/mcar/losses.py",
+        "sha256": "E5470D122D6CB45D5648AC67D355522A82F46C5DE673CA1EE9C407C6A6D7707E"
+      },
+      {
+        "path": "tests/test_complete_ten_method_test_metrics.py",
+        "sha256": "CC39ED63A08E47C048D5C58467658B0844649E330B0C56F0EA54265915851E10"
+      }
+    ],
+    "external_resources": [
+      {
+        "path": "D:\\miniconda3\\envs\\asd\\Lib\\site-packages\\torchaudio-2.8.0+cu128.dist-info\\RECORD",
+        "sha256": "9208B5C17A8866A8363BAC4A054CD7DAF225264CBD0F798EB73A8EC2021D96B2"
+      },
+      {
+        "path": "D:\\miniconda3\\envs\\asd\\Lib\\site-packages\\torchaudio\\lib\\_torchaudio.pyd",
+        "sha256": "E203F390565D9F6A8EF0B3016796E47A912C826AB9F35C244AA831F28CB35F2A"
+      }
+    ]
+  },
+  "itd": {
+    "sampling_rate_hz": 44100.0,
+    "upsampled_rate_hz": 384000.0,
+    "lowpass_hz": 1600.0,
+    "maximum_itd_seconds": 0.001,
+    "direction_batch_size": 64
+  },
+  "notch": {
+    "range_hz": [
+      4000.0,
+      18000.0
+    ],
+    "smoothing_window_bins": 11,
+    "smoothing_degree": 3,
+    "minimum_prominence_db": 1.0,
+    "minimum_separation_hz": 500.0,
+    "matching_tolerance_hz": 1500.0
+  },
+  "bootstrap": {
+    "replicates": 10000,
+    "generator": "NumPy PCG64",
+    "base_seed": 20260902,
+    "subject_is_independent_unit": true
+  },
+  "outputs": {
+    "supplementary_results_root": "results/sonicom_fsc_single_seed20260822_secondary_deferred_test_v1",
+    "complete_results_root": "results/sonicom_fsc_single_seed20260822_complete_test_v1",
+    "delivery_root": "outputs/sonicom_fsc_single_seed20260822_complete_test_v1"
+  },
+  "commands": {
+    "evaluate": "D:/miniconda3/envs/ml/python.exe scripts/evaluate_complete_ten_method_test_metrics.py configs/experiments/sonicom_fsc_single_seed20260822_secondary_test_v1_manifest.json --allow-test"
+  },
+  "expected_counts": {
+    "subjects": 44,
+    "methods": 10,
+    "new_endpoints": 16,
+    "new_per_subject_rows": 7040,
+    "new_aggregate_rows": 160,
+    "new_paired_rows": 144,
+    "band_profile_rows": 350,
+    "spatial_direction_rows": 7670,
+    "complete_endpoints": 20,
+    "complete_per_subject_rows": 8800,
+    "complete_aggregate_rows": 200
+  },
+  "test_policy": "Read exactly the frozen 44-subject test cohort; no inference, tuning, selection, or registry reset.",
+  "result_blind_statement": "No new secondary/deferred test endpoint was parsed or aggregated before this freeze.",
+  "identity_sha256": "1A4A32BF798F55FD76D2617797FADFB602A34832CC08ECC97BBF8296A21C0039",
+  "verified_identity_sha256": "1A4A32BF798F55FD76D2617797FADFB602A34832CC08ECC97BBF8296A21C0039",
+  "standardized_prediction_inventory_sha256": "CD6CF11225825CE7878901D6CEB7890DF98EE06A03690AB5D08ABBDF85E6806B"
+}

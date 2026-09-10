@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "val",
+  "subject_count": 44,
+  "seed_count": 3,
+  "variant_count": 2,
+  "metric_count": 8,
+  "subject_level_row_count": 2112,
+  "expected_subject_level_row_count": 2112,
+  "all_finite": true,
+  "test_subjects_read": 0,
+  "strict_pairing": true,
+  "checkpoint_policy": "pre-frozen E130/E190 last.pt; no reselection",
+  "training_performed": false,
+  "historical_results_overwritten": false,
+  "bootstrap": {
+    "implementation": "mcar.evaluation.secondary_metrics.paired_tail_statistics",
+    "replicates": 10000,
+    "confidence_level": 0.95,
+    "seed": 20260909,
+    "tie_tolerance": 1e-12,
+    "difference": "FSC E190 - FiLM-SIREN E130",
+    "pool_seeds": false
+  },
+  "local_spectral_metrics_all_seed_means_improved": true,
+  "manifest": "D:\\cuc\\CSMT\\MCAR\\configs\\experiments\\sonicom_fsc_cnn_ablation_q26_v1.json"
+}

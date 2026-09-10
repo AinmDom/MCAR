@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "split": "test",
+  "subject_count": 44,
+  "test_subject_count_read": 44,
+  "methods": [
+    "SHOnly",
+    "SUpDEqSH",
+    "SUpDEqNN",
+    "SUpDEqBary",
+    "MCA",
+    "MCARv351",
+    "FSPAE",
+    "RANF",
+    "HYBRID",
+    "BOUNDED"
+  ],
+  "secondary_endpoints": [
+    "FullSphereLSD",
+    "HFFirstDifferenceMAE",
+    "HFSecondDifferenceMAE",
+    "MultiScaleNotchDepthMAE",
+    "ERBBandILDMean",
+    "SpatialLSD_0_10deg",
+    "SpatialLSD_10_20deg",
+    "SpatialLSD_20_30deg",
+    "SpatialLSD_30_180deg"
+  ],
+  "deferred_endpoints": [
+    "DominantNotchPenalizedMAE_Hz",
+    "DominantNotchMatchedMAE_Hz",
+    "DominantNotchMissRate",
+    "DominantNotchSpuriousRate",
+    "ReferenceNotchFraction",
+    "ITDWeightedMAE_us",
+    "ITDMaximumAbsoluteError_us"
+  ],
+  "all_finite": true,
+  "bootstrap_replicates": 10000,
+  "bootstrap_base_seed": 20260902,
+  "manifest_identity_sha256": "1A4A32BF798F55FD76D2617797FADFB602A34832CC08ECC97BBF8296A21C0039",
+  "claim_boundary": "Post-lock supplementary test characterization; no tuning or selection."
+}

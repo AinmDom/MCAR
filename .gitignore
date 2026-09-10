@@ -127,5 +127,3 @@ outputs/hybrid_lsd_b_e190/
 /paper write/*
 !/paper write/grand_paper/
 !/paper write/grand_paper/**
-/CSMT_2026_updated_0907_r2_tex/
-/CSMT_2026_visualized_tex/

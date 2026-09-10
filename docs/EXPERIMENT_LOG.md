@@ -1,3 +1,43 @@
+## 2026-09-10：Q14/Q26/Q50 作者导出网格图横向组合完成
+
+- 时间/agent：2026-09-10T16:46:20+08:00，CODEX；状态：已完成并核验。
+- 动作：将作者提供的 Q14、Q26、Q50 三张 2400×2400 PNG 按 Q14→Q26→Q50 横向排版，以白色 50 px 等宽间距连接；未添加、删除、缩放或重绘任一面板内容。
+- 证据：paper write/CSMT_2026_updated_0907_r2_tex/figure/spherical_grid_triptych/spherical_grid_triptych_q14_q26_q50.png，以及 triptych_layout.json。
+- 关键结果：组合图尺寸为 7300×2400 px、600 dpi；三面板均 1:1 复制。对每个面板的四个分散像素位置进行匹配检查，结果全部一致；两条间隔带抽样均为纯白。
+- 完整性：仅使用作者提供的三张本地图稿，未改动冻结方向、训练、评价、数据汇总或 LaTeX；test_subjects_read=N/A，finite/best/末点预算=N/A；图稿目录仍为未跟踪文件。
+- 下一步：作者可将组合 PNG 直接置入正式稿，或要求进一步添加子图标签/图注。
+- 阻塞项：无。
+
+## 2026-09-10：球面网格完整经线与前后半球遮挡已修正
+
+- 时间/agent：2026-09-10T16:33:43+08:00，CODEX；状态：已完成并核验。
+- 动作：将交互页经线从南北极之间的半圆改为完整 360° 大圆；按观察方向 z 值分割前后半球，前侧按当前线宽/透明度显示实线，后侧显示较淡的虚线。
+- 证据：paper write/CSMT_2026_updated_0907_r2_tex/figure/spherical_grid_triptych/spherical_grid_explorer.html 与 build_spherical_grid_triptych.js。
+- 关键结果：经线采样从 121 个半圆点改为 241 个全圆点；前后半球交界处插值到轮廓，避免出现断线；Q14/Q26/Q50 网格点与交互控件不变。
+- 完整性：构建脚本经 Node 语法检查；已检查生成页含全圆经线和前/后半球路径逻辑。未运行训练、评价、数据汇总或 LaTeX，test_subjects_read=N/A，finite/best/末点预算=N/A。
+- 下一步：作者刷新当前离线网页，确认理想视角与线条风格后导出三个 Q 级别 PNG。
+- 阻塞项：无。
+
+## 2026-09-10：球面网格网页的线条与北极轴向控件已更新
+
+- 时间/agent：2026-09-10T16:28:48+08:00，CODEX；状态：已完成并核验。
+- 动作：在交互网页中新增经纬线宽度（0.5–4.0 px）与透明度（5–85%）滑杆；新增由北极沿正 z 轴向外的红色箭头，随球面视角同步旋转。
+- 证据：paper write/CSMT_2026_updated_0907_r2_tex/figure/spherical_grid_triptych/spherical_grid_explorer.html 与 build_spherical_grid_triptych.js。
+- 关键结果：Q14/Q26/Q50 选择、拖拽旋转、重置与 2400×2400 PNG 下载行为保留；新页面含 gridWidth、gridOpacity、北极投影与箭头绘制逻辑，并通过 Node 语法及关键控件存在性检查。
+- 完整性：未改变冻结网格方向、训练、评价、数据汇总或 LaTeX，test_subjects_read=N/A，finite/best/末点预算=N/A；图稿目录仍为未跟踪文件。
+- 下一步：作者刷新当前离线网页，在选定线宽/透明度和视角下导出三张图，再交由 Codex 横向排版。
+- 阻塞项：无。
+
+## 2026-09-10：Q14/Q26/Q50 交互式球面网格网页已就绪
+
+- 时间/agent：2026-09-10T16:22:45+08:00，CODEX；状态：已完成并核验。
+- 动作：在正式论文目录新增离线交互网页，按冻结嵌套网格分别显示 Q14、Q26 与 Q50；页面支持拖拽旋转、恢复视角并下载各自 2400×2400 PNG，供作者自行选择具立体感的视角。
+- 证据：paper write/CSMT_2026_updated_0907_r2_tex/figure/spherical_grid_triptych/spherical_grid_explorer.html；数据源为 configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv 与对应冻结几何 JSON。
+- 关键结果：各档精确显示 14/26/50 个方向，Q14⊂Q26⊂Q50；最小点间角分别为 39.36699615882736°、31.915838841829665°、20.53677810221674°。
+- 完整性：页面与构建脚本均通过本地语法/存在性检查；未运行训练、评价、数据汇总或 LaTeX 编译，test_subjects_read=N/A，finite/best/末点预算=N/A；生成的图稿目录为未跟踪文件。
+- 下一步：作者从交互页分别导出 Q14、Q26、Q50 的选定视角 PNG 后提供给 Codex，Codex 再按作者图像做无损横向排版。
+- 阻塞项：无。
+
 # 项目实验日志
 ## 2026-09-10：正式论文写作区提交与协作入口归档完成
 

@@ -1,3 +1,259 @@
+## 2026-09-11：ARI 外部复现实验提交边界已整理并通过提交前检查
+
+- 时间/agent：2026-09-11T15:27:13+08:00，Codex；状态：已整理、待单次提交；训练与评价均无运行中进程。
+- 动作：将ARI外部复现整理为轻量自包含提交候选：保留官方来源清单、v2队列/split/对称Q26、冻结训练与一次性测试配置、独立ARI数据/MATLAB/训练/评价代码、最终七份结果文件、结果索引，以及关键训练statistics/preflight/access-state、E130/E190 configuration/history/best-validation/training-report。新增精确`.gitignore`例外以纳入这些轻量证据，同时继续忽略SOFA、HDF5、checkpoint、prediction、validation ledger、日志与失败run；废弃v1候选和临时smoke入口明确忽略且不删除。
+- 证据：结果索引=`results/ari_fsc_adapted_q26_external_replication_v1/README.md`；候选未跟踪文件与两份修改文件合计约0.52 MB。提交前Python入口全部`py_compile`通过，23份相关JSON解析通过，PowerShell runner解析通过，220/10/5行结果矩阵复算通过且五项配对均值/CI上界<0；五份MATLAB文件`checkcode`均0 errors（合计4条非错误提示）。
+- 完整性：候选中无`.sofa/.h5/.pt`等大型文件；权威checkpoint仅以SHA256记录，不纳入二进制。ARIA test仍为一次访问，`test_subjects_read=22`、all_finite=true、失败被试=0、协议偏差=0、测试后调参=false；E130/E190完整结束。未修改论文或SONICOM结果。`git diff --check`唯一提示为实验日志较早历史行的既有尾随空格，按历史不得重写规则保留；本次新增文件无新增whitespace错误。
+- 下一步：只暂存上述权威候选，复核staged文件清单与大小后创建一个Git提交；不推送。
+- 阻塞项：无。
+
+## 2026-09-11：ARI 外部数据库最小复现实验正式完成并通过独立完整性核验
+
+- 时间/agent：2026-09-11T15:19:37+08:00，Codex；状态：完成；正式运行 PID=`33332` 及 MATLAB/Python 子进程均已退出。
+- 动作：核验一次性测试访问、22位MCA特征、E190 FSC预测、五项subject-level指标、均值±样本SD、10000次被试配对bootstrap、最终summary与Markdown报告；另以独立只读脚本逐文件检查22份waveform、feature、prediction的shape/finite/split/checkpoint属性，并从220行原始矩阵重算全部均值、样本SD、配对均值和bootstrap区间。
+- 精确结果（MCA mean±sample SD；FSC mean±sample SD；FSC-MCA mean [95% paired-bootstrap CI]）：FullSphereERB=`1.1250478577401919±0.06390734927937161；0.9075119530552231±0.06315628255186399；-0.21753590468496864 [-0.24681059588879734,-0.18757009624529375] dB`；Contralateral25ERB=`1.2866987781635595±0.07180058462350536；1.0605504557270211±0.07265894804014157；-0.2261483224365384 [-0.2574208297906791,-0.19351711942403155] dB`；ERBBandILDMean=`2.0900914669036865±0.19180461387052777；1.6281035650860181±0.11520754515478858；-0.4619879018176686 [-0.531943226266991,-0.39348503283479003] dB`；ITDWeightedMAE=`15.574587678749721±2.5980533503353156；15.088884093162886±2.5634970768782415；-0.48570358558683585 [-0.5802527510526702,-0.3966974180708619] us`；FullSphereLSD=`4.662865613961413±0.23070014848322137；3.708464232069181±0.22315956277556151；-0.9544013818922319 [-1.0183309852168676,-0.8882104956514187] dB`。
+- 复现判定：五项预注册指标的FSC-MCA均值与95%区间上界全部<0，且五项分别均为22/22被试改善、0恶化、0相等；满足测试前冻结的严格全五指标规则，故本次ARI结果支持“FSC相对MCA的残差补偿效果可在第二个数据库复现”。
+- 证据：`results/ari_fsc_adapted_q26_external_replication_v1/mca_fsc_subject_level_metrics.csv`（220行，SHA256=`BAEE27CB4278A7648FE9B69FC2258097B5C409F86FE3B450B9EEAE3EB7A77A44`）；`five_metric_summary.csv`（10行，SHA256=`1184E1D33C42F26449062DF66E260FD622650E3F5FC0A0FD75F0427B9828D175`）；`paired_bootstrap.csv`（5行，SHA256=`DF52535582F879AD2F12BC08FEB709E0ED58C0A3984D81B2FAAFBEB7DD53E4AF`）；`summary.json`（SHA256=`DF5DDC6EB1D53CE4A49A60C0C53B78505AB94480FD41080FB57B2C18866FC934`）；`REPORT.md`（SHA256=`FC524C0B020C9DA80DBA67CF0AC7EAD61ED92A3AB6D584D97CA3979F3334EC6A`）。
+- 完整性：实际train/validation/test=130/22/22，split泄漏=false；test首次访问=`2026-09-11T14:20:13+08:00`、raw读取完成=`14:20:16+08:00`、`test_subjects_read=22`且仅一次；22份waveform shape=`[1550,2,256]`、22份feature/prediction shape=`[2,1550,463]`，全部finite，失败被试=0。E130/E190完整结束，唯一评价checkpoint为E190 `last.pt`，SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`，22份prediction均绑定该SHA。协议偏差=0、测试后调参=false。stderr仅2类NumPy标量转换DeprecationWarning，不影响本次计算或结果；没有运行错误。未改SONICOM/论文，未提交/推送；Git dirty仍为ARI实验增量与日志。
+- 解释边界/建议：ARI与SONICOM使用不同实测网格、固体角权重及ARI-adapted Q26，绝对指标不得合并成同一实验；但配对方向一致、效应跨全部五指标且22/22被试一致，建议作为独立外部数据库复现实验证据候选纳入正文，是否写入等待作者决定。
+- 下一步：向作者报告精确结果、警告、协议偏差和纳入建议；不自动修改论文、表格或图片。
+- 阻塞项：无。
+
+## 2026-09-11：ARI 唯一一次正式测试评价链已启动
+
+- 时间/agent：2026-09-11T14:20:25+08:00，Codex；状态：运行中，后台 PowerShell PID=`33332`、MATLAB worker PID=`25304`（launcher PID=`28220`），不是完成声明。
+- 动作：在无 Python/MATLAB 重叠进程、D盘可用195727814656 bytes、Conda `ml` 的 PyTorch 2.8.0+cu128/CUDA/RTX 5060与MATLAB R2025b均可用、七个正式目标均不存在的条件下，启动冻结入口 `scripts/run_ari_fsc_locked_test.ps1`。入口已原子声明测试访问，并按冻结顺序执行 raw waveform派生、MCA特征、E190 FSC推理、Python三指标、MATLAB两项ERB指标和subject-level/bootstrap汇总。
+- 证据：PID=`33332` 启动时间2026-09-11T14:20:11+08:00且核验时存活；stdout/stderr=`artifacts/ari_fsc_adapted_q26_v2/locked_test.{stdout,stderr}.log`。访问状态=`artifacts/ari_fsc_adapted_q26_v2/test_access_state.json`：首次访问=`2026-09-11T14:20:13+08:00`，raw派生完成=`2026-09-11T14:20:16+08:00`，22/22 test subjects，`all_finite=true`；stdout已逐项记录22/22，stderr为空。当前实际进入MATLAB MCA特征阶段。
+- 完整性：配置 SHA256=`9F5838C2F0D1E8C4C0F2E4D54D96B9AA7D39B8852B131655F76BAB8AA600E7CA`，预检v3 SHA256=`29E434F2DCBD29BD5BAFDDDA0ED1FCC79832533C75AE100E04155A8A477C1A7A`，权威E190 `last.pt` SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`。train/validation/test=130/22/22、split无泄漏；E130/E190均完整结束；测试后调参=false。评价尚未完成，结果finite/失败被试/claim结论=N/A。未改SONICOM/论文，未提交/推送。
+- 检查方式：`Get-Process -Id 33332`；检查上述stdout/stderr、`artifacts/ari_fsc_adapted_q26_v2/test/preparation_status.csv`、`artifacts/reconstruction/ari_fsc_adapted_q26_fsc_e190_test/inference_report.json`及`results/ari_fsc_adapted_q26_external_replication_v1/summary.json`。不得因失败自动重跑一次性raw test访问。
+- 下一步：后续轮次先核验实际进程与阶段产物；完成后检查22位、220行subject-level矩阵、10行汇总、5行paired bootstrap、全部finite、checkpoint身份、协议偏差与严格五指标判定，再记录收尾。
+- 阻塞项：无；正式评价正在运行。
+
+## 2026-09-11：ARI 严格复现判定规则与最终报告字段已在测试前补冻结
+
+- 时间/agent：2026-09-11T14:19:09+08:00，Codex；状态：测试前补冻结完成，正式 test 尚未访问或启动，PID=N/A。
+- 动作：不改变数据、模型、checkpoint、方向、指标或统计实现，仅将既有汇总脚本中的严格判定口径显式写入冻结配置：五项预注册指标均须满足被试配对 `FSC-MCA` 均值<0且10000次 paired-bootstrap 95%区间上界<0，方判定支持复现；否则判定未达到严格复现标准。补齐 `summary.json` 的首次/完成访问时间、失败被试、E130/E190状态、协议偏差、测试后调参与 `claim_supported` 字段，并使 `REPORT.md` 自动列出五项精确均值±样本SD和配对区间。
+- 证据：更新后冻结配置=`configs/experiments/ari_fsc_adapted_q26_locked_test_v1.json`，SHA256=`9F5838C2F0D1E8C4C0F2E4D54D96B9AA7D39B8852B131655F76BAB8AA600E7CA`；finalizer=`scripts/finalize_ari_fsc_locked_test.py`，SHA256=`C5DD4EBCFF525E8E0BDEF551F4D2FD0A629E58426C70C8BCDFBE5FF0EA08FB50`；无测试读取预检=`artifacts/ari_fsc_adapted_q26_v2/locked_test_preflight_v3.json`，SHA256=`29E434F2DCBD29BD5BAFDDDA0ED1FCC79832533C75AE100E04155A8A477C1A7A`，status=`passed`、13份资源哈希匹配。
+- 完整性：split=130/22/22；raw test文件仅核验存在，`raw_test_content_read=false`、`test_subjects_read=0`；正式 state/waveform/feature/prediction/result/log 目标均不存在。E130/E190完整结束，权威 E190 `last.pt` SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`；测试后调参=false。未改SONICOM或论文，Git dirty仍仅为既有ARI增量与本日志，未提交/推送。
+- 下一步：再次核验进程、磁盘、运行时、资源哈希和目标缺失后，启动唯一一次正式 test 执行链并记录PID/stdout/stderr；任何失败不得自动重跑。
+- 阻塞项：无。
+
+## 2026-09-11：ARI 一次性测试推理与五指标评价协议已冻结
+
+- 时间/agent：2026-09-11T14:06:04+08:00，Codex；状态：锁定测试配置、执行链与无测试读取预检完成；正式 test 尚未访问或启动，PID=N/A。
+- 动作：新增 `configs/experiments/ari_fsc_adapted_q26_locked_test_v1.json`，绑定 E190 `last.pt`、22位测试被试、ARI-adapted Q26、训练统计、方向/耳侧/HRIR重建/ITD/五指标/subject-level统计和10000次配对 bootstrap。新增一次性原始 SOFA 读取器、独立 test MCA 特征适配、FSC推理与三项 Python 指标、两项 MATLAB `AKerbError` 指标、汇总脚本和单一 PowerShell 执行入口。原始 `Data.IR` 只允许在原子创建 access-state 后读取一次；任何既有 state/输出均拒绝重跑，后续阶段只读派生 HDF5。
+- 冻结定义：评价方向为1550个实测方向排除ARI-Q26后的1524个方向；SphericalVoronoi权重在该评价子集上归一化，Q26权重为0；水平面为实测 elevation=0（容差1e-9）的86个非观测方向；对侧25度球冠为左耳中心(270,0)、右耳中心(90,0)，各80个非观测方向并分别归一化权重。`FullSphereERB`/`Contralateral25ERB`复用SUpDEq `AKerbError`；`ERBBandILDMean`、`ITDWeightedMAE`、`FullSphereLSD`复用仓库冻结Python实现。ARI与SONICOM网格不同，绝对值不得合并为同一实验。
+- 证据：配置 SHA256=`1610996CA8809348F671A2342E22EB10E90F69C58235AA752F5D3F6A00DB0158`；预检=`artifacts/ari_fsc_adapted_q26_v2/locked_test_preflight_v2.json`，SHA256=`0CCEB450E2013DA14C9AF2018F2C9C30505B05DF3D3B64BA0F82E580C59ADF00`；preflight入口 SHA256=`D0A8AB6F3C762839BB1B2BA316C95FC35344AEAD0118379C97127FF316BEA1B3`。13份执行/指标资源 SHA256 全部匹配；Python编译通过，PowerShell解析通过，3份MATLAB文件 `checkcode` 无 error（仅2条样式warning）。
+- 完整性：split=130/22/22且测试ID与冻结manifest逐项一致；22份原始文件只核验路径存在，未打开Data.IR，`raw_test_content_read=false`、`test_subjects_read=0`。E190报告完成、权威checkpoint=`last.pt`、SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`。测试state、派生waveform、feature、prediction、result五个目标均不存在；无测试后调参。未改SONICOM/论文，Git dirty仅含ARI增量与日志，未提交/推送。
+- 下一步：正式执行 `scripts/run_ari_fsc_locked_test.ps1`；该动作将首次且不可重复地读取22位test Data.IR，并依次生成test MCA特征、FSC预测、五指标、subject-level CSV、均值±样本SD、FSC-MCA配对bootstrap及summary。启动时须记录PID/日志/首次访问时间；任何失败不得自动重跑。
+- 阻塞项：无。首次在沙箱内调用MATLAB静态检查因环境隔离报告启动错误，获准在沙箱外仅运行`checkcode`后成功；该过程未读取测试数据。
+
+## 2026-09-11：ARI Stage-D E190 正式训练完整结束
+
+- 时间/agent：2026-09-11T13:46:32+08:00，Codex；状态：完成并通过产物完整性核验；PID=`15516` 已正常退出。
+- 动作：核验正式 ARI Stage-D run 的进程、190轮 history、38次 validation ledger、22位验证被试明细、训练报告、冻结 backbone 和 best/last checkpoint。按预注册固定预算，唯一权威评价模型为 E190 `last.pt`；best cycle 恰为190不改变末点规则。
+- 证据：run=`artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/`；history恰有190行（cycle 1--190），全部数值 finite；cycle 190 train total=`0.672584`、validation total=`0.799803`，精确 best validation objective=`0.7998033843257211`。38次验证覆盖 cycle 5,10,...,190，每次均为22个唯一 validation subjects；stderr为空。训练报告 status=`completed`、optimizer steps=`24700`、elapsed=`2452.0173032`秒、peak CUDA allocated=`521.8134765625` MiB。
+- checkpoint：权威 `last.pt` 实际 SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`，与报告一致；cycle=190、training stage=`film_siren_spectral_cnn_stage_d`、seed=20260911、cycles=190、run name均匹配冻结配置，所有 model tensors finite。`best.pt` SHA256=`C24C9D7F88DA86D38281FEFD0B203399722C0D2AD390F6642693455528ABCF8B`。
+- 冻结性：E190 checkpoint 中全部 `film_siren.*` tensor 与 E130 `last.pt` 的 `model_state` 逐项 bitwise equal；`film_siren_frozen=true`。初始 checkpoint 记录的路径、cycle=130、training stage 与 SHA256=`74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280` 均正确；仅74402个频谱 CNN 参数参与训练。
+- 完整性：实际 train=130、validation=22；condition inputs=152，local MCA inputs=25536（190*130 + 38*22）；无失败被试、无 NaN/Inf、split无泄漏，38个 ledger 的 `test_subjects_read` 均为0，训练报告 `test_subjects_read=0`。E130/E190均完整结束；测试首次访问=N/A，测试后调参=false。未改 SONICOM/论文，Git dirty仅含既有 ARI 增量和实验日志，未提交/推送。
+- 下一步：在访问 test 前冻结只允许一次执行的 ARI 推理与五指标评价配置/脚本，绑定本条 E190 `last.pt` SHA256，完成静态、shape、方向权重、统计单位和 test-access guard 预检；预检完成前不得读取22位 test HRIR。
+- 阻塞项：无。
+
+## 2026-09-11：ARI Stage-D E190 正式训练已启动
+
+- 时间/agent：2026-09-11T12:57:59+08:00，Codex；状态：运行中，Python PID=`15516`，不是完成声明。
+- 动作：在无 Python/MATLAB 重叠进程、正式输出及日志路径均不存在的条件下，重新核验冻结 Stage-D 配置、入口、ARI adapter 与 E130 `last.pt` 的 SHA256，随后用 Conda `ml` 启动冻结 backbone 的频谱 CNN E190 正式训练。
+- 证据：run=`artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/`，`configuration.json` 已实际写入；stdout/stderr=`artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190.{stdout,stderr}.log`。启动核验时进程存活，stdout 已完成 cycle 1--3：total loss=`0.718658,0.706280,0.698000`，stderr=0 bytes。config SHA256=`4CC176C1FC2DF71BE62DC8782EFADD9D1996F1B8E3F1BACB5EC77FC689B2C08C`；入口 SHA256=`BBA0D725AE78C701D1494BB351C69717255F7011FB16FF9E5595FF949B5FC395`；E130 checkpoint SHA256=`74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280`。
+- 完整性：预检 train=130、validation=22、grid=1550、frequency=463、non-observed=1524、horizontal=86、Stage-D shape=`[2,4,463]`、all_finite=true、backbone frozen=true、CNN trainable parameters=74402；规划190 epochs、24700 optimizer steps。测试 guard 已验证，`test_subjects_read=0`；E190正在运行、尚未完成，checkpoint=N/A，未发生测试后调参。未改 SONICOM/论文，Git dirty仅含既有 ARI 增量和实验日志，未提交/推送。
+- 检查方式：`Get-Process -Id 15516`；`Get-Content artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190.stdout.log -Tail 20`；检查对应 stderr；完成后必须核验190行 history、38次 validation ledger、冻结 backbone 身份及 `last.pt` SHA256，不能仅凭目录宣称完成。
+- 下一步：后续轮次先检查实际 PID、stdout/stderr 与产物；仅在 E190 完整结束且末点 checkpoint 完整性通过后，才冻结一次性测试读取和评价入口。
+- 阻塞项：无；训练正在运行。
+
+## 2026-09-11：ARI Stage-D E190 配置绑定与无更新预检完成
+
+- 时间/agent：2026-09-11T12:23:29+08:00，Codex；状态：正式 Stage-D 配置已冻结，CUDA 预检通过；E190 尚未启动，PID=N/A。
+- 动作：新增独立配置 `configs/experiments/ari_fsc_adapted_q26_stage_d_seed20260911_e190.json` 和入口 `scripts/train_ari_fsc_stage_d.py`。配置将已完成的 ARI E130 权威 `last.pt` 按路径与 SHA256 固定为冻结 backbone；入口复用已验证的 ARI train/validation 数据适配，只对 ARI grid、split 和 strict-ILD singleton 布局作适配，并在运行前逐项比较25个模型/损失/优化器/scheduler/频率/预算字段与冻结 SONICOM Stage-D source，任何偏差均拒绝执行。
+- 证据：Stage-D 配置 SHA256=`4CC176C1FC2DF71BE62DC8782EFADD9D1996F1B8E3F1BACB5EC77FC689B2C08C`；入口 SHA256=`BBA0D725AE78C701D1494BB351C69717255F7011FB16FF9E5595FF949B5FC395`；预检产物=`artifacts/ari_fsc_adapted_q26_v2/stage_d_preflight.json`，SHA256=`7D6FC6B6E2F0ED378299C9C632076A8FCC02BCBAB4EC2D5A7EBD140FF853869D`。绑定 E130 checkpoint cycle=130、SHA256=`74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280`。
+- 预检结果：train=130、validation=22、test=0；grid=1550、non-observed=1524、horizontal non-observed=86、frequency=463；Stage-B/Stage-D shape均为`[2,4,463]`，all_finite=true，zero_initial_delta=true。FiLM-SIREN冻结参数=1444482，频谱 CNN 可训练参数=74402；E190规划为130 steps/epoch、190 epochs、24700 optimizer steps，当前 parameter_updates=0。实际调用 test split 被拒绝，`test_guard_verified=true`、`test_subjects_read=0`。
+- 完整性：正式输出 `artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/` 尚不存在；未启动训练、未读取测试、未发生测试后调参。E130完整结束，E190=N/A，E190 checkpoint=N/A；未改 SONICOM/论文，Git dirty仅含既有 ARI 增量、上述新文件与实验日志，未提交/推送。
+- 下一步：启动前重新检查 GPU、Python/MATLAB 进程、配置/入口/checkpoint SHA256及输出路径；若仍通过，将正式 E190 启动作为该轮最后动作，记录 PID、stdout/stderr、run path 和检查命令后结束。
+- 阻塞项：无。
+
+## 2026-09-11：ARI Stage-B E130 正式训练完整结束
+
+- 时间/agent：2026-09-11T12:00:51+08:00，Codex；状态：完成并通过产物完整性核验；PID=`27824` 已正常退出。
+- 动作：核验正式 ARI Stage-B run 的进程、stdout/stderr、130轮 history、26次 validation ledger、22位验证被试明细、训练报告及 best/last checkpoint；没有根据验证结果改变冻结配置，权威模型按预注册规则固定为 E130 `last.pt`，即使本次 best cycle 同为130也不改变选择口径。
+- 证据：run=`artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/`；`history.csv` 恰有130行（cycle 1--130）且所有数值 finite；cycle 130 train total=`0.714390`、validation total=`0.8517441993409937`。`validation_ledger.json` 恰有26次（每5轮一次，5--130），每次均含22个唯一 validation subject、数值全 finite、`test_subjects_read=0`；`best_validation_per_subject.csv` 有22位唯一被试。`training_report.json` status=`completed`、optimizer_steps=`16900`、elapsed=`859.5928966 s`、peak CUDA=`520.5322265625 MiB`。
+- checkpoint：权威 `last.pt` 内 cycle=130、seed=20260911、run name和cycles=130均匹配冻结配置，SHA256实际值与报告一致：`74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280`；诊断性 `best.pt` SHA256=`9E8A62FF72623393B182F4CA2B26EB93EA45EC6675332723494AB0F830C3EA0E`，本实验不以 best checkpoint 评价。
+- 完整性：实际训练队列=130，validation=22；condition inputs=152（130+22），local MCA reads=17472（16900 train steps + 26×22 validation），无失败被试、无 NaN/Inf、stderr为空、split互斥；test=0，`test_subjects_read=0`，测试首次访问=N/A，测试后调参=false。E130完整结束；E190尚未启动；未改 SONICOM/论文，Git仍为 dirty（ARI增量文件与日志），未提交/推送。
+- 下一步：以该 E130 `last.pt` 作为冻结 backbone，完成独立 ARI Stage-D E190 入口的 checkpoint/shape/test-guard 预检；只有预检通过后才按相同规则启动正式 E190，仍不得访问 test。
+- 阻塞项：无。
+
+## 2026-09-11：ARI Stage-B E130 正式训练已启动
+
+- 时间/agent：2026-09-11T11:43:42+08:00，Codex；状态：运行中，Python PID=`27824`，不是完成声明。
+- 动作：保留首次失败产物并将其标记为 `artifacts/training/ari_fsc_adapted_q26_seed20260911_e130.failed_20260911T114124+0800*`；独立 ARI wrapper 仅增加 `strict_ild/reference_ild_db` 从 `[1,direction]` 消除 singleton 轴后按方向取值的布局适配，未改变 strict-ILD 数值、objective、模型、optimizer、scheduler、seed 或 E130 预算。适配回归得到 target/mca=`[2,4,463]`、reference ILD=`[4]`、finite=true、test=0；随后以相同冻结 execution-v2 从新鲜正式路径重新启动。
+- 证据：正式 run=`artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/`，配置已实际写入 `configuration.json`；stdout/stderr=`artifacts/training/ari_fsc_adapted_q26_seed20260911_e130.{stdout,stderr}.log`。启动核验时进程存活、stderr=0 bytes，stdout 已完成 cycle 1--4：total loss依次 `1.078063,1.022864,0.989326,1.001445`，cycle 4 用时7.8秒。适配后入口 SHA256=`48AC9B0450BC8C27B42A5D7704722F7CF64AD064E01C7D505482AD87D9599C4C`；execution-v2 SHA256=`E87A34F89DB7DBB7940F2D3FDEE4A5C4C496E67E9D5DF1405F5F175BC96EA447`。
+- 完整性：启动前 GPU utilization=4%、memory=1190/8151 MiB，且无既有 Python 进程；正式进程已出现在 GPU compute-apps。预检 train=130、validation=22、direction=1550、frequency=463、non-observed=1524、horizontal=86、condition=`[2,26,463]`；split互斥，`test_subjects_read=0`。E130正在运行、尚未完成；E190/checkpoint=N/A；未发生测试后调参，未改 SONICOM/论文，Git仍为 dirty（ARI增量文件和实验日志），未提交/推送。
+- 检查方式：`Get-Process -Id 27824`；`Get-Content artifacts/training/ari_fsc_adapted_q26_seed20260911_e130.stdout.log -Tail 20`；`Get-Content artifacts/training/ari_fsc_adapted_q26_seed20260911_e130.stderr.log -Tail 20`；完成后核验 history、validation ledger、`last.pt` 身份/SHA256和固定 cycle=130，而不能仅凭目录或配置宣称完成。
+- 下一步：后续轮次先检查 PID、stdout/stderr 与实际产物；只有 E130 完整结束、last checkpoint及train/validation完整性通过后，才准备 Stage-D E190，仍不得读取 test。
+- 阻塞项：无；训练正在运行。
+
+## 2026-09-11：ARI E130 首次正式启动在首批读取前失败
+
+- 时间/agent：2026-09-11T11:41:24+08:00，Codex；状态：失败并退出，PID=`18364` 已不存在，未发生参数更新。
+- 动作：作者确认此前 GPU 满载来自《守望先锋》且已关闭后，复核 RTX 5060 utilization=4%、memory=1190/8151 MiB；用冻结 execution-v2 和 Conda `ml` 启动 Stage-B E130。进程创建 run 配置后，在首个训练 batch 的 strict-ILD metadata 读取处退出。
+- 证据：失败 run=`artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/`；stdout/stderr=`artifacts/training/ari_fsc_adapted_q26_seed20260911_e130.{stdout,stderr}.log`；traceback 为 `reference_ild_db[indices]` 对 HDF5 shape `[1,1550]` 作第一维方向索引导致 `IndexError: Fancy indexing out of range for (0-0)`。实际 ARI 文件的 `reference_ild_db` 是 `[1,direction]`，其他 strict 数组 shape 正常。
+- 完整性：错误发生在 `one_loss/read_block` 的目标读取阶段，optimizer step=0；train 被试开始尝试读取但首批失败，validation=0、test=0，`test_subjects_read=0`；E130未完成，E190/checkpoint=N/A，未调参，未改 SONICOM/论文，未提交/推送。
+- 下一步：保留失败目录与日志，给独立 ARI wrapper 增加只负责消除该 singleton 轴的 `read_block` 适配并做无更新 strict-loss 回归；通过后以同一冻结配置和新鲜正式路径重跑。
+- 阻塞项：ARI strict `reference_ild_db` 存储布局与 SONICOM reader 假定不一致；属于数据布局适配缺口，不涉及模型、loss、预算或测试结果。
+
+## 2026-09-11：ARI E130 正式入口就绪，但因未知 GPU 满载未启动
+
+- 时间/agent：2026-09-11T11:38:23+08:00，Codex；状态：训练入口与完整预检完成；正式训练因外部 GPU 占用暂缓，PID=N/A。
+- 动作：新增 `scripts/train_ari_fsc_stage_b.py`，以 monkey-patch 方式仅替换冻结 SONICOM Stage-C trainer 的数据边界函数（ARI subject path、Q26 condition、1550方向网格、水平面索引），原模型、objective、optimizer、scheduler、validation 和 checkpoint 实现不改。新增 `configs/experiments/ari_fsc_adapted_q26_execution_v2.json`，更正 v1 对源配置无效 `steps_per_cycle=262` 字段的解释：原 trainer 实际定义一轮为每位训练被试一次，故 ARI E130 为130 steps/epoch、16900 optimizer steps；不重复被试凑262步。
+- 证据：execution-v2 SHA256=`E87A34F89DB7DBB7940F2D3FDEE4A5C4C496E67E9D5DF1405F5F175BC96EA447`；Stage-B入口 SHA256=`6C79F86E769ECC6AAF50DE933A2F5CEF343D00B0878714D71F309166E1EE253D`。`--preflight` 完整读取并检查 train=130、val=22，direction=1550、frequency=463、non-observed=1524、horizontal non-observed=86、condition=`[2,26,463]`、test_subjects_read=0；目标输出 `artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/` 不存在，D盘可用195806752768 bytes。
+- 完整性/阻塞：启动前 `nvidia-smi` 显示 RTX 5060 GPU utilization=100%、memory=5550/8151 MiB、75°C、145/145W，但无本实验 Python 进程，WDDM 列表仅显示多个外部图形应用，无法可靠归属。为保留正在运行或状态不明任务，未叠加训练、未创建空 run 目录。train/val实际预检读取=130/22，test=0；E130/E190/checkpoint=N/A，未调参，未改 SONICOM/论文，未提交/推送。
+- 下一步：待 GPU 外部负载释放后，重新检查进程、显存和输出目录；随后将正式启动作为该轮最后动作，记录 launcher/worker PID、stdout/stderr、run path 与检查命令。
+- 阻塞项：未知外部 GPU 满载；需要 GPU 空闲或作者明确确认可与当前负载并行后才能启动。
+
+## 2026-09-11：ARI strict-ILD 冻结 objective smoke check 完成
+
+- 时间/agent：2026-09-11T10:44:22+08:00，Codex；状态：无更新 objective smoke check 通过；训练未启动。
+- 动作：新增 `scripts/smoke_ari_strict_loss.py`，从冻结 train 特征中选取4个非观测全局方向及4个满足 ARI `elevation==0` 的非观测水平方向，读取其 strict-HRIR metadata，并调用既有 `calculate_stage_c_losses` 与冻结 Stage-D objective；脚本不创建 optimizer、不调用 backward。
+- 证据：`artifacts/ari_fsc_adapted_q26_v2/strict_loss_smoke.json`：loss=`0.7694603204727173`、all_finite=true、global_direction_count=4、horizontal_direction_count=4、parameter_updates=0、train_subjects_read=1、validation=0、test=0。
+- 完整性：该 loss 值只验证 ARI strict-ILD/频谱 ILD/ERB/notch objective 接口和数值有限性，绝不用于测试、选择或调参；严格只读取 train HDF5 且 test counter=0。正式 batch sampler、optimizer/scheduler、E130/E190和checkpoint写入尚未实现；未改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：实现独立 ARI Stage-B/Stage-D 训练循环，以冻结 262 steps/cycle、130/190 cycles、last checkpoint规则和 validation-only integrity check运行；在启动 E130 前做静态配置/输出目录核验并记录 PID。
+- 阻塞项：无。
+
+## 2026-09-11：独立 ARI Stage-B/Stage-D 前向 smoke check 完成
+
+- 时间/agent：2026-09-11T10:11:49+08:00，Codex；状态：前向 smoke check 通过；训练未启动。
+- 动作：新增 `scripts/ari_fsc_entry.py`，作为独立于 SONICOM entry point 的 ARI FSC 入口；它读取冻结 ARI execution config、核验 E130/E190 source-config SHA256、拒绝非 train/val 或任何 test-accessed HDF5，并在 CUDA 上构建同构 Stage-B FiLM-SIREN 与 Stage-D frozen-backbone spectral CNN。执行 `--smoke` 时不创建 optimizer、不调用 backward、不更新参数。
+- 证据：`artifacts/ari_fsc_adapted_q26_v2/stage_forward_smoke.json`：Stage-B/Stage-D/base/delta shapes 均为 `[2,4,463]`，`all_finite=true`，parameter_updates=0，source config SHA verified，train_subjects_read=1、validation=0、test=0；仅作诊断的 normalized target MSE=`0.6461482048034668`。
+- 完整性：本次验证的是模型接口、局部 MCA/correction channels、CUDA 前向和 Stage-D zero-initialized-refiner兼容性；MSE 不作为测试结果、选择或调参依据。完整 strict-ILD/正式 objective 的训练循环尚未实现，故 E130/E190/checkpoint/评价/bootstrap=N/A。未构造或读取 test path；未改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：在该隔离入口中实现与冻结 Stage-B/Stage-D objective 完全一致的 batch sampler、horizontal-rule、strict-ILD loss、optimizer/scheduler和末点checkpoint写入；先完成无更新 loss smoke check，才可正式启动 E130。
+- 阻塞项：无。
+
+## 2026-09-11：ARI FSC 单一训练执行配置冻结
+
+- 时间/agent：2026-09-11T10:01:50+08:00，Codex；状态：训练执行配置冻结；训练未启动。
+- 动作：新增 `configs/experiments/ari_fsc_adapted_q26_execution_v1.json`，将 ARI protocol、split、Q26 normalization、train-only statistics、Conda ml CUDA 环境、E130/E190末点规则和 test guard 绑定为单一执行入口。Stage-B 与 Stage-D 分别逐字继承指定 SONICOM E130/E190 source config 的模型/优化器/scheduler/loss/frequency/batch/clip/fixed-cycle设定；仅覆盖 ARI 数据路径、队列/方向数、水平面规则、seed=20260911和名称。
+- 证据：JSON 语法检查通过；执行配置 SHA256=`79799C5076AB3E813A7757C80331BFF0910B093CE56095E8B1A7D92784362A89`。Stage-B source=`configs/experiments/sonicom_film_siren_gl_final_d1d2_notch_seed20260822_e130.json`，SHA256=`34682E6AE3D3C2B71D1A0AF45FE4B8EEF8DB4E11F697C6DAFA51D4794CFC432B`；Stage-D source=`configs/experiments/sonicom_film_siren_spectral_cnn_final_seed20260822_e190.json`，SHA256=`53585DF74C0CBE5A288DA8FC757B8AFD8DDE702E095E25A7B43EFFFCD567EB97`。
+- 完整性：配置明确拒绝 SONICOM checkpoint/ensemble/selection/test paths，使用 ARI train=130、val=22、test=22 及 observed=26/non-observed=1524；`test_subjects_read=0`。模型参数更新、checkpoint、E130/E190、评价/bootstrap=N/A；未改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：在独立 ARI entry point 中读取此配置，作一次无参数更新的 Stage-B/Stage-D 前向和损失 smoke check（涵盖 ARI horizontal-rule）；通过后才可把 E130 启动作为一轮最后动作。
+- 阻塞项：无。
+
+## 2026-09-11：ARI FSC loader CUDA smoke check 完成
+
+- 时间/agent：2026-09-11T09:59:17+08:00，Codex；状态：训练前 loader smoke check 通过；训练未启动。
+- 动作：新增独立 `scripts/smoke_ari_fsc_loader.py`，在固定 `D:\miniconda3\envs\ml\python.exe` 内仅加载一位 train 与一位 validation 的已准备特征；以 train-only ARI-Q26 normalization 建立条件张量，并在 CUDA 上无梯度运行既有 `Q26ConditionEncoder`。
+- 证据：`artifacts/ari_fsc_adapted_q26_v2/loader_smoke.json`：PyTorch=`2.8.0+cu128`、CUDA=`12.8`、GPU=`NVIDIA GeForce RTX 5060`；manifest counts train=130/val=22；condition shape=`[1,2,26,463]`、latent shape=`[1,128]`；train_subjects_read=1、validation_subjects_read=1、test_subjects_read=0、all_finite=true。
+- 完整性：smoke 明确检查 train/val manifest 互斥、全部相应 HDF5 存在、strict phase shape=`[2,1550,463]`、每个输入的 test counter=0；未构造或打开 test path。正式 E130/E190/checkpoint/评价/bootstrap=N/A；未修改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：实现冻结模型与优化器配置的独立 ARI Stage-B/Stage-D 入口（不能改变 SONICOM entry point），再在不更新参数的前提下验证单 batch 前向/损失；只有这些检查完成，才按预注册 E130 将训练作为一轮的最后动作启动。
+- 阻塞项：无。
+
+## 2026-09-11：ARI 训练 Python 环境固定为 Conda ml
+
+- 时间/agent：2026-09-11T09:57:17+08:00，Codex；状态：训练前环境核验完成；训练未启动。
+- 动作：发现先前为预处理临时使用的仓库 `.venv` 没有 PyTorch；其中安装的 `torch 2.14.0+cpu` 不满足冻结 `require_cuda=true`，已停止使用该环境。按作者提示定位并核验 `D:\miniconda3\envs\ml\python.exe`，后续 ARI 训练/验证和 PyTorch smoke check 固定使用该 Conda 环境。
+- 证据：`D:\miniconda3\Scripts\conda.exe run -n ml python ...` 返回解释器=`D:\miniconda3\envs\ml\python.exe`、PyTorch=`2.8.0+cu128`、CUDA=`12.8`、`torch.cuda.is_available()=True`、GPU=`NVIDIA GeForce RTX 5060`。没有运行中的 Python/PyTorch 训练进程。
+- 完整性：这仅改变执行环境选择，不改变冻结数据、Q26、模型、损失、种子、训练预算或 test policy；train=130/val=22/test=0 已有特征不变，`test_subjects_read=0`。checkpoint/E130/E190/评价/bootstrap=N/A；未改 SONICOM/论文，未提交/推送。
+- 下一步：用 `ml` 环境实现/执行独立 ARI loader 的无梯度 shape、split-isolation 与 strict-ILD metadata smoke check；正式 E130 启动前仍须记录 PID、输出路径和检查方式。
+- 阻塞项：无。
+
+## 2026-09-11：ARI train MCA 特征批处理与完整性核验完成
+
+- 时间/agent：2026-09-11T09:47:37+08:00，Codex；状态：完成（train 特征准备，非训练）。
+- 动作：已确认 MATLAB worker/launcher 均退出，`mcar.prepare_ari_fsc_split(...,'train')` 实际完成130位训练被试；随后逐文件运行 ARI 专用 feature validator。
+- 证据：`artifacts/ari_fsc_adapted_q26_v2/train/preparation_status.csv` 有130行，`Success=130`、`failed=0`、累计 subject wall-time=632.2411498秒；目录存在130个 `nh*.h5`。`python scripts/validate_ari_fsc_features.py --expected-split train ...` 返回 `validated_files=130 max_identity_db=0`。
+- 完整性：实际读取 train=130、validation=0、test=0；130份输出均为 `[2,1550,463]`、strict ILD metadata 完整、finite、Q26/evaluation mask/zero-observed-weight 符合冻结规则，残差恒等式最大误差=0 dB；`test_subjects_read=0`。checkpoint/E130/E190/正式评价/bootstrap=N/A；未改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：实现不改变 SONICOM 行为的 ARI training loader/config，并以 train/validation 作无梯度 shape、split-isolation、strict-ILD metadata smoke check；通过后才可考虑按冻结 E130 启动正式训练。
+- 阻塞项：无。
+
+## 2026-09-11：ARI train MCA 特征批处理已启动
+
+- 时间/agent：2026-09-11T09:28:01+08:00，Codex；状态：运行中（train 特征准备，非模型训练）。
+- 动作：validation 22/22 完成并验证后，按完全相同的冻结 `mcar.prepare_ari_fsc_split(...,'train')` 启动 130 位 train MCA/残差/严格-ILD 特征生成。首个 Windows launcher 因参数引号未正确传递而立即退出、无输出/无产物，已在实际运行前纠正为单一带引号参数串；未把该失败 launcher 作为运行证据。
+- 证据：实际 MATLAB worker PID=`14824`（伴随 launcher PID=`19472`），stdout=`artifacts/ari_fsc_adapted_q26_v2/logs/mca_train_stdout.log`，stderr=`artifacts/ari_fsc_adapted_q26_v2/logs/mca_train_stderr.log`，增量状态=`artifacts/ari_fsc_adapted_q26_v2/train/preparation_status.csv`。启动后已生成5个 `nh*.h5`，例如 `nh110`/`nh111`，各耗时5.4446009/5.4172503秒。
+- 完整性：范围 train=130，validation=0、test=0；adapter 仅接受 `train|val`，`test_subjects_read=0` 且无 test HRIR 访问。训练/checkpoint/E130/E190/正式评价/bootstrap=N/A；未覆盖既有 SONICOM/论文，未提交/推送。
+- 下一步：以 worker、status 和 stderr 核验实际结束；完成后必须对130个文件逐个运行 ARI validator并记录 shape/finite/split 隔离，之后才可进行训练前 smoke check。
+- 阻塞项：无。
+
+## 2026-09-11：ARI validation MCA 特征批处理与完整性核验完成
+
+- 时间/agent：2026-09-11T09:25:55+08:00，Codex；状态：完成（validation 特征准备，非训练）。
+- 动作：已确认 MATLAB worker 退出，`mcar.prepare_ari_fsc_split(...,'val')` 实际完成 22 位 validation 被试；随后用 ARI 专用 validator 检查每一份 HDF5。
+- 证据：`artifacts/ari_fsc_adapted_q26_v2/val/preparation_status.csv` 有22行，`Success=22`、`failed=0`、累计 subject wall-time=109.3233494秒；目录存在22个 `nh*.h5`。命令 `python scripts/validate_ari_fsc_features.py --expected-split val ...` 返回 `validated_files=22 max_identity_db=0`。
+- 完整性：validation 实际读取=22，train=0、test=0；全部输出为 `[2,1550,463]`、严格 ILD 元数据完整、finite，并满足 frozen Q26/evaluation-mask/zero-observed-weight 规则；`test_subjects_read=0`。checkpoint/E130/E190/正式评价/bootstrap=N/A；未改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：可按相同冻结 adapter 启动 train=130 的 MCA 特征批处理；完成并验证后才可进行训练前配置/加载 smoke check，仍不得访问 test。
+- 阻塞项：无。
+
+## 2026-09-11：ARI validation MCA 特征批处理运行状态更正
+
+- 时间/agent：2026-09-11T09:21:32+08:00，Codex；状态：运行中（validation 特征准备，非训练）。
+- 动作：复查发现先前记录的 PID=16892 是短生命周期 MATLAB launcher；以前台同命令确认后，实际 worker 进程为 `MATLAB PID=6060`（伴随 launcher PID=12500），正在逐被试写入特征。此更正不改变冻结配置、数据或命令。
+- 证据：`artifacts/ari_fsc_adapted_q26_v2/val/preparation_status.csv` 已记录创建 `nh136`、`nh139`、`nh143`、`nh157`、`nh170` 等，单被试耗时约5.24--5.44秒；目录中已有6个 `nh*.h5`。stdout/stderr 路径沿用上一条；运行中必须以 status CSV 和 `Get-Process MATLAB` 检查，而非 launcher PID。
+- 完整性：范围仍为 validation=22，train=0、test=0；test guard 不变，`test_subjects_read=0`。训练/checkpoint/E130/E190/正式评价/bootstrap=N/A；未覆盖 `nh8.h5`，未改 SONICOM/论文，未提交/推送。
+- 下一步：等待 worker 退出后，核对 status 22/22、所有 HDF5 和独立 ARI validator；若全部通过才启动 train 特征处理。
+- 阻塞项：无。
+
+## 2026-09-11：ARI validation MCA 特征批处理已启动
+
+- 时间/agent：2026-09-11T08:45:05+08:00，Codex；状态：运行中（validation 特征准备，非训练）。
+- 动作：已启动 `mcar.prepare_ari_fsc_split(...,'val')`，按冻结 Q26/SUpDEq 规则为 22 位 validation 被试生成 MCA、残差和严格 ILD 特征；existing complete `nh8.h5` 只会跳过，不覆盖。
+- 证据：MATLAB PID=`16892`，stdout=`artifacts/ari_fsc_adapted_q26_v2/logs/mca_val_stdout.log`，stderr=`artifacts/ari_fsc_adapted_q26_v2/logs/mca_val_stderr.log`，状态文件会增量写入 `artifacts/ari_fsc_adapted_q26_v2/val/preparation_status.csv`；独立验证命令为 `python scripts/validate_ari_fsc_features.py --expected-split val artifacts/ari_fsc_adapted_q26_v2/val/*.h5`。
+- 完整性：启动前无 MATLAB/Python 残留进程；实际允许读取 validation=22，train=0，test=0；函数仅接受 `train|val`，test guard 不变。训练/checkpoint/E130/E190/测试首次访问/评价/bootstrap=N/A；未改 SONICOM、论文，未提交/推送。
+- 下一步：检查 PID、status CSV、stderr 和输出 HDF5；仅在 validation 批处理实际完成且全部通过 ARI validator 后，才启动 train 特征批处理。
+- 阻塞项：无。
+
+## 2026-09-11：ARI 训练/验证波形与 MCA 特征 adapter 核验完成
+
+- 时间/agent：2026-09-11T07:45:16+08:00，Codex；状态：独立 ARI 训练前 adapter 已就绪；训练和测试均未启动/访问。
+- 动作：`scripts/prepare_ari_fsc_waveforms.py` 已对 train=130、validation=22 完成冻结的 48→44.1 kHz polyphase 重采样及 256-sample 输出，并拒绝 `--split test`。新增 `matlab/+mcar/prepare_ari_fsc_subject.m`，仅接收预处理 train/val HDF5，以冻结 Q26 运行既有 SUpDEq MCA，并写入严格 ILD 所需的相位/带外谱/HRIR 能量 ILD 元数据。
+- 证据：派生产物（不纳入 Git）为 `data/processed/ari_fsc_adapted_q26_v2/{train,val}/preparation_summary.json` 与 `artifacts/ari_fsc_adapted_q26_v2/val/nh8.h5`。验证实际读取 train=130、validation=22；单个 MCA HDF5 为 `[ear=2,direction=1550,freq=463]`，strict phase 同 shape、带外谱 `[2,1550,50]`，`reference−mca−residual` 最大绝对误差=0 dB，全部 finite。既有通用 validator 的唯一拒绝项为其 SONICOM 专属断言“每个方向权重>0”；ARI 的 26 个观测方向权重为 0、1524 个非观测 Voronoi 权重和为1，符合冻结 protocol，故不使用该错误判据。
+- 完整性：test guard 已实际返回 `TEST ACCESS REFUSED`；`test_subjects_read=0`，test HRIR 未读；split 互斥，未覆盖任何产物；SUpDEq 依赖以 `external/SUpDEq` 作为工作目录可用。checkpoint/E130/E190/正式评价/bootstrap=N/A；未修改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：增加独立 ARI validator（明确接受观测方向零权重）并批量生成 train/validation MCA 特征；之后只进行训练前完整性核验，尚不得访问 test。
+- 阻塞项：无。
+
+## 2026-09-11：ARI-adapted Q26 冻结记录 SHA256 更正
+
+- 时间/agent：2026-09-11T02:11:00+08:00，Codex；状态：记录更正；协议内容、数据、split 与训练状态均未改变。
+- 动作：在写入上一条冻结日志后对三个实际文件重新计算完整 SHA256，发现该条中 split 和 protocol 的末段曾因终端表格截断而被误抄；保留历史原文并在本条给出权威校正。
+- 证据/更正：`configs/data/ari_hrtf_b_nh_adapted_q26_v2.csv`=`0B9853AF93A28F512806774428D6E02DBD9B39F0B7D6254E2D567AA6493560A3`（原条正确）；`configs/data/ari_hrtf_b_nh_adapted_q26_subject_split_v2.csv`=`79DB6FD19A9763A743722CB4B76CFB28C392470E0292CD1E1CC52C646819558B`；`configs/experiments/ari_fsc_adapted_q26_external_replication_v2.json`=`CE44BEA7713DEB010AAB482FF5DBA50722647E14E0E6BFA7531F2743727E22E3`。
+- 完整性：仅更正日志元数据；`test_subjects_read=0`，训练/评价/checkpoint/E130/E190=N/A；未改论文或 SONICOM，未提交/推送。
+- 下一步/阻塞项：按上一条执行 ARI adapter 的预训练实现与核验；无新增阻塞。
+
+## 2026-09-11：经作者授权的 ARI-adapted Q26、队列 split 与预训练协议已冻结
+
+- 时间/agent：2026-09-11T02:10:00+08:00，Codex；状态：预训练协议冻结完成；未开始预处理、训练、评价或测试读取。
+- 动作：依据作者明确授权，以共同 ARI 实测网格重新定义独立的 ARI-Q26：中轴锚点 `(0°,-30°)` 与 `(0°,80°)`，加 12 个精确左右镜像对；在每一轮 greedy maximin 中同时最大化候选对到既选点的最小距离及该镜像对的内部距离，source-index 作确定性 tie-break。以 seed=20260911 对 174 位合格被试冻结 130/22/22 train/validation/test split；该整数配额对应 74.71264367816092%/12.64367816091954%/12.64367816091954%，为 n=174 时最接近目标份额的总偏差最小分配。
+- 证据：`configs/data/ari_hrtf_b_nh_adapted_q26_v2.csv`（SHA256=`0B9853AF93A28F512806774428D6E02DBD9B39F0B7D6254E2D567AA6493560A3`）；`configs/data/ari_hrtf_b_nh_adapted_q26_subject_split_v2.csv`（SHA256=`79DB6FD19A9763A743722CB4B76CFB28B7B05C73D1DA4F2A74C830B501E6B4C5`）；`configs/experiments/ari_fsc_adapted_q26_external_replication_v2.json`（SHA256=`CE44BEA7713DEB010AAB482FF5DBA507D6C2CCB79C8D497636C0DA609D5E1C07`）；生成/防覆盖脚本=`scripts/freeze_ari_adapted_q26_protocol.py`。
+- 关键结果：26 方向唯一、12 对镜像严格互指、每一方向即 ARI 原始测点，故逐方向映射误差均为 0°（最大/平均=0°）；最小两两角距=27.942208616877725°；全部 174 合格文件的 `SourcePosition` 一致（coordinate-grid SHA256=`7DE852FCC9D3B47C7A1AE38B9650E02B9B8682131471FA215DF001E3F28AFA66`），采样率=48 kHz。v1 预训练候选因其 pair-internal distance 未入目标、最小间距仅4.923991616867438°而被训练前静态核验拒绝；v1 文件保留但不可执行，v2 为唯一授权协议。
+- 完整性：split 覆盖 train=130、val=22、test=22、excluded=3，互斥；`test_subjects_read=0`（只读取 SOFA metadata/SourcePosition，未读取 Data.IR 值）；NaN/Inf/输出 shape/checkpoint/E130/E190/测试首次访问=N/A。未修改 SONICOM/论文/既有结果，未提交或推送。
+- 下一步：在独立 ARI adapter 中冻结 48→44.1 kHz 的 polyphase 重采样、256 样本 padding、MCA 与 FSC 数据张量以及 split/test-access guards；adapter 通过 shape/finite/split smoke checks 后，才可启动 E130。
+- 阻塞项：无；绝对指标将采用 ARI 网格，后续不得与 SONICOM 的绝对值合并。
+
+## 2026-09-11：ARI 外部复现实验因冻结 Q26 与 ARI 网格不兼容而安全中止
+
+- 时间/agent：2026-09-11T01:55:00+08:00，Codex；状态：预训练 Q26 映射门槛失败，实验中止；未冻结可执行 split/配置、未启动训练/评价、未读测试 HRIR 值。
+- 动作：基于 174 个 metadata 合格的 `hrtf b_nh` 候选，尝试将既有冻结 SONICOM Q26 定义逐项、唯一且左右镜像地映射到 ARI `SourcePosition`（用训练候选的坐标 metadata，未读 `Data.IR`）。预注册脚本 `scripts/freeze_ari_external_replication_protocol.py` 的接受上限为 5°；发现不满足即拒绝产生冻结配置。
+- 证据：ARI 坐标为 1550 方向、elevation=-30°..+80°；冻结 Q26 目标含 elevation=-45°（索引 5/10/17/22）与 +90°（索引1），本身超出 ARI 覆盖。最近 ARI 方向的角误差为：Q26[1] +90°→+80° = 10.000000000000012°；Q26[5] 150°/-45°→150°/-30° = 14.99999999999997°；Q26[10] 295°/-45°→292.5°/-30° = 15.128488621993617°；Q26[17] 65°/-45°→62.5°/-30° = 15.128488621993617°；Q26[22] 210°/-45°→210°/-30° = 14.99999999999997°。其余目标也出现 2.349209748549927° 与 2.462013492259059° 的网格误差；独立最近邻在 Q26[6] 的镜像配对检查失败。
+- 关键结果：在不改变 Q26 的前提下，最小可得最大映射误差至少 15.128488621993617°，远高于 5° 预注册阈值且无法满足所有镜像不变量。为避免静默变更 Q26、将网格误差混入 FSC--MCA 比较，按作者指令停止，而非放宽阈值、重定义观测方向或继续处理。
+- 完整性：`test_subjects_read=0`；训练/验证/测试实际读取数均为0，NaN/Inf/shape训练检查、checkpoint、E130/E190、测试首次访问、bootstrap均为N/A。只移除了本次失败映射生成的临时 split CSV；保留可复查的下载清单、原始数据和脚本。未修改 SONICOM、论文文件或既有结果，未提交/推送。
+- 下一步：如作者希望继续，须显式批准一种协议变更（例如针对 ARI 重新冻结一个可实现且镜像对称的 Q26，或选择具备 -45°/+90° 覆盖的另一独立实测数据库），然后从新预注册协议开始；不得把本次失败的测试结果用于调整。
+- 阻塞项：冻结 SONICOM Q26 与 ARI 测量 elevation 覆盖不兼容。
+
+## 2026-09-11：ARI 外部复现实验数据获取与同质队列筛查完成
+
+- 时间/agent：2026-09-11T01:47:00+08:00，Codex；状态：已完成数据获取与元数据筛查，尚未冻结 split、未启动训练、未读取测试 HRIR 内容。
+- 动作：从官方 SOFA 索引 `https://sofacoustics.org/data/database/ari/` 下载且仅下载 `hrtf b_nh*.sofa`；固定为实测、入耳式、ARI 半消声室的 b 处理版本（50 Hz--18 kHz 均衡）。明确排除 DTF、无字母旧版本、c/d（起始方向/实验室或测量顺序不同）、模拟、LAS 与耳后式数据。下载器采用 TLS 证书校验、逐文件 SHA256 和 SOFA metadata/shape 检查；一次服务器截断后安全重试，未保留不完整文件。
+- 证据：`configs/data/ari_hrtf_b_nh_source_inventory_v1.json`（SHA256=`39FAD86C6076A08BC3EFB71E8E15D57C36C5B8962D275A2A5E7CFCFFE2132D15`）；大型未跟踪源数据在 `data/raw/ari_hrtf_b_nh_v20260911/`，获取器为 `scripts/acquire_ari_hrtf_b_nh.py`。
+- 关键结果：获取时间为 2026-09-11T01:47:00+08:00；177 个文件、521,943,432 bytes。174 个文件为共同 `SimpleFreeFieldHRIR`、`Data.IR=[1550,2,256]`、`SourcePosition=[1550,3]`，构成足够大的同质候选队列；因缺失方向而按固定元数据规则排除 `nh10`（1549）、`nh22`（1548）和 `nh826`（1548），未根据模型误差排除。许可信息：官方目录/ARI 页面未发布机器可读许可；清单保留 OEAW/ARI 署名与研究使用限制说明，后续报告须保留该 caveat。
+- 完整性：已逐项记录官方 URL、文件名、bytes、SHA256、SOFA 约定、shape 与 metadata 合格性；D 盘下载后可用 203,402,129,408 bytes。`test_subjects_read=0`（未读 `Data.IR` 值），训练/评价/best/末点预算=N/A；未修改 SONICOM 或论文文件，未提交/推送。
+- 下一步：从 174 个合格 ID 以 seed=20260911 生成并冻结 75/12.5/12.5 manifest，读取单一训练文件的方向元数据以审计 Q26 唯一、镜像映射；之后才建立 ARI 专用预注册配置与适配器。
+- 阻塞项：无；需要在 protocol freeze 后实现独立 ARI 适配器，因为既有 SONICOM FSC 输入固定为 793 个方向。
+
 ## 2026-09-10：正式论文结构图替换与稀疏网格图接入完成
 
 - 时间/agent：2026-09-10T23:40:48+08:00，CODEX；状态：已完成并通过静态核验。
@@ -4169,3 +4425,21 @@ MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开
   2. residual MLP 的训练数据生成流程尚未固定：仍需明确输入特征、log-magnitude residual 目标、训练/验证/测试划分以及跨方向或跨个体的划分方式。
   3. residual MLP 尚未实现和训练，因此当前只能完成 SH、SUpDEq + SH、MCA 三种传统基线比较，尚不能评估 MCA + residual MLP 的增益。
 - 结论与下一步：MCA demo 已成功复现，传统基线和图表导出流程已经跑通。下一步先完成对侧耳高频区域的定量统计，再固定 residual 数据集格式与划分方式，最后训练轻量 MLP，并以 LSD、ERB-band magnitude error、ILD error 和对侧高频误差与 MCA baseline 比较。
+## 2026-09-11：ARI 训练前波形 adapter 与 validation 输入核验完成
+
+- 时间/agent：2026-09-11T07:40:09+08:00，Codex；状态：独立 ARI adapter 已冻结并完成 validation 数据准备；未启动训练、未读取测试 HRIR。
+- 动作：新增 `scripts/prepare_ari_fsc_waveforms.py`，它校验冻结 protocol、source inventory、split 与 Q26 的 SHA256，且在任何文件解析前拒绝 `--split test`；仅对允许 split 执行预注册 `scipy.signal.resample_poly(up=147,down=160)`，将 236 samples 右侧零填充至 256，保留左右耳顺序、时间原点和 ITD。已实际运行 `--split val`。
+- 证据：脚本的 `--split test` 返回 `TEST ACCESS REFUSED`；validation 产物和清单为 `data/processed/ari_fsc_adapted_q26_v2/val/preparation_summary.json`（大型/派生数据不纳入 Git）。22 个 HDF5 均为 `hrir=[1550,2,256]`、`direction_features=[1550,6]`、Q26 indices=`[26]`；抽样重开检查 `all_finite=true`。SUpDEq/MATLAB 可用性也已在 `external/SUpDEq` 工作目录核验成功（`supdeq_interpHRTF.m` 可解析）；其相对路径要求已记录。
+- 完整性：实际读取 validation=22、train=0、test=0，split 隔离和 test guard 通过；所有 validation 波形 finite；checkpoint/E130/E190/评价/bootstrap=N/A；未修改 SONICOM、论文或既有结果，未提交/推送。
+- 下一步：用同一不可覆盖 adapter 准备 130 位训练被试，并实现从已准备波形到冻结 MCA/FSC 残差 HDF5 的独立特征生成器；随后才可作训练前 shape/finite smoke check。
+- 阻塞项：无。绝对评价仍须等待 E190 后的一次授权测试访问。
+## 2026-09-11：ARI Stage-D E190 正式训练已启动
+
+- 时间/agent：2026-09-11T12:57:59+08:00，Codex；状态：运行中，Python PID=`15516`，不是完成声明。
+- 动作：在无 Python/MATLAB 重叠进程、正式输出及日志路径均不存在的条件下，重新核验冻结 Stage-D config、入口、ARI adapter 与 E130 `lastlish` Hmm typo? 
+## 2026-09-11：ARI Stage-D E190 正式训练完整结束
+
+- 时间/agent：2026-09-11T13:46:32+08:00，Codex；状态：完成并通过产物完整性核验；PID=`15516` 已正常退出。
+- 动作：核验正式 ARI Stage-D run 的进程、190轮 history、38次 validation ledger、22位验证被试明细、训练报告、冻结 backbone 和 best/last checkpoint。按预注册固定预算，唯一权威评价模型为 E190 `last.pt`；best cycle 恰为190不改变末点规则。
+- 证据：run=`artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/`；history恰有190行（cycle 1--190），全部数值 finite；cycle 190 train total=`0.672584`、validation total=`0.799803`，精确 best validation objective=`0.7998033843257211`。38次验证覆盖 cycle 5,10,...,190，每次均为22个唯一 validation subjects；stderr为空。训练报告 status=`completed`、optimizer steps=`24700`、elapsed=`2452.0173032`秒、peak CUDA allocated=`521.8134765625` MiB。
+- checkpoint：权威 `last.pt` 实际 SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`，与报告一致；cycle=190、training stage=`film_siren_spectral_cnn_stage_d`、seed=20260911、cycles=190、run name均匹配冻结配置，所有 model tensors finite。`best.pt` SHA256=`C24C9D7F88DA86D382 multic?`。

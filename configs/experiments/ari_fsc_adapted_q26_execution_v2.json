@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.1",
+  "status": "frozen_pre_training",
+  "supersedes": "configs/experiments/ari_fsc_adapted_q26_execution_v1.json",
+  "supersession_reason": "The inherited SONICOM steps_per_cycle field is not consumed by the frozen trainer; a cycle is one pass over train subjects. ARI therefore has 130 optimizer steps per epoch, preserving the E130/E190 epoch budgets without duplicating subjects.",
+  "experiment_id": "ARI-FSC-ADAPTED-Q26-EXTERNAL-REPLICATION-V2",
+  "protocol": "configs/experiments/ari_fsc_adapted_q26_external_replication_v2.json",
+  "dataset_root": "artifacts/ari_fsc_adapted_q26_v2",
+  "subject_split_csv": "configs/data/ari_hrtf_b_nh_adapted_q26_subject_split_v2.csv",
+  "q26_csv": "configs/data/ari_hrtf_b_nh_adapted_q26_v2.csv",
+  "q26_normalization": "configs/data/ari_fsc_adapted_q26_normalization_v1.json",
+  "training_statistics": "artifacts/ari_fsc_adapted_q26_v2/training_statistics.json",
+  "cohort_counts": {"train": 130, "val": 22, "test": 22},
+  "direction_count": 1550,
+  "observation_count": 26,
+  "interpolation_direction_count": 1524,
+  "horizontal_rule": "measured elevation_deg==0 and non-observed only",
+  "seed": 20260911,
+  "environment": {"python": "D:/miniconda3/envs/ml/python.exe", "require_cuda": true, "precision": "FP32", "automatic_mixed_precision": false},
+  "test_policy": "Only frozen train=130 and val=22 paths may be resolved before E190 completion. Test paths are never constructed or opened.",
+  "stage_b": {
+    "source_config": "configs/experiments/sonicom_film_siren_gl_final_d1d2_notch_seed20260822_e130.json",
+    "source_config_sha256": "34682E6AE3D3C2B71D1A0AF45FE4B8EEF8DB4E11F697C6DAFA51D4794CFC432B",
+    "cycles": 130,
+    "epoch_subject_count": 130,
+    "optimizer_steps_per_epoch": 130,
+    "source_unused_steps_per_cycle_field": 262,
+    "checkpoint_rule": "E130 last.pt only"
+  },
+  "stage_d": {
+    "source_config": "configs/experiments/sonicom_film_siren_spectral_cnn_final_seed20260822_e190.json",
+    "source_config_sha256": "53585DF74C0CBE5A288DA8FC757B8AFD8DDE702E095E25A7B43EFFFCD567EB97",
+    "cycles": 190,
+    "epoch_subject_count": 130,
+    "optimizer_steps_per_epoch": 130,
+    "source_unused_steps_per_cycle_field": 262,
+    "checkpoint_rule": "E190 last.pt only"
+  },
+  "inheritance": "Import architecture, optimizer, scheduler, objective, frequency_mapping, batch sizes, gradient clipping and formal-fixed-cycle semantics verbatim from each source_config. Override only ARI data/split/Q26 paths, seed, cohort/grid rules, run names and epoch subject count. Never use SONICOM checkpoint, ensemble, selection or test paths.",
+  "run_names": {"stage_b": "ari_fsc_adapted_q26_seed20260911_e130", "stage_d": "ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190"}
+}

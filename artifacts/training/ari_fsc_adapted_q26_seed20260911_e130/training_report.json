@@ -1,0 +1,33 @@
+{
+  "status": "completed",
+  "run_name": "ari_fsc_adapted_q26_seed20260911_e130",
+  "seed": 20260911,
+  "cycles": 130,
+  "optimizer_steps": 16900,
+  "best_cycle": 130,
+  "best_validation_objective_total": 0.8517441993409937,
+  "decision": "FIXED_CYCLE_COMPLETE",
+  "formal_fixed_cycle": true,
+  "checkpoint_policy": "fixed_stop_cycle_last",
+  "authoritative_checkpoint": "last.pt",
+  "scheduler_horizon_cycles": 150,
+  "elapsed_seconds": 859.5928966,
+  "peak_cuda_allocated_mib": 520.5322265625,
+  "best_checkpoint_sha256": "9E8A62FF72623393B182F4CA2B26EB93EA45EC6675332723494AB0F830C3EA0E",
+  "last_checkpoint_sha256": "74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280",
+  "authoritative_checkpoint_sha256": "74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280",
+  "test_subjects_read": 0,
+  "conditioning_scope": "global_plus_local_mca",
+  "model_family": "FilmSiren",
+  "film_siren_frozen": false,
+  "initial_film_checkpoint": null,
+  "trainable_parameter_count": 1444482,
+  "total_parameter_count": 1444482,
+  "condition_inputs_read": 152,
+  "local_mca_inputs_read": 17472,
+  "git": {
+    "branch": "codex/project-structure-refactor",
+    "commit": "0d7a01909a55ac5e7355b5274b9da425dbfcfbe9",
+    "dirty": true
+  }
+}

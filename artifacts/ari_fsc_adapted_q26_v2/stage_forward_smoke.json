@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "mode": "no_update_smoke",
+  "stage_b_shape": [
+    2,
+    4,
+    463
+  ],
+  "stage_d_shape": [
+    2,
+    4,
+    463
+  ],
+  "stage_d_base_shape": [
+    2,
+    4,
+    463
+  ],
+  "stage_d_delta_shape": [
+    2,
+    4,
+    463
+  ],
+  "normalized_target_mse": 0.6461482048034668,
+  "all_finite": true,
+  "train_subjects_read": 1,
+  "validation_subjects_read": 0,
+  "test_subjects_read": 0,
+  "parameter_updates": 0,
+  "source_config_sha256_verified": true
+}

@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "train_subjects": 130,
+  "validation_subjects": 22,
+  "test_subjects_read": 0,
+  "test_guard_verified": true,
+  "directions": 1550,
+  "interpolation_directions": 1524,
+  "horizontal_interpolation_directions": 86,
+  "frequencies": 463,
+  "stage_d_shape": [
+    2,
+    4,
+    463
+  ],
+  "stage_b_shape": [
+    2,
+    4,
+    463
+  ],
+  "zero_initial_delta": true,
+  "all_finite": true,
+  "film_siren_frozen_parameters": 1444482,
+  "spectral_cnn_trainable_parameters": 74402,
+  "initial_checkpoint_cycle": 130,
+  "initial_checkpoint_sha256": "74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280",
+  "cycles": 190,
+  "optimizer_steps_per_epoch": 130,
+  "planned_optimizer_steps": 24700,
+  "parameter_updates": 0
+}

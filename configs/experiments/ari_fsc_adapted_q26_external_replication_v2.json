@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen_pre_training",
+  "created_at": "2026-09-11T01:43:11+08:00",
+  "experiment_id": "ARI-FSC-ADAPTED-Q26-EXTERNAL-REPLICATION-V2",
+  "authorization": "Author approved an ARI-coverage-adapted, mirror-symmetric Q26 after the original SONICOM Q26 mapping was rejected.",
+  "source_inventory": "configs/data/ari_hrtf_b_nh_source_inventory_v1.json",
+  "source_inventory_sha256": "39FAD86C6076A08BC3EFB71E8E15D57C36C5B8962D275A2A5E7CFCFFE2132D15",
+  "cohort": {
+    "eligible_subject_count": 174,
+    "excluded_subjects": [
+      "nh10",
+      "nh22",
+      "nh826"
+    ],
+    "split_seed": 20260911,
+    "split_counts": {
+      "train": 130,
+      "val": 22,
+      "test": 22
+    },
+    "split_csv": "configs/data/ari_hrtf_b_nh_adapted_q26_subject_split_v2.csv",
+    "split_csv_sha256": "79DB6FD19A9763A743722CB4B76CFB28C392470E0292CD1E1CC52C646819558B"
+  },
+  "q26": {
+    "selection": "two median-plane anchors (0,-30),(0,80) plus deterministic greedy maximin selection of 12 exact mirror pairs from the common ARI measured grid; pair-internal separation included; lexicographic source-index tie-break",
+    "csv": "configs/data/ari_hrtf_b_nh_adapted_q26_v2.csv",
+    "csv_sha256": "0B9853AF93A28F512806774428D6E02DBD9B39F0B7D6254E2D567AA6493560A3",
+    "unique_direction_count": 26,
+    "mirror_symmetric": true,
+    "mapping_max_error_deg": 0.0,
+    "mapping_mean_error_deg": 0.0,
+    "minimum_pairwise_separation_deg": 27.942208616877725,
+    "common_grid_sha256": "7DE852FCC9D3B47C7A1AE38B9650E02B9B8682131471FA215DF001E3F28AFA66"
+  },
+  "signal": {
+    "source_sampling_rate_hz": 48000.0,
+    "target_sampling_rate_hz": 44100.0,
+    "resampling": "scipy.signal.resample_poly(up=147,down=160); right-zero-pad 236 samples to 256; no time alignment",
+    "amplitude_compensation": "retain official ARI hrtf-b equalization",
+    "itd": "retain delay through common polyphase resampling"
+  },
+  "evaluation": {
+    "directions": "all non-Q26 measured ARI directions",
+    "weights": "spherical Voronoi areas normalized over the evaluation subset",
+    "horizontal_ild": "ARI measured elevation==0 directions",
+    "metrics": [
+      "FullSphereERB",
+      "Contralateral25ERB",
+      "ERBBandILDMean",
+      "ITDWeightedMAE",
+      "FullSphereLSD"
+    ],
+    "statistics": "subject-level mean/sample SD; FSC-MCA paired bootstrap 10000, seed 20260911"
+  },
+  "training": {
+    "seed": 20260911,
+    "film_siren_budget": "E130",
+    "spectral_cnn_budget": "E190",
+    "checkpoint_rule": "E190 last.pt only",
+    "validation": "integrity-only; no selection"
+  },
+  "test_policy": "No test Data.IR reads until adapter/config are frozen and E190 is complete; one authorized test pass only.",
+  "test_subjects_read": 0
+}

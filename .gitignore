@@ -80,6 +80,41 @@ wandb_state/
 /artifacts/*
 !/artifacts/README.md
 
+# Curated lightweight evidence for the completed ARI external replication.
+# Raw/intermediate HDF5, checkpoints, validation ledgers, and logs remain ignored.
+!/artifacts/ari_fsc_adapted_q26_v2/
+/artifacts/ari_fsc_adapted_q26_v2/*
+!/artifacts/ari_fsc_adapted_q26_v2/loader_smoke.json
+!/artifacts/ari_fsc_adapted_q26_v2/stage_forward_smoke.json
+!/artifacts/ari_fsc_adapted_q26_v2/strict_loss_smoke.json
+!/artifacts/ari_fsc_adapted_q26_v2/stage_d_preflight.json
+!/artifacts/ari_fsc_adapted_q26_v2/locked_test_preflight_v3.json
+!/artifacts/ari_fsc_adapted_q26_v2/training_statistics.json
+!/artifacts/ari_fsc_adapted_q26_v2/test_access_state.json
+!/artifacts/training/
+/artifacts/training/*
+!/artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/
+/artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/*
+!/artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/configuration.json
+!/artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/history.csv
+!/artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/best_validation_per_subject.csv
+!/artifacts/training/ari_fsc_adapted_q26_seed20260911_e130/training_report.json
+!/artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/
+/artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/*
+!/artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/configuration.json
+!/artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/history.csv
+!/artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/best_validation_per_subject.csv
+!/artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/training_report.json
+
+# Superseded ARI preregistration candidates and disposable smoke entry points.
+/configs/data/ari_hrtf_b_nh_adapted_q26_subject_split_v1.csv
+/configs/data/ari_hrtf_b_nh_adapted_q26_v1.csv
+/configs/experiments/ari_fsc_adapted_q26_execution_v1.json
+/configs/experiments/ari_fsc_adapted_q26_external_replication_v1.json
+/scripts/freeze_ari_external_replication_protocol.py
+/scripts/smoke_ari_fsc_loader.py
+/scripts/smoke_ari_strict_loss.py
+
 # Disposable strict-reconstruction smoke outputs; curated full results remain tracked.
 /results/*_smoke/
 

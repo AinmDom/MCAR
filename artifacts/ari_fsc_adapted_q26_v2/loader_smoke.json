@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "environment": {
+    "torch": "2.8.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 5060"
+  },
+  "train_subjects_read": 1,
+  "validation_subjects_read": 1,
+  "test_subjects_read": 0,
+  "manifest_counts": {
+    "train": 130,
+    "val": 22
+  },
+  "condition_shape": [
+    1,
+    2,
+    26,
+    463
+  ],
+  "latent_shape": [
+    1,
+    128
+  ],
+  "validation_condition_shape": [
+    1,
+    2,
+    26,
+    463
+  ],
+  "all_finite": true
+}

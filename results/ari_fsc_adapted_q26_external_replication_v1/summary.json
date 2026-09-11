@@ -1,0 +1,45 @@
+{
+  "status": "completed",
+  "database": "ARI",
+  "split": "test",
+  "cohort_size": 174,
+  "train_subjects": 130,
+  "validation_subjects": 22,
+  "test_subjects_read": 22,
+  "failed_subjects": [],
+  "methods": [
+    "MCA",
+    "FSC"
+  ],
+  "metrics": [
+    "FullSphereERB",
+    "Contralateral25ERB",
+    "ERBBandILDMean",
+    "ITDWeightedMAE",
+    "FullSphereLSD"
+  ],
+  "subject_level_rows": 220,
+  "summary_rows": 10,
+  "paired_rows": 5,
+  "all_finite": true,
+  "split_leakage": false,
+  "checkpoint": "artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/last.pt",
+  "checkpoint_sha256": "9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7",
+  "checkpoint_policy": "E190 last.pt only",
+  "e130_completed": true,
+  "e190_completed": true,
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 20260911,
+    "unit": "subject",
+    "difference": "FSC-MCA"
+  },
+  "test_access_state": "artifacts/ari_fsc_adapted_q26_v2/test_access_state.json",
+  "test_first_access_time": "2026-09-11T14:20:13+08:00",
+  "test_access_completed_time": "2026-09-11T14:20:16+08:00",
+  "post_test_tuning": false,
+  "protocol_deviations": [],
+  "claim_decision_rule": "The ARI replication supports FSC residual compensation only if all five preregistered metrics have FSC-MCA mean differences below zero and paired-bootstrap 95% upper bounds below zero; otherwise it does not meet the strict replication criterion. This rule is frozen before any raw test Data.IR access.",
+  "claim_supported": true,
+  "all_five_ci_below_zero": true
+}

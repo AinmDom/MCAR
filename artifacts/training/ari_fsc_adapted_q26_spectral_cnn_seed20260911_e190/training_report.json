@@ -1,0 +1,38 @@
+{
+  "status": "completed",
+  "run_name": "ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190",
+  "seed": 20260911,
+  "cycles": 190,
+  "optimizer_steps": 24700,
+  "best_cycle": 190,
+  "best_validation_objective_total": 0.7998033843257211,
+  "decision": "FIXED_CYCLE_COMPLETE",
+  "formal_fixed_cycle": true,
+  "checkpoint_policy": "fixed_stop_cycle_last",
+  "authoritative_checkpoint": "last.pt",
+  "scheduler_horizon_cycles": 200,
+  "elapsed_seconds": 2452.0173032,
+  "peak_cuda_allocated_mib": 521.8134765625,
+  "best_checkpoint_sha256": "C24C9D7F88DA86D38281FEFD0B203399722C0D2AD390F6642693455528ABCF8B",
+  "last_checkpoint_sha256": "9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7",
+  "authoritative_checkpoint_sha256": "9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7",
+  "test_subjects_read": 0,
+  "conditioning_scope": "global_plus_local_mca",
+  "model_family": "FilmSirenSpectralCNN",
+  "film_siren_frozen": true,
+  "initial_film_checkpoint": {
+    "path": "D:\\cuc\\CSMT\\MCAR\\artifacts\\training\\ari_fsc_adapted_q26_seed20260911_e130\\last.pt",
+    "sha256": "74A27310D0E15F67FAB2823E14F915CF618EDB82F01745F030EA4A20F215B280",
+    "cycle": 130,
+    "training_stage": "film_siren_stage_c"
+  },
+  "trainable_parameter_count": 74402,
+  "total_parameter_count": 1518884,
+  "condition_inputs_read": 152,
+  "local_mca_inputs_read": 25536,
+  "git": {
+    "branch": "codex/project-structure-refactor",
+    "commit": "0d7a01909a55ac5e7355b5274b9da425dbfcfbe9",
+    "dirty": true
+  }
+}

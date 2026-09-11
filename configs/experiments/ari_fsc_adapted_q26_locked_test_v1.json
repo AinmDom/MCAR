@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "status": "frozen_pre_test",
+  "created_on": "2026-09-11",
+  "experiment_id": "ARI-FSC-ADAPTED-Q26-LOCKED-TEST-V1",
+  "authorization": "The original user request authorizes one test evaluation after model and evaluation protocol freeze.",
+  "test_access_authorized": true,
+  "protocol": "configs/experiments/ari_fsc_adapted_q26_external_replication_v2.json",
+  "source_inventory": "configs/data/ari_hrtf_b_nh_source_inventory_v1.json",
+  "source_inventory_sha256": "39FAD86C6076A08BC3EFB71E8E15D57C36C5B8962D275A2A5E7CFCFFE2132D15",
+  "split_csv": "configs/data/ari_hrtf_b_nh_adapted_q26_subject_split_v2.csv",
+  "split_csv_sha256": "79DB6FD19A9763A743722CB4B76CFB28C392470E0292CD1E1CC52C646819558B",
+  "q26_csv": "configs/data/ari_hrtf_b_nh_adapted_q26_v2.csv",
+  "q26_csv_sha256": "0B9853AF93A28F512806774428D6E02DBD9B39F0B7D6254E2D567AA6493560A3",
+  "q26_normalization": "configs/data/ari_fsc_adapted_q26_normalization_v1.json",
+  "q26_normalization_sha256": "886998DA852C8FCC34610F19D3839610476E9F42909A4183C1A798ECC46C54FA",
+  "training_statistics": "artifacts/ari_fsc_adapted_q26_v2/training_statistics.json",
+  "training_statistics_sha256": "BA604038F5143CF374613FF26D135DE609BA2F38799D96ACBAFD1AE4771DEE65",
+  "checkpoint": "artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/last.pt",
+  "checkpoint_sha256": "9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7",
+  "checkpoint_rule": "E190 last.pt only",
+  "cohort": {
+    "eligible": 174,
+    "train": 130,
+    "validation": 22,
+    "test": 22,
+    "test_subject_ids": ["nh18", "nh19", "nh41", "nh46", "nh47", "nh55", "nh56", "nh61", "nh163", "nh165", "nh166", "nh209", "nh226", "nh233", "nh246", "nh251", "nh252", "nh709", "nh710", "nh770", "nh780", "nh791"]
+  },
+  "signal": {
+    "source_sampling_rate_hz": 48000.0,
+    "target_sampling_rate_hz": 44100.0,
+    "source_hrir_length": 256,
+    "resampling": "scipy.signal.resample_poly(up=147,down=160), then append 20 right-side zeros to length 256",
+    "time_zero": "unaligned; preserve measured delay through common resampling",
+    "amplitude_compensation": "retain official ARI hrtf-b equalization",
+    "ear_order": ["left", "right"]
+  },
+  "evaluation": {
+    "direction_count": 1550,
+    "observed_direction_count": 26,
+    "evaluation_direction_count": 1524,
+    "directions": "all measured ARI directions excluding frozen ARI-adapted Q26",
+    "solid_angle_weights": "SphericalVoronoi areas on the 1524 evaluation directions, normalized to sum one; Q26 weights are zero",
+    "horizontal_rule": "evaluation directions with measured elevation_deg exactly zero within absolute tolerance 1e-9; expected count 86",
+    "contralateral_rule": "25-degree great-circle caps centered at azimuth 270,elevation 0 for left ear and azimuth 90,elevation 0 for right ear; intersect evaluation set and normalize each cap's weights",
+    "metrics": {
+      "FullSphereERB": "AKerbError([50,22050], fs=44100) on strict reconstructed/reference HRIR; solid-angle direction mean per ERB band, band mean, equal-ear mean",
+      "Contralateral25ERB": "same AKerbError definition restricted to frozen ear-specific contralateral caps",
+      "ERBBandILDMean": "repository spectral_band_ild_profile on 86 horizontal evaluation directions and registered 200--18000 Hz ERB centers",
+      "ITDWeightedMAE": "repository estimate_itd_seconds; direction-weighted absolute error over 1524 evaluation directions in microseconds",
+      "FullSphereLSD": "frequency RMS dB error, equal-ear mean, solid-angle weighted over 1524 evaluation directions"
+    },
+    "grid_comparability_note": "ARI and SONICOM use different measured direction grids and evaluation weights; absolute values must not be pooled as one experiment."
+  },
+  "itd": {
+    "sampling_rate_hz": 44100.0,
+    "upsampled_rate_hz": 384000.0,
+    "lowpass_hz": 1600.0,
+    "maximum_itd_seconds": 0.001,
+    "direction_batch_size": 64,
+    "interpolation": "none after argmax; resolution 1/384000 second"
+  },
+  "statistics": {
+    "unit": "subject",
+    "method_summary": "mean and sample standard deviation across 22 subjects",
+    "paired_difference": "FSC-MCA; negative favors FSC",
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260911,
+    "bootstrap_interval": "2.5 and 97.5 percentiles of paired-subject resampled mean differences; numpy.default_rng PCG64; linear quantiles",
+    "claim_decision_rule": "The ARI replication supports FSC residual compensation only if all five preregistered metrics have FSC-MCA mean differences below zero and paired-bootstrap 95% upper bounds below zero; otherwise it does not meet the strict replication criterion. This rule is frozen before any raw test Data.IR access."
+  },
+  "test_access_policy": "Raw test Data.IR is read once after atomically claiming test_access_state. Later stages read derived HDF5 only. Existing claim or target refuses execution; failure is recorded and automatic rerun is forbidden.",
+  "test_access_state": "artifacts/ari_fsc_adapted_q26_v2/test_access_state.json",
+  "prepared_waveform_root": "data/processed/ari_fsc_adapted_q26_test_v1",
+  "feature_root": "artifacts/ari_fsc_adapted_q26_v2/test",
+  "prediction_root": "artifacts/reconstruction/ari_fsc_adapted_q26_fsc_e190_test",
+  "result_root": "results/ari_fsc_adapted_q26_external_replication_v1",
+  "runtime": {
+    "python": "D:/miniconda3/envs/ml/python.exe",
+    "matlab": "D:/MATLAB/R2025b/bin/MATLAB.exe",
+    "torchaudio_site_packages": "D:/miniconda3/envs/asd/Lib/site-packages",
+    "torchaudio_version": "2.8.0+cu128"
+  },
+  "resources": [
+    {"path": "scripts/prepare_ari_fsc_waveforms.py", "sha256": "A13F0CDB55DB487B238C7FDF77742AC4429ED4960EC99D03811497CE3ADDF6A3"},
+    {"path": "scripts/prepare_ari_fsc_locked_test_waveforms.py", "sha256": "F0EC2453918AF0EA04B3EC52C36CC95BB6DC708BDA22C749CD8C84E52C3F1679"},
+    {"path": "matlab/+mcar/prepare_ari_fsc_test_split.m", "sha256": "9C57E97E06D37EE4733E30ADC331D404EFD9831912A3E429A7CC7F9947C1F8C0"},
+    {"path": "matlab/+mcar/prepare_ari_fsc_test_subject.m", "sha256": "FC56AD9767C0D20C55D8D28533BCB7621CDD3C1DE3AC0F8B0B81CB0DE1D780F4"},
+    {"path": "scripts/predict_evaluate_ari_fsc_test_secondary.py", "sha256": "1D9CAB477E12CA5CCDBB0E5321B93488777E3E102EC7E3D8B8FABEE6ED7AF753"},
+    {"path": "matlab/+mcar/evaluate_ari_fsc_test_erb.m", "sha256": "D6A6C79B8BA49273CC9ADF64D509EFE114BA3186379711D96572654D779DC73C"},
+    {"path": "scripts/finalize_ari_fsc_locked_test.py", "sha256": "C5DD4EBCFF525E8E0BDEF551F4D2FD0A629E58426C70C8BCDFBE5FF0EA08FB50"},
+    {"path": "scripts/run_ari_fsc_locked_test.ps1", "sha256": "FBC2AF2F432725D95440FE9477570F37195FB32A8A0B9529073ED88E96A74C73"},
+    {"path": "src/mcar/evaluation/secondary_metrics.py", "sha256": "C1DA0A232E0D29790D31168FB9A87AB4D2A46001F16EB3695BEA1CB90EDA63C9"},
+    {"path": "src/mcar/evaluation/deferred_secondary_metrics.py", "sha256": "295F7CBD7D48BE6C41DDD8AA2AAD0338B3F370BBF0FF5544FFA75AE37F83AD51"},
+    {"path": "src/mcar/fsp_ae_signal.py", "sha256": "35A1125995EB2500AC468606CA52CE3B7F5AF0D4C4A944F0A197D1342F71585C"},
+    {"path": "external/SUpDEq/thirdParty/AKtools/2_Tools/Filter/AKerbError.m", "sha256": "8C9DD43F2DB3FC628AFB52D0ED3FE2C0DF21BEBF960E913586B94396B6DDFDBC"},
+    {"path": "external/SUpDEq/thirdParty/AKtools/2_Tools/Tools/AKsingle2bothSidedSpectrum.m", "sha256": "860CB85AF9E5BBD0571CE92FA8D9778F604A527533AD949339661CC707913D30"}
+  ]
+}

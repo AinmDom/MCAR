@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "loss": 0.7694603204727173,
+  "all_finite": true,
+  "global_direction_count": 4,
+  "horizontal_direction_count": 4,
+  "train_subjects_read": 1,
+  "validation_subjects_read": 0,
+  "test_subjects_read": 0,
+  "parameter_updates": 0
+}

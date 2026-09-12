@@ -1,3 +1,23 @@
+## 2026-09-11：ARI 外部数据库复现实验已接入正式论文
+
+- 时间/agent：2026-09-11T18:28:10+08:00，Codex；状态：正文接入与静态核对完成，未执行 LaTeX 编译。
+- 动作：在正式稿摘要、引言贡献、数据与协议、统计方法、实现设置、结果、讨论、结论及英文摘要中加入 ARI 外部数据库复现实验；新增五项主指标紧凑结果表，并在 references.bib 增加 ARI 官方数据库页面条目 R20。实验明确表述为“在 ARI 上从头训练后的第二数据库复现”，不表述为零样本跨数据库泛化。
+- 关键结果：正文报告 22 名 ARI 测试被试上五项主指标均为 22/22 改善，FSC--MCA 的五个 95% 被试配对 bootstrap 区间上界均小于 0；均值相对降幅依次为 FullSphereERB=19.34%、Contralateral25ERB=17.58%、ERBBandILDMean=22.10%、ITDWeightedMAE=3.12%、FullSphereLSD=20.47%。表中均值、样本标准差、配对差及区间均按权威报告四位小数写入。
+- 证据：paper write/grand_paper/main.tex；paper write/grand_paper/references.bib；results/ari_fsc_adapted_q26_external_replication_v1/REPORT.md；results/ari_fsc_adapted_q26_external_replication_v1/paired_bootstrap.csv。
+- 完整性：新增表沿用模板既有 bicaption 表标签方式，正文引用与标签一致；R20 正文引用和 BibTeX 条目均恰有 1 处；table/tabular 起止数量一致；异常乱码和旧的 ARI 训练预算表述无残留；git diff --check 无新增空白错误，仅提示工作区 LF/CRLF 转换。未修改实验结果、配置、图片或冻结产物，也未按作者约定自动编译或渲染 PDF。
+- 下一步：作者使用本地 LaTeX Workshop 编译并检查新增五列表格的版面；随后再决定是否开展并纳入零样本跨数据库泛化实验。
+- 阻塞项：ARI 官方页面未明确给出机器可读许可证；当前 R20 按官方网站与访问日期引用，投稿前宜结合会议格式再核对数据库致谢和许可说明。
+
+## 2026-09-11：ARI 外部复现实验作者决策前审阅完成
+
+- 时间/agent：2026-09-11T15:45:56+08:00，Codex；状态：审阅完成，建议作为独立外部数据库复现实验纳入正文候选；未修改论文。
+- 动作：在已提交的 ARI 轻量证据上复核冻结协议、同质队列、split、镜像对称 ARI-adapted Q26、一次性测试访问、E130/E190 末点身份、220 行逐被试矩阵、五项汇总与 10000 次被试配对 bootstrap；另从逐被试 CSV 独立复算改善人数、相对降幅、最弱个体差值及结果文件 SHA256。
+- 关键结果：五项指标均为 22/22 测试被试改善，FSC-MCA 的配对均值与 95% bootstrap 区间上界均小于 0。相对 MCA 的均值降幅为 FullSphereERB=19.336%、Contralateral25ERB=17.576%、ERBBandILDMean=22.104%、ITDWeightedMAE=3.119%、FullSphereLSD=20.468%；每项最弱个体差值仍小于 0。建议将结论限定为“FSC 在 ARI 上重新训练后，相对 MCA 的残差补偿效果得到第二数据库复现”，不得表述为零样本跨数据库泛化，也不支持相对其他学习方法的外部数据库优势。
+- 证据：results/ari_fsc_adapted_q26_external_replication_v1/REPORT.md；results/ari_fsc_adapted_q26_external_replication_v1/mca_fsc_subject_level_metrics.csv；results/ari_fsc_adapted_q26_external_replication_v1/paired_bootstrap.csv；configs/experiments/ari_fsc_adapted_q26_external_replication_v2.json；configs/experiments/ari_fsc_adapted_q26_locked_test_v1.json。
+- 完整性：结果矩阵=220 行、唯一测试被试=22、重复 subject-method-metric 单元=0；五份权威结果文件哈希均与完成日志一致。队列=174，train/validation/test=130/22/22，排除 3 个维度异常文件；split 泄漏=false、all_finite=true、失败被试=0、协议偏差=0、测试后调参=false。训练仅 1 个随机种子，且 ARI 使用独立适配 Q26、1550 方向网格和固体角权重，因此不能与 SONICOM 绝对值合并；被试 bootstrap 只量化被试不确定性，不量化训练随机性。Git 审阅前 clean，HEAD=ece2ab110f3dc8a6392f63d302c7fceae6d6e188。
+- 下一步：由作者决定是否纳入；若纳入，建议新增紧凑的“ARI 外部数据库复现”小节与五行表，并同步修订摘要、实验设置、讨论、结论和“单一数据库”限制，同时补充 ARI 数据库来源引用与访问日期。
+- 阻塞项：当前 bibliography 仅有 SOFA 2.1 文献，未见专门的 ARI 数据库来源条目；ARI 官方目录/页面未明确给出机器可读许可证，投稿前应确认引用与数据使用说明。训练/评价无运行中进程。
+
 ## 2026-09-11：ARI 外部复现实验提交边界已整理并通过提交前检查
 
 - 时间/agent：2026-09-11T15:27:13+08:00，Codex；状态：已整理、待单次提交；训练与评价均无运行中进程。

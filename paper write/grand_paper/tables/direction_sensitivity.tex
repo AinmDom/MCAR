@@ -1,8 +1,8 @@
-% Matched-density Q14/Q26/Q50, shared Q50-excluded 743-direction validation domain.
+% Q14/Q26/Q50 sparsity experiment on the shared Q50-excluded 743-direction validation domain.
 \begin{table}[htbp]
 \centering\scriptsize
 \setlength{\tabcolsep}{2.3pt}
-\bicaption[tab:q-results]{表}{FSC matched-density稀疏度实验（44名验证被试，共同743方向）}{Tab.}{Matched-density FSC sparsity experiment (44 validation subjects, 743 shared directions)}
+\bicaption[tab:q-results]{表}{FSC稀疏度实验（44名验证被试，共同743方向）}{Tab.}{FSC sparsity experiment (44 validation subjects, 743 shared directions)}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -16,5 +16,5 @@ Q50 & $\mathbf{0.7519} \pm 0.1514$ & $1.2173 \pm 0.1932$ & $\mathbf{1.3978} \pm 
 \end{tabular}%
 }
 \par\smallskip
-\parbox{\linewidth}{\footnotesize 数值为被试均值$\pm$样本标准差。Q14、Q26、Q50分别使用对应观测密度训练的FSC模型；三者采用相同网络结构、训练预算和三随机种子集成，并统一在排除Q50观测后的743个公共方向上评价。频带ILD与ITD为补充完成的matched-density验证指标；加粗表示三种密度中的最低均值。}
+\parbox{\linewidth}{\footnotesize 数值为被试均值$\pm$样本标准差。Q14、Q26、Q50分别使用对应观测密度训练的FSC模型；三者采用相同网络结构、训练预算和3个随机种子模型的集成，并统一在排除Q50观测后的743个公共方向上评价。频带ILD与ITD为该验证实验采用的评价指标；加粗表示三种密度中的最低均值。}
 \end{table}

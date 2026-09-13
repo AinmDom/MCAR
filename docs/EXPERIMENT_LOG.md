@@ -4443,3 +4443,12 @@ MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开
 - 动作：核验正式 ARI Stage-D run 的进程、190轮 history、38次 validation ledger、22位验证被试明细、训练报告、冻结 backbone 和 best/last checkpoint。按预注册固定预算，唯一权威评价模型为 E190 `last.pt`；best cycle 恰为190不改变末点规则。
 - 证据：run=`artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/`；history恰有190行（cycle 1--190），全部数值 finite；cycle 190 train total=`0.672584`、validation total=`0.799803`，精确 best validation objective=`0.7998033843257211`。38次验证覆盖 cycle 5,10,...,190，每次均为22个唯一 validation subjects；stderr为空。训练报告 status=`completed`、optimizer steps=`24700`、elapsed=`2452.0173032`秒、peak CUDA allocated=`521.8134765625` MiB。
 - checkpoint：权威 `last.pt` 实际 SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`，与报告一致；cycle=190、training stage=`film_siren_spectral_cnn_stage_d`、seed=20260911、cycles=190、run name均匹配冻结配置，所有 model tensors finite。`best.pt` SHA256=`C24C9D7F88DA86D382 multic?`。
+## 2026-09-13：两位SONICOM测试个体的FSC重现图候选已生成并完成静态核验
+
+- 时间/agent：2026-09-13T12:53:27+08:00，Codex；状态：已生成、待作者挑选纳入位置；无训练或评价进程启动。
+- 动作：按作者指定同时生成两种论文候选图，均只使用正式单成员 FSC E190、MCA和实测参考：(1) P0009/P0060 的双耳对侧方向频谱重现图；(2) 相同两位个体的左耳水平面“方位角--频率”参考幅度、MCA绝对误差、FSC绝对误差图。P0009按五项FSC--MCA改善向量距44人中位向量最近选取；P0060按幅度类综合改善最强选取。未修改论文正文，且按作者既有要求未编译LaTeX。
+- 证据：可复现函数=`matlab/+mcar/generate_fsc_individual_reconstruction_figures.m`；输出=`paper write/grand_paper/figure/fsc_two_subject_binaural_spectra.{png,pdf}`及`paper write/grand_paper/figure/fsc_two_subject_horizontal_maps.{png,pdf}`。执行入口=`matlab -batch "addpath('matlab'); mcar.generate_fsc_individual_reconstruction_figures();"`。
+- 关键结果：P0009的MCA→FSC五项变化为全域ERB=`1.0187→0.7484` dB、对侧ERB=`1.7702→1.2954` dB、频带ILD=`2.0430→1.6199` dB、ITD加权MAE=`16.118→15.574` us、全域LSD=`4.797→3.615` dB；P0060对应为`1.0829→0.6838` dB、`1.9050→1.0595` dB、`2.1036→1.3661` dB、`13.288→12.974` us、`4.794→3.336` dB。空间误差图只显示插值方向，MCA/FSC共用`[0,12]` dB色标。
+- 完整性：函数逐一断言两位的源HDF5与prediction HDF5均为`split=test`、张量shape一致且全finite；所有4个PNG/PDF产物非空，大小分别为648246、207532、913741、628561 bytes。未访问原始SOFA、未再推理/训练/评价、未发生测试后调参；正式结果边界仍为既有44名测试被试一次性推理，新增test读取=N/A（只读已有派生HDF5）。MATLAB `checkcode` 无错误；Git新增5个未跟踪图/函数文件，未提交或推送。
+- 下一步：作者从两图中确定正文/补充材料的纳入方式后，再补充图注、正文引用和LaTex include；不自动编译。
+- 阻塞项：无。

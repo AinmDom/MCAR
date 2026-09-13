@@ -299,9 +299,14 @@ The main-method comparison reports absolute-error mean $\pm$ sample standard dev
 
 \subsection{Comparison with Learning-Based Methods}
 
-Table~\ref{tab:learning-results} compares FSC, RANF, and FSP-AE separately. FSC has the lowest mean full-sphere ERB, contralateral-$25^\circ$ ERB, and ERB-band ILD. FSP-AE has the lowest ITD-weighted MAE, followed by FSC. For full-sphere LSD, FSP-AE ranks first, RANF second, and FSC third.
+Figure~\ref{fig:learning-methods} compares FSC, RANF, and FSP-AE across the five primary metrics. Points denote subject means and error bars denote sample standard deviations over the same 44 Q26 test subjects. FSC has the lowest mean full-sphere ERB, contralateral-$25^\circ$ ERB, and ERB-band ILD. FSP-AE has the lowest ITD-weighted MAE, followed by FSC. For full-sphere LSD, FSP-AE ranks first, RANF second, and FSC third.
 
-\input{tables/learning_results}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure/learning_methods_comparison.png}
+\caption{Learning-based method comparison across the five primary metrics.}
+\label{fig:learning-methods}
+\end{figure}
 
 The three learning-based methods excel on different metrics. We therefore characterize FSC as a residual-refinement approach with low mean ERB and ERB-band ILD, while it is slightly behind FSP-AE on ITD and behind both FSP-AE and RANF on full-sphere LSD, rather than as a cost-free optimum that replaces every alternative.
 
@@ -320,9 +325,14 @@ These local-spectral and extended metrics describe distinct aspects of reconstru
 
 This ablation compares only FiLM-SIREN E130 without the CNN against FSC E190 obtained by training the spectral CNN on top of the frozen E130 model. It does not separately ablate FiLM, SIREN, the conditional encoder, or individual loss terms. Strictly paired E130/E190 models are evaluated for three independent seeds, with epoch counts and hyperparameters fixed in advance. Only 44 validation subjects are used; the test set is not accessed.
 
-Table~\ref{tab:component-results} reports the mean and sample standard deviation for each variant and seed, and Table~\ref{tab:component-paired} reports $\Delta=E_{\mathrm{E190}}-E_{\mathrm{E130}}$ with 95\% paired-bootstrap intervals. All eight metrics have $\Delta<0$ under each of the three seeds, and the upper endpoints of all 24 intervals are below zero. Full-sphere ERB decreases by 0.0250, 0.0244, and 0.0210\,dB across the three repeats, while full-sphere LSD decreases by 0.2517, 0.2429, and 0.2576\,dB. High-frequency first-order difference, high-frequency second-order difference, and multiscale notch depth also improve consistently in all three repeats. Although ITD-weighted MAE has negative paired intervals, its absolute changes are only 0.0101--0.0284\,$\mu$s and are not interpreted as a substantive temporal-cue benefit.
+Figure~\ref{fig:cnn-ablation} summarizes the paired differences $\Delta=E_{\mathrm{E190}}-E_{\mathrm{E130}}$ and their 95\% paired-bootstrap intervals across all eight metrics and three independent repeats. All eight metrics have $\Delta<0$ under each repeat, and the upper endpoints of all 24 intervals are below zero. Full-sphere ERB decreases by 0.0250, 0.0244, and 0.0210\,dB across the three repeats, while full-sphere LSD decreases by 0.2517, 0.2429, and 0.2576\,dB. High-frequency first-order difference, high-frequency second-order difference, and multiscale notch depth also improve consistently in all three repeats. Although ITD-weighted MAE has negative paired intervals, its absolute changes are only 0.0101--0.0284\,$\mu$s and are not interpreted as a substantive temporal-cue benefit. Because the eight metrics use different physical units, horizontal magnitudes in Fig.~\ref{fig:cnn-ablation} should be interpreted within each metric rather than compared directly across rows.
 
-\input{tables/component_results}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\linewidth]{figure/cnn_ablation_forest.png}
+\caption{Paired CNN-refinement effects across eight metrics and three independent repeats.}
+\label{fig:cnn-ablation}
+\end{figure}
 
 For each seed, 10000 paired-bootstrap resamples are drawn independently, always using the subject as the statistical unit; the three repeats are not combined as 132 independent samples. The experiment verifies the incremental effect of the complete CNN-refinement stage relative to the corresponding FiLM-SIREN base model. Because E190 is optimized under the specified composite objective, we do not further attribute the result to any one auxiliary loss.
 \FloatBarrier
@@ -410,7 +420,7 @@ Local spectral shape, binaural energy relationships, and ITD reflect different r
 
 \subsection{Structural Roles and Model Complexity}
 
-The FiLM, SIREN, and CNN modules respectively provide subject-level conditioning, a continuous residual representation, and cross-frequency binaural refinement, jointly producing the final residual along one forward path. Unlike subject-specific model fitting, the conditional encoder compresses each subject's sparse binaural spatial observations into an embedding of shared dimensionality, enabling a single cross-subject model to express individual differences through FiLM modulation. This is the key interface connecting subject acoustic observations to the continuous neural field. In the validation-set CNN ablation, FSC E190 yields negative paired differences relative to FiLM-SIREN E130 on all eight metrics across three independent seeds, with all 24 upper confidence limits below zero; the three local-spectral metrics improve consistently in all three repeats (Table~\ref{tab:component-paired}). The result supports a stable incremental benefit from the CNN-refinement stage but does not isolate the causal contribution of each auxiliary loss.
+The FiLM, SIREN, and CNN modules respectively provide subject-level conditioning, a continuous residual representation, and cross-frequency binaural refinement, jointly producing the final residual along one forward path. Unlike subject-specific model fitting, the conditional encoder compresses each subject's sparse binaural spatial observations into an embedding of shared dimensionality, enabling a single cross-subject model to express individual differences through FiLM modulation. This is the key interface connecting subject acoustic observations to the continuous neural field. In the validation-set CNN ablation, FSC E190 yields negative paired differences relative to FiLM-SIREN E130 on all eight metrics across three independent seeds, with all 24 upper confidence limits below zero; the three local-spectral metrics improve consistently in all three repeats (Fig.~\ref{fig:cnn-ablation}). The result supports a stable incremental benefit from the CNN-refinement stage but does not isolate the causal contribution of each auxiliary loss.
 
 Zero initialization of the CNN output layer only guarantees that the function of the complete FSC equals the stage-one FiLM-SIREN configuration at the start of stage two; it does not guarantee monotonically decreasing errors during training. FSC inference always includes all three modules. The Q26 model contains 1.519 million deployed parameters and occupies approximately 6.45\,MiB on disk. Inference efficiency was measured on an NVIDIA GeForce RTX 5060 in FP32 for 793 directions $\times$ 463 frequency bins. After five warm-up runs, 30 timed runs yielded a median model-inference latency of 110.45\,ms and a P95 latency of 110.95\,ms. These timings exclude checkpoint loading and disk I/O and are reported only to characterize the computational cost of FSC; because the external baselines were not benchmarked under the same implementation and hardware conditions, no cross-method efficiency advantage is claimed.
 

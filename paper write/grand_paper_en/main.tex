@@ -96,19 +96,21 @@ r^\star_{s,e}=M^\star_{s,e}-M^{\mathrm{MCA}}_{s,e},\qquad
 \end{equation}
 The statistics $\mu_r$ and $\sigma_r$ are determined only from the training set. Reference magnitudes at observed directions are used as conditional inputs only within $\mathcal O_s$; reference magnitudes at unobserved directions serve as training supervision or for previously specified evaluation and are never inference inputs. MCA magnitudes and the original MCA correction features are likewise constructed only from the corresponding sparse observations.
 
-Figure~\ref{fig:FSC-reconstruction-workflow} summarizes the complete inference chain from sparse measurements to interpolated binaural responses, whereas Fig.~\ref{fig:FSC-architecture} expands only the learned residual predictor.
+Figure~\ref{fig:FSC-reconstruction-workflow} summarizes the complete inference chain. MCA provides the baseline magnitude, phase, and magnitude-correction features, while FSC predicts magnitude residuals at the 463 modeled frequency bins. The remaining 50 single-sided bins retain their MCA values, and the corrected magnitude is combined with MCA phase before conjugate extension, a 1024-point IFFT, and cropping to 256 HRIR samples. Reference HRTFs at unobserved directions are not used as inference inputs.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.98\linewidth]{figure/fsc_sparse_to_interpolated_hrtf_workflow.pdf}
-\caption{End-to-end inference workflow from sparse measured HRTFs to interpolated HRTFs and HRIRs. Sparse binaural observations are time-aligned and processed by MCA to form target-direction baseline magnitudes, phases, and magnitude-correction features. The frozen FSC model uses only sparse observed references, query coordinates, and MCA context to predict a normalized magnitude residual; after denormalization, this residual is added to the MCA magnitude at the 463 selected frequency bins. The corrected magnitudes are combined with MCA phase, while the 50 unpredicted single-sided bins retain their original MCA complex values. Conjugate-symmetric extension and a 1024-point IFFT then yield 256-sample binaural HRIRs at the target directions. No reference HRTF at an unobserved direction is used as an inference input.}
+\caption{FSC inference workflow from sparse HRTF observations to dense HRTF/HRIR reconstruction.}
 \label{fig:FSC-reconstruction-workflow}
 \end{figure}
+
+Figure~\ref{fig:FSC-architecture} expands the learned residual predictor. Sparse binaural observations are encoded into a subject condition for the FiLM-SIREN field, whose binaural residual estimate is subsequently refined by the direction-conditioned spectral CNN. Signal-domain reconstruction is performed outside this predictor as described above.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.98\linewidth]{figure/fsc_single_model_architecture.pdf}
-\caption{Detailed architecture of the single-model FSC residual predictor. Sparse binaural observations are encoded into a subject condition that modulates the six-layer FiLM-SIREN base field. A seven-channel spectral tensor combines the two-ear magnitude and correction inputs, the FiLM-SIREN base residuals, and normalized log-frequency. The direction-conditioned binaural spectral CNN predicts an increment that is added to the base residual to produce the final normalized binaural residual. Signal-domain reconstruction is outside the scope of this diagram.}
+\caption{Architecture of the FSC residual predictor.}
 \label{fig:FSC-architecture}
 \end{figure}
 
@@ -328,19 +330,19 @@ For each seed, 10000 paired-bootstrap resamples are drawn independently, always 
 \subsection{Sparsity Experiment}
 \label{sec:sparsity}
 
-To study how FSC behaves with observation density, Q14, Q26, and Q50 each use their corresponding E190 model frozen after training and are evaluated on the same 44 test subjects and 743 shared unobserved directions. Figure~\ref{fig:q-grids} shows the spatial distribution of the three nested observation sets. Every mean error in Table~\ref{tab:q-results} decreases as the number of observed directions grows. Full-sphere ERB falls from $0.9535\pm0.4675$\,dB at Q14 to $0.8318\pm0.3190$\,dB at Q26 and $0.7931\pm0.3893$\,dB at Q50. Contralateral-$25^\circ$ ERB similarly decreases from $0.9341\pm0.4606$\,dB to $0.8573\pm0.3243$ and $0.8206\pm0.4159$\,dB. Figure~\ref{fig:q-results} visualizes the full-sphere ERB trend. Because this experiment uniformly excludes all 50 Q50 observations, its Q26 setting uses 743 directions, whereas the main Q26 comparison uses 767 unobserved directions; the evaluation domains differ.
+To study how FSC behaves with observation density, Q14, Q26, and Q50 each use their corresponding E190 model frozen after training and are evaluated on the same 44 test subjects and 743 shared unobserved directions. Figure~\ref{fig:q-grids} shows the nested spatial layouts $Q14\subset Q26\subset Q50$. Circles denote the Q14 core, squares the directions added for Q26, and triangles the additional Q50 directions; faded symbols indicate points on the far side of the sphere. Every mean error in Table~\ref{tab:q-results} decreases as the number of observed directions grows. Full-sphere ERB falls from $0.9535\pm0.4675$\,dB at Q14 to $0.8318\pm0.3190$\,dB at Q26 and $0.7931\pm0.3893$\,dB at Q50. Contralateral-$25^\circ$ ERB similarly decreases from $0.9341\pm0.4606$\,dB to $0.8573\pm0.3243$ and $0.8206\pm0.4159$\,dB. Figure~\ref{fig:q-results} summarizes the full-sphere ERB trend using the same 44 test subjects and 743 shared evaluation directions; error bars denote 95\% subject-bootstrap confidence intervals. All three E190 models are frozen before test evaluation without test-based reselection. Because this experiment uniformly excludes all 50 Q50 observations, its Q26 setting uses 743 directions, whereas the main Q26 comparison uses 767 unobserved directions; the evaluation domains differ.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.98\linewidth]{figure/spherical_grid_triptych_q14_q26_q50.pdf}
-\caption{Nested sparse observation grids in a fixed orthographic view. Circles denote the Q14 core, squares the directions added to obtain Q26, and triangles the directions added to obtain Q50; faded symbols lie on the far side of the sphere. Thus, $Q14\subset Q26\subset Q50$ while preserving the directions selected at lower densities.}
+\caption{Nested Q14, Q26, and Q50 sparse observation grids.}
 \label{fig:q-grids}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.82\linewidth]{figure/matched_density_erb_trend.pdf}
-\caption{Mean full-sphere ERB error and 95\% subject-bootstrap confidence intervals in the FSC sparsity experiment ($n=44$ test subjects; 743 shared directions); lower values indicate better performance. Q14, Q26, and Q50 use their corresponding E190 models frozen after training, without test-based reselection.}
+\caption{Full-sphere ERB error versus sparse-observation density.}
 \label{fig:q-results}
 \end{figure}
 
@@ -410,9 +412,7 @@ Local spectral shape, binaural energy relationships, and ITD reflect different r
 
 The FiLM, SIREN, and CNN modules respectively provide subject-level conditioning, a continuous residual representation, and cross-frequency binaural refinement, jointly producing the final residual along one forward path. Unlike subject-specific model fitting, the conditional encoder compresses each subject's sparse binaural spatial observations into an embedding of shared dimensionality, enabling a single cross-subject model to express individual differences through FiLM modulation. This is the key interface connecting subject acoustic observations to the continuous neural field. In the validation-set CNN ablation, FSC E190 yields negative paired differences relative to FiLM-SIREN E130 on all eight metrics across three independent seeds, with all 24 upper confidence limits below zero; the three local-spectral metrics improve consistently in all three repeats (Table~\ref{tab:component-paired}). The result supports a stable incremental benefit from the CNN-refinement stage but does not isolate the causal contribution of each auxiliary loss.
 
-Zero initialization of the CNN output layer only guarantees that the function of the complete FSC equals the stage-one FiLM-SIREN configuration at the start of stage two; it does not guarantee monotonically decreasing errors during training. FSC inference always includes all three modules. The Q26 model has 1.519 million deployed parameters and a model file of approximately 6.45\,MiB. On an NVIDIA GeForce RTX 5060 in FP32 for 793 directions $\times$ 463 frequency bins, median model inference time is 110.45\,ms and P95 is 110.95\,ms (Table~\ref{tab:efficiency-results}). This benchmark quantifies FSC's own cost only; because all baselines were not measured using the same implementation and hardware, it does not support a cross-method efficiency claim.
-
-\input{tables/efficiency_results}
+Zero initialization of the CNN output layer only guarantees that the function of the complete FSC equals the stage-one FiLM-SIREN configuration at the start of stage two; it does not guarantee monotonically decreasing errors during training. FSC inference always includes all three modules. The Q26 model contains 1.519 million deployed parameters and occupies approximately 6.45\,MiB on disk. Inference efficiency was measured on an NVIDIA GeForce RTX 5060 in FP32 for 793 directions $\times$ 463 frequency bins. After five warm-up runs, 30 timed runs yielded a median model-inference latency of 110.45\,ms and a P95 latency of 110.95\,ms. These timings exclude checkpoint loading and disk I/O and are reported only to characterize the computational cost of FSC; because the external baselines were not benchmarked under the same implementation and hardware conditions, no cross-method efficiency advantage is claimed.
 
 \subsection{Generalization Scope and Limitations}
 

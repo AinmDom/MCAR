@@ -1,0 +1,17 @@
+To complement the aggregate errors in Table~\ref{tab:primary-results}, Figs.~\ref{fig:subject-binaural-spectra} and~\ref{fig:horizontal-error-maps} show subject-level reconstructions for two test subjects. P0009 is the deterministic median-effect representative, selected as the subject whose five-primary-metric improvement vector is closest to the across-subject median improvement vector over all 44 test subjects; it was not chosen by visual inspection. P0060 is included as a strong-improvement case, corresponding to the largest aggregate magnitude improvement among the examined subjects. In Fig.~\ref{fig:subject-binaural-spectra}, the left- and right-ear responses are shown at $270^\circ$ and $90^\circ$, respectively; measured HRTFs are plotted as black solid curves, MCA as gray dashed curves, and FSC as red solid curves. The examples are descriptive and do not replace the subject-level statistics above.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure/fsc_two_subject_binaural_spectra.png}
+\caption{Binaural HRTF magnitude spectra for P0009 and P0060 at contralateral interpolation directions.}
+\label{fig:subject-binaural-spectra}
+\end{figure}
+
+At these contralateral interpolation directions, FSC generally follows the measured magnitude more closely than MCA across broad mid- and high-frequency regions, while some narrow peaks and notches remain mismatched. The correction is therefore better interpreted as residual spectral refinement than as exact recovery of every local notch. Figure~\ref{fig:horizontal-error-maps} extends the comparison from one contralateral query to all 72 horizontal-plane interpolation directions. For each subject, the panels show the measured left-ear magnitude followed by the absolute errors of MCA and FSC on a common 0--12\,dB scale. The dashed vertical line marks the left-ear contralateral direction at $270^\circ$ (equivalently $-90^\circ$ on the plotted azimuth axis). Across the horizontal plane, many error ridges present in the MCA reconstruction are reduced after FSC refinement for both subjects, particularly in direction-dependent mid- and high-frequency structure.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure/fsc_two_subject_horizontal_maps.png}
+\caption{Horizontal-plane left-ear HRTF magnitude and absolute-error maps for P0009 and P0060.}
+\label{fig:horizontal-error-maps}
+\end{figure}

@@ -1,0 +1,27 @@
+warning: in the working copy of 'paper write/grand_paper_en/main.bbl', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'paper write/grand_paper_en/tables/primary_results.tex', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/paper write/grand_paper_en/main.tex b/paper write/grand_paper_en/main.tex[m
+[1mindex 4fc4afa..53b345c 100644[m
+[1m--- a/paper write/grand_paper_en/main.tex[m	
+[1m+++ b/paper write/grand_paper_en/main.tex[m	
+[36m@@ -410,9 +410,7 @@[m [mLocal spectral shape, binaural energy relationships, and ITD reflect different r[m
+ [m
+ The FiLM, SIREN, and CNN modules respectively provide subject-level conditioning, a continuous residual representation, and cross-frequency binaural refinement, jointly producing the final residual along one forward path. Unlike subject-specific model fitting, the conditional encoder compresses each subject's sparse binaural spatial observations into an embedding of shared dimensionality, enabling a single cross-subject model to express individual differences through FiLM modulation. This is the key interface connecting subject acoustic observations to the continuous neural field. In the validation-set CNN ablation, FSC E190 yields negative paired differences relative to FiLM-SIREN E130 on all eight metrics across three independent seeds, with all 24 upper confidence limits below zero; the three local-spectral metrics improve consistently in all three repeats (Table~\ref{tab:component-paired}). The result supports a stable incremental benefit from the CNN-refinement stage but does not isolate the causal contribution of each auxiliary loss.[m
+ [m
+[31m-Zero initialization of the CNN output layer only guarantees that the function of the complete FSC equals the stage-one FiLM-SIREN configuration at the start of stage two; it does not guarantee monotonically decreasing errors during training. FSC inference always includes all three modules. The Q26 model has 1.519 million deployed parameters and a model file of approximately 6.45\,MiB. On an NVIDIA GeForce RTX 5060 in FP32 for 793 directions $\times$ 463 frequency bins, median model inference time is 110.45\,ms and P95 is 110.95\,ms (Table~\ref{tab:efficiency-results}). This benchmark quantifies FSC's own cost only; because all baselines were not measured using the same implementation and hardware, it does not support a cross-method efficiency claim.[m
+[31m-[m
+[31m-\input{tables/efficiency_results}[m
+[32m+[m[32mZero initialization of the CNN output layer only guarantees that the function of the complete FSC equals the stage-one FiLM-SIREN configuration at the start of stage two; it does not guarantee monotonically decreasing errors during training. FSC inference always includes all three modules. The Q26 model contains 1.519 million deployed parameters and occupies approximately 6.45\,MiB on disk. Inference efficiency was measured on an NVIDIA GeForce RTX 5060 in FP32 for 793 directions $\times$ 463 frequency bins. After five warm-up runs, 30 timed runs yielded a median model-inference latency of 110.45\,ms and a P95 latency of 110.95\,ms. These timings exclude checkpoint loading and disk I/O and are reported only to characterize the computational cost of FSC; because the external baselines were not benchmarked under the same implementation and hardware conditions, no cross-method efficiency advantage is claimed.[m
+ [m
+ \subsection{Generalization Scope and Limitations}[m
+ [m
+[1mdiff --git a/paper write/grand_paper_en/tables/primary_results.tex b/paper write/grand_paper_en/tables/primary_results.tex[m
+[1mindex 5d7da70..8729f7b 100644[m
+[1m--- a/paper write/grand_paper_en/tables/primary_results.tex[m	
+[1m+++ b/paper write/grand_paper_en/tables/primary_results.tex[m	
+[36m@@ -21,3 +21,5 @@[m [mMCA & $1.0822 \pm 0.0959$ & $1.7458 \pm 0.1551$ & $2.0562 \pm 0.1948$ & $18.3997[m
+ \par\smallskip[m
+ \parbox{\linewidth}{\footnotesize Values are subject mean $\pm$ sample standard deviation; bold denotes the lowest mean in this table. All five metrics are evaluated over 767 unobserved Q26 directions. Full-sphere ERB, contralateral ERB, and full-sphere LSD use solid-angle weighting; ERB-band ILD uses 72 horizontal-plane interpolation directions; ITD-weighted MAE uses solid-angle weighting over all 767 directions.}[m
+ \end{table}[m
+[32m+[m
+[32m+[m[32m\input{results_visual_examples}[m

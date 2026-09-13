@@ -33,6 +33,7 @@
 \vspace{1em}
 {\kaishu\zihao{5}\textbf{Young}\par}
 \vspace{0.6em}
+{\small 审阅稿，2026年9月7日\par}
 \end{center}
 
 \begin{csmtAbstract}
@@ -85,20 +86,10 @@ r^\star_{s,e}=M^\star_{s,e}-M^{\mathrm{MCA}}_{s,e},\qquad
 \end{equation}
 其中$\mu_r,\sigma_r$仅由训练集统计量确定。观测参考幅度只在$\mathcal O_s$内作为条件输入，非观测方向的参考幅度用于训练监督或既有评价，不作为推断输入。MCA幅度及其原有幅度校正特征也只由对应的稀疏观测构造。
 
-图~\ref{fig:FSC-reconstruction-workflow}概括从稀疏测量到密集双耳响应的完整推断链路。MCA提供基线幅度、相位和幅度校正特征，FSC则在463个建模频点上预测幅度残差。其余50个单边频谱频点保留原始MCA复数值；校正后的幅度与MCA相位结合，经共轭对称扩展、1024点IFFT并截取前256点得到HRIR。未观测方向的参考HRTF不作为推断输入。
-
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.98\linewidth]{../grand_paper_en/figure/fsc_sparse_to_interpolated_hrtf_workflow.pdf}
-\bicaption[fig:FSC-reconstruction-workflow]{图}{FSC从稀疏HRTF观测到密集HRTF/HRIR重建的推断流程}{Fig.}{FSC inference workflow from sparse HRTF observations to dense HRTF/HRIR reconstruction}
-\end{figure}
-
-图~\ref{fig:FSC-architecture}进一步展开学习式残差预测器。稀疏双耳观测首先编码为被试条件，用于调制FiLM-SIREN连续残差场；随后，方向条件化频谱CNN对双耳基础残差进行进一步细化。信号域重建位于该预测器之外，并按前述流程完成。
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.98\linewidth]{../grand_paper_en/figure/fsc_single_model_architecture.pdf}
-\bicaption[fig:FSC-architecture]{图}{FSC残差预测器结构}{Fig.}{Architecture of the FSC residual predictor}
+\includegraphics[width=0.92\linewidth]{figure/hybrid_e190_single_member.png}
+\bicaption[fig:FSC-architecture]{图}{FSC整体结构。FiLM-SIREN基础场根据稀疏双耳观测、查询方向与MCA幅度生成初始残差；双耳频谱CNN进一步结合MCA校正特征和跨频率双耳信息输出增量残差，完整模型最终输出dB残差。}{Fig.}{Overall FSC architecture. The FiLM-SIREN base field predicts an initial residual from sparse binaural observations, query direction, and MCA magnitude; the binaural spectral CNN further refines the residual using MCA correction features and cross-frequency binaural information, and the complete model outputs the final residual in dB.}
 \end{figure}
 
 围绕上述统一前向链路，下面按链路顺序说明FiLM、SIREN和CNN三个模块的具体结构。
@@ -278,14 +269,9 @@ FSC相对MCA的五项主指标呈现较明确的幅度频谱收益，但时间�
 主方法比较在同一44名测试被试上报告绝对误差均值$\pm$样本标准差；LAP-LSD作为扩展指标，在第\ref{sec:secondary-metrics}节单独报告。
 
 \subsection{与学习方法对比}
+表\ref{tab:learning-results}单独比较FSC、RANF和FSP-AE。FSC的全域ERB、对侧$25^\circ$ ERB和频带ILD均值最低；ITD加权MAE由FSP-AE最低，FSC次之；全域LSD则由FSP-AE最低，RANF次之，FSC排名第三。
 
-图~\ref{fig:learning-methods}比较FSC、RANF和FSP-AE在五项主指标上的表现。各点表示同一44名Q26测试被试的被试均值，误差线表示样本标准差。FSC的全域ERB、对侧$25^\circ$ ERB和频带ILD均值最低；ITD加权MAE由FSP-AE最低，FSC次之；全域LSD则由FSP-AE最低、RANF次之、FSC第三。
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.98\linewidth]{../grand_paper_en/figure/learning_methods_comparison.png}
-\bicaption[fig:learning-methods]{图}{三种学习式方法在五项主指标上的对比}{Fig.}{Learning-based method comparison across the five primary metrics}
-\end{figure}
+\input{tables/learning_results}
 
 三种学习方法在不同指标上的优势并不一致。因此，本文将FSC定位为在ERB和频带ILD上具有较低均值、但在ITD上略落后于FSP-AE、在全域LSD上仍落后于FSP-AE与RANF的残差细化方案，而非替代全部方法的无代价最优解。
 
@@ -300,35 +286,30 @@ FSC相对MCA的五项主指标呈现较明确的幅度频谱收益，但时间�
 \FloatBarrier
 \subsection{CNN消融实验}
 \label{sec:ablation}
+本节仅比较FiLM-SIREN E130（无CNN）与在其冻结基础上训练频谱CNN得到的FSC E190，不进一步消融FiLM、SIREN、条件编码器或损失项。实验采用3个独立随机种子下严格配对的E130/E190模型，训练轮次和超参数均预先固定；评价仅使用44名验证被试，不使用测试集。
 
-本节仅比较FiLM-SIREN E130（无CNN）与在其冻结基础上训练频谱CNN得到的FSC E190，不进一步消融FiLM、SIREN、条件编码器或单个损失项。实验采用3个独立随机种子下严格配对的E130/E190模型，训练轮次和超参数均预先固定；评价仅使用44名验证被试，不访问测试集。
+表\ref{tab:component-results}给出各变体在每个随机种子下的均值与样本标准差，表\ref{tab:component-paired}给出$\Delta=E_{\mathrm{E190}}-E_{\mathrm{E130}}$及95\% paired-bootstrap区间。3个独立随机种子的八项指标均有$\Delta<0$，且全部24个区间的上界均小于0。全域ERB在三次重复实验中的下降为0.0250、0.0244和0.0210\,dB，全域LSD下降为0.2517、0.2429和0.2576\,dB。高频一阶差分、高频二阶差分和多尺度凹口深度三项局部频谱指标在三次重复实验中也均一致改善；ITD加权MAE虽达到负向配对区间，但绝对变化仅为0.0101--0.0284\,$\mu$s，不作实质性时间线索收益解释。
 
-图~\ref{fig:cnn-ablation}汇总八项指标、三次独立重复实验中的配对差$\Delta=E_{\mathrm{E190}}-E_{\mathrm{E130}}$及95\% paired-bootstrap区间。八项指标在三次重复中均有$\Delta<0$，且全部24个区间的上界均小于0。全域ERB在三次重复实验中的下降为0.0250、0.0244和0.0210\,dB，全域LSD下降为0.2517、0.2429和0.2576\,dB；高频一阶差分、高频二阶差分和多尺度凹口深度也在三次重复中一致改善。ITD加权MAE虽得到负向配对区间，但绝对变化仅为0.0101--0.0284\,$\mu$s，因此不解释为实质性时间线索收益。由于八项指标具有不同物理单位，图~\ref{fig:cnn-ablation}中的横向距离只应在同一指标内部解释，不宜跨行直接比较改善幅度。
+\input{tables/component_results}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.94\linewidth]{../grand_paper_en/figure/cnn_ablation_forest.png}
-\bicaption[fig:cnn-ablation]{图}{八项指标、三次独立重复实验中的CNN细化配对效应}{Fig.}{Paired CNN-refinement effects across eight metrics and three independent repeats}
-\end{figure}
-
-paired bootstrap对每个随机种子独立执行10000次重采样，统计单位始终为被试，不将三次重复实验合并为132个独立样本。该实验验证的是完整CNN细化阶段相对相应FiLM-SIREN基础模型的增量收益；由于E190阶段按既定复合目标优化，本文不进一步把结果拆分归因于某一个辅助损失项。
+paired bootstrap对每个随机种子独立执行10000次重采样，统计单位始终是被试，不将三次重复实验合并成132个独立样本。该实验验证的是完整CNN细化阶段相对相应FiLM-SIREN基础模型的增量收益；由于E190阶段按既定复合目标优化，本文不进一步把结果拆分归因于某一个辅助损失项。
 \FloatBarrier
 
 
 \subsection{稀疏度实验}
 \label{sec:sparsity}
-为考察FSC随观测密度变化的行为，Q14、Q26和Q50均使用训练完成后冻结的对应E190模型，并在同一44名测试被试及共同743个未观测方向上评价。图~\ref{fig:q-grids}展示嵌套空间布局$Q14\subset Q26\subset Q50$：圆形表示Q14核心方向，方形表示扩展到Q26时新增的方向，三角形表示Q50进一步新增的方向，淡色符号位于球体背面。表~\ref{tab:q-results}所列各项平均误差均随观测方向数增加而下降。全域ERB由Q14的$0.9535\pm0.4675$\,dB降至Q26的$0.8318\pm0.3190$\,dB，并在Q50进一步降至$0.7931\pm0.3893$\,dB；对侧$25^\circ$ ERB也由$0.9341\pm0.4606$\,dB依次降至$0.8573\pm0.3243$和$0.8206\pm0.4159$\,dB。图~\ref{fig:q-results}在相同44名测试被试和743个公共评价方向上汇总全域ERB趋势，误差线表示95\%被试bootstrap区间；三个E190模型均在测试评价前冻结，不依据测试结果重新选择。由于本节统一排除Q50的50个观测方向，Q26在此使用743个方向，而正文Q26主比较使用767个未观测方向，两者评价域不同。
+为考察FSC随观测密度变化的行为，Q14、Q26和Q50均使用训练完成后冻结的E190模型，并在同一44名测试被试及共同743个未观测方向上评价。图\ref{fig:q-grids}展示三种嵌套观测集合的空间分布。表\ref{tab:q-results}所列各项指标的平均误差均随观测方向数增加而下降。全域ERB由Q14的$0.9535\pm0.4675$\,dB降至Q26的$0.8318\pm0.3190$\,dB，并在Q50进一步降至$0.7931\pm0.3893$\,dB；对侧$25^\circ$ ERB也由$0.9341\pm0.4606$\,dB依次降至$0.8573\pm0.3243$和$0.8206\pm0.4159$\,dB。图\ref{fig:q-results}给出全域ERB均值的直观趋势。由于本节统一排除了Q50的50个观测方向，Q26在此使用743方向，而正文Q26主比较使用767个未观测方向，两者评价域不同。
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.98\linewidth]{../grand_paper_en/figure/spherical_grid_triptych_q14_q26_q50.pdf}
-\bicaption[fig:q-grids]{图}{Q14、Q26和Q50的嵌套稀疏观测网格}{Fig.}{Nested Q14, Q26, and Q50 sparse observation grids}
+\includegraphics[width=0.98\linewidth]{figure/spherical_grid_triptych_q14_q26_q50.png}
+\bicaption[fig:q-grids]{图}{Q14、Q26和Q50的嵌套稀疏观测网格}{Fig.}{Nested sparse observation grids for Q14, Q26, and Q50}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.82\linewidth]{../grand_paper_en/figure/matched_density_erb_trend.pdf}
-\bicaption[fig:q-results]{图}{稀疏观测密度与全域ERB误差的关系}{Fig.}{Full-sphere ERB error versus sparse-observation density}
+\includegraphics[width=0.78\linewidth]{figure/matched_density_erb_trend.pdf}
+\bicaption[fig:q-results]{图}{FSC稀疏度实验中的全域ERB均值（44名测试被试，共同743方向）。Q14、Q26和Q50均采用训练完成后冻结的对应E190模型，未依据测试结果重新选择。}{Fig.}{Mean full-sphere ERB in the FSC sparsity experiment (44 test subjects, 743 shared directions). Q14, Q26, and Q50 use their corresponding E190 models frozen after training, without test-based reselection.}
 \end{figure}
 
 % Q14/Q26/Q50 sparsity results on the shared Q50-excluded 743-direction domain.
@@ -389,12 +370,14 @@ ARI结果与SONICOM中ERB、频带ILD和全域LSD相对MCA的改善方向一致�
 \subsection{频谱细化与双耳线索的折衷}
 MCA之后的残差学习在本研究中具有明确的幅度频谱补偿价值。表\ref{tab:primary-results}显示，FSC的全域ERB、对侧$25^\circ$ ERB、频带ILD和全域LSD均值均低于MCA，而ITD加权MAE略高于MCA。相对学习式方法，FSC在前三项幅度/声级指标上具有较低均值，但FSP-AE的ITD与全域LSD更低，RANF的全域LSD也更低。这说明FSC更擅长校正MCA残留的听觉频带与双耳声级误差，而宽带LSD和时间线索不会随ERB目标同步达到最优。本文因此不以领先项数量判定总体优劣，也不将客观误差下降直接解释为定位或外化感改善。
 
-局部谱形、双耳能量关系和ITD反映不同的重建要求。一、二阶差分及多尺度凹口深度约束局部频谱变化，绝对幅度误差和ERB误差则评价其他尺度的偏离。FSC在三个局部端点上的较低均值，与FSP-AE的对侧高频和ITD最大绝对误差优势可以同时成立。这些局部端点与训练辅助项定义相近，其改善说明模型在所约束的目标上表现较好，但不足以证明一般听觉收益。全域ERB和频带ILD在外部主比较中的最低均值，也不能保证严格水平面ILD或ITD的稳定收益；前者基于完整重建HRIR的双耳能量比，后者通过低通互相关估计。FSC不直接学习ITD，联合输入双耳信息并设置ILD损失也不保证这些误差在每名被试上下降。
+局部谱形、双耳能量关系和ITD反映不同的重建要求。一、二阶差分及多尺度凹口深度约束局部频谱变化，绝对幅度误差和ERB误差则评价其他尺度的偏离。FSC在三个局部端点上的最低均值，与FSP-AE的对侧高频和ITD最大绝对误差优势可以同时成立。这些局部端点与训练辅助项定义相近，其改善说明模型在所约束的目标上表现较好，但不足以证明一般听觉收益。全域ERB和频带ILD在外部主比较中的最低均值，也不能保证严格水平面ILD或ITD的稳定收益；前者基于完整重建HRIR的双耳能量比，后者通过低通互相关估计。FSC不直接学习ITD，联合输入双耳信息并设置ILD损失也不保证这些误差在每名被试上下降。
 
 \subsection{结构作用与模型复杂度}
-FSC的FiLM、SIREN和CNN模块分别提供被试级条件、连续残差表示及跨频率双耳细化，并在同一前向链路中共同产生最终残差。与逐被试单独建模不同，条件编码器把每名被试的稀疏空间双耳观测压缩成共享维度的embedding，使一个跨被试模型能够通过FiLM调制表达个体差异；这是本文结构设计中连接“个体声学观测”和“连续神经场”的关键接口。验证集CNN消融中，FSC E190相对FiLM-SIREN E130在3个独立随机种子的八项指标上均取得负的配对差，且24个95\%区间均低于零；三项局部频谱指标在三次重复实验中一致改善（图\ref{fig:cnn-ablation}）。该结果支持CNN细化阶段的稳定增量收益，但不进一步区分各辅助损失项的独立贡献。
+FSC的FiLM、SIREN和CNN模块分别提供被试级条件、连续残差表示及跨频率双耳细化，并在同一前向链路中共同产生最终残差。与逐被试单独建模不同，条件编码器把每名被试的稀疏空间双耳观测压缩成共享维度的embedding，使一个跨被试模型能够通过FiLM调制表达个体差异；这是本文结构设计中连接“个体声学观测”和“连续神经场”的关键接口。验证集CNN消融中，FSC E190相对FiLM-SIREN E130在3个独立随机种子的八项指标上均取得负的配对差，且24个95\%区间均低于零；三项局部频谱指标在三次重复实验中一致改善（表\ref{tab:component-paired}）。该结果支持CNN细化阶段的稳定增量收益，但不进一步区分各辅助损失项的独立贡献。
 
-CNN输出层的零初始化仅保证第二阶段开始时完整FSC的函数等于第一阶段FiLM-SIREN配置，并不保证训练过程中误差单调下降。FSC推断始终包含FiLM、SIREN和CNN三个模块。Q26模型包含1.519M个部署参数，模型文件约6.45\,MiB。推断效率在NVIDIA GeForce RTX 5060、FP32、793方向$\times$463频点设置下测量；经过5次预热后进行30次计时，得到模型推断中位延迟110.45\,ms，P95延迟110.95\,ms。上述计时不包含检查点加载和磁盘I/O，仅用于描述FSC自身计算开销；由于外部基线未在相同实现和硬件条件下统一测量，本文不据此提出跨方法效率优势。
+CNN输出层的零初始化仅保证第二阶段开始时完整FSC的函数等于第一阶段FiLM-SIREN配置，不保证训练后的误差单调下降。FSC推断始终包含FiLM、SIREN和CNN三个模块。Q26模型包含1.519M个部署参数，模型文件约6.45\,MiB；在NVIDIA GeForce RTX 5060、FP32、793方向$\times$463频点设置下，模型推断中位数为110.45\,ms，P95为110.95\,ms（表\ref{tab:efficiency-results}）。该基准仅用于量化FSC自身开销，未在同一实现与硬件条件下测量全部基线，因此不据此提出跨方法效率优势。
+
+\input{tables/efficiency_results}
 
 \subsection{泛化范围与研究局限}
 稀疏度实验表明，在SONICOM的44名测试被试及共同743方向上，表中各项指标的平均误差均随Q14、Q26、Q50的观测密度增加而下降。其中全域ERB均值由0.9535\,dB降至0.8318\,dB和0.7931\,dB，ITD的主要下降则发生在Q14至Q26，提示额外测量对不同评价维度的边际收益并不一致。该趋势仍限于同一固定测试队列和当前空间采样方案。
@@ -410,7 +393,7 @@ ARI实验从另一个角度考察了数据库可迁移性。已有研究表明�
 
 本文提出FiLM条件化SIREN与频谱CNN模型FSC，用于补偿MCA插值后仍存在的方向相关幅度残差。模型将每名被试的稀疏空间双耳观测压缩为固定维度embedding，通过FiLM调制SIREN连续残差场，并利用双耳频谱CNN进一步修正跨频率结构；最终复用MCA相位完成HRIR重建。与此同时，本文将严格HRIR域ERB误差作为核心评价维度，并在训练中引入ERB代理目标，使学习重点集中于具有听觉频带意义的幅度误差。
 
-在SONICOM的Q26测试协议下，FSC的全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE和全域LSD分别为0.8360、1.2280、1.6514\,dB、18.8480\,$\mu$s和3.6029\,dB。相对MCA，FSC在三项幅度/声级指标和全域LSD上取得更低均值，但ITD加权MAE略高；相对FSP-AE和RANF，FSC在前三项上更低，但FSP-AE的ITD与全域LSD更低，RANF的全域LSD也更低。CNN消融在3个独立随机种子的八项指标上均得到负配对差且95\%区间低于零。进一步的稀疏度实验表明，在共同743方向上，各项报告指标的平均误差均随Q14、Q26、Q50逐步下降；全域ERB依次为0.9535、0.8318和0.7931\,dB。ARI外部复现实验中，FSC在五项主指标上均为22/22名测试被试改善，五个95\%配对bootstrap区间均低于零，表明该方法在第二数据库重新训练后仍能稳定降低MCA残差。
+在SONICOM的Q26测试协议下，FSC的全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE和全域LSD分别为0.8360、1.2280、1.6514\,dB、18.8480\,$\mu$s和3.6029\,dB。相对MCA，FSC在三项幅度/声级指标和全域LSD上取得更低均值，但ITD加权MAE略高；相对FSP-AE和RANF，FSC在前三项上更低，但FSP-AE的ITD与全域LSD更低，RANF的全域LSD也更低。CNN消融在3个独立随机种子的八项指标上均得到负配对差且95\%区间低于零。进一步的稀疏度实验表明，在共同743方向上，表中各项指标的平均误差均随Q14、Q26、Q50逐步下降；全域ERB依次为0.9535、0.8318和0.7931\,dB。ARI外部复现实验中，FSC在五项主指标上均为22/22名测试被试改善，五个95\%配对bootstrap区间均低于零，表明该方法在第二数据库重新训练后仍能稳定降低MCA残差。
 
 当前方法仍受到零样本跨数据库泛化尚未验证、MCA相位依赖、单模型推断开销尚缺统一基线比较、损失项尚未逐项消融、ARI复现实验仅含1个训练种子及缺少听音实验等限制。后续工作将重点研究更一致的ERB/感知目标、零样本跨数据库泛化、损失机制分析和主观空间听觉验证。
 
@@ -425,7 +408,7 @@ ARI实验从另一个角度考察了数据库可迁移性。已有研究表明�
 \end{center}
 
 \begin{eAbstract}
-Sparse head-related transfer function (HRTF) interpolation often fails to recover fine magnitude details. This paper proposes FiLM-conditioned SIREN with Spectral CNN (FSC). Starting from magnitude-corrected and time-aligned interpolation (MCA), FSC uses a subject-level conditional embedding to modulate a continuous direction--frequency residual field and employs a binaural spectral CNN to refine local spectral and interaural structure. The reconstructed magnitude is finally combined with the MCA phase to recover head-related impulse responses (HRIRs). On 44 SONICOM test subjects under the Q26 protocol, FSC achieved full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, ITD-weighted MAE, and full-sphere LSD values of 0.8360, 1.2280, 1.6514\,dB, 18.8480\,$\mu$s, and 3.6029\,dB, respectively. Relative to MCA, the mean errors decreased on all four magnitude or spectral metrics, whereas ITD-weighted MAE increased slightly. Across three independent seeds, the validation-set CNN ablation improved all eight metrics and placed all 24 paired-bootstrap intervals below zero. In the sparsity experiment, every reported mean error decreased as the observation density increased from Q14 through Q26 to Q50. After training from scratch on the ARI database, FSC improved all five primary metrics over MCA for all 22 test subjects. These results show that FSC can compensate for residual MCA magnitude errors and that the effect can be reproduced after retraining on a second database; zero-shot cross-database generalization and perceptual benefits remain to be established.
+Sparse head-related transfer function (HRTF) interpolation often leaves direction-dependent magnitude errors. This paper proposes FiLM-conditioned SIREN with Spectral CNN (FSC), which learns an additive residual over magnitude-corrected and time-aligned interpolation (MCA). Sparse binaural observations are encoded into a subject-level condition for a continuous direction--frequency SIREN field, while a binaural spectral CNN refines local spectral and interaural structure. The reconstructed magnitude is combined with the MCA phase to recover HRIRs. On 44 SONICOM test subjects under Q26, FSC achieved full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, ITD-weighted MAE, and full-sphere LSD values of 0.8360, 1.2280, 1.6514 dB, 18.8480 $\mu$s, and 3.6029 dB, respectively. Relative to MCA, four magnitude or spectral metrics improved, whereas ITD-weighted MAE increased slightly. Across three independent seeds, the validation-set CNN ablation improved all eight metrics and placed all 24 paired-bootstrap intervals below zero. Errors also decreased as the observation density increased from Q14 to Q50. In an ARI replication trained from scratch, FSC improved all five primary metrics over MCA for all 22 test subjects. These results support MCA residual compensation with a subject-conditioned neural field, while zero-shot cross-database generalization and perceptual benefits remain to be established.
 \end{eAbstract}
 
 \begin{eKeywords}

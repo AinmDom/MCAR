@@ -164,3 +164,6 @@ outputs/hybrid_lsd_b_e190/
 !/paper write/grand_paper/**
 !/paper write/grand_paper_en/
 !/paper write/grand_paper_en/**
+grand_paper_cn_sync/README_APPLY.md
+grand_paper_cn_sync/sync_cn_from_en.py
+grand_paper_cn_sync/translated/results_visual_examples.tex

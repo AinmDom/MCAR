@@ -1,3 +1,63 @@
+## 2026-09-13：CSMT 英文版图二与图三的图内说明已移入图注并通过最终 QA
+
+- 时间/agent：2026-09-13T12:31:43+08:00，Codex；状态：图二底部说明行和图三坐标区统计说明已移除，英文正文图注与图稿 QA 记录同步更新；第一张图保持不变；按作者约定未执行 LaTeX 编译、整稿 PDF 渲染或页面版面检查。
+- 动作：删除图二底部 `Fixed orthographic view; faded marks lie on the far side.`，并调整球面面板与三项符号图例的底部空间；固定正射视图及远侧淡化含义保留在 `main.tex` 图注。删除图三坐标区内 `Mean and 95% subject-bootstrap CI` 与 `n = 44 test subjects; lower is better` 两行，将均值、95%被试 bootstrap 区间、`n=44` 及 lower-is-better 语义完整移入图注。分别用 `--only grids` 和 `--only trend` 重绘，未调用 architecture 导出。
+- 关键结果：图二最终尺寸=143.5 x 58.0 mm、最小渲染字形=6.3 pt、三面板 alignment=PASS（1.5 pt阈值）、collision=PASS（0 fail/0 warn）；图三最终尺寸=120.0 x 68.0 mm、最小渲染字形=6.2 pt、alignment=NOT APPLICABLE、collision=PASS（0 fail/0 warn）。PDF文本核验确认图二不再含固定视图/远侧说明，图三不再含均值/CI、`n=44` 或 lower-is-better 的图内说明；逐图视觉检查确认图例、均值标签和全部置信区间端点仍清晰。
+- 完整性：图二仍使用冻结几何CSV全部90行，Q14/Q26/Q50唯一方向计数=14/26/50且严格嵌套；图三仍使用权威 FullSphereERB 三行汇总和44名测试被试的既有区间，数据、统计与坐标范围均未改变。源码审计20 PASS、0 FAIL、1个已复核宽度解析 warning。第一张图 PDF/PNG/SVG/TIFF 哈希逐一与修改前一致，PDF SHA256=`19EC4EAD3838AA9C80053BB01B21F099E5874BD1AD3DD4D7DCAE51EBD6B7D74E`。`test_subjects_read=0`；训练/评价、finite、best/末点预算均为N/A；临时依赖、预览和Python缓存已删除；未提交、未推送；既有中文正式稿未提交修改未改动。
+- 证据：`paper write/grand_paper_en/figure/spherical_grid_triptych_q14_q26_q50.pdf`（SHA256=`19A54FD6E4CD696D9EC661FD14614C51F0F6F9355189CF1C63D543102033FE36`）；`paper write/grand_paper_en/figure/matched_density_erb_trend.pdf`（SHA256=`44D14F93FE8FAFA2DB1A5629763EBCF18EC7A2995559D7D908ED248C1AE46EE2`）；`paper write/grand_paper_en/main.tex`（SHA256=`63F8BDB42D972483DC270799119A34A32A1398E7BB95D717D3558A4DD6FDE303`）；`paper write/grand_paper_en/figure_src/make_submission_figures.py`；`paper write/grand_paper_en/figure_src/QA_NOTES.md`；`paper write/grand_paper_en/figure_src/qa/spherical_grid_triptych_q14_q26_q50.collision-audit.json`；`paper write/grand_paper_en/figure_src/qa/matched_density_erb_trend.collision-audit.json`。
+- 下一步：作者本地编译 `paper write/grand_paper_en/main.tex`，确认两条扩充后的图注换行和浮动位置。
+- 阻塞项：无图片内部 QA 阻塞；整稿页面观感仍待作者自行编译确认。
+
+## 2026-09-13：CSMT 英文版第一张模型结构图恢复为详细五区版并通过最终 QA
+
+- 时间/agent：2026-09-13T12:20:39+08:00，Codex；状态：第一张图详细版、英文正文引用与图注、可复现绘图源和 QA 记录均已更新完成；第二、第三张图保持不变；按作者约定未执行 LaTeX 编译、整稿 PDF 渲染或页面版面检查。
+- 动作：按作者反馈将第一张图从四阶段简化流程恢复为接近旧版信息密度的五区模型结构：Inputs、Frozen FiLM-SIREN、7-channel feature builder、Binaural spectral CNN、Residual output。图中明确条件编码器、128维条件向量、逐层 FiLM、6层/256宽 SIREN、7个左右耳特征通道、CNN stem、3→64→64方向编码、4个 dilation=1/2/4/8 残差块、48→96→48 pointwise 路径及 base/CNN 残差合并；删除模型外的 MCA 相位、IFFT、HRIR 重建与反归一化环节，并移除停用的旧四阶段绘图函数。绘图入口新增 `--only architecture`，本轮只重新导出第一张图；英文 `main.tex` 图宽改为 `0.98\linewidth` 并同步收窄图注范围。
+- 关键结果：第一张图最终 PDF 尺寸=143.5 x 104.0 mm，最小渲染字形=5.3 pt、低于5 pt字形=0；collision audit=PASS、0 fail/0 warn，单面板 alignment=NOT APPLICABLE；SVG含82个可编辑 text 节点。最终 PDF 文本中 `phase/IFFT/HRIR/Hybrid/ensemble` 均未出现。逐区视觉检查确认英文换行、四个扩张块、方向条件线、基础残差旁路和输出加法均清楚，无裁切或穿字。
+- 完整性：源码审计20 PASS、0 FAIL、1个已复核 warning；该 warning 仍为验证器将 `143.5 * MM` 误读为3644.9 mm，已由 PDF media box 实测143.5 mm排除。第二、第三张图的 PDF/PNG/SVG/TIFF 八份文件哈希逐一与修改前一致；其中两份 PDF SHA256 分别为 `1D9AA90CCA2455DE7C42CC8C54D518C84E656700255EEEDB8E8C52A39FEFE587` 和 `9F9A770E4D1481BCE35F05C06A782526B90101C1109D881005C68C027CF75AFF`。`test_subjects_read=0`；训练/评价、finite、best/末点预算均为N/A。临时依赖、预览和 Python 缓存已删除；未提交、未推送；既有中文正式稿未提交修改未改动。
+- 证据：`paper write/grand_paper_en/figure/fsc_single_model_architecture.pdf`（SHA256=`19EC4EAD3838AA9C80053BB01B21F099E5874BD1AD3DD4D7DCAE51EBD6B7D74E`）；`paper write/grand_paper_en/figure/fsc_single_model_architecture.png`；`paper write/grand_paper_en/main.tex`（SHA256=`0D80B1720140308424B40E48EEF64B35E4C18D746950A379006278A58808A123`）；`paper write/grand_paper_en/figure_src/make_submission_figures.py`；`paper write/grand_paper_en/figure_src/FIGURE_CONTRACT.md`；`paper write/grand_paper_en/figure_src/QA_NOTES.md`；`paper write/grand_paper_en/figure_src/qa/fsc_single_model_architecture.collision-audit.json`。
+- 下一步：作者本地编译 `paper write/grand_paper_en/main.tex`，重点检查104 mm高详细结构图的浮动位置与图注分页；如需进一步放大正文内字号，可再考虑横跨两栏或移至独立浮动页。
+- 阻塞项：无图片内部 QA 阻塞；整稿页面中的最终位置仍待作者自行编译确认。
+
+## 2026-09-13：CSMT 英文版三张活动论文图已重制并通过最终尺寸 QA
+
+- 时间/agent：2026-09-13T03:32:34+08:00，Codex；状态：三张英文投稿图、可复现绘图源、正文引用和图注更新完成；按作者约定未执行 LaTeX 编译、整稿 PDF 渲染或页面版面检查。
+- 动作：在 `paper write/grand_paper_en/` 内新增统一 Python/Matplotlib 绘图源、图契约、依赖、provenance 与 QA 记录，并生成每图的 editable PDF/SVG、600-dpi PNG、600-dpi LZW TIFF。结构图重排为 Inputs、FiLM-SIREN base、Spectral refinement、Reconstruction 四阶段，删除旧 Hybrid/三成员集成口径并补齐 MCA 幅度残差、MCA 相位与 IFFT 重建链；球面图从冻结方向 CSV 重新绘制固定正射三联图，以圆/方/三角和颜色双重编码 Q14 核心、Q26 新增与 Q50 新增方向，移除交互页面文字和无解释箭头；ERB 趋势图加入三组95%被试 bootstrap 区间、`n=44`、明确 error 纵轴，并扩展纵轴覆盖全部区间。英文 `main.tex` 已改为引用三份新 PDF 并同步扩充图注，ERB 图宽由 `0.78\linewidth` 调整为 `0.82\linewidth`。
+- 关键结果：结构图/球面图/ERB图最终 PDF 尺寸分别为134.7 x 88.0、143.5 x 58.0、120.0 x 68.0 mm；最小渲染字形分别为6.0、5.9、6.0 pt，均无低于5 pt字形。三份最新 collision audit 均为 PASS、0 fail/0 warn；球面三联图 panel-alignment 在1.5 pt阈值下 PASS，两个单面板图为 NOT APPLICABLE。逐图视觉检查未见裁切、图例歧义、误差棒端点遮挡或信息流混淆。
+- 数据与完整性：球面图使用冻结 CSV 全部90行，唯一方向计数严格为Q14=14、Q26=26、Q50=50并断言 `Q14<Q26<Q50`；ERB图仅使用权威 FullSphereERB 三行汇总，每行44名测试被试的均值与非对称95% subject-bootstrap CI，未添加显著性检验。源码审计20 PASS、0 FAIL、1个已复核宽度表达式 warning；三份 PDF media box 独立确认目标物理尺寸。三份 SVG 分别含41/10/15个可编辑 text 节点，英文正文的三条新图片引用均存在。`test_subjects_read=0`；训练/评价、finite、best/末点预算均为N/A。临时依赖、预览和可视检查副本已删除；未提交、未推送。英文目录仍由根 `.gitignore` 忽略，既有中文正式稿未提交修改未改动。
+- 证据：`paper write/grand_paper_en/main.tex`（SHA256=`C7BE6FED1042A9898D3B3CCB06052B7710CB7AEA1861EA19C32AFCE2A8CBB063`）；`paper write/grand_paper_en/figure/fsc_single_model_architecture.pdf`（SHA256=`6B1850F9B7D84EE20116B222977419FDB5F67BB2D10A8F551BA17DD82634CD28`）；`paper write/grand_paper_en/figure/spherical_grid_triptych_q14_q26_q50.pdf`（SHA256=`1D9AA90CCA2455DE7C42CC8C54D518C84E656700255EEEDB8E8C52A39FEFE587`）；`paper write/grand_paper_en/figure/matched_density_erb_trend.pdf`（SHA256=`9F9A770E4D1481BCE35F05C06A782526B90101C1109D881005C68C027CF75AFF`）；`paper write/grand_paper_en/figure_src/make_submission_figures.py`；`paper write/grand_paper_en/figure_src/QA_NOTES.md`；`paper write/grand_paper_en/figure_src/qa/`；权威数据=`configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv`、`results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/all_metrics_summary_mean_std.csv`。
+- 下一步：作者在本地编译 `paper write/grand_paper_en/main.tex`，重点确认三张图的浮动位置、图注换行及最终页面观感；若确认投稿包需要版本控制，再决定是否扩展当前仅跟踪 `grand_paper/` 的论文写作边界以纳入 `grand_paper_en/`。
+- 阻塞项：无图片内部 QA 阻塞。整稿页面结论仍待作者按既有约定自行编译后确认；源码验证器唯一 warning 是其把 `143.5 * MM` 的模板特定宽度表达式误读为3644.9 mm，已由最终 PDF media box 的143.5 mm实测值排除。
+
+## 2026-09-12：CSMT 英文版三张活动论文图完成只读视觉适配审查
+
+- 时间/agent：2026-09-12T23:46:00+08:00，Codex；状态：视觉与语义适配审查完成；未修改图片、正文或编译产物，未执行 LaTeX 编译/PDF 渲染。
+- 动作：按 `paper write/grand_paper_en/main.tex` 的实际插图宽度检查当前三张活动图，核对结构图的 Python 源码与既有 QA/provenance、球面采样图的 JS/HTML 来源与拼图布局，以及 ERB 趋势图的矢量文本和权威汇总数据；分别评估英文术语一致性、信息层级、最终物理字号、颜色/标记可辨识性、统计表达与投稿包清洁度。
+- 关键发现：①结构图优先级最高：仍使用旧称 `Hybrid E190`、`R_hybrid`，且底部“最终发布平均3个等权E190成员”与英文正文当前单模型 FSC 口径冲突；406.4 mm 宽母版以正文 `0.92\linewidth` 放置后，原生最小8.1 pt文字约缩至2.7 pt，需为正文简化为3--4个逻辑块或双行布局，并将详细五区图移至补充材料。②球面网格图仍保留三处 `Drag to rotate...` 交互界面文字，无颜色/增量图例，红色北极方向箭头未标注；按当前 `0.98\linewidth` 估算标题/副标题/界面说明约为4.7/2.8/2.2 pt，应从源数据重新导出静态图，加入 `Q14 core / +Q26 / +Q50` 图例及形状或描边冗余编码。③ ERB 趋势图整体最接近可用，正文最终最小字约5.8 pt；建议纵轴改为 `Full-sphere ERB error (dB)`，加入 `n=44` 与95%被试 bootstrap 区间，扩展纵轴避免区间被裁切，并统一嵌入字体。三图像素/矢量分辨率均充足，主要问题不是 DPI，而是最终字号、语义和统计信息。
+- 完整性：英文正文实际引用3张图且目标均存在；结构图与 ERB 图均有矢量 PDF，`pdfimages` 检查未发现内嵌位图。结构图既有同源原生尺寸碰撞审计为0 failure/0 warning，但当前环境缺少 PyMuPDF，未声称完成新的碰撞审计。未访问测试数据，`test_subjects_read=0`；训练/评价、finite、best/末点预算均为N/A。审查前 Git 仍仅有既有 `docs/EXPERIMENT_LOG.md`、中文正式稿 `.tex/.bib/.bbl` 与表格修改；英文目录仍被根 `.gitignore` 忽略。
+- 证据：`paper write/grand_paper_en/main.tex`；`paper write/grand_paper_en/figure/hybrid_e190_single_member.png`；`paper write/grand_paper_en/figure/spherical_grid_triptych_q14_q26_q50.png`；`paper write/grand_paper_en/figure/matched_density_erb_trend.pdf`；`paper write/figures/hybrid_e190_single_member/draw_hybrid_e190.py`；`paper write/figures/hybrid_e190_single_member/QA_NOTES.md`；`paper write/figures/hybrid_e190_single_member/collision-audit.json`；`paper write/CSMT_2026_updated_0907_r2_tex/figure/spherical_grid_triptych/build_spherical_grid_triptych.js`；`paper write/CSMT_2026_updated_0907_r2_tex/figure/spherical_grid_triptych/triptych_layout.json`；`results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/all_metrics_summary_mean_std.csv`。
+- 下一步：如作者确认实施，建议依次处理结构图的单模型 FSC 口径与版式、球面图的静态重导出与图例、ERB 图的不确定性表达；最终优先引用矢量 PDF，并在作者本地编译后按实际成稿尺寸复核≥5 pt硬底线、建议≥6 pt。
+- 阻塞项：按作者2026-09-06约定，本轮不自动编译或渲染英文稿，因而最终页面中的实测字号和跨栏/浮动位置仍需作者编译后确认；当前环境缺少 PyMuPDF，若实施改图需在可用环境补跑最终尺寸碰撞审计。
+
+## 2026-09-12：CSMT 英文版 LaTeX 工程已完成并通过静态验收
+
+- 时间/agent：2026-09-12T22:41:35+08:00，Codex；状态：英文改写与静态验收完成；按作者约定未执行 LaTeX 编译、PDF 渲染或版面检查。
+- 动作：以作者当前未提交的 `paper write/grand_paper/main.tex` 为唯一正文源稿，按提供的 CSMT 英文模板重建英文单语结构，将标题、摘要、关键词、7章正文、20个二级标题、图表标题、表头及注释全部改写为英文；复制英文模板的 GB/T 7714-2015 BST、当前英文 BibTeX 和图片资产；将结果放入既有空目录 `paper write/grand_paper_en/`。原中文正式稿及其既有未提交修改均未改动。
+- 关键结果：英文主稿约7319词、430行；正文保留源稿的9个 equation、1个 align、3个内嵌 table、3个 figure及5个外部表输入。FSC 单模型 LAP-LSD 统一采用当前权威值3.6400 dB；英文补充材料同步采用Q26的3.6400±0.5022 dB，并仅保留与当前正文一致的SONICOM严格ERB配对统计及ARI五指标配对统计，未沿用旧三模型集成值3.6129。
+- 完整性：目标 `.tex/.bib/.md` 中文字符扫描命中0；24个唯一正文引文键全部存在于27条BibTeX记录，未引用条目仍为R9、R14、R17；14个唯一 `ref/eqref` 均有对应label且无重复label；5个 `input` 与3个 `includegraphics` 目标全部存在；全部TeX文件环境数量配对。`git diff --check`无新增空白错误，仅有既有LF/CRLF提示。目标目录按仓库现有规则仍由根 `.gitignore` 忽略；未提交、未推送。未启动训练/评价，`test_subjects_read`、finite、best/末点预算均为N/A。
+- 证据：`paper write/grand_paper_en/main.tex`（SHA256=`5CF57AEDCF7E90788689D4CF5DB92F392592DF3F2588A9C7BAF878AEA447B673`）；`paper write/grand_paper_en/supplementary_paired_statistics.tex`（SHA256=`DDC19F2E2BE4F99DC4A3AD51EFAD788E3ABEB3253D9356414299FD9019F485D0`）；`paper write/grand_paper_en/references.bib`（SHA256=`D9526F0820BE72621EA7C8F4A724B10A5801032321F7F87AF1F9E6A7910CA40B`）；`paper write/grand_paper_en/tables/`；`paper write/grand_paper_en/figure/`；英文模板=`../论文模板/Latex Templates_English/csmt2018_english.tex`。
+- 下一步：作者用 XeLaTeX/BibTeX 编译 `paper write/grand_paper_en/main.tex` 并重点检查长表宽度、参考文献分页及最终作者/匿名信息；如需将英文目录纳入版本库，应先由作者确认扩展当前仅跟踪 `grand_paper/` 的论文工作区边界。
+- 阻塞项：按作者2026-09-06约定，本轮未进行编译与视觉验收，因此尚无英文版PDF及版面结论；英文模板仍是标注2018年的会议模板，适用届次与匿名要求需投稿前由作者按当届通知确认。
+
+## 2026-09-12：正式稿作者修改只读验收完成
+
+- 时间/agent：2026-09-12T22:09:32+08:00，Codex；状态：静态验收完成，发现1处需同步的数值表述；未修改论文正文、表格、参考文献或编译产物，未执行LaTeX编译。
+- 动作：核对分支、HEAD及作者提交后的未提交差异；扫描正式稿和活动表格中的工程化措辞、旧稀疏度名称、早期测试暴露、具体随机种子号、补充材料旧表述及LAP-LSD旧命名；检查正文引文键、BibTeX键、现有BBL条目、活动输入文件、图片路径、LaTeX环境和编译日志；对新增R22至R27的题名、作者、DOI及正文引用语义作来源抽查。按PDF检查流程渲染现有19页PDF并抽查首页，随后删除全部临时渲染文件。
+- 关键发现：tables/secondary_global_results.tex已将当前单模型FSC的LAP-LSD改为3.6400，与results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/中的Q26单模型结果一致；但main.tex第5.3节仍写旧三模型集成值3.6129，正文与表4不一致，投稿前应统一为3.6400。其余目标残留扫描未发现问题。
+- 完整性：正文24个唯一引文键均在references.bib和当前main.bbl中存在；BibTeX共27条，未引用条目为R9、R14、R17；无重复DOI。5个活动input和3个includegraphics目标均存在；document、摘要、equation、align、table、figure和tabular环境数量配对；git diff --check无空白错误，仅有LF/CRLF提示。现有main.pdf时间晚于main.tex，编译日志无undefined citation、LaTeX error或overfull box，仅有caption包对未知文档类的提示。未启动训练或评价，test访问、finite、best和末点预算均为N/A。
+- 证据：paper write/grand_paper/main.tex；paper write/grand_paper/tables/secondary_global_results.tex；paper write/grand_paper/references.bib；paper write/grand_paper/main.bbl；paper write/grand_paper/main.log；paper write/grand_paper/main.pdf；results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/all_metrics_summary_mean_std.csv。
+- 下一步：将第5.3节FSC的LAP-LSD由3.6129同步为3.6400，再次编译并重点检查表4宽度与参考文献分页；模板和匿名信息按作者决定暂不处理。
+- 阻塞项：内置本地图像查看接口仍受Windows沙箱helper_unknown_error影响，因此除首页外未逐页进行像素级视觉验收；已有编译日志与逐页文本检查未发现裁切或引用问题。
+
 ## 2026-09-11：ARI 外部数据库复现实验已接入正式论文
 
 - 时间/agent：2026-09-11T18:28:10+08:00，Codex；状态：正文接入与静态核对完成，未执行 LaTeX 编译。
@@ -4463,3 +4523,10 @@ MAT。HUTUBS、AXD 和 KU100 是数据集或设备专名，不作首字母展开
 - 动作：核验正式 ARI Stage-D run 的进程、190轮 history、38次 validation ledger、22位验证被试明细、训练报告、冻结 backbone 和 best/last checkpoint。按预注册固定预算，唯一权威评价模型为 E190 `last.pt`；best cycle 恰为190不改变末点规则。
 - 证据：run=`artifacts/training/ari_fsc_adapted_q26_spectral_cnn_seed20260911_e190/`；history恰有190行（cycle 1--190），全部数值 finite；cycle 190 train total=`0.672584`、validation total=`0.799803`，精确 best validation objective=`0.7998033843257211`。38次验证覆盖 cycle 5,10,...,190，每次均为22个唯一 validation subjects；stderr为空。训练报告 status=`completed`、optimizer steps=`24700`、elapsed=`2452.0173032`秒、peak CUDA allocated=`521.8134765625` MiB。
 - checkpoint：权威 `last.pt` 实际 SHA256=`9FF6042C4B6262DEF1B0A34691AABE18706C07EDE995DA363FF6F99DBA6EF1E7`，与报告一致；cycle=190、training stage=`film_siren_spectral_cnn_stage_d`、seed=20260911、cycles=190、run name均匹配冻结配置，所有 model tensors finite。`best.pt` SHA256=`C24C9D7F88DA86D382 multic?`。
+## 2026-09-12：FSC单模型LAP-LSD正文数值同步
+
+- 时间/agent：2026-09-12T22:14:18+08:00，Codex；状态：完成，未编译。
+- 动作：将正式稿第5.3节FSC的LAP-LSD由旧三模型集成值3.6129 dB同步为当前单模型Q26值3.6400 dB，使正文与表4一致。
+- 证据：paper write/grand_paper/main.tex；paper write/grand_paper/tables/secondary_global_results.tex；results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/all_metrics_summary_mean_std.csv。
+- 完整性：仅修改上述正文数值；未改表格、参考文献、图片、实验结果或编译产物；未运行训练、评价或LaTeX编译，test访问、finite、best/末点预算=N/A。
+- 下一步：作者按需自行编译。阻塞项：无。

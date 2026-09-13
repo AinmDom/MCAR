@@ -1,11 +1,12 @@
 \begin{table}[htbp]
 \centering\scriptsize
 \setlength{\tabcolsep}{3pt}
-\bicaption[tab:primary-results]{表}{FSC与传统插值方法的五项主指标（44名测试被试，Q26）}{Tab.}{Five primary metrics of FSC and conventional interpolation methods (44 test subjects, Q26)}
+\caption{Five primary metrics of FSC and conventional interpolation methods (44 test subjects, Q26)}
+\label{tab:primary-results}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrrr}
 \toprule
-方法 & 全域ERB & 对侧$25^\circ$ ERB & 频带ILD & ITD加权MAE & 全域LSD \\
+Method & Full-sphere ERB & Contra.-$25^\circ$ ERB & ERB-band ILD & ITD-w. MAE & Full-sphere LSD \\
  & dB$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ & $\mu$s$\downarrow$ & dB$\downarrow$ \\
 \midrule
 FSC & $\mathbf{0.8360} \pm 0.3200$ & $\mathbf{1.2280} \pm 0.1144$ & $\mathbf{1.6514} \pm 0.6530$ & $18.8480 \pm 21.9544$ & $\mathbf{3.6029} \pm 0.5191$ \\
@@ -18,5 +19,5 @@ MCA & $1.0822 \pm 0.0959$ & $1.7458 \pm 0.1551$ & $2.0562 \pm 0.1948$ & $18.3997
 \end{tabular}%
 }
 \par\smallskip
-\parbox{\linewidth}{\footnotesize 数值为被试均值$\pm$样本标准差，加粗表示本表最低均值。五项指标均在Q26的767个未观测方向评价；全域ERB、对侧ERB与全域LSD使用固体角加权，频带ILD使用72个水平面插值方向，ITD加权MAE按767方向固体角加权。}
+\parbox{\linewidth}{\footnotesize Values are subject mean $\pm$ sample standard deviation; bold denotes the lowest mean in this table. All five metrics are evaluated over 767 unobserved Q26 directions. Full-sphere ERB, contralateral ERB, and full-sphere LSD use solid-angle weighting; ERB-band ILD uses 72 horizontal-plane interpolation directions; ITD-weighted MAE uses solid-angle weighting over all 767 directions.}
 \end{table}

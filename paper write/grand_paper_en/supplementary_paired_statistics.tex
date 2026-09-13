@@ -1,0 +1,73 @@
+% Standalone English supplementary material for the CSMT paper.
+\documentclass[UTF8,a4paper]{article}
+\usepackage{ctex}
+\setmainfont{Times New Roman}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
+\pagenumbering{gobble}
+
+\begin{document}
+\section*{Supplementary Material: LAP24 LSD and Subject-Paired FSC Statistics}
+
+\subsection*{S1. Descriptive Comparison Using LAP24 LSD}
+
+LAP24-compatible LSD is computed over all 793 directions, including Q26 observations, without solid-angle weighting. Its evaluation domain therefore differs from that of the full-sphere LSD in the main paper, which uses 767 unobserved directions. LAP-LSD is retained as a descriptive extended metric rather than a primary metric.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lr}
+\toprule
+Method & LAP24 LSD / dB$\downarrow$ \\
+\midrule
+SH only & $7.9177 \pm 0.2576$ \\
+SUpDEq SH & $6.3776 \pm 0.9409$ \\
+SUpDEq NN & $5.5891 \pm 0.3514$ \\
+SUpDEq Bary. & $5.4608 \pm 0.3174$ \\
+MCA & $4.7553 \pm 0.2707$ \\
+FSP-AE & $\mathbf{3.0692} \pm 0.5574$ \\
+RANF & $3.2221 \pm 0.2540$ \\
+FSC & $3.6400 \pm 0.5022$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In the frozen single-member sparsity experiment, FSC obtains LAP-LSD values of $3.8704\pm0.6481$, $3.6400\pm0.5022$, and $3.5569\pm0.5661$\,dB at Q14, Q26, and Q50, respectively. The mean decreases as the number of observed directions increases.
+
+\subsection*{S2. Subject-Paired Statistics Reported in the Main Paper}
+
+For the same 44 SONICOM test subjects, within-subject FSC--MCA differences are evaluated with 10000 paired-bootstrap resamples. All metrics are lower-is-better, so a negative difference favors FSC. The two strict HRIR-domain ERB metrics yield the following results.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lrr}
+\toprule
+Metric & Mean FSC--MCA [95\% CI] & Improved subjects \\
+\midrule
+Full-sphere ERB / dB & $-0.2462\;[-0.2942,-0.1665]$ & 43/44 \\
+Contralateral-$25^\circ$ ERB / dB & $-0.5178\;[-0.5728,-0.4541]$ & 43/44 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For the independent ARI replication, the same subject-paired procedure is applied to 22 test subjects. FSC is trained from scratch on ARI, so these statistics assess replication after retraining rather than zero-shot transfer of a SONICOM model.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lr}
+\toprule
+Metric & Mean FSC--MCA [95\% CI] \\
+\midrule
+Full-sphere ERB / dB & $-0.2175\;[-0.2468,-0.1876]$ \\
+Contralateral-$25^\circ$ ERB / dB & $-0.2261\;[-0.2574,-0.1935]$ \\
+ERB-band ILD / dB & $-0.4620\;[-0.5319,-0.3935]$ \\
+ITD-weighted MAE / $\mu$s & $-0.4857\;[-0.5803,-0.3967]$ \\
+Full-sphere LSD / dB & $-0.9544\;[-1.0183,-0.8882]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Every ARI metric improves for all 22 test subjects, and each bootstrap interval lies below zero. Subject-level bootstrap quantifies subject uncertainty but does not capture training randomness; the ARI replication uses one fixed training seed.
+
+\end{document}

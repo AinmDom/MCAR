@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{Model size and inference cost of FSC-Q26}
+\label{tab:efficiency-results}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Deployment & Parameters & Checkpoint & Median inference & Inference P95 & Median end-to-end \\
+ & M & MiB & ms & ms & ms \\
+\midrule
+Single member & 1.519 & 6.45 & 110.45 & 110.95 & -- \\
+Three-member ensemble & 4.557 & 19.35 & 331.49 & 332.10 & 513.24 \\
+\bottomrule
+\end{tabular}%
+}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize Benchmarked on one validation subject with 793 directions $\times$ 463 frequency bins using an NVIDIA GeForce RTX 5060 in FP32. Model inference includes five warm-up and 30 timed runs and excludes checkpoint loading and disk I/O; end-to-end time includes input reading and output serialization. The result describes only FSC's own cost and is not used to claim an efficiency advantage over other methods.}
+\end{table}

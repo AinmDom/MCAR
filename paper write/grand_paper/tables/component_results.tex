@@ -1,12 +1,12 @@
-% Formal Q26 validation-only spectral-CNN ablation; paired E130/E190 checkpoints within each seed.
+% Q26 validation-set CNN ablation with paired E130/E190 models.
 \begin{table}[htbp]
 \centering\scriptsize
 \setlength{\tabcolsep}{2.4pt}
-\bicaption[tab:component-results]{表}{正式频谱CNN消融的逐seed绝对误差（44名验证被试，Q26）}{Tab.}{Per-seed absolute errors in the formal spectral-CNN ablation (44 validation subjects, Q26)}
+\bicaption[tab:component-results]{表}{CNN消融实验的绝对误差（44名验证被试，Q26）}{Tab.}{Absolute errors in the CNN ablation (44 validation subjects, Q26)}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
-& \multicolumn{2}{c}{Seed 20260821} & \multicolumn{2}{c}{Seed 20260822} & \multicolumn{2}{c}{Seed 20260823} \\
+& \multicolumn{2}{c}{重复1} & \multicolumn{2}{c}{重复2} & \multicolumn{2}{c}{重复3} \\
 指标$\downarrow$ & E130 & E190 & E130 & E190 & E130 & E190 \\
 \midrule
 全域ERB（dB） & $0.8554\pm0.1635$ & $0.8304\pm0.1645$ & $0.8501\pm0.1599$ & $0.8257\pm0.1610$ & $0.8488\pm0.1607$ & $0.8277\pm0.1620$ \\
@@ -21,17 +21,17 @@ ITD加权MAE（$\mu$s） & $15.5683\pm2.3349$ & $15.5411\pm2.3330$ & $15.5621\pm
 \end{tabular}%
 }
 \par\smallskip
-\parbox{\linewidth}{\footnotesize 数值为被试均值$\pm$样本标准差。E130为不含频谱CNN的FiLM-SIREN末点，E190为同seed E130基础上的完整FSC末点；所有checkpoint、epoch、seed和超参数均预先冻结。}
+\parbox{\linewidth}{\footnotesize 数值为被试均值$\pm$样本标准差。E130为不含频谱CNN的FiLM-SIREN末点，E190为相同重复实验中基于E130训练的完整FSC末点；三次重复使用独立随机种子，训练配置和轮次均预先固定。}
 \end{table}
 
 \begin{table}[htbp]
 \centering\scriptsize
 \setlength{\tabcolsep}{3pt}
-\bicaption[tab:component-paired]{表}{正式频谱CNN消融的逐seed配对差及95\% bootstrap区间}{Tab.}{Per-seed paired differences and 95\% bootstrap intervals in the formal spectral-CNN ablation}
+\bicaption[tab:component-paired]{表}{CNN消融实验的配对差及95\% bootstrap区间}{Tab.}{Paired differences and 95\% bootstrap intervals in the CNN ablation}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrr}
 \toprule
-指标$\downarrow$ & Seed 20260821 & Seed 20260822 & Seed 20260823 \\
+指标$\downarrow$ & 重复1 & 重复2 & 重复3 \\
 \midrule
 全域ERB（dB） & $-0.0250\;[-0.0275,-0.0225]$ & $-0.0244\;[-0.0271,-0.0218]$ & $-0.0210\;[-0.0235,-0.0186]$ \\
 对侧$25^\circ$ ERB（dB） & $-0.0167\;[-0.0199,-0.0136]$ & $-0.0208\;[-0.0250,-0.0169]$ & $-0.0142\;[-0.0179,-0.0105]$ \\
@@ -45,5 +45,5 @@ ITD加权MAE（$\mu$s） & $-0.0271\;[-0.0378,-0.0170]$ & $-0.0101\;[-0.0199,-0.
 \end{tabular}%
 }
 \par\smallskip
-\parbox{\linewidth}{\footnotesize 差值定义为$\Delta=E_{\mathrm{FSC\ E190}}-E_{\mathrm{FiLM\text{-}SIREN\ E130}}$，负值表示加入频谱CNN refinement后误差降低。每个seed分别对相同44名验证被试进行10000次paired bootstrap（固定bootstrap seed 20260909）；三个seed不合并为132个独立样本。}
+\parbox{\linewidth}{\footnotesize 差值定义为$\Delta=E_{\mathrm{FSC\ E190}}-E_{\mathrm{FiLM\text{-}SIREN\ E130}}$，负值表示CNN细化后误差降低。三次重复分别对相同44名验证被试进行10000次配对bootstrap，不将三次重复合并为132个独立样本。}
 \end{table}

@@ -1,0 +1,439 @@
+% !TeX program = xelatex
+\documentclass[UTF8,a4paper]{article}
+\usepackage{ctex}
+\setmainfont{Times New Roman}
+\usepackage[sort&compress,numbers]{natbib}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[font={small,bf}]{caption}
+\geometry{left=3.18cm,right=3.18cm,top=2.54cm,bottom=2.54cm}
+\pagenumbering{gobble}
+\renewcommand\refname{References}
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\tablename}{Tab.}
+\titleformat*{\section}{\rmfamily\zihao{4}\bfseries}
+\titleformat*{\subsection}{\rmfamily\zihao{5}\bfseries}
+\titleformat*{\subsubsection}{\rmfamily\zihao{5}\itshape}
+\setlength{\parindent}{2em}
+\setlength{\emergencystretch}{2em}
+\newenvironment{csmtAbstract}{\par\noindent\small{\bfseries Abstract: }}{\par}
+\newenvironment{keywords}{\par\smallskip\noindent\small{\bfseries Key Words: }}{\par}
+
+\makeatletter
+\renewcommand\@maketitle{%
+  \hfill
+  \begin{minipage}{0.95\textwidth}
+    \vskip 2em
+    {\centering\bfseries\zihao{3}\@title\par}
+    \vskip 1em
+    {\centering\zihao{5}\textbf{\@author}\par}
+  \end{minipage}
+  \vskip 1em\par
+}
+\makeatother
+
+\title{Sparse HRTF Interpolation via MCA Residual Learning and Conditional Implicit Representation}
+\author{Young}
+
+\begin{document}
+\maketitle
+
+\begin{csmtAbstract}
+Sparse head-related transfer function (HRTF) interpolation often fails to recover fine magnitude details. This paper proposes FiLM-conditioned SIREN with Spectral CNN (FSC). Starting from magnitude-corrected and time-aligned interpolation (MCA), FSC uses a subject-level conditional embedding to modulate a continuous direction--frequency residual field and employs a binaural spectral CNN to refine local spectral and interaural structure. The reconstructed magnitude is finally combined with the MCA phase to recover head-related impulse responses (HRIRs). On 44 SONICOM test subjects under the Q26 protocol, FSC achieved full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, ITD-weighted MAE, and full-sphere LSD values of 0.8360, 1.2280, 1.6514\,dB, 18.8480\,$\mu$s, and 3.6029\,dB, respectively. Relative to MCA, the mean errors decreased on all four magnitude or spectral metrics, whereas ITD-weighted MAE increased slightly. Across three independent seeds, the validation-set CNN ablation improved all eight metrics and placed all 24 paired-bootstrap intervals below zero. In the sparsity experiment, every reported mean error decreased as the observation density increased from Q14 through Q26 to Q50. After training from scratch on the ARI database, FSC improved all five primary metrics over MCA for all 22 test subjects. These results show that FSC can compensate for residual MCA magnitude errors and that the effect can be reproduced after retraining on a second database; zero-shot cross-database generalization and perceptual benefits remain to be established.
+\end{csmtAbstract}
+
+\begin{keywords}
+head-related transfer function; HRTF interpolation; MCA; residual learning; conditional implicit representation; interaural cues
+\end{keywords}
+
+\section{Introduction}
+\label{sec:introduction}
+
+A head-related transfer function (HRTF) describes the direction-dependent acoustic transfer from a sound source to the two eardrums and underpins binaural spatial-audio rendering. Its time-domain counterpart, the head-related impulse response (HRIR), contains the interaural time difference (ITD), interaural level difference (ILD), and monaural spectral cues produced by the pinnae, head, and torso\cite{R6}. Because human morphology varies substantially, directly using nonindividualized HRTFs may introduce spatial-cue mismatch. Classic localization experiments showed that such mismatch can increase front--back and up--down confusions and reduce elevation accuracy for some listeners\cite{R27}. Dense individualized HRTFs normally require direction-by-direction measurements in a controlled acoustic environment, making acquisition costly. Interpolating a dense HRTF set from a small number of measured directions is therefore an important means of reducing the measurement burden of personalization\cite{R13}.
+
+Sparse HRTF interpolation estimates binaural responses at unmeasured directions from a limited set of observations. Existing approaches can broadly be divided into neighboring-direction weighting, functional models, and learning-based methods\cite{R15}. The first two categories include linear or bilinear interpolation, vector-base amplitude panning (VBAP), inverse-distance weighting (IDW), principal-component analysis, filter models, and spherical-harmonic (SH) expansion\cite{R2,R3}. Learning-based methods infer HRTFs at target directions from sparse observations using structures such as autoencoders and neural fields\cite{R4,R5}. Traditional methods offer clear physical or geometric interpretations, whereas learning-based methods provide stronger nonlinear representation capacity. Both nevertheless face a common difficulty: contralateral high-frequency responses change rapidly with direction, and local spectral peaks and notches together with binaural cues are often harder to recover than the overall low-frequency magnitude.
+
+Time alignment removes direction-dependent propagation delays before interpolation and thereby reduces the difficulty caused by rapidly varying phase\cite{R3}. Magnitude-corrected and time-aligned interpolation (MCA) additionally constructs a correction filter from a frequency-smoothed magnitude representation, addressing both delay and magnitude errors within a conventional interpolation pipeline\cite{R1}. MCA can still leave direction-dependent magnitude residuals, particularly at contralateral high frequencies and in local spectral structures. Compared with reconstructing a complete complex HRTF directly from sparse inputs, residual learning on top of MCA preserves the phase and low-frequency structure of the existing interpolation chain while focusing the learning target on errors not removed by the conventional method.
+
+Motivated by this observation, we propose FiLM-conditioned SIREN with Spectral CNN (FSC). The model comprises three cooperating modules. First, a conditional encoder compresses sparse binaural spatial observations into a subject-level embedding, from which feature-wise linear modulation (FiLM)\cite{R7} generates layer-wise modulation parameters. Second, a sinusoidal representation network (SIREN)\cite{R11} forms a continuous residual field over direction, frequency, and MCA magnitude. Finally, a binaural spectral convolutional neural network jointly processes the full spectra of both ears to refine local cross-frequency structure and binaural relationships. The model predicts only an MCA magnitude residual. Reconstruction reuses the MCA phase and the unpredicted frequency bins, maintaining a clear interface between the signal-processing baseline and the learned component.
+
+The main contributions are as follows. (1) We formulate sparse HRTF interpolation as MCA magnitude-residual compensation rather than direct reconstruction of the full HRTF, retaining the conventional interpolation and reconstruction chain while concentrating on its remaining errors. (2) We compress each subject's sparse binaural spatial observations into a fixed-dimensional subject embedding, use FiLM to modulate a continuous SIREN residual field, and then apply a binaural spectral CNN for cross-frequency refinement. (3) We treat auditory-band ERB error as a central evaluation dimension, introduce an ERB proxy objective during training, and evaluate final reconstructions using a strict HRIR-domain ERB measure. (4) We compare conventional and learning-based methods under a unified Q26 test protocol and independently train Q14, Q26, and Q50 models to study behavior as the number of observed directions changes. (5) We retrain and evaluate the same architecture and objectives with unchanged E130/E190 epoch budgets on the external ARI database to test whether MCA residual compensation can be reproduced on a second database. The results show that the principal advantages of FSC occur in magnitude and level measures such as ERB and ERB-band ILD, whereas ITD and full-sphere LSD retain trade-offs relative to different external methods.
+
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Conventional HRTF Interpolation}
+
+Spherical-harmonic expansion and neighboring-direction weighting are common conventional approaches to sparse HRTF interpolation. Time alignment can reduce the spatial order required by an SH representation\cite{R3}. SUpDEq improves spatial reconstruction through directional equalization before interpolation and inverse equalization afterwards, and its performance under different spherical sampling schemes has also been studied\cite{R2,R2S}. MCA constructs a magnitude-correction filter using the interpolated smoothed magnitude as a reference on top of time-aligned interpolation\cite{R1}. Rather than treating these conventional methods as baselines that must be replaced completely, this study uses MCA as an interpretable initial reconstruction and specifically learns its remaining magnitude error.
+
+\subsection{Learning-Based HRTF Interpolation}
+
+HRTF personalization may rely on anthropometric information or sparse acoustic measurements; the two tasks provide different forms of listener-specific information\cite{R15,R16}. We focus on the latter setting, in which a target listener already has a small set of measured HRTFs. HRTF Field maps source direction to continuous HRTF magnitude with a neural field, providing a unified representation across spatial sampling schemes\cite{R22}. The spherical neural-process meta-learner of Thuillier et al. conditions on sparse HRTF observations from the same subject and queries unobserved directions on the unit sphere while also estimating predictive uncertainty\cite{R26}. FSP-AE interprets regularized linear regression as an autoencoder and jointly processes source direction, frequency, and input type to model magnitude and ITD\cite{R4}. RANF combines retrieved HRTFs, convolution, and bidirectional sequence modeling and can be parameter-efficiently adapted to a target subject\cite{R5}. In contrast, FSC uses a preceding MCA reconstruction as its reference and learns only an additive magnitude residual; ITD is determined indirectly by reconstructing the complete HRIR with the reused MCA phase. Because the methods differ in subject adaptation, phase recovery, and output representation, we evaluate their final reconstructions under a common pipeline rather than mixing scores reported in the original papers with our reevaluated results.
+
+Cross-database learning additionally faces differences between measurement systems. Even after harmonizing sampling rate, HRIR length, common directions, and magnitude scale, Pauwels and Picinali found that machine-learning models could identify the source HRTF database with high accuracy, indicating that measurement-chain characteristics may create database-specific systematic differences\cite{R24}. Wen et al. further analyzed direction-dependent system-response differences caused by loudspeakers, microphones, and measurement environments, and proposed frequency-response normalization to reduce database identifiability and improve unified cross-database representation learning\cite{R25}. These findings also motivate a distinction between independent retraining and replication on another database and zero-shot cross-database generalization.
+
+\subsection{Conditional Implicit Representations and Spectral Modeling}
+
+FiLM modulates intermediate features using conditionally generated feature-wise scales and shifts\cite{R7}, whereas SIREN uses periodic activations to represent continuous signals and their high-frequency detail\cite{R11}. Convolutional networks model neighborhood structure through local connections and weight sharing\cite{R21}. We therefore append a binaural spectral CNN to the continuous residual field so that adjacent frequency bins and joint left--right information can be exploited explicitly. The contribution is not the first use of FiLM, SIREN, or convolutional spectral modeling, but their combination with an MCA residual interface, binaural spectral refinement, and stage-wise optimization. Because objective errors and subjective spatial-audio perception are not in one-to-one correspondence\cite{R18}, spectral, ILD, and ITD results are reported separately, and a reduction in any single metric is not interpreted directly as improved localization or externalization.
+
+\section{MCA Residual Learning with a Conditional Implicit Representation}
+\label{sec:method}
+
+\subsection{Overall Framework and Learning Target}
+
+This study begins with magnitude-corrected and time-aligned interpolation (MCA) and learns the HRTF magnitude residual that remains in its interpolated result. MCA augments time-aligned interpolation with magnitude correction based on a frequency-smoothed representation\cite{R1}. We retain this conventional reconstruction as the baseline and use subject information from sparse observations to predict an additive residual instead of directly regressing a complete complex HRTF. FSC modulates a continuous MCA residual field with a subject-level conditional embedding and integrates three modules: FiLM-based conditional modulation, a SIREN implicit residual representation, and binaural spectral refinement with a CNN. Along a single forward path, the modules generate subject conditions, represent direction--frequency residuals, and perform cross-frequency binaural correction. Stage-wise optimization is only a training strategy and does not change the definition of the complete model as the combination of all three modules.
+
+Let $s$ denote a subject, $\mathbf q=(x,y,z)$ a unit query-direction vector, $e\in\{L,R\}$ an ear, and $f$ a frequency. The $Q$ observed directions of subject $s$ form the set $\mathcal O_s$. Let $M^\star_{s,e}(\mathbf q,f)$ and $M^{\mathrm{MCA}}_{s,e}(\mathbf q,f)$ be the reference and MCA magnitudes in dB. The supervision target is
+\begin{equation}
+r^\star_{s,e}=M^\star_{s,e}-M^{\mathrm{MCA}}_{s,e},\qquad
+\widetilde r^\star_{s,e}=\frac{r^\star_{s,e}-\mu_r}{\sigma_r}.
+\label{eq:residual-target}
+\end{equation}
+The statistics $\mu_r$ and $\sigma_r$ are determined only from the training set. Reference magnitudes at observed directions are used as conditional inputs only within $\mathcal O_s$; reference magnitudes at unobserved directions serve as training supervision or for previously specified evaluation and are never inference inputs. MCA magnitudes and the original MCA correction features are likewise constructed only from the corresponding sparse observations.
+
+Figure~\ref{fig:FSC-reconstruction-workflow} summarizes the complete inference chain from sparse measurements to interpolated binaural responses, whereas Fig.~\ref{fig:FSC-architecture} expands only the learned residual predictor.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure/fsc_sparse_to_interpolated_hrtf_workflow.pdf}
+\caption{End-to-end inference workflow from sparse measured HRTFs to interpolated HRTFs and HRIRs. Sparse binaural observations are time-aligned and processed by MCA to form target-direction baseline magnitudes, phases, and magnitude-correction features. The frozen FSC model uses only sparse observed references, query coordinates, and MCA context to predict a normalized magnitude residual; after denormalization, this residual is added to the MCA magnitude at the 463 selected frequency bins. The corrected magnitudes are combined with MCA phase, while the 50 unpredicted single-sided bins retain their original MCA complex values. Conjugate-symmetric extension and a 1024-point IFFT then yield 256-sample binaural HRIRs at the target directions. No reference HRTF at an unobserved direction is used as an inference input.}
+\label{fig:FSC-reconstruction-workflow}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure/fsc_single_model_architecture.pdf}
+\caption{Detailed architecture of the single-model FSC residual predictor. Sparse binaural observations are encoded into a subject condition that modulates the six-layer FiLM-SIREN base field. A seven-channel spectral tensor combines the two-ear magnitude and correction inputs, the FiLM-SIREN base residuals, and normalized log-frequency. The direction-conditioned binaural spectral CNN predicts an increment that is added to the base residual to produce the final normalized binaural residual. Signal-domain reconstruction is outside the scope of this diagram.}
+\label{fig:FSC-architecture}
+\end{figure}
+
+The following subsections describe the FiLM, SIREN, and CNN modules in the order in which they appear along this unified forward path.
+
+\subsection{Subject Conditioning and Continuous Residual Representation}
+
+The FiLM module first compresses a subject's sparse binaural spatial observations into a fixed-dimensional embedding and then uses it to modulate every sinusoidal layer of the SIREN. For each observed direction, the conditional encoder applies two one-dimensional convolutional layers to the normalized binaural spectrum, concatenates the direction vector $\mathbf q$, and projects the result to a 128-dimensional feature. Features are averaged over the valid-direction mask and linearly mapped to the subject-level condition $\mathbf z_s\in\mathbb R^{128}$. The binaural spatial characteristics of different subjects are thus encoded in a common 128-dimensional conditional space. During training, shared SIREN parameters are combined with $\mathbf z_s$ to represent individual differences, while the set encoder avoids using reference magnitudes at unobserved directions as input.
+
+Following the conditional-control principle of feature-wise linear modulation (FiLM)\cite{R7}, a shared modulator generates frequency scaling, phase shift, and amplitude scaling parameters for SIREN layer $\ell$ from $\mathbf z_s$:
+\begin{equation}
+\boldsymbol\gamma_\ell=1+0.5\tanh(\mathbf g_\ell),\quad
+\boldsymbol\beta_\ell=\pi\tanh(\mathbf b'_\ell),\quad
+\mathbf a_\ell=1+0.5\tanh(\mathbf a'_\ell).
+\label{eq:film-modulation}
+\end{equation}
+Here $\mathbf g_\ell$, $\mathbf b'_\ell$, and $\mathbf a'_\ell$ are generated from $\mathbf z_s$ by a shared hidden layer and layer-specific output heads. Modulation is applied to every sinusoidal layer, so the same query coordinates can yield different residual representations under different subject conditions.
+
+The SIREN module represents the MCA magnitude residual as a continuous function of direction and frequency. Its seven-dimensional query input is
+\begin{equation}
+\mathbf u_{s,\mathbf q,f}=
+[x,y,z,\nu_{\mathrm{lin}}(f),\nu_{\mathrm{ERB}}(f),
+ \widetilde M^{\mathrm{MCA}}_{s,L},\widetilde M^{\mathrm{MCA}}_{s,R}]^\top .
+\end{equation}
+The coordinates $\nu_{\mathrm{lin}}$ and $\nu_{\mathrm{ERB}}$ map linear frequency and equivalent rectangular bandwidth (ERB) frequency, respectively, to $[-1,1]$. The fundamental relationship between auditory-filter bandwidth and the ERB-rate scale is described by Moore and Glasberg\cite{R23}. The MCA magnitudes marked by tildes are normalized using separate training-set means and standard deviations. The global subject condition from FiLM and the local MCA magnitude at a query location therefore control residual prediction through distinct inputs.
+
+This module adopts the periodic activation of a sinusoidal representation network (SIREN)\cite{R11}. It contains six sinusoidal layers with 256 hidden units each, modulated by the parameters generated by FiLM:
+\begin{equation}
+\mathbf h_\ell=\mathbf a_\ell(\mathbf z_s)\odot
+\sin\!\left[
+\omega_\ell\boldsymbol\gamma_\ell(\mathbf z_s)\odot
+(\mathbf W_\ell\mathbf h_{\ell-1}+\mathbf b_\ell)
++\boldsymbol\beta_\ell(\mathbf z_s)\right].
+\label{eq:film-siren}
+\end{equation}
+Here $\mathbf h_0=\mathbf u$, $\odot$ denotes element-wise multiplication, and $\omega_\ell=20$ for every layer. A final linear layer outputs the initial normalized residuals for the two ears, $\widetilde{\mathbf r}_F=F_\phi(\mathbf u,\mathbf z_s)$, which also form part of the full-spectrum CNN input. The continuous coordinate representation of SIREN models the residual across directions and frequencies, after which the CNN further captures local spectral and interaural structure.
+
+\subsection{Binaural Spectral Refinement}
+
+For each query direction, the CNN jointly processes the complete target-frequency band of both ears. The input matrix $X_s(\mathbf q)\in\mathbb R^{7\times F}$ contains, in order, the left-ear MCA magnitude, left-ear MCA magnitude-correction feature, left-ear FiLM-modulated SIREN residual, their right-ear counterparts, and normalized log-frequency. The MCA magnitude-correction feature is denoted by $\widetilde C^{\mathrm{MCA}}$ and is not the newly learned residual increment. The input order is
+\begin{equation}
+X_s(\mathbf q)=
+[\widetilde M_L^{\mathrm{MCA}},
+ \widetilde C_L^{\mathrm{MCA}},\widetilde r_{F,L},
+ \widetilde M_R^{\mathrm{MCA}},
+ \widetilde C_R^{\mathrm{MCA}},\widetilde r_{F,R},
+ \nu_{\log}]^\top .
+\label{eq:cnn-input}
+\end{equation}
+Each item is a frequency sequence of length $F$. The log-frequency coordinate $\nu_{\log}$ is specific to the CNN input and does not replace the joint linear/ERB frequency coordinates used by SIREN.
+
+The binaural spectral convolutional neural network first maps the seven input channels to 48 channels and then applies four dilated depthwise-convolution residual blocks. The kernel length is 7 and the dilation rates are $1,2,4,8$. Within each block, pointwise convolutions expand the channels to 96 and project them back to 48, together with group normalization and SiLU activation. A two-layer, 64-dimensional mapping of the direction vector $\mathbf q$ supplies feature-wise scales and shifts to each block. A final $1\times1$ convolution outputs the spectral increment $\Delta\widetilde{\mathbf r}_\theta$ for both ears. The module explicitly exploits adjacent frequency bins and binaural spectral information, and combines with the FiLM and SIREN modules to obtain the final residual; its isolated effect must still be distinguished from those of the training objective and optimization budget.
+
+\subsection{Training Objective and Reconstruction}
+
+The FSC prediction and its conversion to dB are
+\begin{equation}
+\widetilde{\mathbf r}_H=\widetilde{\mathbf r}_F+
+C_\theta(X_s(\mathbf q),\mathbf q),\qquad
+\mathbf r_H^{\mathrm{dB}}=\sigma_r\widetilde{\mathbf r}_H+\mu_r.
+\end{equation}
+The CNN increment in dB is therefore $\sigma_r\Delta\widetilde{\mathbf r}_\theta$ and does not receive another addition of $\mu_r$. The reconstructed FSC magnitude is
+\begin{equation}
+\widehat{\mathbf M}=\mathbf M^{\mathrm{MCA}}+
+\mathbf r_H^{\mathrm{dB}}.
+\end{equation}
+To recover an HRIR, the complex spectrum at each selected frequency is constructed from $10^{\widehat M/20}$ and the corresponding MCA phase, while the remaining bins retain the original complex MCA values. After conjugate-symmetric extension and a 1024-point inverse fast Fourier transform (IFFT), the first 256 HRIR samples are retained. The model does not learn phase, and every HRIR-based binaural-cue evaluation is performed after this complete reconstruction chain.
+
+Inference always uses the FiLM, SIREN, and CNN modules together, whereas training is stage-wise. The first stage obtains the E130 parameters of the FiLM conditional-modulation and SIREN residual-representation modules. In the second stage, those modules and the conditional encoder are frozen and only the CNN is optimized. The weights and biases of the CNN output convolution are initialized to zero, so $\Delta\widetilde{\mathbf r}_\theta$ is identically zero at the start of stage two and the initial function of the complete FSC equals that of the stage-one model. Zero initialization applies only to the CNN output layer; it neither sets every CNN weight to zero nor makes the initial output equal to MCA.
+
+The training objective combines a SmoothL1 loss on the normalized residual with seven auxiliary terms:
+\begin{align}
+\mathcal L={}&\mathcal L_{\mathrm{res}}+
+\frac{1}{\sigma_r}\big(
+0.75\mathcal L_{\mathrm{ERB\text{-}proxy}}+
+0.25\mathcal L_{\mathrm{contraHF}}+
+0.75\mathcal L_{\mathrm{strictILD}}\notag\\
+&\qquad+
+0.05\mathcal L_{\mathrm{bandILD}}+
+0.25\mathcal L_{\Delta f}+
+0.15\mathcal L_{\Delta^2 f}+
+0.30\mathcal L_{\mathrm{notch}}\big).
+\label{eq:training-loss}
+\end{align}
+The SmoothL1 threshold of $\mathcal L_{\mathrm{res}}$ is 1 in normalized units. The remaining terms are divided by the training residual standard deviation $\sigma_r$ as implemented. Solid-angle weights are renormalized within the direction subset of each term and then averaged over ears and the relevant frequency bins or bands.
+
+The ERB proxy is the central spectral term in the composite objective. Forty-one centers are uniformly spaced on the ERB axis corresponding to 50--20000\,Hz; triangular weights integrate the linear power of selected frequency bins, after which differences between band energies in dB are evaluated. The band definition follows the auditory-filter bandwidth and ERB-rate concepts\cite{R23}; the 41 centers and triangular weights form a differentiable approximation used here for backpropagation. This design aligns training more closely with the auditory-band error emphasized in this paper, although the final claims are based on strict HRIR-domain ERB evaluation. The term $\mathcal L_{\mathrm{contraHF}}$ is the magnitude absolute error above 10\,kHz in the contralateral hemisphere. These two terms constrain band energy and absolute high-frequency magnitude, respectively, but the former is not the strict HRIR-domain ERB metric reported in the final evaluation.
+
+Local spectral structure is modeled by adjacent-bin differences at 4\,kHz and above. Let $\epsilon_f=\widehat M_f-M^\star_f$ be the magnitude-error sequence. The first- and second-order terms average $|\epsilon_{f+1}-\epsilon_f|$ and $|\epsilon_{f+2}-2\epsilon_{f+1}+\epsilon_f|$, respectively. Every bin in a difference stencil must lie within the selected band. Their units are reported as dB/bin and dB/bin$^2$, rather than as derivatives with respect to continuous frequency. The multiscale spectral-notch term compares
+\begin{equation}
+D_r(M)_f=\tau\log\!\left[
+1+\exp\!\left(
+\frac{(M_{f-r}+M_{f+r})/2-M_f-\eta}{\tau}
+\right)\right],
+\end{equation}
+where the radius is $r\in\{4,8,16\}$ frequency bins, the center frequency lies between 4 and 18\,kHz, $\eta=1$\,dB, and $\tau=0.5$\,dB. Absolute differences between depth maps are averaged across all radii.
+
+The binaural terms are computed on independently sampled horizontal-plane directions. The strict interaural level difference (ILD) loss uses the left-to-right energy ratio of the reconstructed HRIR. The ERB-band ILD loss instead uses the left--right power difference in proxy ERB bands with center frequencies between 200 and 18000\,Hz and applies a SmoothL1 threshold of 0.5\,dB. Independent sampling ensures that horizontal-plane directions contribute to the binaural terms in every step; the constraints do not guarantee that every corresponding test error will decrease.
+
+Each training epoch traverses 262 training subjects and performs one parameter update per subject. For each subject, 16 interpolation directions are sampled without replacement from the full measurement domain and another 16 from the horizontal plane. AdamW is used with a learning rate and weight decay of $10^{-4}$, a gradient-clipping threshold of 5, and FP32 training. The learning rate is linearly warmed up for two epochs and then cosine-decayed according to a 200-epoch schedule.
+
+The stage-two training budget is fixed at 190 epochs (E190). During development, the validation-optimal epochs across three independent seeds were 190, 190, and 170. The prespecified median rule therefore selected 190 epochs as the common training budget. The endpoint parameters after epoch 190 are used, without resetting the budget or model parameters according to test performance.
+
+\section{Experimental Setup}
+\label{sec:setup}
+
+\subsection{Datasets and Evaluation Protocol}
+
+The experiments use measured HRTFs from the SONICOM dataset\cite{R6}, stored in the Spatially Oriented Format for Acoustics (SOFA)\cite{R8}. The file variant is \texttt{FreeFieldCompMinPhase\_44kHz}, sampled at 44.1\,kHz; each subject contains binaural 256-sample HRIRs at 793 directions. Here, ``MinPhase'' is part of the free-field-compensated filename and does not mean that the complete HRTF is constrained to minimum phase in this study. The original SONICOM paper described an earlier 120-subject release. Based on a later official metadata snapshot and anomaly records, we retained 350 usable subjects.
+
+Subjects are stratified by their free-field equalization files and divided into 262 training, 44 validation, and 44 test subjects, with no subject shared across splits. Normalization statistics are computed from the training set. Table~\ref{tab:protocol} summarizes the principal settings. Reference elevations range from $-45^\circ$ to $90^\circ$, so ``full sphere'' throughout this paper denotes the measured domain provided by the dataset and excludes the unmeasured lower spherical cap.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Data and the fixed operating point}
+\label{tab:protocol}
+\begin{tabular}{p{0.29\linewidth}p{0.61\linewidth}}
+\toprule
+Item & Setting\\
+\midrule
+Subject split & 262 training / 44 validation / 44 test subjects\\
+Sparse observations & Q26, left--right symmetric; observed directions excluded from interpolation evaluation\\
+Reference and evaluation directions & 793 reference directions; 767 unobserved directions, including 72 horizontal-plane directions\\
+Learned frequencies & 463 bins, 86.1328125--19982.8125\,Hz\\
+Time-domain reconstruction & 1024-point IFFT followed by the first 256 HRIR samples, at 44.1\,kHz\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Q26 is a 26-direction subset constructed on the existing measurement grid and is not treated as an exact Lebedev grid. The selection fixes the north pole and one median-plane direction and then chooses 12 left--right symmetric pairs to maximize the minimum great-circle separation, with the log-determinant of a regularized third-order SH design used to resolve ties. Observed directions are excluded from evaluation, and every learning-based method obtains subject information only from its corresponding sparse input.
+
+The architecture, training objective, and training budget are determined during the training and validation stages. Unless otherwise stated, experiments use the single E190 model selected in advance on the validation set; no model ensemble is used, and the test set is not involved in model selection.
+
+To examine reproducibility on a second database, we additionally use the public semi-anechoic in-ear HRTF database of the Acoustics Research Institute (ARI), Austrian Academy of Sciences\cite{R20}. The experiment fixes the 177 \texttt{hrtf b} SOFA files available at download time. Of these, 174 have a consistent $1550\times2\times256$ shape, whereas three files with incomplete direction counts are excluded before any response values are read. The 174 eligible subjects are assigned by a fixed split to 130 training, 22 validation, and 22 test subjects. The original 48\,kHz HRIRs are converted to 44.1\,kHz using fixed polyphase resampling and right-padded to 256 samples; measurement delays are preserved and no additional time alignment is performed.
+
+The ARI elevation range is $-30^\circ$ to $80^\circ$ and cannot contain every SONICOM-Q26 direction. Therefore, the external replication constructs an independent mirror-symmetric ARI-Q26 in advance using only public direction metadata, with all 26 observations taken from original measurement points. These observed points are excluded from evaluation, and solid-angle weights are recomputed over the remaining 1524 directions. ERB-band ILD uses the 86 unobserved horizontal-plane directions, while contralateral-$25^\circ$ regions and normalized weights are defined separately for the two ears. Because ARI and SONICOM use different measurement grids, Q26 sets, and directional weights, their absolute metrics are not pooled into a single experiment.
+
+\subsection{Compared Methods}
+
+The comparison covers seven external methods and FSC: SH only, SUpDEq SH, SUpDEq Natural Neighbor, SUpDEq Barycentric, MCA, FSP-AE, and RANF form the external method set. The analysis first tests residual compensation relative to MCA and then compares the learning-based methods.
+
+Conventional reconstructions use the existing SUpDEq/MCA implementation. SH-related settings are third order, a head radius of 0.09\,m, and an SH regularization parameter of 0.01; natural-neighbor and barycentric interpolation retain their respective frozen definitions. All eight methods in the primary comparison use the same test subjects, Q26 observations, and interpolation-evaluation mask, without forcing them to share the same training or inference mechanism.
+
+For FSC, which predicts only an MCA magnitude residual, evaluation uses the MCA phase and unpredicted-bin reuse chain described in Section~\ref{sec:method}. Methods that directly generate HRIRs retain their native outputs, which are mapped to the common evaluation representation and frequency bins. All eight methods use the same test subjects, Q26 observation set, and evaluation mask, and the 12 reported metrics are computed from their complete reconstructed outputs.
+
+\subsection{Evaluation Metrics}
+
+The main text emphasizes five lower-is-better metrics. Full-sphere ERB error (FullSphereERB) is computed with the \texttt{AKerbError} function in AKtools\cite{R12}, over 50\,Hz to the 22.05\,kHz Nyquist frequency. Absolute band errors are averaged across ears and solid-angle weighted over 767 interpolation directions. Contralateral-$25^\circ$ ERB error (Contralateral25ERB) uses the same HRIR-domain error but is restricted to great-circle regions of radius $25^\circ$ centered at $(270^\circ,0^\circ)$ for the left ear and $(90^\circ,0^\circ)$ for the right ear, with directional weights renormalized inside each region. We treat these two strict HRIR-domain ERB errors as central metrics of spatial-audio-related band-energy deviation; they differ from the ERB proxy in Eq.~\eqref{eq:training-loss}. ERB-band ILD (ERBBandILDMean) is the average left--right band-energy-difference error over 35 proxy ERB bands centered between 200 and 18000\,Hz and over 72 horizontal-plane interpolation directions.
+
+Interaural time difference follows an implementation compatible with the public FSP-AE pipeline\cite{R4}. Reconstructed and reference HRIRs are low-pass filtered at 1.6\,kHz, resampled to 384\,kHz, and evaluated by the cross-correlation peak within $\pm1$\,ms, without interpolation beyond the peak index. ITD-weighted mean absolute error (ITDWeightedMAE), measured in $\mu$s, solid-angle weights the absolute difference across 767 interpolation directions. The fifth metric is full-sphere log-spectral distortion (FullSphereLSD): the root mean square of the reconstructed-versus-reference log-magnitude difference is computed over frequency, averaged across ears, and solid-angle weighted over 767 interpolation directions.
+
+In addition to the five primary metrics, the CNN ablation uses high-frequency first-order difference error, high-frequency second-order difference error, and multiscale notch-depth error to describe local spectral structure. The first two compare adjacent-bin variations above 4\,kHz, and the notch-depth error uses local depth maps with radii of 4, 8, and 16 bins between 4 and 18\,kHz. All three are solid-angle weighted over 767 interpolation directions. The remaining extended metrics comprise LSD under the LAP24 evaluation pipeline (LAP-LSD)\cite{R19}, maximum absolute ITD error, contralateral high-frequency magnitude error, and horizontal-plane ILD error. LAP-LSD is computed over all 793 directions, including the Q26 observations, without solid-angle weighting. Maximum absolute ITD error uses the same direction-wise estimates as the primary ITD-weighted MAE and takes the largest absolute error over 767 interpolation directions. Contralateral high-frequency error (ContralateralHighFrequency) is the absolute magnitude error in selected bins above 10\,kHz and at or below 20\,kHz within the contralateral hemisphere, with solid-angle weighting and separate normalization for each ear before averaging. Horizontal-plane ILD mean absolute error (HorizontalILDMAE) uses
+\begin{equation}
+\operatorname{ILD}(\mathbf q)=10\log_{10}
+\frac{\sum_{n=0}^{255}|h_L(\mathbf q,n)|^2}
+     {\sum_{n=0}^{255}|h_R(\mathbf q,n)|^2},
+\end{equation}
+and arithmetically averages the absolute predicted-versus-reference ILD difference across the 72 horizontal-plane interpolation directions. This metric uses the broadband energy ratio of complete HRIRs and differs from the primary ERB-band ILD; the two are not interchangeable.
+
+In total, 12 metrics are organized by their role in the paper as five primary metrics, three local-spectral metrics, and four extended metrics. The primary metrics are full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, ITD-weighted MAE, and full-sphere LSD. The three local-spectral metrics support the CNN ablation, while the four extended metrics further describe broadband spectral and binaural cues under another evaluation domain. Because these metrics describe different error dimensions, we do not construct an aggregate score by adding across units or counting metric wins.
+
+The subject is the independent statistical unit; directions and frequencies do not inflate the sample size. The SONICOM main-method comparison uses 44 test subjects, and the ARI replication uses 22 test subjects. Primary and ARI metrics are reported as mean $\pm$ sample standard deviation, whereas local-spectral and extended-metric tables report subject means to control table width. The two strict SONICOM ERB metrics, the CNN ablation, and the ARI experiment additionally use 10000 subject-paired bootstrap resamples. For each of three independent CNN-ablation seeds, the same 44 validation subjects are resampled separately; the repeats are not pooled as 132 independent samples. All subjects are retained, without error-based exclusion.
+
+\subsection{Implementation and Development Settings}
+
+The FiLM-SIREN architecture was selected through a stage-wise training/validation search. For SIREN, we compared frequency mappings, the first-layer frequency coefficient, depth, and width, ultimately choosing joint linear/ERB frequency coordinates, six layers, a hidden width of 256, and $\omega=20$. For FiLM, we compared conditional dimensionality, modulation form, modulation placement, and global/local MCA inputs, and selected a 128-dimensional subject condition with full modulation applied to every sinusoidal layer. This search determines a reproducible configuration but does not claim globally optimal hyperparameters.
+
+The CNN ablation uses 44 validation subjects and compares strictly paired FiLM-SIREN E130 and FSC E190 models across three independent seeds. Each E190 model is obtained by freezing its corresponding E130 model and training the spectral CNN. Epoch counts and hyperparameters are fixed before evaluation and are not reselected using the results. Eight metrics are evaluated, and the paired difference is defined as $\Delta=E_{\mathrm{FSC\ E190}}-E_{\mathrm{FiLM\text{-}SIREN\ E130}}$, so $\Delta<0$ indicates a reduction in error after CNN refinement.
+
+The sparsity experiment uses nested observation sets $Q14\subset Q26\subset Q50$. For Q14 and Q50, MCA-residual training data are rebuilt at the corresponding density and both FiLM-SIREN and the spectral CNN are trained independently; Q26 follows the main experiment's training path. Every model is frozen after training and is not reselected according to test results. To compare densities fairly, all three settings are evaluated on the same 44 test subjects and the same 743 directions, obtained by excluding the 50 Q50 observations from the 793-direction grid. The Q26 primary result uses its own 767 unobserved directions, whereas this experiment uses the common 743-direction domain; the two Q26 values therefore need not be identical.
+
+The ARI external replication keeps the FSC architecture, losses, optimizer, and E130/E190 epoch budgets unchanged but inherits neither SONICOM parameters nor normalization statistics. FiLM-SIREN and the spectral CNN are trained from scratch using ARI training subjects. The experiment uses one prespecified seed, and the authoritative model is the endpoint after E190. The validation set monitors training integrity only and does not alter the budget or select a checkpoint. Model identity, the five primary metrics, and the statistical criterion were frozen before test access, and the protocol was neither retrained nor adjusted in response to test results. This design evaluates replication after retraining on a new database rather than zero-shot transfer of a frozen SONICOM model.
+
+\section{Results}
+\label{sec:results}
+
+We first analyze FSC residual compensation relative to MCA, then compare learning-based methods, and finally examine local-spectral and extended metrics, the CNN ablation, the sparsity experiment, and external replication on ARI. The SONICOM main-method comparison and sparsity experiment use 44 test subjects, the CNN ablation uses only 44 validation subjects, and the ARI experiment uses 22 independent test subjects. The main text emphasizes subject means and sample standard deviations and reports 95\% bootstrap intervals where paired statistics were specified.
+
+\subsection{Comparison with MCA}
+
+FSC shows clear magnitude and spectral improvements over MCA on the five primary metrics, but the temporal cue does not improve in parallel. In Table~\ref{tab:primary-results}, full-sphere ERB decreases from 1.0822 to 0.8360\,dB, contralateral-$25^\circ$ ERB from 1.7458 to 1.2280\,dB, ERB-band ILD from 2.0562 to 1.6514\,dB, and full-sphere LSD from 4.7914 to 3.6029\,dB. Subject-paired results for the two strict ERB metrics agree with the mean trend: the mean FSC--MCA difference is $-0.2462$\,dB with a 95\% interval of $[-0.2942,-0.1665]$ for full-sphere ERB, and $-0.5178$\,dB with an interval of $[-0.5728,-0.4541]$ for contralateral-$25^\circ$ ERB. Both metrics improve for 43 of 44 subjects. In contrast, ITD-weighted MAE increases from 18.3997 to 18.8480\,$\mu$s, so FSC is not interpreted as an ITD-improvement method.
+
+\input{tables/primary_results}
+
+The main-method comparison reports absolute-error mean $\pm$ sample standard deviation on the same 44 test subjects. LAP-LSD is treated as an extended metric and reported separately in Section~\ref{sec:secondary-metrics}.
+
+\subsection{Comparison with Learning-Based Methods}
+
+Table~\ref{tab:learning-results} compares FSC, RANF, and FSP-AE separately. FSC has the lowest mean full-sphere ERB, contralateral-$25^\circ$ ERB, and ERB-band ILD. FSP-AE has the lowest ITD-weighted MAE, followed by FSC. For full-sphere LSD, FSP-AE ranks first, RANF second, and FSC third.
+
+\input{tables/learning_results}
+
+The three learning-based methods excel on different metrics. We therefore characterize FSC as a residual-refinement approach with low mean ERB and ERB-band ILD, while it is slightly behind FSP-AE on ITD and behind both FSP-AE and RANF on full-sphere LSD, rather than as a cost-free optimum that replaces every alternative.
+
+\subsection{Local-Spectral and Extended-Metric Analysis}
+\label{sec:secondary-metrics}
+
+The local-spectral and extended metrics further expose trade-offs between error types (Table~\ref{tab:secondary-results}). FSP-AE has the lowest mean contralateral high-frequency error, horizontal-plane ILD error, and maximum absolute ITD error, at 3.1644\,dB, 0.7587\,dB, and 123.6387\,$\mu$s, respectively; the corresponding FSC values are 3.4951\,dB, 0.8047\,dB, and 152.3437\,$\mu$s. For high-frequency first-order difference, second-order difference, and multiscale notch depth, FSC obtains 0.4081\,dB/bin, 0.2307\,dB/bin$^2$, and 0.4907\,dB, respectively; the notch-depth value is slightly higher than RANF's 0.4893\,dB. In the independently locked LAP24 evaluation, LAP-LSD values for FSP-AE, RANF, and FSC are 3.0692, 3.2221, and 3.6400\,dB, all below MCA's 4.7553\,dB. Different methods can therefore lead on broadband binaural, extreme-ITD, or local-spectral-shape metrics.
+
+\input{tables/secondary_global_results}
+
+These local-spectral and extended metrics describe distinct aspects of reconstruction error; objective improvements are not taken as direct evidence of perceptual localization improvement.
+
+\FloatBarrier
+\subsection{CNN Ablation}
+\label{sec:ablation}
+
+This ablation compares only FiLM-SIREN E130 without the CNN against FSC E190 obtained by training the spectral CNN on top of the frozen E130 model. It does not separately ablate FiLM, SIREN, the conditional encoder, or individual loss terms. Strictly paired E130/E190 models are evaluated for three independent seeds, with epoch counts and hyperparameters fixed in advance. Only 44 validation subjects are used; the test set is not accessed.
+
+Table~\ref{tab:component-results} reports the mean and sample standard deviation for each variant and seed, and Table~\ref{tab:component-paired} reports $\Delta=E_{\mathrm{E190}}-E_{\mathrm{E130}}$ with 95\% paired-bootstrap intervals. All eight metrics have $\Delta<0$ under each of the three seeds, and the upper endpoints of all 24 intervals are below zero. Full-sphere ERB decreases by 0.0250, 0.0244, and 0.0210\,dB across the three repeats, while full-sphere LSD decreases by 0.2517, 0.2429, and 0.2576\,dB. High-frequency first-order difference, high-frequency second-order difference, and multiscale notch depth also improve consistently in all three repeats. Although ITD-weighted MAE has negative paired intervals, its absolute changes are only 0.0101--0.0284\,$\mu$s and are not interpreted as a substantive temporal-cue benefit.
+
+\input{tables/component_results}
+
+For each seed, 10000 paired-bootstrap resamples are drawn independently, always using the subject as the statistical unit; the three repeats are not combined as 132 independent samples. The experiment verifies the incremental effect of the complete CNN-refinement stage relative to the corresponding FiLM-SIREN base model. Because E190 is optimized under the specified composite objective, we do not further attribute the result to any one auxiliary loss.
+\FloatBarrier
+
+\subsection{Sparsity Experiment}
+\label{sec:sparsity}
+
+To study how FSC behaves with observation density, Q14, Q26, and Q50 each use their corresponding E190 model frozen after training and are evaluated on the same 44 test subjects and 743 shared unobserved directions. Figure~\ref{fig:q-grids} shows the spatial distribution of the three nested observation sets. Every mean error in Table~\ref{tab:q-results} decreases as the number of observed directions grows. Full-sphere ERB falls from $0.9535\pm0.4675$\,dB at Q14 to $0.8318\pm0.3190$\,dB at Q26 and $0.7931\pm0.3893$\,dB at Q50. Contralateral-$25^\circ$ ERB similarly decreases from $0.9341\pm0.4606$\,dB to $0.8573\pm0.3243$ and $0.8206\pm0.4159$\,dB. Figure~\ref{fig:q-results} visualizes the full-sphere ERB trend. Because this experiment uniformly excludes all 50 Q50 observations, its Q26 setting uses 743 directions, whereas the main Q26 comparison uses 767 unobserved directions; the evaluation domains differ.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure/spherical_grid_triptych_q14_q26_q50.pdf}
+\caption{Nested sparse observation grids in a fixed orthographic view. Circles denote the Q14 core, squares the directions added to obtain Q26, and triangles the directions added to obtain Q50; faded symbols lie on the far side of the sphere. Thus, $Q14\subset Q26\subset Q50$ while preserving the directions selected at lower densities.}
+\label{fig:q-grids}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\linewidth]{figure/matched_density_erb_trend.pdf}
+\caption{Mean full-sphere ERB error and 95\% subject-bootstrap confidence intervals in the FSC sparsity experiment ($n=44$ test subjects; 743 shared directions); lower values indicate better performance. Q14, Q26, and Q50 use their corresponding E190 models frozen after training, without test-based reselection.}
+\label{fig:q-results}
+\end{figure}
+
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{2.3pt}
+\caption{Results of the FSC sparsity experiment (44 test subjects, 743 shared directions)}
+\label{tab:q-results}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Observation density & Full-sphere ERB & Contra.-$25^\circ$ ERB & ERB-band ILD & ITD-w. MAE & Contra. HF & Horizontal ILD & LAP-LSD \\
+ & dB$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ & $\mu$s$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ \\
+\midrule
+Q14 & $0.9535 \pm 0.4675$ & $0.9341 \pm 0.4606$ & $1.7100 \pm 0.8184$ & $25.0873 \pm 34.6257$ & $3.6826 \pm 0.3895$ & $0.8149 \pm 1.0303$ & $3.8704 \pm 0.6481$ \\
+Q26 & $0.8318 \pm 0.3190$ & $0.8573 \pm 0.3243$ & $1.6419 \pm 0.6366$ & $18.6892 \pm 21.8057$ & $3.4854 \pm 0.2655$ & $0.7983 \pm 0.9065$ & $3.6400 \pm 0.5022$ \\
+Q50 & $\mathbf{0.7931} \pm 0.3893$ & $\mathbf{0.8206} \pm 0.4159$ & $\mathbf{1.5446} \pm 0.7385$ & $\mathbf{18.4376} \pm 21.9641$ & $\mathbf{3.4305} \pm 0.2861$ & $\mathbf{0.7324} \pm 0.9098$ & $\mathbf{3.5569} \pm 0.5661$ \\
+\bottomrule
+\end{tabular}%
+}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize Values are subject mean $\pm$ sample standard deviation. Q14, Q26, and Q50 use FSC models trained and frozen at the corresponding observation density and are evaluated on the same 44 test subjects and 743 directions after excluding Q50 observations. Bold denotes the lowest mean among the three densities.}
+\end{table}
+
+The remaining metrics follow the same trend. ERB-band ILD decreases from 1.7100\,dB at Q14 to 1.6419\,dB at Q26 and 1.5446\,dB at Q50. Contralateral high-frequency magnitude error decreases from 3.6826 to 3.4854 and 3.4305\,dB, and horizontal-plane ILD error decreases from 0.8149 to 0.7983 and 0.7324\,dB. ITD-weighted MAE decreases from 25.0873\,$\mu$s at Q14 to 18.6892\,$\mu$s at Q26 and 18.4376\,$\mu$s at Q50, with most of the improvement occurring between Q14 and Q26. LAP-LSD falls from 3.8704 to 3.6400 and 3.5569\,dB. Overall, every reported mean error decreases with observation density, but this is a trend on a fixed test cohort and does not by itself imply perceptual benefit.
+
+\FloatBarrier
+\subsection{External Replication on the ARI Database}
+\label{sec:ari-replication}
+
+Table~\ref{tab:ari-results} reports FSC after independent training on the ARI database. Relative to MCA, mean FSC errors decrease by 19.34\%, 17.58\%, 22.10\%, 3.12\%, and 20.47\% for full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, ITD-weighted MAE, and full-sphere LSD, respectively. All five metrics improve for 22 of 22 test subjects, and all five upper endpoints of the 95\% bootstrap intervals for FSC--MCA are below zero, satisfying the strict replication criterion frozen before test access.
+
+\begin{table}[htbp]
+\centering\small
+\setlength{\tabcolsep}{3.2pt}
+\caption{Five primary metrics of FSC and MCA on the external ARI database}
+\label{tab:ari-results}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccc}
+\toprule
+Metric & MCA mean $\pm$ SD & FSC mean $\pm$ SD & Mean FSC--MCA [95\% CI] \\
+\midrule
+Full-sphere ERB (dB) & $1.1250\pm0.0639$ & $0.9075\pm0.0632$ & $-0.2175\ [-0.2468,-0.1876]$ \\
+Contralateral-$25^\circ$ ERB (dB) & $1.2867\pm0.0718$ & $1.0606\pm0.0727$ & $-0.2261\ [-0.2574,-0.1935]$ \\
+ERB-band ILD (dB) & $2.0901\pm0.1918$ & $1.6281\pm0.1152$ & $-0.4620\ [-0.5319,-0.3935]$ \\
+ITD-weighted MAE ($\mu$s) & $15.5746\pm2.5981$ & $15.0889\pm2.5635$ & $-0.4857\ [-0.5803,-0.3967]$ \\
+Full-sphere LSD (dB) & $4.6629\pm0.2307$ & $3.7085\pm0.2232$ & $-0.9544\ [-1.0183,-0.8882]$ \\
+\bottomrule
+\end{tabular}%
+}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize Values are based on 22 ARI test subjects and are lower-is-better. Confidence intervals use 10000 subject-paired bootstrap resamples, and differences are defined as FSC--MCA. FSC is trained from scratch on ARI without inheriting SONICOM parameters; this table evaluates replication on a second database, not zero-shot cross-database generalization.}
+\end{table}
+
+The directions of improvement over MCA for ERB, ERB-band ILD, and full-sphere LSD on ARI agree with those on SONICOM, showing that the residual-compensation effect is not observed on only one database. On the other hand, the ITD improvement on ARI is much smaller than the improvements in the four magnitude or spectral metrics, and ITD slightly degrades in the SONICOM main comparison. FSC is therefore not interpreted as providing stable cross-database improvement in temporal cues. Because the two databases have different grids, Q26 sets, and weights, the absolute values in Table~\ref{tab:ari-results} are not directly ranked against those in the SONICOM tables.
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Trade-off Between Spectral Refinement and Binaural Cues}
+
+Residual learning after MCA provides clear magnitude and spectral compensation in this study. Table~\ref{tab:primary-results} shows that FSC has lower mean full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, and full-sphere LSD than MCA, while its ITD-weighted MAE is slightly higher. Relative to learning-based methods, FSC has lower means on the first three magnitude or level metrics, but FSP-AE has lower ITD and full-sphere LSD, and RANF also has lower full-sphere LSD. FSC is therefore better at correcting MCA residuals in auditory-band and binaural-level errors, while broadband LSD and temporal cues do not become optimal automatically with the ERB objective. We neither judge overall superiority by counting metric wins nor interpret objective error reductions directly as improved localization or externalization.
+
+Local spectral shape, binaural energy relationships, and ITD reflect different reconstruction requirements. First- and second-order differences and multiscale notch depth constrain local spectral variation, whereas absolute magnitude and ERB errors assess deviations at other scales. FSC's low means on the three local endpoints can coexist with FSP-AE's advantage in contralateral high-frequency and maximum ITD error. The local endpoints resemble auxiliary training terms, so their improvements show that the model performs well on explicitly constrained objectives but do not establish a general auditory benefit. Low full-sphere ERB and ERB-band ILD in the external main comparison likewise do not guarantee stable strict horizontal-plane ILD or ITD gains. The former is based on the binaural energy ratio of complete reconstructed HRIRs, while the latter is estimated by low-pass cross-correlation. FSC does not predict ITD directly, and jointly inputting binaural information and adding an ILD loss do not guarantee lower errors for every subject.
+
+\subsection{Structural Roles and Model Complexity}
+
+The FiLM, SIREN, and CNN modules respectively provide subject-level conditioning, a continuous residual representation, and cross-frequency binaural refinement, jointly producing the final residual along one forward path. Unlike subject-specific model fitting, the conditional encoder compresses each subject's sparse binaural spatial observations into an embedding of shared dimensionality, enabling a single cross-subject model to express individual differences through FiLM modulation. This is the key interface connecting subject acoustic observations to the continuous neural field. In the validation-set CNN ablation, FSC E190 yields negative paired differences relative to FiLM-SIREN E130 on all eight metrics across three independent seeds, with all 24 upper confidence limits below zero; the three local-spectral metrics improve consistently in all three repeats (Table~\ref{tab:component-paired}). The result supports a stable incremental benefit from the CNN-refinement stage but does not isolate the causal contribution of each auxiliary loss.
+
+Zero initialization of the CNN output layer only guarantees that the function of the complete FSC equals the stage-one FiLM-SIREN configuration at the start of stage two; it does not guarantee monotonically decreasing errors during training. FSC inference always includes all three modules. The Q26 model has 1.519 million deployed parameters and a model file of approximately 6.45\,MiB. On an NVIDIA GeForce RTX 5060 in FP32 for 793 directions $\times$ 463 frequency bins, median model inference time is 110.45\,ms and P95 is 110.95\,ms (Table~\ref{tab:efficiency-results}). This benchmark quantifies FSC's own cost only; because all baselines were not measured using the same implementation and hardware, it does not support a cross-method efficiency claim.
+
+\input{tables/efficiency_results}
+
+\subsection{Generalization Scope and Limitations}
+
+In the SONICOM sparsity experiment with 44 test subjects and 743 shared directions, every reported mean error decreases as the observation density increases through Q14, Q26, and Q50. Full-sphere ERB decreases from 0.9535 to 0.8318 and 0.7931\,dB, while the main ITD reduction occurs between Q14 and Q26, suggesting that additional measurements have different marginal effects across evaluation dimensions. This trend remains specific to the fixed test cohort and current spatial sampling schemes.
+
+The ARI experiment examines database transferability from another perspective. Prior work shows that HRTF databases may retain identifiable measurement-system differences even after basic harmonization, and that dedicated cross-database frequency-response normalization can further reduce them\cite{R24,R25}. When all parameters are reestimated from ARI training data while retaining the architecture, training objective, and E130/E190 epoch budgets, every paired FSC--MCA interval is below zero and all five metrics improve for all 22 subjects. This supports reproducibility of residual compensation on a second database, especially for magnitude and spectral effects in ERB, ERB-band ILD, and LSD. However, independent training, normalization, and ARI-Q26 mean that the experiment does not show direct transfer of a frozen SONICOM model without adaptation. Strict zero-shot cross-database generalization remains to be evaluated separately.
+
+The composite objective uses an ERB proxy as its central spectral term together with high-frequency error, ILD, spectral differences, and notch-depth constraints. Its main contribution is an auditory-band-oriented objective design for sparse HRTF residual refinement, rather than a claim that one fixed loss formulation is definitive. Future work can investigate differentiable objectives that more closely match strict HRIR-domain ERB, adaptive multi-objective balancing, and perceptual losses.
+
+Several limitations remain. The ARI experiment evaluates replication after retraining on the target database and does not answer the zero-shot cross-database question. FSC reuses the MCA phase and does not directly predict ITD, so temporal-cue capability is constrained by the front-end reconstruction. The Q26 model has approximately 1.519 million deployed parameters, and a uniform implementation and hardware comparison against every baseline has not been completed. The CNN ablation evaluates the incremental effect of the complete refinement stage but does not provide term-by-term causal attribution of the auxiliary losses. The ARI replication uses only one independent training seed, and its subject bootstrap does not quantify training randomness. Finally, no subjective listening experiment is currently available, so objective ERB, ILD, ITD, or LSD improvements cannot be equated directly with localization accuracy, externalization, or preference.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We proposed FiLM-conditioned SIREN with Spectral CNN (FSC) to compensate for direction-dependent magnitude residuals remaining after MCA interpolation. Sparse binaural spatial observations from each subject are compressed into a fixed-dimensional embedding, which modulates a continuous SIREN residual field through FiLM, and a binaural spectral CNN further corrects cross-frequency structure. The MCA phase is then reused to reconstruct the HRIR. In parallel, strict HRIR-domain ERB error is adopted as a central evaluation dimension, and an ERB proxy is introduced during training so that learning emphasizes magnitude errors meaningful on an auditory-band scale.
+
+Under the SONICOM Q26 test protocol, FSC obtains full-sphere ERB, contralateral-$25^\circ$ ERB, ERB-band ILD, ITD-weighted MAE, and full-sphere LSD values of 0.8360, 1.2280, 1.6514\,dB, 18.8480\,$\mu$s, and 3.6029\,dB. Relative to MCA, FSC has lower means on three magnitude or level metrics and full-sphere LSD but slightly higher ITD-weighted MAE. Relative to FSP-AE and RANF, FSC is lower on the first three metrics, while FSP-AE is lower on ITD and full-sphere LSD and RANF is also lower on full-sphere LSD. In the CNN ablation, all eight paired differences are negative with 95\% intervals below zero across three independent seeds. In the sparsity experiment on 743 shared directions, every reported mean error decreases through Q14, Q26, and Q50, with full-sphere ERB values of 0.9535, 0.8318, and 0.7931\,dB. In the external ARI replication, FSC improves all five primary metrics for all 22 test subjects, and all five 95\% paired-bootstrap intervals lie below zero, showing that retraining the method on a second database can stably reduce MCA residuals.
+
+The current method remains limited by the absence of zero-shot cross-database validation, dependence on the MCA phase, lack of a uniform inference-cost comparison against all baselines, absence of term-wise loss ablations, a single training seed in the ARI replication, and the lack of a listening experiment. Future work will focus on more consistent ERB and perceptual objectives, zero-shot cross-database generalization, loss-mechanism analysis, and subjective spatial-hearing validation.
+
+\bibliographystyle{gbt-7714-2015-numerical}
+\bibliography{references}
+
+\end{document}

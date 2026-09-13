@@ -1,0 +1,21 @@
+% Legacy validation-set density table retained for traceability; not included by main.tex.
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{2.3pt}
+\caption{FSC sparsity experiment (44 validation subjects, 743 shared directions)}
+\label{tab:q-results-validation}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Observation density & Full-sphere ERB & Contra.-$25^\circ$ ERB & ERB-band ILD & ITD-w. MAE & Contra. HF & Horizontal ILD \\
+ & dB$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ & $\mu$s$\downarrow$ & dB$\downarrow$ & dB$\downarrow$ \\
+\midrule
+Q14 & $0.9084 \pm 0.1826$ & $1.3383 \pm 0.2294$ & $1.5815 \pm 0.1835$ & $20.7651 \pm 4.1220$ & $3.6618 \pm 0.3404$ & $0.6427 \pm 0.1826$ \\
+Q26 & $0.8008 \pm 0.1614$ & $\mathbf{1.2123} \pm 0.1895$ & $1.4923 \pm 0.1499$ & $\mathbf{15.3786} \pm 2.3343$ & $3.4920 \pm 0.2761$ & $0.6232 \pm 0.1773$ \\
+Q50 & $\mathbf{0.7519} \pm 0.1514$ & $1.2173 \pm 0.1932$ & $\mathbf{1.3978} \pm 0.1383$ & $15.5581 \pm 2.5475$ & $\mathbf{3.4093} \pm 0.2707$ & $\mathbf{0.5489} \pm 0.1440$ \\
+\bottomrule
+\end{tabular}%
+}
+\par\smallskip
+\parbox{\linewidth}{\footnotesize Values are subject mean $\pm$ sample standard deviation. Q14, Q26, and Q50 use FSC models trained for their corresponding observation densities. The three settings share the network architecture and training budget, use an ensemble of three seeded models, and are evaluated over the same 743 directions obtained after excluding Q50 observations. ERB-band ILD and ITD are the evaluation metrics used in this validation experiment; bold denotes the lowest mean among the three densities.}
+\end{table}

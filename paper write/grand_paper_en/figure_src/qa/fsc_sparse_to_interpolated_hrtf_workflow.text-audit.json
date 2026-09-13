@@ -1,0 +1,10 @@
+{
+  "pdf": "paper write/grand_paper_en/figure/fsc_sparse_to_interpolated_hrtf_workflow.pdf",
+  "auditable": true,
+  "minimum_required_pt": 5.0,
+  "minimum_found_pt": 5.35,
+  "text_run_count": 43,
+  "below_minimum_count": 0,
+  "below_minimum": [],
+  "warnings": []
+}

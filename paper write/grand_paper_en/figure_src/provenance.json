@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "backend": "python/matplotlib",
+  "test_subjects_read": 0,
+  "figure_width_mm": {
+    "fsc_sparse_to_interpolated_hrtf_workflow": 143.5,
+    "fsc_single_model_architecture": 143.5,
+    "spherical_grid_triptych_q14_q26_q50": 143.5,
+    "matched_density_erb_trend": 120.0
+  },
+  "data_sources": {
+    "configs/data/sonicom_nested_sparse_grid_q14_q26_q50_v1.csv": "47564f039d30391198b3d5386c161e149fb1d4384e1134488dff0a1ac74cd6ab",
+    "results/sonicom_fsc_single_member_matched_density_all_metrics_test_v1/all_metrics_summary_mean_std.csv": "c07deb354b0880b37f937c029d7333c1cbacd2f6e762816a89e8856c0153431b"
+  },
+  "data_counts": {
+    "grid_rows": 90,
+    "grid_unique_counts": {
+      "Q14": 14,
+      "Q26": 26,
+      "Q50": 50
+    },
+    "erb_summary_rows": 3,
+    "erb_subjects": 44
+  },
+  "statistics": "Mean and 95% subject-bootstrap CI from authoritative aggregate CSV; no significance test added.",
+  "formats": [
+    "svg",
+    "pdf",
+    "png@600dpi",
+    "tiff@600dpi_lzw"
+  ]
+}

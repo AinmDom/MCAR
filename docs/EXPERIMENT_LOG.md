@@ -1,3 +1,13 @@
+## 2026-09-14：作者确认的流程图与模型结构图已同步到中文版正文
+
+- 时间/agent：2026-09-14T18:45:26+08:00，Codex；状态：中文版正式稿已切换到与英文稿相同的两张作者确认 PNG，并完成静态引用核验；未编译 LaTeX。
+- 动作：保持中英文共享图稿的既有目录结构，不复制冗余文件；将 `paper write/grand_paper/main.tex` 中完整重建流程图和 FSC 模型结构图的两处引用由 `../grand_paper_en/figure/*.pdf` 改为对应 `*.png`。中英文图注、标签和其余正文未修改。
+- 关键结果：中文版流程图引用解析到 1380×620 px 的作者终稿，SHA256=`F59A8FD31037F682BAED10B92752674BD2064F5FD6A9EEF305B1E3C7A18BCB35`；模型结构图引用解析到 1434×690 px 的作者终稿，SHA256=`AF33B8B64BFA0DE0750D037C803EB083B7EAE79506CA1A1353D7C5C3265B7E26`。两项目标均存在，与英文稿引用同一物理文件。
+- 完整性：`main.tex` 差异严格为 2 行删除、2 行新增，均仅改变图片扩展名；`git diff --check` 无错误。`test_subjects_read=0`；训练、评价、finite、best/末点预算均为 N/A；未编译、未渲染整稿 PDF，未提交、未推送。
+- 证据：paper write/grand_paper/main.tex（SHA256=96D269E67FACB5FEA30D394AAED720622A9AC4F8C33159B8B3AEBC95F7685ECC）；共享图稿位于 paper write/grand_paper_en/figure/。
+- 下一步：作者本地编译 `paper write/grand_paper/main.tex`，确认两张透明背景 PNG 在中文版页面中的合成效果、最终字号与浮动位置。
+- 阻塞项：无文件引用阻塞；整稿页面级观感按作者约定留待本地编译确认。
+
 ## 2026-09-14：作者确认的英文流程图与模型结构图已替换进正文
 
 - 时间/agent：2026-09-14T18:35:36+08:00，Codex；状态：两张作者确认的最终 PNG 已原样替换英文稿对应图稿，正文引用已切换并完成静态完整性核验；未编译 LaTeX。

@@ -1,0 +1,73 @@
+%% Figure 1: end-to-end inference workflow from sparse to interpolated HRTFs.
+%% Structural Mermaid counterpart of the current submission figure.
+%%{init: {"theme": "base", "flowchart": {"curve": "linear", "nodeSpacing": 24, "rankSpacing": 34}, "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "13px", "lineColor": "#52606B", "textColor": "#26343F"}}}%%
+flowchart LR
+
+  subgraph S1["1  Sparse input"]
+    direction TB
+    A1["Sparse binaural<br/>HRTFs / HRIRs<br/>at Q observed directions"]
+    A2["Target queries q<br/>+ sparse observed<br/>magnitudes and xyz"]
+  end
+
+  subgraph S2["2  MCA baseline"]
+    direction TB
+    B1["Time alignment<br/>+ spatial interpolation"]
+    B2["Magnitude correction from<br/>smoothed magnitude"]
+    B3["MCA magnitude M_MCA<br/>+ correction feature C_MCA"]
+    B4["MCA phase + original<br/>outside-bin complex values"]
+    B1 --> B2 --> B3
+    B1 --> B4
+  end
+
+  subgraph S3["3  FSC correction"]
+    direction TB
+    C1["Frozen FSC model<br/>FiLM-SIREN + spectral CNN"]
+    C2["Normalized residual<br/>r_tilde_H(q, f)"]
+    C3["Denormalize<br/>r_H^dB = sigma_r × r_tilde_H + mu_r"]
+    C1 --> C2 --> C3
+  end
+
+  subgraph S4["4  Spectrum assembly"]
+    direction TB
+    D1["Correct 463 selected bins<br/>M_hat = M_MCA + r_H^dB"]
+    D2["Selected-bin complex spectrum<br/>10^(M_hat/20) exp(j phi_MCA)"]
+    D3["Assemble 513-bin single-sided spectrum<br/>463 corrected complex bins<br/>+ 50 original MCA complex bins"]
+    D1 --> D2 --> D3
+  end
+
+  subgraph S5["5  Output"]
+    direction TB
+    E1["Conjugate-symmetric extension"]
+    E2["1024-point IFFT"]
+    E3["Retain first 256 samples"]
+    E4["Dense binaural<br/>HRIRs / HRTFs"]
+    E1 --> E2 --> E3 --> E4
+  end
+
+  A1 --> B1
+  A2 --> B1
+  A2 --> C1
+  B3 --> C1
+  C3 --> D1
+  B3 --> D1
+  B4 --> D2
+  B4 --> D3
+  D3 --> E1
+
+  classDef input fill:#FFFFFF,stroke:#315E8A,color:#26343F,stroke-width:1.4px;
+  classDef mca fill:#FFFFFF,stroke:#3B8C88,color:#26343F,stroke-width:1.4px;
+  classDef fsc fill:#FFFFFF,stroke:#4F8167,color:#26343F,stroke-width:1.4px;
+  classDef spectrum fill:#FFFFFF,stroke:#75669A,color:#26343F,stroke-width:1.4px;
+  classDef output fill:#FFFFFF,stroke:#C17B2F,color:#26343F,stroke-width:1.4px;
+  class A1,A2 input;
+  class B1,B2,B3 mca;
+  class B4,D1,D2,D3 spectrum;
+  class C1,C2,C3 fsc;
+  class E1,E2,E3,E4 output;
+
+  style S1 fill:#EEF4F8,stroke:#315E8A,stroke-width:1.5px,stroke-dasharray:5 4,color:#315E8A
+  style S2 fill:#EEF7F6,stroke:#3B8C88,stroke-width:1.5px,stroke-dasharray:5 4,color:#3B8C88
+  style S3 fill:#EEF6F1,stroke:#4F8167,stroke-width:1.5px,stroke-dasharray:5 4,color:#4F8167
+  style S4 fill:#F3F0F7,stroke:#75669A,stroke-width:1.5px,stroke-dasharray:5 4,color:#75669A
+  style S5 fill:#FAF3E9,stroke:#C17B2F,stroke-width:1.5px,stroke-dasharray:5 4,color:#C17B2F
+

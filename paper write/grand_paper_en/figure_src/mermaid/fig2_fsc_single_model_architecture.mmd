@@ -1,0 +1,114 @@
+%% Figure 2: detailed architecture of the single-model FSC residual predictor.
+%% This diagram intentionally ends at the predicted normalized residual.
+%%{init: {"theme": "base", "flowchart": {"curve": "linear", "nodeSpacing": 18, "rankSpacing": 28}, "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "12px", "lineColor": "#52606B", "textColor": "#26343F"}}}%%
+flowchart LR
+
+  subgraph S1["1  Inputs"]
+    direction TB
+    I1["Condition set<br/>normalized magnitude [B, 2, Q, 463]<br/>xyz [B, Q, 3]<br/>mask [B, Q]"]
+    I2["Query field coordinates<br/>[B, N, 7]"]
+    I3["Local context<br/>normalized MCA<br/>normalized correction<br/>normalized log-frequency<br/>direction xyz"]
+  end
+
+  subgraph S2["2  FiLM-SIREN — Stage D frozen"]
+    direction TB
+    F1["Condition encoder<br/>Q-direction set"]
+    F2["Latent z<br/>[B, 128]"]
+    F3["Layer modulator"]
+    F4["6-layer FiLM-SIREN<br/>width 256<br/>FiLM at every layer"]
+    F5["Linear 256 → 2"]
+    F6["Base residual r_F<br/>[B, N, 2]"]
+    F1 --> F2 --> F3 --> F4 --> F5 --> F6
+  end
+
+  subgraph S3["3  Seven-channel feature builder"]
+    direction TB
+    Z1["1  L MCA"]
+    Z2["2  L correction"]
+    Z3["3  L base residual"]
+    Z4["4  R MCA"]
+    Z5["5  R correction"]
+    Z6["6  R base residual"]
+    Z7["7  Log-frequency"]
+    Z8["Stack / assemble<br/>[B, 7, F]"]
+    Z9["Direction xyz<br/>[B, 3]"]
+    Z1 --> Z8
+    Z2 --> Z8
+    Z3 --> Z8
+    Z4 --> Z8
+    Z5 --> Z8
+    Z6 --> Z8
+    Z7 --> Z8
+  end
+
+  subgraph S4["4  Binaural spectral CNN — Stage D trainable"]
+    direction TB
+    C1["CNN stem<br/>ReflectionPad1d(3)<br/>Conv1d 7 → 48, kernel 7<br/>GroupNorm(8) + SiLU"]
+    C2["Direction encoder<br/>Linear 3 → 64 → 64<br/>SiLU after both layers<br/>condition width 64"]
+    B1["Block 1<br/>dilation 1, kernel 7"]
+    B2["Block 2<br/>dilation 2, kernel 7"]
+    B3["Block 3<br/>dilation 4, kernel 7"]
+    B4["Block 4<br/>dilation 8, kernel 7"]
+    C5["Each block<br/>depthwise Conv1d + FiLM<br/>pointwise 48 → 96 → 48"]
+    C3["Conv1d 48 → 2<br/>kernel 1"]
+    C4["CNN increment C_theta(X, q)<br/>[B, N, 2]"]
+    C1 --> B1 --> B2 --> B3 --> B4 --> C3 --> C4
+    C5 -. block design .-> B1
+    C5 -. block design .-> B2
+    C5 -. block design .-> B3
+    C5 -. block design .-> B4
+  end
+
+  subgraph S5["5  Residual output"]
+    direction TB
+    O1["Base residual r_F<br/>[B, N, 2]"]
+    O2["CNN increment C_theta<br/>[B, N, 2]"]
+    O3(("+"))
+    O4["Final normalized<br/>binaural residual<br/>[B, N, 2]"]
+    O5["r_H = r_F + C_theta(X, q)"]
+    O1 --> O3
+    O2 --> O3
+    O3 --> O4 --> O5
+  end
+
+  I1 --> F1
+  I2 --> F4
+  I3 --> Z1
+  I3 --> Z2
+  I3 --> Z4
+  I3 --> Z5
+  I3 --> Z7
+  I3 --> Z9
+  F6 --> Z3
+  F6 --> Z6
+  Z8 --> C1
+  Z9 --> C2
+  C2 -. FiLM .-> B1
+  C2 -. FiLM .-> B2
+  C2 -. FiLM .-> B3
+  C2 -. FiLM .-> B4
+  F6 --> O1
+  C4 --> O2
+
+  classDef input fill:#FFFFFF,stroke:#315E8A,color:#26343F,stroke-width:1.3px;
+  classDef film fill:#FFFFFF,stroke:#4F8167,color:#26343F,stroke-width:1.3px;
+  classDef feature fill:#FFFFFF,stroke:#75669A,color:#26343F,stroke-width:1.3px;
+  classDef cnn fill:#FFFFFF,stroke:#315E8A,color:#26343F,stroke-width:1.3px;
+  classDef output fill:#FFFFFF,stroke:#C17B2F,color:#26343F,stroke-width:1.3px;
+  classDef note fill:#F8FAFB,stroke:#66727D,color:#52606B,stroke-width:1px,stroke-dasharray:3 3;
+  class I1,I2,I3 input;
+  class F1,F2,F3,F4,F5,F6 film;
+  class Z1,Z2,Z4,Z5,Z7,Z8,Z9 feature;
+  class Z3,Z6 film;
+  class C1,C2,B1,B2,B3,B4,C3,C4 cnn;
+  class C5 note;
+  class O1 film;
+  class O2 cnn;
+  class O3,O4,O5 output;
+
+  style S1 fill:#EEF4F8,stroke:#315E8A,stroke-width:1.5px,stroke-dasharray:5 4,color:#315E8A
+  style S2 fill:#EEF6F1,stroke:#4F8167,stroke-width:1.5px,stroke-dasharray:5 4,color:#4F8167
+  style S3 fill:#F3F0F7,stroke:#75669A,stroke-width:1.5px,stroke-dasharray:5 4,color:#75669A
+  style S4 fill:#EEF4F8,stroke:#315E8A,stroke-width:1.5px,stroke-dasharray:5 4,color:#315E8A
+  style S5 fill:#FAF3E9,stroke:#C17B2F,stroke-width:1.5px,stroke-dasharray:5 4,color:#C17B2F
+

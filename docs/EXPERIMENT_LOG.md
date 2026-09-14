@@ -1,3 +1,23 @@
+## 2026-09-14：作者确认的英文流程图与模型结构图已替换进正文
+
+- 时间/agent：2026-09-14T18:35:36+08:00，Codex；状态：两张作者确认的最终 PNG 已原样替换英文稿对应图稿，正文引用已切换并完成静态完整性核验；未编译 LaTeX。
+- 动作：将附件中的五阶段稀疏 HRTF/HRIR 重建流程图覆盖为 `paper write/grand_paper_en/figure/fsc_sparse_to_interpolated_hrtf_workflow.png`，将五区 FSC 模型结构图覆盖为 `paper write/grand_paper_en/figure/fsc_single_model_architecture.png`；`main.tex` 的两处 `includegraphics` 从旧 PDF 改为新 PNG。旧 PDF/SVG/TIFF 未删除、未修改，但不再由正文引用；README 与 QA 记录已注明作者确认的栅格终稿边界。
+- 关键结果：流程图=1380×620 px，SHA256=F59A8FD31037F682BAED10B92752674BD2064F5FD6A9EEF305B1E3C7A18BCB35；结构图=1434×690 px，SHA256=AF33B8B64BFA0DE0750D037C803EB083B7EAE79506CA1A1353D7C5C3265B7E26。目标文件哈希与附件逐一一致，复制过程未重采样；两处 LaTeX 引用目标均存在。
+- 完整性：图稿内容保持作者确认版本；透明画布边缘保留。静态检查确认 `main.tex` 仅改动两处图片后缀，`git diff --check` 无新增空白错误（仅既有 LF/CRLF 提示）。`test_subjects_read=0`；训练、评价、finite、best/末点预算均为 N/A；未编译、未渲染整稿 PDF，未提交、未推送。
+- 证据：paper write/grand_paper_en/main.tex（SHA256=38DFAA7B3CFAB1B9A57E87F1B44F9796A6FA84558976C0F3BC6488EEA47BC599）；paper write/grand_paper_en/figure_src/README.md（SHA256=696F69369444F45E9DEE0CF8741B37424CC39296C06E64A040E2FE5FDECE148A）；paper write/grand_paper_en/figure_src/QA_NOTES.md（SHA256=379E8A2F61A85C053F354F4C3A35210CB8F1F7622A64B35DEFAB0494B50E946D）；上述两张 PNG。
+- 下一步：作者本地编译 `paper write/grand_paper_en/main.tex`，重点确认透明背景在白色页面上的合成效果、最终字号和两张图的浮动位置。
+- 阻塞项：无文件替换阻塞；按照作者既有约定，本轮未执行 LaTeX 编译，因此整稿页面级观感尚未验证。
+
+## 2026-09-14：CSMT 英文稿当前图一与图二的 Mermaid 可编辑源已补齐
+
+- 时间/agent：2026-09-14T14:47:59+08:00，Codex；状态：当前英文稿图一和图二的独立 Mermaid 源及使用说明已创建并完成静态结构核验；未修改正文、Matplotlib 绘图源或现有 PDF/PNG/SVG/TIFF 图稿。
+- 动作：将当前图一“稀疏双耳 HRTF/HRIR 经 MCA、FSC 幅度残差校正、复谱组装与 IFFT 得到插值输出”的五阶段流程转换为 Mermaid；将当前图二“Inputs、FiLM-SIREN、7-channel feature builder、Binaural spectral CNN、Residual output”的详细五区结构转换为 Mermaid。两图沿用当前英文术语、分区、关键旁路及蓝/青/绿/紫/橙色族，并新增目录 README 说明 Mermaid 自动布局与投稿版 Matplotlib 图的权威边界。
+- 关键结果：图一 Mermaid=73 行、5 个闭合 subgraph、16 个唯一节点；图二 Mermaid=114 行、5 个闭合 subgraph、32 个唯一节点。两文件均无重复节点、无缺失连线端点、双引号成对。图一完整保留 463 个校正频点、50 个原始 MCA 复频点、513 点单边谱、1024 点 IFFT 和 256 样本截取；图二完整保留 7 通道、dilation=1/2/4/8 四个残差块、48→96→48 pointwise 路径及 base/CNN 残差相加。
+- 完整性：本机未预装 Mermaid CLI，且未为本任务联网安装依赖，因此本轮结论为结构/语义静态核验通过，不声称完成特定 Mermaid 渲染器的像素级版式验收。`test_subjects_read=0`；训练、评价、finite、best/末点预算均为 N/A；未编译 LaTeX，未提交、未推送。
+- 证据：`paper write/grand_paper_en/figure_src/mermaid/fig1_sparse_to_interpolated_hrtf_workflow.mmd`（SHA256=`3F1C29E7AB7BF3D3476F83E87E7A76AFDD07EA127B81D5E9E98A6F8B08EF8C0F`）；`paper write/grand_paper_en/figure_src/mermaid/fig2_fsc_single_model_architecture.mmd`（SHA256=`E6E8608CFDB2706D46574B699CCD51C058B82B02A3726F6F1F1182F4507D038A`）；`paper write/grand_paper_en/figure_src/mermaid/README.md`（SHA256=`A6FA82B43D6FF0C1242D27B0E7061232F40C379B17991406582C114374CC1E79`）。
+- 下一步：作者可直接在 Mermaid 编辑器中打开 `.mmd`，或将内容粘贴到支持 Mermaid 导入的绘图工具继续调整；若确定最终内容变化，再同步回 Matplotlib 投稿图与英文图注。
+- 阻塞项：无文件交付阻塞；不同 Mermaid/ioDraw 版本的自动排版可能略有差异，最终投稿图仍需按既有流程重新导出和 QA。
+
 ## 2026-09-13：CSMT 英文版图二与图三的图内说明已移入图注并通过最终 QA
 
 - 时间/agent：2026-09-13T12:31:43+08:00，Codex；状态：图二底部说明行和图三坐标区统计说明已移除，英文正文图注与图稿 QA 记录同步更新；第一张图保持不变；按作者约定未执行 LaTeX 编译、整稿 PDF 渲染或页面版面检查。

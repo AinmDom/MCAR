@@ -26,18 +26,18 @@
 \newenvironment{keywords}{\par\smallskip\noindent\songti\small{\heiti 关键词：}}{\par}
 \newenvironment{eAbstract}{\par\noindent\sffamily\small{\bfseries Abstract: }}{\par}
 \newenvironment{eKeywords}{\par\smallskip\noindent\sffamily\small{\bfseries Key Words: }}{\par}
-\newcommand{\todo}[1]{\textcolor{red}{【待修改：#1】}}
+
 \begin{document}
 \begin{center}
-{\heiti\zihao{3}基于FiLM条件化SIREN与频谱CNN的稀疏HRTF插值方法\par}
+{\heiti\zihao{3}基于FiLM条件化SIREN与频谱CNN的HRTF插值方法\par}
 \vspace{1em}
-{\kaishu\zihao{5}\textbf{Young}\par}
+{\kaishu\zihao{5}\textbf{卢杨}\par}
 \vspace{0.6em}
 \end{center}
 
 \begin{csmtAbstract}
 针对稀疏HRTF插值中幅度细节难以恢复的问题，本文提出FiLM条件化SIREN与频谱CNN模型。本文方法以幅度校正与时间对齐插值（Magnitude-Corrected and Time-Aligned Interpolation，
-MCA）为基底，通过被试级条件嵌入调制连续方向--频率残差场，并利用双耳频谱CNN补偿局部频谱与双耳结构，最终复用MCA相位完成HRIR重建。在SONICOM数据集44名测试被试、26个观测方向的设置下，本文方法的全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE和全域LSD分别为0.8360、1.2280、1.6514\,dB、18.8480\,$\mu$s和3.6029\,dB。相对MCA，稳定收益集中在幅度、听觉频带和双耳声压级误差训练阶段使用ERB近似目标：除ITD加权MAE略有上升外，其余四项均值都降低；与所比较的学习式方法相比，前三项均值最低。3个独立随机种子的验证集CNN消融在八项指标上均得到改善，24个95\%配对bootstrap区间均低于零，表明频谱补偿阶段具有稳定增量作用；各项报告误差的均值也随观测方向数由14增至26和50而整体下降。在ARI数据库独立重新训练后，幅度、频谱和声压级维度相对MCA的改善方向得到复现，五项报告指标均在所有测试被试上改善。结果表明，本文方法能够学习并补偿MCA残留频谱与声压级误差；而零样本跨数据库泛化和感知收益仍需进一步验证。
+MCA）为基底，通过被试个体特征嵌入调制连续方向--频率残差场，并利用双耳频谱CNN补偿局部频谱与双耳结构，最终复用MCA相位完成HRIR重建。在SONICOM数据集44名测试被试、26个观测方向的设置下，本文方法的全域ERB、对侧$25^\circ$ ERB、频带ILD、ITD加权MAE和全域LSD分别为0.8360、1.2280、1.6514\,dB、18.8480\,$\mu$s和3.6029\,dB。相对MCA，在训练阶段使用ERB近似目标在幅度、听觉频带和双耳声压级误差取得稳定收益：除ITD加权MAE略有上升外，其余四项均值都降低；与所比较的学习式方法相比，前三项均值最低。3个独立随机种子的验证集CNN消融在八项指标上均得到改善，24个95\%配对bootstrap区间均低于零，表明频谱补偿阶段具有稳定增量作用；各项报告误差的均值也随观测方向数由14增至26和50而整体下降。在ARI数据库中独立重新训练并复现了相对于MCA在幅度、频谱和声压级维度上的改善，五项报告指标均在所有测试被试上优化。结果表明，本文方法能够学习并补偿MCA残留频谱与声压级误差；而零样本跨数据库泛化和感知收益仍需进一步验证。
 \end{csmtAbstract}
 
 \begin{keywords}
@@ -62,6 +62,8 @@ MCA剩余的残差同时表现出两类互补的特点。其一，误差随声�
 另一个设计考虑来自训练目标本身。在线性频率网格上逐频点计算幅度误差会等价对待不同FFT频点，而人耳的频率分辨率并非在线性频率轴上均匀分布，更适合由听觉频带组织。因此，本文在补偿阶段引入ERB近似项，使残差补偿同时受到听觉频带尺度的约束；最终评价则使用严格HRIR域ERB指标，而不是直接以训练阶段的ERB近似目标作为最终评价。这里ERB用于描述听觉频带尺度上的误差，并不替代主观听音评价，因此仍保留ILD、ITD和LSD作为互补指标。
 
 本文的主要工作如下：（1）将稀疏HRTF插值表述为显式MCA重建之上的残差补偿，而非直接预测完整HRTF。传统的时间对齐、幅度校正、相位与重建链路均被保留，学习模块专门处理MCA之后仍存在的结构化幅度误差；（2）提出连续表示与局部优化互补的FSC残差架构。由被试条件调制的FiLM-SIREN在方向--频率域表示连续MCA残差场，双耳频谱CNN则显式补偿局部跨频率和耳间频谱结构，使连续坐标表示与局部频谱邻域建模分别承担不同功能；（3）构建听觉频带导向的残差学习目标，在训练中引入ERB近似项，并以严格HRIR域ERB误差作为核心评价维度，同时保留ILD、ITD和LSD等互补指标；（4）在统一协议下通过传统与学习式方法比较、CNN配对消融、Q14/Q26/Q50独立训练的稀疏度实验以及ARI数据库独立重训练，对上述设计进行验证。
+
+本文其余部分组织如下：第2节回顾传统HRTF插值、学习式HRTF插值以及条件隐式表示与频谱建模相关工作；第3节介绍FSC的整体框架、个体条件与连续残差表示、双耳频谱补偿，以及训练目标与重建流程；第4节说明数据集与评价协议、对比方法、评价指标和实现设置；第5节报告FSC与MCA及外部方法的比较结果，并进一步给出局部频谱与扩展指标分析、CNN消融实验、稀疏度实验和ARI外部数据库复现实验；第6节讨论频谱补偿与双耳线索之间的折衷、模型结构作用、泛化范围及研究局限；第7节总结全文，给出本文结论。
 
 \section{相关工作}
 \label{sec:related}
@@ -427,7 +429,7 @@ ARI实验从另一个角度考察了数据库可迁移性。已有研究表明�
 \begin{center}
 {\normalsize\bfseries Sparse HRTF Interpolation with FiLM-Conditioned SIREN and Spectral CNN\par}
 \smallskip
-{\small Young\par}
+{\small Lu Yang\par}
 \end{center}
 
 \begin{eAbstract}

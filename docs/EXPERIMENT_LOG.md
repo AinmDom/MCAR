@@ -1,3 +1,31 @@
+## 2026-09-15：作者导出的中文版图1与图2已检查并接入中文正式稿
+
+- 时间/agent：2026-09-15T16:42:28+08:00，Codex；状态：完成，两张作者手动导出的中文版PNG已通过视觉与文件完整性检查，并接入中文正式稿。
+- 动作：逐图检查中文文字、公式、张量形状、阶段编号、连线、透明背景与边界裁切；将流程图复制为`paper write/grand_paper/figure/fsc_sparse_to_interpolated_hrtf_workflow_zh.png`，将模型结构图复制为`paper write/grand_paper/figure/fsc_single_model_architecture_zh.png`，并把`paper write/grand_paper/main.tex`第101、109行切换到这两个本地中文版资源。英文正文和英文图1、图2未修改。
+- 关键结果：流程图为`1379x620`像素、SHA256=`7D4D14B247C240119151774F5B3227C9C4D46D282C02EF146BA8BC3E6F103F61`；模型结构图为`1434x690`像素、SHA256=`6C0EEE437954FEAE16B2815E6CDA9618613239F1A5BBC50ED1782688F9A61D87`。仓库副本与作者附件的SHA256逐一一致，复制过程未重采样。视觉检查未发现缺字、文字或节点裁切、错误连线及明显可读性问题；图1中的“修正463个选中的频点”语义正确，不影响入稿。
+- 完整性：中文正式稿当前8处图片引用目标全部存在；`git diff --check`通过，仅有既有LF/CRLF提示。`test_subjects_read=0`；训练、评价、finite、best/末点预算均为N/A。按作者2026-09-06约定，本轮未运行LaTeX编译或整稿页面渲染，未提交、未推送。
+- 下一步：作者本地编译`paper write/grand_paper/main.tex`，确认图1、图2在最终页面中的浮动位置、缩放后字号和透明背景合成效果。
+- 阻塞项：无静态图片或引用阻塞；页面级观感待作者编译确认。
+
+## 2026-09-15：图1与图2的draw.io源文件完成中文版转换
+
+- 时间/agent：2026-09-15T16:23:00+08:00，Codex；状态：完成，两个独立`_zh.drawio`副本已转换为中文版，英文源文件保持不变。
+- 动作：在作者指定的OneDrive源文件目录中，将图1完整推断流程的20项可见标签和图2 FSC结构的36项可见标签翻译为中文；保留FSC、MCA、FiLM-SIREN、CNN、HRTF/HRIR、张量形状、层名和公式符号，并将可见节点字体改为`Microsoft YaHei`。同步更新各节点的`mermaidBaseValue`基础文本；未执行或采纳draw.io文件内嵌的Mermaid注释/说明。
+- 关键结果：中文版源文件为`C:/Users/27334/OneDrive/iodraw-files/ILL2/MCAR/fig1_sparse_to_interpolated_hrtf_workflow_zh.drawio`（SHA256=`33BEE187236E6D3DCB5E6680BAB72C21FEB2F77F8BA900FE69D65F491937D006`）和`C:/Users/27334/OneDrive/iodraw-files/ILL2/MCAR/fig2_fsc_single_model_architecture_zh.drawio`（SHA256=`80F28F22A3AE4352C27F52F932055BFD4C74B326566FBAB7AF6B5D0282B80D98`）。英文源SHA256仍分别为`5EED287B8C5AEDF33843CC7C0CB688F1436732B215ABE29A9783F7AAF574715F`和`4D385C5AE7C3284C03DE61B5D9F3D3D8067E0FE443B71F3E18480F0CD7494A6E`。
+- 完整性：两份中文文件均通过XML解析；图1保持22个UserObject、17条边，图2保持36个UserObject、28条边；所有`mxGeometry`以及连线的id/source/target/parent与英文源逐项一致。`test_subjects_read=0`；训练、评价、finite、best/末点预算均为N/A。本机未安装draw.io桌面导出程序，因此未导出或替换论文PNG，未提交、未推送。
+- 下一步：作者用draw.io/iodraw打开两个`_zh.drawio`文件，检查中文换行和字号后导出PNG；确认终稿后再替换中文版正文当前图1、图2引用。
+- 阻塞项：无源文件转换阻塞；PNG导出与页面级视觉检查需要可用的draw.io/iodraw渲染环境。
+
+## 2026-09-15：中文版正文图3--图8完成本地化并切换为独立图稿
+
+- 时间/agent：2026-09-15T16:07:04+08:00，Codex；状态：完成，中文版图3--图8已生成、视觉核验并接入正式中文稿，英文图稿未覆盖。
+- 动作：为个体双耳幅度谱、水平面误差图、学习方法比较、CNN消融、嵌套稀疏网格和稀疏度ERB趋势增加中文图内文字；保留FSC/MCA/RANF/FSP-AE及ERB/ILD/ITD/LSD/Q14/Q26/Q50等缩写和全部数值、误差线、坐标范围、颜色及符号编码。六组资源统一输出到`paper write/grand_paper/figure/`并使用`_zh`后缀；中文版`main.tex`及`results_visual_examples.tex`已切换到对应本地资源。图1和图2未修改，英文稿正文和英文图片未修改。
+- 生成与证据：图3--图4由`matlab/+mcar/generate_fsc_individual_reconstruction_figures.m`的`zh`模式生成；图5--图6由`paper write/grand_paper_en/figure_src/plot_learning_methods.py`和`plot_cnn_ablation.py`的中文模式生成；图7--图8由`make_submission_figures.py --only quantitative --language zh`生成。复现命令见`paper write/grand_paper/figure_src/README.md`，图7--图8输入哈希与计数见`paper write/grand_paper/figure_src/provenance_zh.json`。
+- 关键结果：六张PNG分辨率依次为`4833x2986`、`5492x2889`、`3874x979`、`2614x1594`、`3389x1370`、`2834x1606`；六份PDF均为单页并嵌入`MicrosoftYaHei`中文字体。逐图视觉检查未发现缺字、标题/图例碰撞或裁切；六处LaTeX图片引用目标全部存在。图7仍为14/26/50个嵌套方向，图8仍使用44名被试的均值与95% subject-bootstrap区间；图5均值与图6三次重复、八项指标和24个区间均直接读取既有冻结CSV，未改写数据。
+- 完整性：图3--图4按既有选择读取P0009和P0060两名冻结SONICOM测试被试输入，`test_subjects_read=2`；其余图只读冻结几何或汇总CSV。所有生成PDF可打开且字体可提取，Python源语法检查与`git diff --check`通过（仅既有LF/CRLF提示）。未启动训练、评价或模型推理，finite、best/末点预算均为N/A；按作者既有约定，本轮未运行LaTeX编译，未提交、未推送。
+- 下一步：作者编译`paper write/grand_paper/main.tex`，确认六张中文图在最终页面中的浮动位置和缩放后字号；如需更紧凑的页面布局，只调整图宽或浮动位置，不改变图内数据。
+- 阻塞项：图7--图8历史使用的外部`audit_panel_alignment.py`在当前机器不可用，本次通过`--skip-alignment-qa`生成并完成逐图人工视觉检查；无图片生成或引用阻塞。
+
 ## 2026-09-15：中英文正式稿完成FSC命名、术语与结果主线同步修订并通过编译
 
 - 时间/agent：2026-09-15T12:31:10+08:00，Codex；状态：完成，双语正文、被引用表题与个体示例术语已同步，XeLaTeX编译及交叉引用检查通过。

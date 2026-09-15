@@ -1,5 +1,9 @@
+import argparse
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,16 +16,12 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 DATA_CSV = SCRIPT_DIR / "data" / "cnn_ablation_paired_bootstrap.csv"
 FIGURE_DIR = SCRIPT_DIR.parent / "figure"
 
-OUT_PDF = FIGURE_DIR / "cnn_ablation_forest.pdf"
-OUT_PNG = FIGURE_DIR / "cnn_ablation_forest.png"
-
-
 # ============================================================
 # Plot configuration
 # ============================================================
 REPEAT_ORDER = ["Repeat 1", "Repeat 2", "Repeat 3"]
 
-METRICS = [
+METRICS_EN = [
     ("FullSphereERB", "Full-sphere ERB"),
     ("Contralateral25ERB", "Contralateral 25° ERB"),
     ("ERBBandILDMean", "ERB-band ILD"),
@@ -32,6 +32,17 @@ METRICS = [
     ("MultiscaleNotchDepth", "Multiscale notch depth"),
 ]
 
+METRICS_ZH = [
+    ("FullSphereERB", "全域ERB"),
+    ("Contralateral25ERB", "对侧25° ERB"),
+    ("ERBBandILDMean", "频带ILD"),
+    ("ITDWeightedMAE", "ITD加权MAE"),
+    ("FullSphereLSD", "全域LSD"),
+    ("HFFirstDifference", "高频一阶差分"),
+    ("HFSecondDifference", "高频二阶差分"),
+    ("MultiscaleNotchDepth", "多尺度凹口深度"),
+]
+
 REPEAT_OFFSETS = {
     "Repeat 1": -0.18,
     "Repeat 2": 0.00,
@@ -39,7 +50,33 @@ REPEAT_OFFSETS = {
 }
 
 
-def main():
+def configure_fonts(language):
+    if language == "zh":
+        plt.rcParams.update({
+            "font.family": "sans-serif",
+            "font.sans-serif": [
+                "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "DejaVu Sans"
+            ],
+            "axes.unicode_minus": False,
+            "pdf.fonttype": 42,
+        })
+
+
+def render(language="en", output_dir=None):
+    if language not in {"en", "zh"}:
+        raise ValueError("language must be 'en' or 'zh'")
+    configure_fonts(language)
+    metrics = METRICS_ZH if language == "zh" else METRICS_EN
+    repeat_labels = (
+        {"Repeat 1": "重复1", "Repeat 2": "重复2", "Repeat 3": "重复3"}
+        if language == "zh"
+        else {repeat: repeat for repeat in REPEAT_ORDER}
+    )
+    figure_dir = Path(output_dir) if output_dir is not None else FIGURE_DIR
+    suffix = "_zh" if language == "zh" else ""
+    out_pdf = figure_dir / f"cnn_ablation_forest{suffix}.pdf"
+    out_png = figure_dir / f"cnn_ablation_forest{suffix}.png"
+
     if not DATA_CSV.exists():
         raise FileNotFoundError(
             f"Input CSV not found:\n{DATA_CSV}\n\n"
@@ -47,7 +84,7 @@ def main():
             "grand_paper_en/figure_src/data/cnn_ablation_paired_bootstrap.csv"
         )
 
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+    figure_dir.mkdir(parents=True, exist_ok=True)
 
     df = pd.read_csv(DATA_CSV)
 
@@ -61,8 +98,8 @@ def main():
 
     df = df[df["Repeat"].isin(REPEAT_ORDER)].copy()
 
-    metric_keys = [key for key, _ in METRICS]
-    metric_labels = {key: label for key, label in METRICS}
+    metric_keys = [key for key, _ in metrics]
+    metric_labels = {key: label for key, label in metrics}
 
     df["Metric"] = pd.Categorical(
         df["Metric"],
@@ -122,7 +159,7 @@ def main():
                 capsize=3,
                 markersize=5,
                 linewidth=1.2,
-                label=repeat if first_point else None,
+                label=repeat_labels[repeat] if first_point else None,
             )
             first_point = False
 
@@ -132,13 +169,21 @@ def main():
     ax.set_yticks(base_y)
     ax.set_yticklabels([metric_labels[key] for key in metric_keys])
 
-    ax.set_xlabel(
-        r"Paired difference $\Delta = E_{\mathrm{E190}} - E_{\mathrm{E130}}$"
-        "\n(negative values indicate lower error after CNN refinement)"
-    )
+    if language == "zh":
+        ax.set_xlabel(
+            r"配对差 $\Delta = E_{\mathrm{E190}} - E_{\mathrm{E130}}$"
+            "\n（负值表示CNN补偿后误差降低）"
+        )
+        legend_title = "独立重复"
+    else:
+        ax.set_xlabel(
+            r"Paired difference $\Delta = E_{\mathrm{E190}} - E_{\mathrm{E130}}$"
+            "\n(negative values indicate lower error after CNN refinement)"
+        )
+        legend_title = "Independent repeat"
 
     ax.grid(axis="x", alpha=0.25)
-    ax.legend(title="Independent repeat", frameon=False, ncol=3, loc="lower left")
+    ax.legend(title=legend_title, frameon=False, ncol=3, loc="lower left")
 
     # Leave a little room to the right of zero so the reference line is visible.
     xmin = min(df["CI_Low"].min(), -0.01)
@@ -146,12 +191,20 @@ def main():
     pad = 0.06 * (xmax - xmin)
     ax.set_xlim(xmin - pad, xmax + pad)
 
-    fig.savefig(OUT_PDF, bbox_inches="tight")
-    fig.savefig(OUT_PNG, dpi=300, bbox_inches="tight")
+    fig.savefig(out_pdf, bbox_inches="tight")
+    fig.savefig(out_png, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
-    print(f"Saved PDF: {OUT_PDF}")
-    print(f"Saved PNG: {OUT_PNG}")
+    print(f"Saved PDF: {out_pdf}")
+    print(f"Saved PNG: {out_png}")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--language", choices=("en", "zh"), default="en")
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args()
+    render(args.language, args.output_dir)
 
 
 if __name__ == "__main__":

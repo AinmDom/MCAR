@@ -52,6 +52,18 @@ PURPLE = "#75669A"
 GREEN = "#4F8167"
 
 
+def configure_language(language):
+    if language == "zh":
+        plt.rcParams.update({
+            "font.family": "sans-serif",
+            "font.sans-serif": [
+                "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "DejaVu Sans"
+            ],
+            "axes.unicode_minus": False,
+            "pdf.fonttype": 42,
+        })
+
+
 def rounded_box(ax, x, y, w, h, text, face, edge, fontsize=6.2, weight="normal"):
     patch = FancyBboxPatch(
         (x, y),
@@ -509,7 +521,14 @@ def point_category(source, q14, q26):
     return "q50"
 
 
-def draw_nested_grids(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alignment, grid_rows):
+def draw_nested_grids(
+    out_dir: Path,
+    qa_dir: Path,
+    require_matplotlib_panel_alignment,
+    grid_rows,
+    language="en",
+):
+    configure_language(language)
     levels = ("Q14", "Q26", "Q50")
     by_level = {level: [row for row in grid_rows if row["level"] == level] for level in levels}
     q14 = {row["source"] for row in by_level["Q14"]}
@@ -548,8 +567,13 @@ def draw_nested_grids(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alig
         ax.set_ylim(-1.10, 1.10)
         ax.set_aspect("equal")
         ax.set_axis_off()
+        title = (
+            f"{level}（{len(by_level[level])}个方向）"
+            if language == "zh"
+            else f"{level}  ({len(by_level[level])} directions)"
+        )
         ax.set_title(
-            f"{level}  ({len(by_level[level])} directions)",
+            title,
             fontsize=7.0,
             fontweight="bold",
             pad=2.0,
@@ -567,10 +591,15 @@ def draw_nested_grids(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alig
             color=INK,
         )
 
+    legend_labels = (
+        ("Q14核心方向", "Q26新增方向", "Q50新增方向")
+        if language == "zh"
+        else ("Q14 core", "Added for Q26", "Added for Q50")
+    )
     handles = [
-        Line2D([0], [0], marker="o", linestyle="none", markersize=4.5, markerfacecolor=BLUE, markeredgecolor="white", label="Q14 core"),
-        Line2D([0], [0], marker="s", linestyle="none", markersize=4.4, markerfacecolor=TEAL, markeredgecolor="white", label="Added for Q26"),
-        Line2D([0], [0], marker="^", linestyle="none", markersize=4.8, markerfacecolor=AMBER, markeredgecolor="white", label="Added for Q50"),
+        Line2D([0], [0], marker="o", linestyle="none", markersize=4.5, markerfacecolor=BLUE, markeredgecolor="white", label=legend_labels[0]),
+        Line2D([0], [0], marker="s", linestyle="none", markersize=4.4, markerfacecolor=TEAL, markeredgecolor="white", label=legend_labels[1]),
+        Line2D([0], [0], marker="^", linestyle="none", markersize=4.8, markerfacecolor=AMBER, markeredgecolor="white", label=legend_labels[2]),
     ]
     fig.legend(
         handles=handles,
@@ -594,7 +623,8 @@ def draw_nested_grids(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alig
         require_panel_labels=True,
         strict=True,
     )
-    export_figure(fig, out_dir / "spherical_grid_triptych_q14_q26_q50")
+    suffix = "_zh" if language == "zh" else ""
+    export_figure(fig, out_dir / f"spherical_grid_triptych_q14_q26_q50{suffix}")
     plt.close(fig)
 
 
@@ -619,7 +649,14 @@ def read_erb_summary(csv_path: Path):
     return rows
 
 
-def draw_erb_trend(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alignment, rows):
+def draw_erb_trend(
+    out_dir: Path,
+    qa_dir: Path,
+    require_matplotlib_panel_alignment,
+    rows,
+    language="en",
+):
+    configure_language(language)
     q = np.array([row["q"] for row in rows], dtype=float)
     mean = np.array([row["mean"] for row in rows])
     low = np.array([row["low"] for row in rows])
@@ -649,8 +686,12 @@ def draw_erb_trend(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alignme
     ax.set_ylim(0.68, 1.145)
     ax.set_xticks(q, ["Q14", "Q26", "Q50"])
     ax.set_yticks(np.arange(0.7, 1.11, 0.1))
-    ax.set_xlabel("Observed directions")
-    ax.set_ylabel("Full-sphere ERB error (dB)")
+    if language == "zh":
+        ax.set_xlabel("观测方向数")
+        ax.set_ylabel("全域ERB误差 (dB)")
+    else:
+        ax.set_xlabel("Observed directions")
+        ax.set_ylabel("Full-sphere ERB error (dB)")
     ax.grid(axis="y", color=GRID, linewidth=0.55, alpha=0.75)
     ax.tick_params(direction="out", length=2.5, width=0.65, color=INK)
     for spine in ("left", "bottom"):
@@ -666,7 +707,8 @@ def draw_erb_trend(out_dir: Path, qa_dir: Path, require_matplotlib_panel_alignme
         tolerance_pt=1.5,
         strict=True,
     )
-    export_figure(fig, out_dir / "matched_density_erb_trend")
+    suffix = "_zh" if language == "zh" else ""
+    export_figure(fig, out_dir / f"matched_density_erb_trend{suffix}")
     plt.close(fig)
 
 
@@ -680,22 +722,41 @@ def sha256(path: Path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--skill-scripts", type=Path, required=True)
+    parser.add_argument("--skill-scripts", type=Path)
     parser.add_argument(
         "--only",
-        choices=("all", "workflow", "architecture", "grids", "trend"),
+        choices=("all", "workflow", "architecture", "grids", "trend", "quantitative"),
         default="all",
         help="Render only one figure when revising an accepted submission set.",
     )
+    parser.add_argument("--language", choices=("en", "zh"), default="en")
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument(
+        "--skip-alignment-qa",
+        action="store_true",
+        help="Skip the optional external panel-alignment audit during local rendering.",
+    )
     args = parser.parse_args()
-    sys.path.insert(0, str(args.skill_scripts.resolve()))
-    from audit_panel_alignment import require_matplotlib_panel_alignment
+    if args.language == "zh" and args.only not in ("grids", "trend", "quantitative"):
+        parser.error("Chinese rendering is currently supported for grids, trend, or quantitative.")
+    if args.skip_alignment_qa:
+        def require_matplotlib_panel_alignment(*_args, **_kwargs):
+            return None
+    else:
+        if args.skill_scripts is None:
+            parser.error("--skill-scripts is required unless --skip-alignment-qa is used.")
+        sys.path.insert(0, str(args.skill_scripts.resolve()))
+        from audit_panel_alignment import require_matplotlib_panel_alignment
 
     source_dir = Path(__file__).resolve().parent
     grand_paper_en = source_dir.parent
     root = source_dir.parents[2]
-    out_dir = grand_paper_en / "figure"
-    qa_dir = source_dir / "qa"
+    out_dir = args.output_dir.resolve() if args.output_dir else grand_paper_en / "figure"
+    qa_dir = (
+        out_dir.parent / "figure_src" / "qa"
+        if args.language == "zh"
+        else source_dir / "qa"
+    )
     qa_dir.mkdir(parents=True, exist_ok=True)
     grid_csv = root / "configs" / "data" / "sonicom_nested_sparse_grid_q14_q26_q50_v1.csv"
     erb_csv = (
@@ -715,21 +776,42 @@ def main():
         )
     if args.only in ("all", "architecture"):
         draw_architecture(out_dir, qa_dir, require_matplotlib_panel_alignment)
-    if args.only in ("all", "grids"):
-        draw_nested_grids(out_dir, qa_dir, require_matplotlib_panel_alignment, grid_rows)
-    if args.only in ("all", "trend"):
-        draw_erb_trend(out_dir, qa_dir, require_matplotlib_panel_alignment, erb_rows)
+    if args.only in ("all", "grids", "quantitative"):
+        draw_nested_grids(
+            out_dir,
+            qa_dir,
+            require_matplotlib_panel_alignment,
+            grid_rows,
+            language=args.language,
+        )
+    if args.only in ("all", "trend", "quantitative"):
+        draw_erb_trend(
+            out_dir,
+            qa_dir,
+            require_matplotlib_panel_alignment,
+            erb_rows,
+            language=args.language,
+        )
+
+    figure_width_mm = {
+        "fsc_sparse_to_interpolated_hrtf_workflow": 143.5,
+        "fsc_single_model_architecture": 143.5,
+        "spherical_grid_triptych_q14_q26_q50": 143.5,
+        "matched_density_erb_trend": 120.0,
+    }
+    if args.language == "zh":
+        figure_width_mm = {
+            "spherical_grid_triptych_q14_q26_q50_zh": 143.5,
+            "matched_density_erb_trend_zh": 120.0,
+        }
 
     provenance = {
         "schema_version": "1.0",
         "backend": "python/matplotlib",
+        "language": args.language,
+        "alignment_qa": "skipped" if args.skip_alignment_qa else "enabled",
         "test_subjects_read": 0,
-        "figure_width_mm": {
-            "fsc_sparse_to_interpolated_hrtf_workflow": 143.5,
-            "fsc_single_model_architecture": 143.5,
-            "spherical_grid_triptych_q14_q26_q50": 143.5,
-            "matched_density_erb_trend": 120.0,
-        },
+        "figure_width_mm": figure_width_mm,
         "data_sources": {
             str(grid_csv.relative_to(root)).replace("\\", "/"): sha256(grid_csv),
             str(erb_csv.relative_to(root)).replace("\\", "/"): sha256(erb_csv),
@@ -746,7 +828,10 @@ def main():
         "statistics": "Mean and 95% subject-bootstrap CI from authoritative aggregate CSV; no significance test added.",
         "formats": ["svg", "pdf", "png@600dpi", "tiff@600dpi_lzw"],
     }
-    (source_dir / "provenance.json").write_text(
+    provenance_dir = out_dir.parent / "figure_src" if args.language == "zh" else source_dir
+    provenance_dir.mkdir(parents=True, exist_ok=True)
+    provenance_name = "provenance_zh.json" if args.language == "zh" else "provenance.json"
+    (provenance_dir / provenance_name).write_text(
         json.dumps(provenance, indent=2) + "\n",
         encoding="utf-8",
     )

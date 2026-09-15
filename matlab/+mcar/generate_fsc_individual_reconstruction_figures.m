@@ -1,8 +1,14 @@
-function outputs = generate_fsc_individual_reconstruction_figures()
+function outputs = generate_fsc_individual_reconstruction_figures(language)
 %GENERATE_FSC_INDIVIDUAL_RECONSTRUCTION_FIGURES Create paper candidate figures.
 % Uses only the frozen SONICOM Q26 test-derived HDF5 inputs and the
 % preselected single-member FSC E190 prediction.  P0009 is the median-effect
 % representative; P0060 has the strongest aggregate magnitude improvement.
+
+if nargin < 1
+    language = "en";
+end
+language = lower(string(language));
+assert(ismember(language, ["en", "zh"]), 'Language must be "en" or "zh".');
 
 scriptDir = fileparts(mfilename('fullpath'));
 projectRoot = fileparts(fileparts(scriptDir));
@@ -19,10 +25,14 @@ for index = 1:numel(subjects)
     records(index) = load_subject(dataRoot, predictionRoot, subjects(index));
 end
 
-spectraPath = fullfile(figureRoot, 'fsc_two_subject_binaural_spectra.png');
-mapsPath = fullfile(figureRoot, 'fsc_two_subject_horizontal_maps.png');
-draw_spectra(records, spectraPath);
-draw_maps(records, mapsPath);
+suffix = "";
+if language == "zh"
+    suffix = "_zh";
+end
+spectraPath = fullfile(figureRoot, "fsc_two_subject_binaural_spectra" + suffix + ".png");
+mapsPath = fullfile(figureRoot, "fsc_two_subject_horizontal_maps" + suffix + ".png");
+draw_spectra(records, spectraPath, language);
+draw_maps(records, mapsPath, language);
 export_pdf_from_png_figure(records, figureRoot);
 
 outputs = string({spectraPath, strrep(spectraPath, '.png', '.pdf'), ...
@@ -50,12 +60,24 @@ assert(all(isfinite(record.reference), 'all') && all(isfinite(record.mca), 'all'
     all(isfinite(record.fsc), 'all'), 'Non-finite tensor for %s.', subject);
 end
 
-function draw_spectra(records, outputPath)
+function draw_spectra(records, outputPath, language)
 fig = figure('Visible', 'off', 'Color', 'w', 'Position', [80, 80, 1640, 980]);
 layout = tiledlayout(fig, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 colors = struct('reference', [0.10, 0.10, 0.10], 'mca', [0.40, 0.45, 0.52], ...
     'fsc', [0.83, 0.18, 0.20]);
-earNames = ["Left ear, 270 degrees", "Right ear, 90 degrees"];
+if language == "zh"
+    earNames = ["左耳，270°", "右耳，90°"];
+    measuredLabel = "实测";
+    frequencyLabel = "频率 (Hz)";
+    magnitudeLabel = "幅度 (dB)";
+    fontName = "Microsoft YaHei";
+else
+    earNames = ["Left ear, 270 degrees", "Right ear, 90 degrees"];
+    measuredLabel = "Measured";
+    frequencyLabel = "Frequency (Hz)";
+    magnitudeLabel = "Magnitude (dB)";
+    fontName = "Arial";
+end
 targetAzimuth = [270, 90];
 for row = 1:2
     for column = 1:2
@@ -68,7 +90,7 @@ for row = 1:2
         reference = record.reference(frequencyMask, directionIndex, earIndex);
         mca = record.mca(frequencyMask, directionIndex, earIndex);
         fsc = record.fsc(frequencyMask, directionIndex, earIndex);
-        semilogx(ax, f, reference, 'Color', colors.reference, 'LineWidth', 1.5, 'DisplayName', 'Measured');
+        semilogx(ax, f, reference, 'Color', colors.reference, 'LineWidth', 1.5, 'DisplayName', measuredLabel);
         hold(ax, 'on');
         semilogx(ax, f, mca, '--', 'Color', colors.mca, 'LineWidth', 1.35, 'DisplayName', 'MCA');
         semilogx(ax, f, fsc, 'Color', colors.fsc, 'LineWidth', 1.65, 'DisplayName', 'FSC');
@@ -76,27 +98,44 @@ for row = 1:2
         xline(ax, 18000, ':', 'Color', [0.68 0.68 0.68], 'HandleVisibility', 'off');
         hold(ax, 'off');
         xlim(ax, [100 20000]); ylim(ax, [-60 25]); grid(ax, 'on');
-        ax.XScale = 'log'; ax.FontName = 'Arial'; ax.FontSize = 11; ax.TickDir = 'out';
+        ax.XScale = 'log'; ax.FontName = fontName; ax.FontSize = 11; ax.TickDir = 'out';
         ax.GridAlpha = 0.18; ax.MinorGridAlpha = 0.08;
         title(ax, sprintf('%s — %s', record.subject, earNames(column)), 'FontWeight', 'bold');
-        xlabel(ax, 'Frequency (Hz)'); ylabel(ax, 'Magnitude (dB)');
+        xlabel(ax, frequencyLabel); ylabel(ax, magnitudeLabel);
         if row == 1 && column == 1
             legend(ax, 'Location', 'southwest', 'Box', 'off');
         end
     end
 end
-title(layout, {'Two-subject binaural HRTF reconstruction at contralateral interpolation directions', ...
-    'P0009: median-effect representative; P0060: strongest aggregate magnitude improvement'}, ...
-    'FontWeight', 'bold', 'FontName', 'Arial');
+if language == "en"
+    title(layout, {'Two-subject binaural HRTF reconstruction at contralateral interpolation directions', ...
+        'P0009: median-effect representative; P0060: strongest aggregate magnitude improvement'}, ...
+        'FontWeight', 'bold', 'FontName', fontName);
+end
 exportgraphics(fig, outputPath, 'Resolution', 300);
 exportgraphics(fig, strrep(outputPath, '.png', '.pdf'), 'ContentType', 'vector');
 close(fig);
 end
 
-function draw_maps(records, outputPath)
+function draw_maps(records, outputPath, language)
 fig = figure('Visible', 'off', 'Color', 'w', 'Position', [60, 60, 1800, 950]);
 layout = tiledlayout(fig, 2, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 errorLimit = 12;
+if language == "zh"
+    panelNames = {'实测左耳幅度', 'MCA绝对误差', 'FSC绝对误差'};
+    azimuthLabel = '方位角 (°)';
+    frequencyLabel = '频率 (Hz)';
+    magnitudeLabel = '幅度 (dB)';
+    errorLabel = '绝对误差 (dB)';
+    fontName = 'Microsoft YaHei';
+else
+    panelNames = {'Measured left-ear magnitude', 'MCA absolute error', 'FSC absolute error'};
+    azimuthLabel = 'Azimuth (degrees)';
+    frequencyLabel = 'Frequency (Hz)';
+    magnitudeLabel = 'Magnitude (dB)';
+    errorLabel = 'Absolute error (dB)';
+    fontName = 'Arial';
+end
 for row = 1:2
     record = records(row);
     [directions, sortOrder] = horizontal_directions(record);
@@ -111,30 +150,31 @@ for row = 1:2
     valid = record.interpolationMask(directions(sortOrder));
     mcaError(:, ~valid) = NaN; fscError(:, ~valid) = NaN;
     panels = {reference, mcaError, fscError};
-    names = {'Measured left-ear magnitude', 'MCA absolute error', 'FSC absolute error'};
     for column = 1:3
         ax = nexttile(layout);
         imagesc(ax, azimuth, frequencies, panels{column});
         set(ax, 'YDir', 'normal', 'YScale', 'log');
         xlim(ax, [-180 180]); ylim(ax, [100 20000]);
-        ax.XTick = -180:90:180; ax.FontName = 'Arial'; ax.FontSize = 10; ax.TickDir = 'out';
-        xlabel(ax, 'Azimuth (degrees)'); ylabel(ax, 'Frequency (Hz)');
-        title(ax, sprintf('%s — %s', record.subject, names{column}), 'FontWeight', 'bold');
+        ax.XTick = -180:90:180; ax.FontName = fontName; ax.FontSize = 10; ax.TickDir = 'out';
+        xlabel(ax, azimuthLabel); ylabel(ax, frequencyLabel);
+        title(ax, sprintf('%s — %s', record.subject, panelNames{column}), 'FontWeight', 'bold');
         if column == 1
             colormap(ax, parula(256)); clim(ax, [-60 20]);
-            cb = colorbar(ax); cb.Label.String = 'Magnitude (dB)';
+            cb = colorbar(ax); cb.Label.String = magnitudeLabel; cb.FontName = fontName;
         else
             colormap(ax, hot(256)); clim(ax, [0 errorLimit]);
-            cb = colorbar(ax); cb.Label.String = 'Absolute error (dB)';
+            cb = colorbar(ax); cb.Label.String = errorLabel; cb.FontName = fontName;
         end
         hold(ax, 'on');
         xline(ax, -90, ':', 'Color', [0.1 0.1 0.1], 'LineWidth', 0.8, 'HandleVisibility', 'off');
         hold(ax, 'off');
     end
 end
-title(layout, {'Horizontal-plane left-ear HRTF reconstruction and absolute spectral error', ...
-    'Only interpolation directions enter the error maps; dashed line marks the contralateral direction (270 degrees)'}, ...
-    'FontWeight', 'bold', 'FontName', 'Arial');
+if language == "en"
+    title(layout, {'Horizontal-plane left-ear HRTF reconstruction and absolute spectral error', ...
+        'Only interpolation directions enter the error maps; dashed line marks the contralateral direction (270 degrees)'}, ...
+        'FontWeight', 'bold', 'FontName', fontName);
+end
 exportgraphics(fig, outputPath, 'Resolution', 300);
 exportgraphics(fig, strrep(outputPath, '.png', '.pdf'), 'ContentType', 'vector');
 close(fig);

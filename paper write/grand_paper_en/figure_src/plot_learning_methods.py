@@ -1,5 +1,9 @@
+import argparse
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -11,16 +15,12 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 DATA_CSV = SCRIPT_DIR / "data" / "learning_methods_plot.csv"
 FIGURE_DIR = SCRIPT_DIR.parent / "figure"
 
-OUT_PDF = FIGURE_DIR / "learning_methods_comparison.pdf"
-OUT_PNG = FIGURE_DIR / "learning_methods_comparison.png"
-
-
 # ============================================================
 # Plot configuration
 # ============================================================
 METHOD_ORDER = ["FSC", "RANF", "FSP-AE"]
 
-METRICS = [
+METRICS_EN = [
     ("FullSphereERB", "Full-sphere ERB", "dB"),
     ("Contralateral25ERB", "Contralateral 25° ERB", "dB"),
     ("ERBBandILDMean", "ERB-band ILD", "dB"),
@@ -28,8 +28,37 @@ METRICS = [
     ("FullSphereLSD", "Full-sphere LSD", "dB"),
 ]
 
+METRICS_ZH = [
+    ("FullSphereERB", "全域ERB", "dB"),
+    ("Contralateral25ERB", "对侧25° ERB", "dB"),
+    ("ERBBandILDMean", "频带ILD", "dB"),
+    ("ITDWeightedMAE", "ITD加权MAE", "μs"),
+    ("FullSphereLSD", "全域LSD", "dB"),
+]
 
-def main():
+
+def configure_fonts(language):
+    if language == "zh":
+        plt.rcParams.update({
+            "font.family": "sans-serif",
+            "font.sans-serif": [
+                "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "DejaVu Sans"
+            ],
+            "axes.unicode_minus": False,
+            "pdf.fonttype": 42,
+        })
+
+
+def render(language="en", output_dir=None):
+    if language not in {"en", "zh"}:
+        raise ValueError("language must be 'en' or 'zh'")
+    configure_fonts(language)
+    metrics = METRICS_ZH if language == "zh" else METRICS_EN
+    figure_dir = Path(output_dir) if output_dir is not None else FIGURE_DIR
+    suffix = "_zh" if language == "zh" else ""
+    out_pdf = figure_dir / f"learning_methods_comparison{suffix}.pdf"
+    out_png = figure_dir / f"learning_methods_comparison{suffix}.png"
+
     if not DATA_CSV.exists():
         raise FileNotFoundError(
             f"Input CSV not found:\n{DATA_CSV}\n\n"
@@ -37,7 +66,7 @@ def main():
             "grand_paper_en/figure_src/data/learning_methods_plot.csv"
         )
 
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+    figure_dir.mkdir(parents=True, exist_ok=True)
 
     df = pd.read_csv(DATA_CSV)
 
@@ -58,12 +87,12 @@ def main():
 
     fig, axes = plt.subplots(
         1,
-        len(METRICS),
+        len(metrics),
         figsize=(12.8, 3.15),
         constrained_layout=True,
     )
 
-    for ax, (metric_key, title, unit) in zip(axes, METRICS):
+    for ax, (metric_key, title, unit) in zip(axes, metrics):
         sub = df[df["Metric"] == metric_key].copy()
         sub = sub.sort_values("Method")
 
@@ -125,12 +154,20 @@ def main():
                 ),
             )
 
-    fig.savefig(OUT_PDF, bbox_inches="tight")
-    fig.savefig(OUT_PNG, dpi=300, bbox_inches="tight")
+    fig.savefig(out_pdf, bbox_inches="tight")
+    fig.savefig(out_png, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
-    print(f"Saved PDF: {OUT_PDF}")
-    print(f"Saved PNG: {OUT_PNG}")
+    print(f"Saved PDF: {out_pdf}")
+    print(f"Saved PNG: {out_png}")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--language", choices=("en", "zh"), default="en")
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args()
+    render(args.language, args.output_dir)
 
 
 if __name__ == "__main__":

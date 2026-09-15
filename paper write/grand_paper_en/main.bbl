@@ -132,19 +132,19 @@ LeCun Y, Bottou L, Bengio Y, et~al.
 \newblock 1998, 86\penalty0 (11):\penalty0 2278--2324.
 \newblock \doi{10.1109/5.726791}.
 
-\bibitem[Rafaely, et~al.(2025)Rafaely, Weinzierl, Berebi, and Brinkmann]{R18}
-Rafaely B, Weinzierl S, Berebi O, et~al.
-\newblock Loss Functions Incorporating Auditory Spatial Perception in Deep Learning---A Review[M/OL].
-\newblock 2025.
-\newblock \url{https://arxiv.org/abs/2506.19404v1}.
-\newblock \doi{10.48550/arXiv.2506.19404}.
-
 \bibitem[Moore, et~al.(1983)Moore and Glasberg]{R23}
 Moore B C J, Glasberg B R.
 \newblock Suggested formulae for calculating auditory-filter bandwidths and excitation patterns[J].
 \newblock The Journal of the Acoustical Society of America.
 \newblock 1983, 74\penalty0 (3):\penalty0 750--753.
 \newblock \doi{10.1121/1.389861}.
+
+\bibitem[Rafaely, et~al.(2025)Rafaely, Weinzierl, Berebi, and Brinkmann]{R18}
+Rafaely B, Weinzierl S, Berebi O, et~al.
+\newblock Loss Functions Incorporating Auditory Spatial Perception in Deep Learning---A Review[M/OL].
+\newblock 2025.
+\newblock \url{https://arxiv.org/abs/2506.19404v1}.
+\newblock \doi{10.48550/arXiv.2506.19404}.
 
 \bibitem[Majdak, et~al.(2022)Majdak, Zotter, Brinkmann, {De Muynke}, Mihocic, and Noisternig]{R8}
 Majdak P, Zotter F, Brinkmann F, et~al.

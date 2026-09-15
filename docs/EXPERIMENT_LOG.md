@@ -1,3 +1,23 @@
+## 2026-09-15：中英文正式稿完成FSC命名、术语与结果主线同步修订并通过编译
+
+- 时间/agent：2026-09-15T12:31:10+08:00，Codex；状态：完成，双语正文、被引用表题与个体示例术语已同步，XeLaTeX编译及交叉引用检查通过。
+- 动作：在保留最新本地修改的基础上，统一中英文论文标题、方法章标题及正文方法称呼为FSC；重写双语摘要、引言技术路线过渡、评价指标组织、Results结论句、Discussion三条主线和三段式Conclusion。中文版将“代理项/代理目标”统一为“可微ERB近似项/ERB近似目标”，中英文均将“五项主指标”改为按评价维度组织的“五项比较/报告指标”；同步修改实际被正文引用的四个表题与两份`results_visual_examples.tex`。未修改实验数据、表格数值、图片、参考文献编号、公式定义或实验协议。
+- 关键结果：双语论证现统一为FSC主要细化MCA残留的幅度、听觉频带和双耳声级误差；明确SONICOM ITD加权MAE相对MCA略有退化，FSP-AE的ITD与全域LSD更低，RANF的全域LSD更低；CNN仅解释为对局部频谱结构的稳定增量作用；ARI明确为独立重新训练后的复现而非zero-shot；ERB改善不解释为定位、外化感或其他感知收益。中文版文末英文摘要与英文稿摘要逐字一致。当前中文/英文`main.tex` SHA256分别为`5607D9020B46AEEF633F89FEECB7659781AEBDDAE536B4E03B8BABB009C61AF3`、`0500DEE2E5371990EF324B38300B526FEF1BF306ADABC29FDFA84E38F1CEBD95`。
+- 编译/证据：分别在`paper write/grand_paper/`与`paper write/grand_paper_en/`运行`xelatex -interaction=nonstopmode -halt-on-error main.tex`，稳定编译后中文`main.pdf`为21页、SHA256=`68522F9E21886834A2DB9CD9DB1DF3E4A5BD97F7E1E7D68E3F83226AB960274C`，英文`main.pdf`为25页、SHA256=`6F560F6B3CC15E8B3974D101A99032A798716389F224183B35A48167A78EF1F5`；两份`main.log`均无LaTeX error、undefined citation/reference、重复label或rerun警告，`main.aux`均含29个label。`git diff --check`通过，仅有既有LF/CRLF提示。
+- 完整性：SONICOM测试被试仍为44名；FSC Q26五项数值仍为`0.8360/1.2280/1.6514 dB/18.8480 us/3.6029 dB`，MCA ITD仍为`18.3997 us`且方向为FSC略退化；CNN消融仍为3个独立种子、八项指标、24个区间及ITD绝对变化`0.0101--0.0284 us`；稀疏度仍为Q14/Q26/Q50及共同743方向；ARI仍为独立重训练后五项22/22改善。`test_subjects_read=0`；训练、评价finite、best/末点预算均为N/A。本轮未提交、未推送；Git仍为dirty，除本轮双语论文增量与本日志外，保留了此前已有的`.gitignore`和两份`main.bbl`修改。
+- 下一步：作者审阅双语措辞和生成的两份本地PDF；如需投稿前版面微调，再针对现有轻微hbox提示处理，不应改变本条冻结的证据边界。
+- 阻塞项：无。
+
+## 2026-09-15：项目代码、数据与产物完成只读收录盘点
+
+- 时间/agent：2026-09-15T00:17:21+08:00，Codex；状态：面向后续文件收录决策的只读盘点完成；未移动、删除、复制或改写任何代码、数据、模型与论文文件。
+- 动作：按顶层目录、二级数据集/产物目录、扩展名、文件数、实际磁盘体量和 Git 跟踪状态梳理工作区；区分可复用源码与配置、精选结果、原始/处理后数据、训练/重建产物、第三方依赖、论文工程及本地环境/缓存。
+- 关键结果：排除 `.git/` 后共 `44541` 个文件、`56958.52 MiB`（`55.62 GiB`）。主要大项为 `artifacts/`=`12503` 文件/`32118.49 MiB`，`data/`=`4023` 文件/`21094.92 MiB`，`.venv/`=`23823` 文件/`3179.13 MiB`，`external/`=`1838` 文件/`350.38 MiB`，`results/`=`948` 文件/`129.28 MiB`。当前实际 Git 跟踪文件合计约 `164.54 MiB`，其中 `results/`=`926` 文件/`112.27 MiB`、`paper write/`=`92` 文件/`21.72 MiB`、`outputs/`=`103` 文件/`19.38 MiB`；核心实现包括 `src/` 60 个已跟踪 Python 文件、`scripts/` 152 个已跟踪入口、`matlab/` 37 个已跟踪 MATLAB 文件、`tests/` 46 个已跟踪测试、`configs/` 263 个已跟踪配置。原始 HRTF 数据包括 HUTUBS `1.34 GiB`、SONICOM `0.85 GiB`、RIEC `0.46 GiB`、AXD `0.39 GiB` 和 ARI `0.49 GiB`；处理后数据约 `17.08 GiB`。当前论文主模型 Bounded E25 三成员的三个权威 `last.pt` 各约 `6.93 MiB`，ARI E190 权威 `last.pt` 约 `6.45 MiB`。
+- 完整性：统计覆盖当前可读取工作区全部常规文件并排除 `.git/`；没有发现未忽略的未跟踪文件。当前分支/HEAD=`codex/project-structure-refactor`/`057a18d`；盘点前既有修改仅 `.gitignore`、`paper write/grand_paper/main.bbl`、`paper write/grand_paper_en/main.bbl`，均未触碰。`test_subjects_read=0`；训练、评价、finite、best/末点预算均为 N/A；未启动任何训练/评价，未提交、未推送。
+- 证据：`docs/PROJECT_STRUCTURE.md`、`data/HRTF/README.md`、`data/processed/README.md`、`artifacts/README.md`、`external/README.md`、`configs/experiments/sonicom_bounded_mcar_film_correction_final_e25_ensemble_manifest.json`、`configs/experiments/ari_fsc_adapted_q26_locked_test_v1.json`；本条目录统计来自当前工作区只读枚举与 `git ls-files`。
+- 下一步：由作者决定收录边界；建议下一轮按“核心可复现包、精选模型包、完整数据归档”三个层级生成精确文件清单与体量预算，再执行任何复制或整理。
+- 阻塞项：无盘点阻塞；原始数据与第三方依赖能否再分发需遵守各来源许可，`artifacts/` 与 `data/` 的大体量使全量收录成本较高。
+
 ## 2026-09-14：作者确认的流程图与模型结构图已同步到中文版正文
 
 - 时间/agent：2026-09-14T18:45:26+08:00，Codex；状态：中文版正式稿已切换到与英文稿相同的两张作者确认 PNG，并完成静态引用核验；未编译 LaTeX。
